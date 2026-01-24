@@ -61,3 +61,25 @@ class LikelihoodDefinition(Scene):
         self.play(FadeOut(failure4), row2.animate.set_color(WHITE), FadeOut(box2))
         self.play(FadeIn(failure1))
         
+        # Step 4: Add log likelihood
+        loglik1 = MathTex(r"l=ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
+        loglik2 = MathTex(r"l=\sum_{i=1}^{n}ln[\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}]")
+        loglik3 = MathTex(r"l=\sum_{i=1}^{n}ln\hat{y}_i^{y_i}+ln(1-\hat{y}_i)^{1-{y_i}}")
+        loglik4 = MathTex(r"l=\sum_{i=1}^{n}y_iln\hat{y}_i+({1-{y_i}})ln(1-\hat{y}_i)")
+
+        self.play(TransformByGlyphMap(failure1, loglik1,
+                                      ([0], [0]),
+                                      ([], [2,3])))
+        self.play(TransformByGlyphMap(loglik1, loglik2,
+                                      ([5], [3]),
+                                      ([2,3], [7,8]),
+                                      (FadeIn, [9,26])))
+        self.play(TransformByGlyphMap(loglik2, loglik3,
+                                      ([9,26], FadeOut),
+                                      (FadeIn, [14]),
+                                      ([7,8], [7,8]),
+                                      ([7,8],[15,16], {"path_arc": PI * -0.7})))
+        self.play(TransformByGlyphMap(loglik3, loglik4,
+                                      ([11,12],[7,8],{"path_arc": PI * 0.7}),
+                                      (range(24,28),range(16,20), {"path_arc": PI * 0.7}),
+                                      (FadeIn, [15,21])))
