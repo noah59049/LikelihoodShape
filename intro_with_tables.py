@@ -170,7 +170,7 @@ class DefinitionsScene(VoiceoverScene):
         y_labels_table.shift(LEFT * y_labels_table.width * 1.4)
         y_table = Tex(y_tex).scale(0.6).align_to(y_labels_table, UL)
         yX_table = Tex(yX_tex).scale(0.6).align_to(y_labels_table, UL)
-        yX_table_numbered = Tex(yX_tex_numbered, substrings_to_isolate = yX_lines[1:-1]).scale(0.6).align_to(y_labels_table, UL)
+        yX_table_numbered = Tex(yX_tex_numbered).scale(0.6).align_to(y_labels_table, UL)
         self.play(Write(y_labels_table))
         self.play(TransformMatchingShapes(y_labels_table, y_table))
         self.play(FadeIn(yX_table))
