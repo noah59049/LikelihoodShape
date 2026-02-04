@@ -149,6 +149,7 @@ def numpy_to_latex(
 
 x_names = [f"X{i + 1}" for i, e in enumerate(colnames)]
 yX_tex_numbered = f"${numpy_to_latex(yX, make_table = True, colnames = ['Y'] + x_names)}$"
+yX_lines = yX_tex_numbered.split(r"\hline")
 yX_tex = f"${numpy_to_latex(yX, make_table = True, colnames = ['Y'] + colnames)}$"
 y_tex = f"${numpy_to_latex(y, make_table = True, colnames = ['Y'])}$"
 y_labels_tex = y_tex.replace("0", "Malignant").replace("1", "Benign").replace("Y", "Breast Cancer")
@@ -169,7 +170,7 @@ class DefinitionsScene(VoiceoverScene):
         y_labels_table.shift(LEFT * y_labels_table.width * 1.4)
         y_table = Tex(y_tex).scale(0.6).align_to(y_labels_table, UL)
         yX_table = Tex(yX_tex).scale(0.6).align_to(y_labels_table, UL)
-        yX_table_numbered = Tex(yX_tex_numbered).scale(0.6).align_to(y_labels_table, UL)
+        yX_table_numbered = Tex(yX_tex_numbered, substrings_to_isolate = yX_lines[1:-1]).scale(0.6).align_to(y_labels_table, UL)
         self.play(Write(y_labels_table))
         self.play(TransformMatchingShapes(y_labels_table, y_table))
         self.play(FadeIn(yX_table))
@@ -224,6 +225,13 @@ class DefinitionsScene(VoiceoverScene):
                 (FadeIn, [16,17]),
                 (FadeIn, [23, 24]),
                 (FadeIn, [36, 37])))
+            
+        # Part 3: Applying the formula to the table
+        self.remove(logodds3)
+        yX_table_numbered.to_edge(LEFT)
+        self.play(FadeIn(yX_table_numbered))
+
 
 if __name__ == "__main__":
-    print(yX_tex)
+    print("\n" * 8)
+    print(yX_lines[1:-1])
