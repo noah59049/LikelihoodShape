@@ -14,7 +14,7 @@ def as_row(vec):
 def as_col(vec):
     return vec.reshape(-1,1)
 
-COLS_TO_KEEP = 4
+COLS_TO_KEEP = 4 # If we set this to a different number it would minorly break things
 colnames = list(load_breast_cancer().feature_names[0:COLS_TO_KEEP])
 X, y = load_breast_cancer(return_X_y=True)
 X = X[:,0:COLS_TO_KEEP]
@@ -189,6 +189,7 @@ class DefinitionsScene(VoiceoverScene):
         logodds2 = MathTex(r"\ln\frac{p}{1-p}=\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         logodds3 = MathTex(r"\ln\frac{p_i}{1-p_i}=\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1}")
         logodds4 = MathTex(r"\ln\frac{p_i}{1-p_i}=\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\beta_3 X_{i,3}+\beta_4 X_{i,4}")
+        logodds5 = MathTex(r"\ln\frac{p_1}{1-p_1}=\beta_0+\beta_1 X_{1,1}+\beta_2 X_{1,2}+\beta_3 X_{1,3}+\beta_4 X_{1,4}").to_edge(DOWN)
 
         with self.voiceover(text = "We are trying to look at how the probability that y is 1 depends on the Xs") as tracker:
             self.play(Write(p1))
@@ -228,7 +229,6 @@ class DefinitionsScene(VoiceoverScene):
                                         (range(27,30), range(27,33)),
                                         (range(32,35), [35]),
                                         (range(36, 41), range(37,40))))
-        
 
         # Determine the height of the rectangle
         # I don't know of a way to find the height of one row of a latex table
@@ -248,8 +248,28 @@ class DefinitionsScene(VoiceoverScene):
                             stroke_width=0        # remove border
                         )
         highlight_rect.align_to(yX_table_numbered, UL)
-        
 
+        # Plug in i = 1
+        highlight_rect.shift(DOWN * highlight_rect.height)
+        self.play(FadeIn(highlight_rect))
+        self.play(TransformByGlyphMap(logodds4, logodds5,
+                                      ([], [])))
+
+        def tex_for_row(i):
+            return MathTex(r"\ln\frac{p_i}{1-p_i}=\beta_0+".replace("i",str(i)) + "+".join([f"\\beta_{k+1} {X[i-1,k]}" for k in range(COLS_TO_KEEP)]))
+        logodds_plugin_old = logodds5
+        logodds_plugin_new = tex_for_row(1).to_edge(DOWN)
+        self.play(TransformMatchingTex(logodds_plugin_old, logodds_plugin_new))
+        for i in range(2, 9):
+            highlight_rect.shift(DOWN * highlight_rect.height)
+            logodds_plugin_old = logodds_plugin_new
+            logodds_plugin_new = tex_for_row(i).to_edge(DOWN)
+            self.play(TransformMatchingTex(logodds_plugin_old, logodds_plugin_new))
+            self.wait(1.5)
+            
+
+
+        
         
 
 
