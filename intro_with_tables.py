@@ -188,6 +188,7 @@ class DefinitionsScene(VoiceoverScene):
         logodds1 = MathTex(r"\ln\frac{p}{1-p}")
         logodds2 = MathTex(r"\ln\frac{p}{1-p}=\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         logodds3 = MathTex(r"\ln\frac{p_i}{1-p_i}=\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1}")
+        logodds4 = MathTex(r"\ln\frac{p_i}{1-p_i}=\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\beta_3 X_{i,3}+\beta_4 X_{i,4}")
 
         with self.voiceover(text = "We are trying to look at how the probability that y is 1 depends on the Xs") as tracker:
             self.play(Write(p1))
@@ -221,7 +222,12 @@ class DefinitionsScene(VoiceoverScene):
         self.remove(logodds3)
         yX_table_numbered.to_corner(UL)
         logodds3.to_edge(DOWN)
+        logodds4.to_edge(DOWN)
         self.play(FadeIn(yX_table_numbered), FadeIn(logodds3))
+        self.play(TransformByGlyphMap(logodds3, logodds4,
+                                        (range(27,30), range(27,33)),
+                                        (range(32,35), [35]),
+                                        (range(36, 41), range(37,40))))
         
 
         # Determine the height of the rectangle
@@ -242,6 +248,7 @@ class DefinitionsScene(VoiceoverScene):
                             stroke_width=0        # remove border
                         )
         highlight_rect.align_to(yX_table_numbered, UL)
+        
 
         
 
