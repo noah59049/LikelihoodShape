@@ -189,8 +189,6 @@ class DefinitionsScene(VoiceoverScene):
         logodds2 = MathTex(r"\ln\frac{p}{1-p}=\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         logodds3 = MathTex(r"\ln\frac{p_i}{1-p_i}=\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1}")
 
-        logodds2colored = MathTex(r"\ln\frac{p}{1-p}=\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}", substrings_to_isolate = [r"\beta_0"])
-
         with self.voiceover(text = "We are trying to look at how the probability that y is 1 depends on the Xs") as tracker:
             self.play(Write(p1))
         with self.voiceover(text = "So we denote that as p") as tracker:
@@ -210,13 +208,6 @@ class DefinitionsScene(VoiceoverScene):
         with self.voiceover(text = "And the big assumption of logistic regression is that the log odds is equal to a linear combination of the Xs") as tracker:
             self.play(TransformByGlyphMap(logodds1, logodds2,
                 (FadeIn, range(7, 33), {"delay":0.5, "run_time":1.4})))
-        
-        self.remove(logodds2)
-        self.add(logodds2colored)
-        logodds2colored.set_color_by_tex(r"\beta_0", RED)
-        self.wait(0.7)
-        self.remove(logodds2colored)
-        self.add(logodds2)
 
         with self.voiceover(text = "And then we are looking at the Eye-Ith individual, so we subscript the p and the Xs with i") as tracker:
             self.play(TransformByGlyphMap(logodds2, logodds3,
