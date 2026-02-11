@@ -228,8 +228,31 @@ class DefinitionsScene(VoiceoverScene):
             
         # Part 3: Applying the formula to the table
         self.remove(logodds3)
-        yX_table_numbered.to_edge(LEFT)
-        self.play(FadeIn(yX_table_numbered))
+        yX_table_numbered.to_corner(UL)
+        logodds3.to_edge(DOWN)
+        self.play(FadeIn(yX_table_numbered), FadeIn(logodds3))
+        
+
+        # Determine the height of the rectangle
+        # I don't know of a way to find the height of one row of a latex table
+        # We could divide the height of the table by the number of rows
+        # Except for the ellipses
+        # So instead we make a table with fewer rows, then divide the height of that by the number of rows in that
+        yX_head = yX[0:6,:]
+        yX_head_tex = f"${numpy_to_latex(yX_head, make_table = True, colnames = ['Y'] + x_names)}$"
+        yX_head_table = Tex(yX_head_tex).scale(0.6)
+
+        # Add the highlight rectangle
+        highlight_rect = Rectangle(
+                            width=yX_table_numbered.width,
+                            height=yX_head_table.height / 7,
+                            fill_color=RED,
+                            fill_opacity=0.2,     # transparency
+                            stroke_width=0        # remove border
+                        )
+        highlight_rect.align_to(yX_table_numbered, UL)
+
+        
 
 
 if __name__ == "__main__":
