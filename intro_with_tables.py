@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # In order to have our example matrices be realistic, we are generating them from an actual logistic regression model on the sklearn breast cancer dataset
 
 import numpy as np
@@ -218,8 +216,70 @@ class DefinitionsScene(VoiceoverScene):
                 (FadeIn, [16,17]),
                 (FadeIn, [23, 24]),
                 (FadeIn, [36, 37])))
+
+        # Part 3: Transform the log odds formula into a sigmoid formula
+        sigmoid1 = MathTex(r"\frac{p_i}{1-p_i}=e^{\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1}}")
+        sigmoid2 = MathTex(r"\frac{1-p_i}{p_i}=e^{-(\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1})}")
+        sigmoid3 = MathTex(r"\frac{1}{p_i}-\frac{p_i}{p_i}=e^{-(\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1})}")
+        sigmoid4 = MathTex(r"\frac{1}{p_i}-1=e^{-(\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1})}")
+        sigmoid5 = MathTex(r"\frac{1}{p_i}=1+e^{-(\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1})}")
+        sigmoid6 = MathTex(r"p_i=\frac{1}{1+e^{-(\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1})}}")
+        sigmoid7 = MathTex(r"p_i=\sigma(\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1})}")
+
+        x_src_idx = range(10,41) #[15, 16, 22, 23, 35, 36]
+        x_dst_idx = range(9,40) #[14, 15, 21, 22, 34, 35]
+        x_src = VGroup(*[logodds3[0][i] for i in x_src_idx])
+        x_dst = VGroup(*[sigmoid1[0][i] for i in x_dst_idx])
+        rest_src = VGroup(*[
+            m for i, m in enumerate(logodds3)
+            if i not in x_src
+        ])
+        rest_dst = VGroup(*[
+            m for i, m in enumerate(sigmoid1)
+            if i not in x_dst
+        ])
+        self.play(
+            TransformByGlyphMap(
+                rest_src,
+                rest_dst,
+                ([0,1],[8], {"path_arc": -PI * 0.6}),
+            ),
+            *[
+                x_src[i].animate.move_to(x_dst[i])
+                for i in range(len(x_src))
+            ]
+        )
+
+        self.play(TransformByGlyphMap(sigmoid1, sigmoid2,
+                                      ([0,1],[5,6], {"path_arc": PI * 0.5}),
+                                      ([3,4,5,6],[0,1,2,3], {"path_arc": PI * 0.5}),
+                                      (FadeIn, [9,10]),
+                                      (FadeIn,[42])))
+        
+        self.play(TransformByGlyphMap(sigmoid2, sigmoid3,
+                                      ([0,4,5,6],[0,1,2,3]),
+                                      ([2,3,4,5,6],[5,6,7,8,9]),
+                                      ([1],[4])))
+        
+        self.play(TransformByGlyphMap(sigmoid3, sigmoid4,
+                                      ([5,6,7,8,9],[5])))
+        
+        self.play(TransformByGlyphMap(sigmoid4, sigmoid5,
+                                      ([4,5],[5,6], {"path_arc": -PI}),
+                                      ([6],[4], {"path_arc":-PI})))
+        
+        self.play(TransformByGlyphMap(sigmoid5, sigmoid6,
+                                      ([0,1], [3,4])))
+        
+        self.play(TransformByGlyphMap(sigmoid6, sigmoid7,
+                                      ([3,4,5,6,7,8],[3], {"path_arc":PI * 0.8})))
+        
+        
+
+
+        return # TEMPORARY
             
-        # Part 3: Applying the formula to the table
+        # Part 4: Applying the formula to the table
         self.remove(logodds3)
         yX_table_numbered.to_corner(UL)
         logodds3.to_edge(DOWN)
@@ -266,12 +326,6 @@ class DefinitionsScene(VoiceoverScene):
             logodds_plugin_new = tex_for_row(i).to_edge(DOWN)
             self.play(TransformMatchingTex(logodds_plugin_old, logodds_plugin_new))
             self.wait(1.5)
-            
-
-
-        
-        
-
 
 if __name__ == "__main__":
     print("\n" * 8)
