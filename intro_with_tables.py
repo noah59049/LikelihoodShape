@@ -226,56 +226,63 @@ class DefinitionsScene(VoiceoverScene):
         sigmoid6 = MathTex(r"p_i=\frac{1}{1+e^{-(\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1})}}")
         sigmoid7 = MathTex(r"p_i=\sigma(\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1})}")
 
-        x_src_idx = range(10,41) #[15, 16, 22, 23, 35, 36]
-        x_dst_idx = range(9,40) #[14, 15, 21, 22, 34, 35]
-        x_src = VGroup(*[logodds3[0][i] for i in x_src_idx])
-        x_dst = VGroup(*[sigmoid1[0][i] for i in x_dst_idx])
-        rest_src = VGroup(*[
-            m for i, m in enumerate(logodds3)
-            if i not in x_src
-        ])
-        rest_dst = VGroup(*[
-            m for i, m in enumerate(sigmoid1)
-            if i not in x_dst
-        ])
-        self.play(
-            TransformByGlyphMap(
-                rest_src,
-                rest_dst,
-                ([0,1],[8], {"path_arc": -PI * 0.6}),
-            ),
-            *[
-                x_src[i].animate.move_to(x_dst[i])
-                for i in range(len(x_src))
-            ]
-        )
+        with self.voiceover(text = "We exponentiate both sides, and this cancels out the ln") as tracker:
+            # This would have been a simple TransformByGlyphMap(logodds3, sigmoid1)
+            # But that was warping/twisting some glyphs.
+            # So we have a rigid transformation of the glyphs we don't want to twist, which is more annoying
+            x_src_idx = range(10,41) #[15, 16, 22, 23, 35, 36]
+            x_dst_idx = range(9,40) #[14, 15, 21, 22, 34, 35]
+            x_src = VGroup(*[logodds3[0][i] for i in x_src_idx])
+            x_dst = VGroup(*[sigmoid1[0][i] for i in x_dst_idx])
+            rest_src = VGroup(*[
+                m for i, m in enumerate(logodds3)
+                if i not in x_src
+            ])
+            rest_dst = VGroup(*[
+                m for i, m in enumerate(sigmoid1)
+                if i not in x_dst
+            ])
+            self.play(
+                TransformByGlyphMap(
+                    rest_src,
+                    rest_dst,
+                    ([0,1],[8], {"path_arc": -PI * 0.6}),
+                ),
+                *[
+                    x_src[i].animate.move_to(x_dst[i])
+                    for i in range(len(x_src))
+                ]
+            )
 
-        self.play(TransformByGlyphMap(sigmoid1, sigmoid2,
-                                      ([0,1],[5,6], {"path_arc": PI * 0.5}),
-                                      ([3,4,5,6],[0,1,2,3], {"path_arc": PI * 0.5}),
-                                      (FadeIn, [9,10]),
-                                      (FadeIn,[42])))
+        with self.voiceover(text = "We take the reciprocal of both sides, and the reciprocal of e to something is e to the negative of that") as tracker:
+            self.play(TransformByGlyphMap(sigmoid1, sigmoid2,
+                                        ([0,1],[5,6], {"path_arc": PI * 0.5}),
+                                        ([3,4,5,6],[0,1,2,3], {"path_arc": PI * 0.5}),
+                                        (FadeIn, [9,10]),
+                                        (FadeIn,[42])))
         
-        self.play(TransformByGlyphMap(sigmoid2, sigmoid3,
-                                      ([0,4,5,6],[0,1,2,3]),
-                                      ([2,3,4,5,6],[5,6,7,8,9]),
-                                      ([1],[4])))
+        with self.voiceover(text = "and then we expand the fraction on the left hand side") as tracker:
+            self.play(TransformByGlyphMap(sigmoid2, sigmoid3,
+                                        ([0,4,5,6],[0,1,2,3]),
+                                        ([2,3,4,5,6],[5,6,7,8,9]),
+                                        ([1],[4])))
         
-        self.play(TransformByGlyphMap(sigmoid3, sigmoid4,
-                                      ([5,6,7,8,9],[5])))
+        with self.voiceover(text = "Simplify pea eye over pea eye") as tracker: # "Simplify pi over pi" causes the AI voice to sputter for 1.5 minutes, IDK why
+            self.play(TransformByGlyphMap(sigmoid3, sigmoid4,
+                                        ([5,6,7,8,9],[5])))
         
-        self.play(TransformByGlyphMap(sigmoid4, sigmoid5,
-                                      ([4,5],[5,6], {"path_arc": -PI}),
-                                      ([6],[4], {"path_arc":-PI})))
+        with self.voiceover(text = "Add one to both sides") as tracker:
+            self.play(TransformByGlyphMap(sigmoid4, sigmoid5,
+                                        ([4,5],[5,6], {"path_arc": -PI}),
+                                        ([6],[4], {"path_arc":-PI})))
         
-        self.play(TransformByGlyphMap(sigmoid5, sigmoid6,
-                                      ([0,1], [3,4])))
+        with self.voiceover(text = "Take the reciprocal again") as tracker:
+            self.play(TransformByGlyphMap(sigmoid5, sigmoid6,
+                                        ([0,1], [3,4])))
         
-        self.play(TransformByGlyphMap(sigmoid6, sigmoid7,
-                                      ([3,4,5,6,7,8],[3], {"path_arc":PI * 0.8})))
-        
-        
-
+        with self.voiceover(text = "And we have a special name for this function on the right side: the sigmoid") as tracker:
+            self.play(TransformByGlyphMap(sigmoid6, sigmoid7,
+                                        ([3,4,5,6,7,8],[3], {"path_arc":PI * 0.8})))
 
         return # TEMPORARY
             
