@@ -163,22 +163,38 @@ from manim_voiceover.services.coqui import CoquiService
 
 class DefinitionsScene(VoiceoverScene):
     def construct(self):
+        self.set_speech_service(CoquiService())
+
         # Part 1: The tables
+
         y_labels_table = Tex(y_labels_tex).scale(0.6)
         y_labels_table.shift(LEFT * y_labels_table.width * 1.4)
         y_table = Tex(y_tex).scale(0.6).align_to(y_labels_table, UL)
         yX_table = Tex(yX_tex).scale(0.6).align_to(y_labels_table, UL)
         yX_table_numbered = Tex(yX_tex_numbered).scale(0.6).align_to(y_labels_table, UL)
-        self.play(Write(y_labels_table))
-        self.play(TransformMatchingShapes(y_labels_table, y_table))
-        self.play(FadeIn(yX_table))
-        self.remove(y_table)
-        self.play(TransformMatchingShapes(yX_table, yX_table_numbered))
+        with self.voiceover(text = "We have a variable we're interested in predicting, and it's dichotomous." \
+                                    "It can only take on two different values." \
+                                    "And we have a bunch of individual observations of that variable" \
+                                    "Here we're using data from a real dataset, it's called the " \
+                                    "Breast Cancer Wisconsin dataset") as tracker:
+            self.play(Write(y_labels_table))
+        with self.voiceover("This variable can be called your dependent variable or your response variable" \
+                            "or many other names. We call it Y, "
+                            "and we pick one of the values to be 0 and another to be 1" \
+                            "Here 0 is malignant and 1 is benign") as tracker:
+            self.play(TransformMatchingShapes(y_labels_table, y_table))
+        with self.voiceover("And we have one or more other variables that we think are related" \
+                            "to our response variable. We likewise have one value of each variable"
+                            " for each individual. These are sometimes called explanatory variables" \
+                            "or predictor variables or independent variables." \
+                            "Unlike the response variable, these can be any real number.") as tracker:
+            self.play(FadeIn(yX_table))
+            self.remove(y_table)
+        with self.voiceover("We notate these variables as X1, X2, and so on") as tracker:
+            self.play(TransformMatchingShapes(yX_table, yX_table_numbered))
         self.play(FadeOut(yX_table_numbered))
 
         # Part 2: Odds definition
-        self.set_speech_service(CoquiService())
-
         p1 = MathTex(r"P(y=1)")
         p2 = MathTex(r"p")
         odds1 = MathTex(r"Odds")
