@@ -202,8 +202,8 @@ class DefinitionsScene(VoiceoverScene):
         logodds1 = MathTex(r"\ln\frac{p}{1-p}")
         logodds2 = MathTex(r"\ln\frac{p}{1-p}=\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         logodds3 = MathTex(r"\ln\frac{p_i}{1-p_i}=\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1}")
-        logodds4 = MathTex(r"\ln\frac{p_i}{1-p_i}=\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\beta_3 X_{i,3}+\beta_4 X_{i,4}")
-        logodds5 = MathTex(r"\ln\frac{p_1}{1-p_1}=\beta_0+\beta_1 X_{1,1}+\beta_2 X_{1,2}+\beta_3 X_{1,3}+\beta_4 X_{1,4}").to_edge(DOWN)
+        plugin1 = MathTex(r"\ln\frac{p_i}{1-p_i}=\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\beta_3 X_{i,3}+\beta_4 X_{i,4}")
+        plugin2 = MathTex(r"\ln\frac{p_1}{1-p_1}=\beta_0+\beta_1 X_{1,1}+\beta_2 X_{1,2}+\beta_3 X_{1,3}+\beta_4 X_{1,4}").to_edge(DOWN)
 
         with self.voiceover(text = "We are trying to look at how the probability that y is 1 depends on the Xs") as tracker:
             self.play(Write(p1))
@@ -299,19 +299,20 @@ class DefinitionsScene(VoiceoverScene):
         with self.voiceover(text = "And we have a special name for this function on the right side: the sigmoid") as tracker:
             self.play(TransformByGlyphMap(sigmoid6, sigmoid7,
                                         ([3,4,5,6,7,8],[3], {"path_arc":PI * 0.8})))
-
-        return # TEMPORARY
             
         # Part 4: Applying the formula to the table
-        self.remove(logodds3)
+
+        plugin1 = MathTex(r"p_i=\sigma(\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\beta_3 X_{i,3}+\beta_4 X_{i,4})")
+        plugin2 = MathTex(r"p_1=\sigma(\beta_0+\beta_1 X_{1,1}+\beta_2 X_{1,2}+\beta_3 X_{1,3}+\beta_4 X_{1,4})").to_edge(DOWN)
+
+        self.remove(sigmoid7)
         yX_table_numbered.to_corner(UL)
-        logodds3.to_edge(DOWN)
-        logodds4.to_edge(DOWN)
-        self.play(FadeIn(yX_table_numbered), FadeIn(logodds3))
-        self.play(TransformByGlyphMap(logodds3, logodds4,
-                                        (range(27,30), range(27,33)),
-                                        (range(32,35), [35]),
-                                        (range(36, 41), range(37,40))))
+        sigmoid7.to_edge(DOWN)
+        plugin1.to_edge(DOWN)
+        self.play(FadeIn(yX_table_numbered), FadeIn(sigmoid7))
+        self.play(TransformByGlyphMap(sigmoid7, plugin1,
+                                      (range(22,25),range(22,28)),
+                                      (range(26,36),range(29,35))))
 
         # Determine the height of the rectangle
         # I don't know of a way to find the height of one row of a latex table
@@ -335,19 +336,19 @@ class DefinitionsScene(VoiceoverScene):
         # Plug in i = 1
         highlight_rect.shift(DOWN * highlight_rect.height)
         self.play(FadeIn(highlight_rect))
-        self.play(TransformByGlyphMap(logodds4, logodds5,
+        self.play(TransformByGlyphMap(plugin1, plugin2,
                                       ([], [])))
 
         def tex_for_row(i):
-            return MathTex(r"\ln\frac{p_i}{1-p_i}=\beta_0+".replace("i",str(i)) + "+".join([f"\\beta_{k+1} {X[i-1,k]}" for k in range(COLS_TO_KEEP)]))
-        logodds_plugin_old = logodds5
-        logodds_plugin_new = tex_for_row(1).to_edge(DOWN)
-        self.play(TransformMatchingTex(logodds_plugin_old, logodds_plugin_new))
+            return MathTex(f"p_{i}=\\sigma(\\beta_0+" + "+".join([f"\\beta_{k+1} {X[i-1,k]}" for k in range(COLS_TO_KEEP)]) + ")")
+        plugin_old = plugin2
+        plugin_new = tex_for_row(1).to_edge(DOWN)
+        self.play(TransformMatchingTex(plugin_old, plugin_new))
         for i in range(2, 9):
             highlight_rect.shift(DOWN * highlight_rect.height)
-            logodds_plugin_old = logodds_plugin_new
-            logodds_plugin_new = tex_for_row(i).to_edge(DOWN)
-            self.play(TransformMatchingTex(logodds_plugin_old, logodds_plugin_new))
+            plugin_old = plugin_new
+            plugin_new = tex_for_row(i).to_edge(DOWN)
+            self.play(TransformMatchingTex(plugin_old, plugin_new))
             self.wait(1.5)
 
 if __name__ == "__main__":
