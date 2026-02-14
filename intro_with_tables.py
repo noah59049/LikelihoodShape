@@ -1,7 +1,6 @@
 # In order to have our example matrices be realistic, we are generating them from an actual logistic regression model on the sklearn breast cancer dataset
 
 import numpy as np
-import sklearn
 from sklearn.datasets import load_breast_cancer
 from sklearn.linear_model import LogisticRegression
 import statsmodels.api as sm
@@ -158,12 +157,11 @@ y_labels_tex = y_tex.replace("0", "Malignant").replace("1", "Benign").replace("Y
 from manim import *
 from manim_voiceover import VoiceoverScene
 from MF_Tools import *
-from manim_voiceover.services.coqui import CoquiService
-
+from manim_voiceover.services.gtts import GTTSService
 
 class DefinitionsScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(CoquiService())
+        self.set_speech_service(GTTSService())
 
         # Part 1: The tables
 
@@ -309,10 +307,12 @@ class DefinitionsScene(VoiceoverScene):
         yX_table_numbered.to_corner(UL)
         sigmoid7.to_edge(DOWN)
         plugin1.to_edge(DOWN)
-        self.play(FadeIn(yX_table_numbered), FadeIn(sigmoid7))
-        self.play(TransformByGlyphMap(sigmoid7, plugin1,
-                                      (range(22,25),range(22,28)),
-                                      (range(26,36),range(29,35))))
+        with self.voiceover("So let's look at this formula, when you plug in some values from our dataset") as tracker:
+            self.play(FadeIn(yX_table_numbered), FadeIn(sigmoid7))
+        with self.voiceover("We have 4 independent variables in this case") as tracker:
+            self.play(TransformByGlyphMap(sigmoid7, plugin1,
+                                        (range(22,25),range(22,28)),
+                                        (range(26,36),range(29,35))))
 
         # Determine the height of the rectangle
         # I don't know of a way to find the height of one row of a latex table
@@ -334,22 +334,24 @@ class DefinitionsScene(VoiceoverScene):
         highlight_rect.align_to(yX_table_numbered, UL)
 
         # Plug in i = 1
-        highlight_rect.shift(DOWN * highlight_rect.height)
-        self.play(FadeIn(highlight_rect))
-        self.play(TransformByGlyphMap(plugin1, plugin2,
-                                      ([], [])))
-
-        def tex_for_row(i):
-            return MathTex(f"p_{i}=\\sigma(\\beta_0+" + "+".join([f"\\beta_{k+1} {X[i-1,k]}" for k in range(COLS_TO_KEEP)]) + ")")
-        plugin_old = plugin2
-        plugin_new = tex_for_row(1).to_edge(DOWN)
-        self.play(TransformMatchingTex(plugin_old, plugin_new))
-        for i in range(2, 9):
+        with self.voiceover(text = "For each value of i, you get a different individual, " \
+                              "a different row, and you multiply the betas by different numbers.") as tracker:
             highlight_rect.shift(DOWN * highlight_rect.height)
-            plugin_old = plugin_new
-            plugin_new = tex_for_row(i).to_edge(DOWN)
+            self.play(FadeIn(highlight_rect))
+            self.play(TransformByGlyphMap(plugin1, plugin2,
+                                        ([], [])))
+
+            def tex_for_row(i):
+                return MathTex(f"p_{i}=\\sigma(\\beta_0+" + "+".join([f"\\beta_{k+1} {X[i-1,k]}" for k in range(COLS_TO_KEEP)]) + ")")
+            plugin_old = plugin2
+            plugin_new = tex_for_row(1).to_edge(DOWN)
             self.play(TransformMatchingTex(plugin_old, plugin_new))
-            self.wait(1.5)
+            for i in range(2, 9):
+                highlight_rect.shift(DOWN * highlight_rect.height)
+                plugin_old = plugin_new
+                plugin_new = tex_for_row(i).to_edge(DOWN)
+                self.play(TransformMatchingTex(plugin_old, plugin_new))
+                self.wait(1.5)
 
 if __name__ == "__main__":
     print("\n" * 8)
