@@ -1,3 +1,7 @@
 __pycache__
 media
 .DS_Store
+cache_dir
+breast_cancer_sklearn.csv
+intro_with_tables.json
+intro_with_tables.mp3
