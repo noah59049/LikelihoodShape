@@ -30,20 +30,32 @@ class OddsScene(Scene):
 
         quote = Text('"The odds of hitting a gutshot straight draw on the turn is 8.5%,\nor 10.75-to-1 odds against"', font_size = 32)
         self.add(quote)
+        quote.shift(quote.height * UP * 2)
 
-        quote.animate.shift(quote.height * UP * 2)
-        checks = VGroup(
-            Text("✓", font_size=70).set_color(GREEN)
-        )
-
-        crosses = VGroup(*[
+        full_xs = VGroup(*[
             Text("✗", font_size=70).set_color(RED)
-            for _ in range(11)
+            for _ in range(10)
         ])
 
-        trials = VGroup(*checks, *crosses)
-        trials.arrange_in_grid(rows=3, cols=4, buff=0.4)
+        partial_x = Text("✗", font_size=70).set_color(RED)
 
-        self.play(LaggedStart(*[FadeIn(t, scale=1.2) for t in trials], lag_ratio=0.05))
+        # Compute cutoff position (75% from left)
+        left = partial_x.get_left()[0]
+        right = partial_x.get_right()[0]
+        cutoff = left + 0.75 * (right - left)
+
+        # Keep only points left of cutoff
+        partial_x.set_points(
+            partial_x.points[
+                partial_x.points[:, 0] <= cutoff
+            ]
+        )
+
+        check = Text("✓", font_size=70).set_color(GREEN)
+
+        trials = VGroup(*full_xs, partial_x, check)
+        trials.arrange(RIGHT, buff=0.3)
+
+        self.play(FadeIn(trials))
 
         # Part 3: 
