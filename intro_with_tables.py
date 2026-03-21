@@ -204,9 +204,9 @@ class DefinitionsScene(VoiceoverScene):
         self.play(FadeOut(yX_table_numbered))
 
         # Part 2: Odds definition
-        odds1 = MathTex(r"Odds=\frac{p}{1-p}")
-        odds2 = Text("The odds of winning are 3 to 1.")
-        logodds1 = MathTex(r"\ln\frac{p}{1-p}")
+        odds1 = MathTex(r"odds=\frac{p}{1-p}")
+
+        logodds1 = MathTex(r"log odds=\ln\frac{p}{1-p}")
         logodds2 = MathTex(r"\ln\frac{p}{1-p}=\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         logodds3 = MathTex(r"\ln\frac{p_i}{1-p_i}=\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\ldots+\beta_{k-1} X_{i,k-1}")
         plugin1 = MathTex(r"\ln\frac{p_i}{1-p_i}=\beta_0+\beta_1 X_{i,1}+\beta_2 X_{i,2}+\beta_3 X_{i,3}+\beta_4 X_{i,4}")
@@ -219,21 +219,21 @@ class DefinitionsScene(VoiceoverScene):
             pass
 
         with self.voiceover(text = "In the context of statistics, the odds of something are the probability of it happening divided by the probability of it not happening."
-        "In other words, if the probability of something is p, the odds of it are p over 1-p") as tracker:
+        "In other words, if the probability of something is p, the odds of it are p over 1-p"
+        "This definition is a bit weird because people usually use odds to mean the same thing as probability"
+        "At least in my experience. But here we use this special definition of odds.") as tracker:
             self.play(TransformByGlyphMap(logodds2, odds1,
                                           (range(7,33),[]),
                                           (range(2,7), range(5,10)),
                                            ([0,1],[]),
                                            ([],[0,1,2,3,4])))
-
-        self.play(FadeOut(odds1))
-        with self.voiceover(text = "suppose we're on a sports team, and I say the odds of winning are 3 to 1") as tracker:
-            self.add(odds2)
-        with self.voiceover("This means we are 3 times as likely to win as to lose") as tracker:
-            self.remove(odds2)
-            # self.add(Text("WWWL"))
-
-        # TODO: Finish this explanation of odds
+            
+        with self.voiceover(text = "And we're looking at the natural log of the odds, called the log odds"):
+            self.play(TransformByGlyphMap(odds1, logodds1,
+                                          (FadeIn, [0,1,2]),
+                                          (FadeIn, [9,10])))
+            
+        self.remove(logodds1)
 
         with self.voiceover("Now let's manipulate this formula to isolate p_i") as tracker:
             self.add(logodds3)
