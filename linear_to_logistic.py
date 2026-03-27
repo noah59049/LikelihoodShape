@@ -77,7 +77,7 @@ class LinearLogisticScene(VoiceoverScene):
             areas = {}
             for y in 0,1:
                 hlines[y] = axes.plot((lambda x : y), color = WHITE)
-                self.add(hlines[y])
+                # self.add(hlines[y])
                 graph_group.add(hlines[y])
                 areas[y] = axes.get_area(
                     hlines[y],
@@ -86,7 +86,7 @@ class LinearLogisticScene(VoiceoverScene):
                     color=RED,
                     opacity=0.2
                 )
-                self.add(areas[y])
+                # self.add(areas[y])
                 graph_group.add(areas[y])
 
         with self.voiceover("a") as tracker:
@@ -96,13 +96,11 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(TransformByGlyphMap(tex2, tex3,
                                         (FadeIn, [0,1,3])))
             graph_group = create_graph(lambda p : math.log(p / (1 - p)),
-                                       x_range = [-1,2,3],
+                                       x_range = [-1,2,1],
                                        x_label = "p",
                                        y_label = "f(p)",
                                        domain = [1e-6,1 - 1e-6],
                                        color = GREEN )
-            self.play(FadeIn(graph_group))
-            self.play(FadeOut(graph_group))
         tex3_original = tex3.copy()
         with self.voiceover("a") as tracker:
             self.play(TransformByGlyphMap(tex3, tex4,
