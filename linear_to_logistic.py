@@ -107,7 +107,8 @@ class LinearLogisticScene(VoiceoverScene):
         axes = graph_group[0]
         with self.voiceover("a") as tracker:
             self.play(FadeOut(tex2))
-            self.play(FadeIn(graph_group))
+            self.add(graph_group[0],graph_group[1])
+            self.play(Create(graph_group[2]))
 
         with self.voiceover("a") as tracker:
             hlines = {}
