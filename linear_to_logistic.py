@@ -199,8 +199,10 @@ class LinearLogisticScene(VoiceoverScene):
         # This would have been a simple TransformByGlyphMap(tex5, sigmoid1)
         # But that was warping/twisting some glyphs.
         # So we have a rigid transformation of the glyphs we don't want to twist, which is more annoying
-        x_src_idx = [13,18,29]
-        x_dst_idx = [12,17,28]
+        # x_src_idx = [13,18,29]
+        # x_dst_idx = [12,17,28]
+        x_src_idx = range(8,33)
+        x_dst_idx = range(7,32)
         x_src = VGroup(*[tex5[0][i] for i in x_src_idx])
         x_dst = VGroup(*[sigmoid1[0][i] for i in x_dst_idx])
         rest_src = VGroup(*[
