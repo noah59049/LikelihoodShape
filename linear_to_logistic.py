@@ -4,42 +4,82 @@ from MF_Tools import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 
-def create_graph(func, 
-                 x_range= None, 
-                 y_range = None,
-                 x_label = "x",
-                 y_label = "y",
-                 domain = None,
-                 color = RED):
-    
-    # Step 0: Fill in ranges if they are not provided
-    x_range = x_range or [-5,5,1]
-    y_range = y_range or [-5,5,1]
+from manim import *
+import numpy as np
 
-    # Step 1: Determine tick mark length if it's not input already
+def create_graph(
+    func,
+    x_range=None,
+    y_range=None,
+    x_label="x",
+    y_label="y",
+    domain=None,
+    inverse_mode=False,
+    inverse_func=None,   # maps y -> x (for inverse_mode mode)
+    t_range=None,        # range in output space (y-space)
+    n_points=1000,
+    width = None,
+    height = None,
+    color=RED,
+):
+    # ---- defaults (avoid mutable args) ----
+    x_range = x_range or [-5, 5, 1]
+    y_range = y_range or [-5, 5, 1]
+
     if len(x_range) == 2:
-        x_range.append((x_range[1] - x_range[0]) * 0.1)
-    assert len(x_range) == 3, "x_range must have length 2 or 3"
+        x_range = [*x_range, (x_range[1] - x_range[0]) * 0.1]
     if len(y_range) == 2:
-        y_range.append((y_range[1] - y_range[0]) * 0.1)
-    assert len(y_range) == 3, "y_range must have length 2 or 3"
+        y_range = [*y_range, (y_range[1] - y_range[0]) * 0.1]
 
     domain = domain or x_range[0:2]
+    if len(domain) == 2:
+        step_size = (domain[1] - domain[0]) / n_points
+        domain = [*domain, step_size]
 
-    # Step 2: Create the axes
-    axes = Axes(x_range = x_range, 
-                    y_range = y_range,
-                    ).add_coordinates()
-    
-    # Step 3: Make the axis labels
-    axis_labels = axes.get_axis_labels(x_label = x_label,
-                                        y_label = y_label)
-    
-    # Step 4: Add the function
-    func = axes.plot(func, color = color, x_range = domain)
+    # ---- axes ----
+    axes_kwargs = {
+        "x_range": x_range,
+        "y_range": y_range,
+    }
+    if width is not None:
+        axes_kwargs["width"] = width
+    if height is not None:
+        axes_kwargs["height"] = height
 
-    # Step 5: Put it all together and return
-    return VGroup(axes, axis_labels, func)
+    axes = Axes(**axes_kwargs).add_coordinates()
+    labels = axes.get_axis_labels(x_label=x_label, y_label=y_label)
+    labels = axes.get_axis_labels(x_label=x_label, y_label=y_label)
+
+    # ---- choose plotting mode ----
+    if inverse_mode:
+        if inverse_func is None:
+            raise ValueError("inverse_mode=True requires inverse_func (mapping y -> x)")
+
+        # default t_range from visible y-axis
+        if t_range is None:
+            t_range = y_range[0:2]
+            # Apparently you can't control the step_size in t_range so never mind
+            # step_size = (t_range[1] - t_range[0]) / n_points
+            # t_range.append(step_size)
+
+        def parametric(t):
+            x = inverse_func(t)
+            return axes.c2p(x, t)
+
+        graph = ParametricFunction(
+            parametric,
+            t_range=t_range,
+            color=color,
+        )
+
+    else:
+        graph = axes.plot(
+            func,
+            x_range=domain,
+            color=color,
+        )
+
+    return VGroup(axes, labels, graph)
 
 
 class LinearLogisticScene(VoiceoverScene):
@@ -95,12 +135,6 @@ class LinearLogisticScene(VoiceoverScene):
         with self.voiceover("a") as tracker:
             self.play(TransformByGlyphMap(tex2, tex3,
                                         (FadeIn, [0,1,3])))
-            graph_group = create_graph(lambda p : math.log(p / (1 - p)),
-                                       x_range = [-1,2,1],
-                                       x_label = "p",
-                                       y_label = "f(p)",
-                                       domain = [1e-6,1 - 1e-6],
-                                       color = GREEN )
         tex3_original = tex3.copy()
         with self.voiceover("a") as tracker:
             self.play(TransformByGlyphMap(tex3, tex4,
@@ -119,3 +153,22 @@ class LinearLogisticScene(VoiceoverScene):
             ))
             self.play(TransformByGlyphMap(tex3_original, tex5,
                                         (range(4), range(7))))
+            
+
+
+
+
+        self.remove(tex5)
+        graph_group = create_graph(
+            lambda p: np.log(p / (1 - p)),
+            x_range=[0, 1, 0.2],
+            y_range=[-6, 6, 1],
+            x_label="p",
+            y_label="f(p)",
+            inverse_mode=True,
+            inverse_func=lambda y: 1 / (1 + np.exp(-y)),  # sigmoid
+            t_range=[-6, 6],
+            color=GREEN,
+        )
+        self.add(graph_group)
+        self.wait(5)
