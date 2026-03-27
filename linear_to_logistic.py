@@ -57,18 +57,16 @@ class LinearLogisticScene(VoiceoverScene):
                                         ([0,1,2,3,4,5], [0])))
         
         # Graph the thing
-        axes = Axes(x_range = [-5,5,1], 
-                    y_range = [-3,3,1],
-                    ).add_coordinates()
-        axis_labels = axes.get_axis_labels(x_label = "X",
-                                           y_label = "p")
-        func = axes.plot((lambda x : 0.38 * (x  - 0.52)), 
-                         color = GREEN)
-        graph_group = VGroup(axes, axis_labels, func)
+        graph_group = create_graph((lambda x : 0.38 * (x  - 0.52)),
+                                   x_range = [-5,5,1],
+                                   y_range = [-3,3,1],
+                                   x_label = "X",
+                                   y_label = "p",
+                                   color = GREEN)
+        axes = graph_group[0]
         with self.voiceover("a") as tracker:
             self.play(FadeOut(tex2))
-            self.play(DrawBorderThenFill(axes), Write(axis_labels), run_time = 0.5)
-            self.play(Create(func))
+            self.play(FadeIn(graph_group))
 
         with self.voiceover("a") as tracker:
             hlines = {}
