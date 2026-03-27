@@ -159,9 +159,23 @@ class LinearLogisticScene(VoiceoverScene):
                                         ([1],[5], {"path_arc":-PI}),
                                         ([3],[31],{"path_arc":-PI/6}),
                                         (FadeIn, [3,4])))
-            #Invert that transform because we want tex3
+            graph_group = create_graph(
+                lambda p: 1 / (1 + np.exp(-p)),
+                x_range=[-6, 6, 2],
+                y_range=[0, 1.75, 1],
+                x_label=r"\beta^T X",
+                y_label=r"f^-1(\beta^T X)",
+                inverse_mode=False,
+                width = 5,
+                height = 1,
+                color=GREEN,
+            )
+            graph_group.to_edge(UP)
+            self.add(graph_group[0],graph_group[1])
+            self.play(Create(graph_group[2]))
          
         with self.voiceover("a") as tracker:
+            self.remove(graph_group[0], graph_group[1], graph_group[2])
             self.play(TransformByGlyphMap(tex4, tex3_original,
                 ([2],[0], {"path_arc": PI}),
                 ([5],[1], {"path_arc": PI}),
