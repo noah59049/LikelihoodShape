@@ -147,6 +147,7 @@ class LinearLogisticScene(VoiceoverScene):
                 height = 5,
                 color=GREEN,
             )
+            graph_group.to_edge(LEFT)
             self.add(graph_group[0],graph_group[1])
             self.play(Create(graph_group[2]))
             self.play(FadeOut(graph_group))
