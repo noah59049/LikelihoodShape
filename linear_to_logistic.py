@@ -240,3 +240,7 @@ class LinearLogisticScene(VoiceoverScene):
 
         self.play(TransformByGlyphMap(sigmoid3, sigmoid4,
                                       ([4,5,6],[4])))
+        
+        self.play(TransformByGlyphMap(sigmoid4, sigmoid5,
+                                        ([4,5],[5,6], {"path_arc": -PI}),
+                                        ([6],[4], {"path_arc":-PI})))
