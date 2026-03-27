@@ -238,3 +238,5 @@ class LinearLogisticScene(VoiceoverScene):
                                     ([1],[3])
                                     ))
 
+        self.play(TransformByGlyphMap(sigmoid3, sigmoid4,
+                                      ([4,5,6],[4])))
