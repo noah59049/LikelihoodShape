@@ -137,7 +137,7 @@ class LinearLogisticScene(VoiceoverScene):
             graph_group = create_graph(
                 lambda p: np.log(p / (1 - p)),
                 x_range=[0, 1.75, 1],
-                y_range=[-6, 6, 1],
+                y_range=[-6, 6, 2],
                 x_label="p",
                 y_label="f(p)",
                 inverse_mode=True,
@@ -147,11 +147,11 @@ class LinearLogisticScene(VoiceoverScene):
                 height = 5,
                 color=GREEN,
             )
-            graph_group.to_edge(LEFT)
+            graph_group.to_edge(RIGHT)
             self.add(graph_group[0],graph_group[1])
             self.play(Create(graph_group[2]))
-            self.play(FadeOut(graph_group))
 
+        self.remove(graph_group[0], graph_group[1], graph_group[2])
         tex3_original = tex3.copy()
         with self.voiceover("a") as tracker:
             self.play(TransformByGlyphMap(tex3, tex4,
