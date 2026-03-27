@@ -231,4 +231,10 @@ class LinearLogisticScene(VoiceoverScene):
                             (FadeIn, [7,8]),
                             (FadeIn,[34])
                             ))
+        
+        self.play(TransformByGlyphMap(sigmoid2, sigmoid3,
+                                    ([0,3,4],[0,1,2]),
+                                    ([2,3,4],[4,5,6]),
+                                    ([1],[3])
+                                    ))
 
