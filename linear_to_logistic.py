@@ -187,3 +187,46 @@ class LinearLogisticScene(VoiceoverScene):
         with self.voiceover("a") as tracker:
             self.play(TransformByGlyphMap(tex3_original, tex5,
                                         (range(4), range(7))))
+            
+        sigmoid1 = MathTex(r"\frac{p}{1-p}=e^{\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1}}")
+        sigmoid2 = MathTex(r"\frac{1-p}{p}=e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
+        sigmoid3 = MathTex(r"\frac{1}{p}-\frac{p}{p}=e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
+        sigmoid4 = MathTex(r"\frac{1}{p}-1=e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
+        sigmoid5 = MathTex(r"\frac{1}{p}=1+e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
+        sigmoid6 = MathTex(r"p=\frac{1}{1+e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}}")
+        sigmoid7 = MathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
+
+        # This would have been a simple TransformByGlyphMap(tex5, sigmoid1)
+        # But that was warping/twisting some glyphs.
+        # So we have a rigid transformation of the glyphs we don't want to twist, which is more annoying
+        x_src_idx = [13,18,29]
+        x_dst_idx = [12,17,28]
+        x_src = VGroup(*[tex5[0][i] for i in x_src_idx])
+        x_dst = VGroup(*[sigmoid1[0][i] for i in x_dst_idx])
+        rest_src = VGroup(*[
+            m for i, m in enumerate(tex5)
+            if i not in x_src
+        ])
+        rest_dst = VGroup(*[
+            m for i, m in enumerate(sigmoid1)
+            if i not in x_dst
+        ])
+        self.play(
+            TransformByGlyphMap(
+                rest_src,
+                rest_dst,
+                ([0,1],[6], {"path_arc": -PI * 0.6}),
+            ),
+            *[
+                x_src[i].animate.move_to(x_dst[i])
+                for i in range(len(x_src))
+            ]
+        )
+
+        self.play(TransformByGlyphMap(sigmoid1, sigmoid2,
+                            ([0],[4], {"path_arc": PI * 0.5}),
+                            ([2,3,4],[0,1,2], {"path_arc": PI * 0.5}),
+                            (FadeIn, [7,8]),
+                            (FadeIn,[34])
+                            ))
+
