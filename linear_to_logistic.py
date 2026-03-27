@@ -132,6 +132,24 @@ class LinearLogisticScene(VoiceoverScene):
         with self.voiceover("a") as tracker:
             self.play(TransformByGlyphMap(tex2, tex3,
                                         (FadeIn, [0,1,3])))
+            
+            graph_group = create_graph(
+                lambda p: np.log(p / (1 - p)),
+                x_range=[0, 1.75, 1],
+                y_range=[-6, 6, 1],
+                x_label="p",
+                y_label="f(p)",
+                inverse_mode=True,
+                inverse_func=lambda y: 1 / (1 + np.exp(-y)),  # sigmoid
+                t_range=[-6, 6],
+                width = 1,
+                height = 5,
+                color=GREEN,
+            )
+            self.add(graph_group[0],graph_group[1])
+            self.play(Create(graph_group[2]))
+            self.play(FadeOut(graph_group))
+
         tex3_original = tex3.copy()
         with self.voiceover("a") as tracker:
             self.play(TransformByGlyphMap(tex3, tex4,
@@ -150,25 +168,3 @@ class LinearLogisticScene(VoiceoverScene):
             ))
             self.play(TransformByGlyphMap(tex3_original, tex5,
                                         (range(4), range(7))))
-            
-
-
-
-
-        self.remove(tex5)
-        graph_group = create_graph(
-            lambda p: np.log(p / (1 - p)),
-            x_range=[0, 1.75, 1],
-            y_range=[-6, 6, 1],
-            x_label="p",
-            y_label="f(p)",
-            inverse_mode=True,
-            inverse_func=lambda y: 1 / (1 + np.exp(-y)),  # sigmoid
-            t_range=[-6, 6],
-            width = 1,
-            height = 5,
-            color=GREEN,
-        )
-        self.add(graph_group[0],graph_group[1])
-        self.play(Create(graph_group[2]))
-        self.play(FadeOut(graph_group))
