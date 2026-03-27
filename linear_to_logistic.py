@@ -4,11 +4,16 @@ from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 
 def create_graph(func, 
-                 x_range=[-5,5,1], 
-                 y_range = [-5,5,1],
+                 x_range= None, 
+                 y_range = None,
                  x_label = "x",
                  y_label = "y",
                  color = RED):
+    
+    # Step 0: Fill in ranges if they are not provided
+    x_range = x_range or [-5,5,1]
+    y_range = y_range or [-5,5,1]
+
     # Step 1: Determine tick mark length if it's not input already
     if len(x_range) == 2:
         x_range.append((x_range[1] - x_range[0]) * 0.1)
