@@ -41,12 +41,12 @@ def create_graph(
         "x_range": x_range,
         "y_range": y_range,
     }
-    if width is not None:
-        axes_kwargs["width"] = width
-    if height is not None:
-        axes_kwargs["height"] = height
-
     axes = Axes(**axes_kwargs).add_coordinates()
+    # --- scale axes manually ---
+    if width is not None:
+        axes.stretch_to_fit_width(width)
+    if height is not None:
+        axes.stretch_to_fit_height(height)
     labels = axes.get_axis_labels(x_label=x_label, y_label=y_label)
     labels = axes.get_axis_labels(x_label=x_label, y_label=y_label)
 
@@ -168,6 +168,8 @@ class LinearLogisticScene(VoiceoverScene):
             inverse_mode=True,
             inverse_func=lambda y: 1 / (1 + np.exp(-y)),  # sigmoid
             t_range=[-6, 6],
+            width = 1,
+            height = 5,
             color=GREEN,
         )
         self.add(graph_group)
