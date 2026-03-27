@@ -158,7 +158,7 @@ class LinearLogisticScene(VoiceoverScene):
         self.remove(tex5)
         graph_group = create_graph(
             lambda p: np.log(p / (1 - p)),
-            x_range=[0, 1, 0.2],
+            x_range=[0, 1.75, 1],
             y_range=[-6, 6, 1],
             x_label="p",
             y_label="f(p)",
@@ -169,5 +169,6 @@ class LinearLogisticScene(VoiceoverScene):
             height = 5,
             color=GREEN,
         )
-        self.add(graph_group)
-        self.wait(5)
+        self.add(graph_group[0],graph_group[1])
+        self.play(Create(graph_group[2]))
+        self.play(FadeOut(graph_group))
