@@ -1,3 +1,4 @@
+import math
 from manim import *
 from MF_Tools import *
 from manim_voiceover import VoiceoverScene
@@ -8,6 +9,7 @@ def create_graph(func,
                  y_range = None,
                  x_label = "x",
                  y_label = "y",
+                 domain = None,
                  color = RED):
     
     # Step 0: Fill in ranges if they are not provided
@@ -22,6 +24,8 @@ def create_graph(func,
         y_range.append((y_range[1] - y_range[0]) * 0.1)
     assert len(y_range) == 3, "y_range must have length 2 or 3"
 
+    domain = domain or x_range[0:2]
+
     # Step 2: Create the axes
     axes = Axes(x_range = x_range, 
                     y_range = y_range,
@@ -32,7 +36,7 @@ def create_graph(func,
                                         y_label = y_label)
     
     # Step 4: Add the function
-    func = axes.plot(func, color = color)
+    func = axes.plot(func, color = color, x_range = domain)
 
     # Step 5: Put it all together and return
     return VGroup(axes, axis_labels, func)
@@ -91,6 +95,14 @@ class LinearLogisticScene(VoiceoverScene):
         with self.voiceover("a") as tracker:
             self.play(TransformByGlyphMap(tex2, tex3,
                                         (FadeIn, [0,1,3])))
+            graph_group = create_graph(lambda p : math.log(p / (1 - p)),
+                                       x_range = [-1,2,3],
+                                       x_label = "p",
+                                       y_label = "f(p)",
+                                       domain = [1e-6,1 - 1e-6],
+                                       color = GREEN )
+            self.play(FadeIn(graph_group))
+            self.play(FadeOut(graph_group))
         tex3_original = tex3.copy()
         with self.voiceover("a") as tracker:
             self.play(TransformByGlyphMap(tex3, tex4,
