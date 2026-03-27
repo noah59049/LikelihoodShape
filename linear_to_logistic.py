@@ -182,5 +182,7 @@ class LinearLogisticScene(VoiceoverScene):
                 ([31],[3], {"path_arc": PI/6}),
                 ([3,4], FadeOut)
             ))
+        
+        with self.voiceover("a") as tracker:
             self.play(TransformByGlyphMap(tex3_original, tex5,
                                         (range(4), range(7))))
