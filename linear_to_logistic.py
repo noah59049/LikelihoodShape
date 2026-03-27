@@ -37,16 +37,13 @@ def create_graph(
         domain = [*domain, step_size]
 
     # ---- axes ----
-    axes_kwargs = {
-        "x_range": x_range,
-        "y_range": y_range,
-    }
-    axes = Axes(**axes_kwargs).add_coordinates()
-    # --- scale axes manually ---
-    if width is not None:
-        axes.stretch_to_fit_width(width)
-    if height is not None:
-        axes.stretch_to_fit_height(height)
+
+    axes = Axes(
+        x_range=x_range,
+        y_range=y_range,
+        x_length=width if width is not None else 6,
+        y_length=height if height is not None else 6,
+    ).add_coordinates()
     labels = axes.get_axis_labels(x_label=x_label, y_label=y_label)
     labels = axes.get_axis_labels(x_label=x_label, y_label=y_label)
 
