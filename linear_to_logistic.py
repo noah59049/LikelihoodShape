@@ -133,6 +133,7 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(TransformByGlyphMap(tex2, tex3,
                                         (FadeIn, [0,1,3])))
             
+        with self.voiceover("a") as tracker:
             graph_group = create_graph(
                 lambda p: np.log(p / (1 - p)),
                 x_range=[0, 1.75, 1],
