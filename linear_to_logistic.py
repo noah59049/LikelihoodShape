@@ -81,10 +81,10 @@ def create_graph(
 
 class LinearLogisticScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/linear_to_logistic.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/Untitled podcast (Mar 27%2C 2026 5%3A00 PM).mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
-                keep_silence=[0,0]))
+                keep_silence=(0,0)))
         tex1 = MathTex(r"P(Y=1) = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         tex2 = MathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         tex3 = MathTex(r"f(p) = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
@@ -115,7 +115,7 @@ class LinearLogisticScene(VoiceoverScene):
             areas = {}
             for y in 0,1:
                 hlines[y] = axes.plot((lambda x : y), color = WHITE)
-                # self.add(hlines[y])
+                self.add(hlines[y])
                 graph_group.add(hlines[y])
                 areas[y] = axes.get_area(
                     hlines[y],
@@ -124,7 +124,7 @@ class LinearLogisticScene(VoiceoverScene):
                     color=RED,
                     opacity=0.2
                 )
-                # self.add(areas[y])
+                self.add(areas[y])
                 graph_group.add(areas[y])
 
         with self.voiceover("a") as tracker:
@@ -160,6 +160,8 @@ class LinearLogisticScene(VoiceoverScene):
                                         ([1],[5], {"path_arc":-PI}),
                                         ([3],[31],{"path_arc":-PI/6}),
                                         (FadeIn, [3,4])))
+        
+        with self.voiceover("a") as tracker:
             graph_group = create_graph(
                 lambda p: 1 / (1 + np.exp(-p)),
                 x_range=[-6, 6, 2],
@@ -196,54 +198,62 @@ class LinearLogisticScene(VoiceoverScene):
         sigmoid6 = MathTex(r"p=\frac{1}{1+e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}}")
         sigmoid7 = MathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
 
-        # This would have been a simple TransformByGlyphMap(tex5, sigmoid1)
-        # But that was warping/twisting some glyphs.
-        # So we have a rigid transformation of the glyphs we don't want to twist, which is more annoying
-        # x_src_idx = [13,18,29]
-        # x_dst_idx = [12,17,28]
-        x_src_idx = range(8,33)
-        x_dst_idx = range(7,32)
-        x_src = VGroup(*[tex5[0][i] for i in x_src_idx])
-        x_dst = VGroup(*[sigmoid1[0][i] for i in x_dst_idx])
-        rest_src = VGroup(*[
-            m for i, m in enumerate(tex5)
-            if i not in x_src
-        ])
-        rest_dst = VGroup(*[
-            m for i, m in enumerate(sigmoid1)
-            if i not in x_dst
-        ])
-        self.play(
-            TransformByGlyphMap(
-                rest_src,
-                rest_dst,
-                ([0,1],[6], {"path_arc": -PI * 0.6}),
-            ),
-            *[
-                x_src[i].animate.move_to(x_dst[i])
-                for i in range(len(x_src))
-            ]
-        )
 
-        self.play(TransformByGlyphMap(sigmoid1, sigmoid2,
-                            ([0],[4], {"path_arc": PI * 0.5}),
-                            ([2,3,4],[0,1,2], {"path_arc": PI * 0.5}),
-                            (FadeIn, [7,8]),
-                            (FadeIn,[34])
-                            ))
-        
-        self.play(TransformByGlyphMap(sigmoid2, sigmoid3,
-                                    ([0,3,4],[0,1,2]),
-                                    ([2,3,4],[4,5,6]),
-                                    ([1],[3])
-                                    ))
+        with self.voiceover("a") as tracker:
+            # This would have been a simple TransformByGlyphMap(tex5, sigmoid1)
+            # But that was warping/twisting some glyphs.
+            # So we have a rigid transformation of the glyphs we don't want to twist, which is more annoying
+            # x_src_idx = [13,18,29]
+            # x_dst_idx = [12,17,28]
+            x_src_idx = range(8,33)
+            x_dst_idx = range(7,32)
+            x_src = VGroup(*[tex5[0][i] for i in x_src_idx])
+            x_dst = VGroup(*[sigmoid1[0][i] for i in x_dst_idx])
+            rest_src = VGroup(*[
+                m for i, m in enumerate(tex5)
+                if i not in x_src
+            ])
+            rest_dst = VGroup(*[
+                m for i, m in enumerate(sigmoid1)
+                if i not in x_dst
+            ])
+            self.play(
+                TransformByGlyphMap(
+                    rest_src,
+                    rest_dst,
+                    ([0,1],[6], {"path_arc": -PI * 0.6}),
+                ),
+                *[
+                    x_src[i].animate.move_to(x_dst[i])
+                    for i in range(len(x_src))
+                ]
+            )
 
-        self.play(TransformByGlyphMap(sigmoid3, sigmoid4,
-                                      ([4,5,6],[4])))
+        with self.voiceover("a") as tracker:
+            self.play(TransformByGlyphMap(sigmoid1, sigmoid2,
+                                ([0],[4], {"path_arc": PI * 0.5}),
+                                ([2,3,4],[0,1,2], {"path_arc": PI * 0.5}),
+                                (FadeIn, [7,8]),
+                                (FadeIn,[34])
+                                ))
         
-        self.play(TransformByGlyphMap(sigmoid4, sigmoid5,
-                                        ([4,5],[5,6], {"path_arc": -PI}),
-                                        ([6],[4], {"path_arc":-PI})))
+        with self.voiceover("a") as tracker:
+            self.play(TransformByGlyphMap(sigmoid2, sigmoid3,
+                                        ([0,3,4],[0,1,2]),
+                                        ([2,3,4],[4,5,6]),
+                                        ([1],[3])
+                                        ))
+
+        # with self.voiceover("a") as tracker: # Because I forgot to put this in the recording
+            self.play(TransformByGlyphMap(sigmoid3, sigmoid4,
+                                        ([4,5,6],[4])))
         
-        self.play(TransformByGlyphMap(sigmoid5, sigmoid6,
-                                        ([0,1], [2,3])))
+
+        with self.voiceover("a") as tracker:
+            self.play(TransformByGlyphMap(sigmoid4, sigmoid5,
+                                            ([4,5],[5,6], {"path_arc": -PI}),
+                                            ([6],[4], {"path_arc":-PI})))
+
+        with self.voiceover("a") as tracker:
+            self.play(TransformByGlyphMap(sigmoid5, sigmoid6,
+                                            ([0,1], [2,3])))
