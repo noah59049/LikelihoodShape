@@ -238,7 +238,11 @@ class DefinitionsScene(VoiceoverScene):
 
         with self.voiceover("And it’s dichotomous, only 2 values, so we represent one of those values as 0 and the other as 1.") as tracker:
             self.remove(y_names_tex, rect)
+            dichotomous_text = Text("0 = Malignant\n1 = Benign")
+            self.play(FadeIn(dichotomous_text))
+            self.wait(1.5) # TODO: Find a better way of doing this, maybe?
             self.play(TransformMatchingTex(y_labels_table, breast_cancer_table))
+            self.remove(dichotomous_text)
 
         with self.voiceover("We call it Y.") as tracker:
             self.play(TransformMatchingTex(breast_cancer_table, y_table))
