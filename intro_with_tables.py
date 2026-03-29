@@ -223,7 +223,7 @@ class DefinitionsScene(VoiceoverScene):
                 "Dependent Variable",
                 "Outcome Variable"
             ]
-            y_names_tex = Text("\n".join(y_names))
+            y_names_tex = VGroup(*[Text(name) for name in y_names]).arrange(DOWN)
             y_names_tex.to_edge(RIGHT)
             self.play(Write(y_names_tex))
             self.play(y_names_tex[0].animate.set_color(RED))
