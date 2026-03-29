@@ -235,9 +235,9 @@ class DefinitionsScene(VoiceoverScene):
                 y_names_tex[0].animate.set_color(RED),
                 Create(rect)
             )
-            self.remove(y_names_tex, rect)
 
         with self.voiceover("And it’s dichotomous, only 2 values, so we represent one of those values as 0 and the other as 1.") as tracker:
+            self.remove(y_names_tex, rect)
             self.play(TransformMatchingTex(y_labels_table, breast_cancer_table))
 
         with self.voiceover("We call it Y.") as tracker:
@@ -265,7 +265,7 @@ class DefinitionsScene(VoiceoverScene):
                 x_names_tex[0].animate.set_color(RED),
                 Create(rect)
             )
-            self.remove(x_names_tex, rect)
 
         with self.voiceover("We notate them X1, X2, etc.") as tracker:
+            self.remove(x_names_tex, rect)
             self.play(TransformMatchingTex(yX_table, yX_table_numbered))
