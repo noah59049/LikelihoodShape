@@ -226,7 +226,12 @@ class DefinitionsScene(VoiceoverScene):
             y_names_tex = VGroup(*[Text(name) for name in y_names]).arrange(DOWN)
             y_names_tex.to_edge(RIGHT)
             self.play(Write(y_names_tex))
-            self.play(y_names_tex[0].animate.set_color(RED))
+            rect = SurroundingRectangle(y_names_tex[0], color=RED, buff=0.1)
+            self.play(
+                y_names_tex[0].animate.set_color(RED),
+                Create(rect)
+            )
+            self.remove(y_names_tex, rect)
 
         with self.voiceover("And it’s dichotomous, only 2 values, so we represent one of those values as 0 and the other as 1.") as tracker:
             self.play(TransformMatchingTex(y_labels_table, breast_cancer_table))
