@@ -181,7 +181,7 @@ from manim_voiceover.services.stitcher import _StitcherService as StitcherServic
 
 class DefinitionsScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/podcasts/Intro With Tables Podcast.mp3",
+        self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/podcasts/intro_with_tables_2.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -215,9 +215,11 @@ class DefinitionsScene(VoiceoverScene):
 
         But first, some terminology.
 
-        The variable we’re interested in predicting has many names, we’ll call it the response variable.""") as tracker:
+        The variable we’re interested in predicting""") as tracker:
             self.play(FadeOut(yX_labels_table), FadeOut(yX_predict_table), FadeOut(question1))
 
+
+        with self.voiceover("has many names, we’ll call it") as tracker:
             y_names = [
                 "Response Variable",
                 "Dependent Variable",
@@ -226,6 +228,8 @@ class DefinitionsScene(VoiceoverScene):
             y_names_tex = VGroup(*[Text(name) for name in y_names]).arrange(DOWN)
             y_names_tex.to_edge(RIGHT)
             self.play(Write(y_names_tex))
+
+        with self.voiceover("the response variable.") as tracker:
             rect = SurroundingRectangle(y_names_tex[0], color=RED, buff=0.1)
             self.play(
                 y_names_tex[0].animate.set_color(RED),
