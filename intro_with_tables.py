@@ -181,7 +181,7 @@ from manim_voiceover.services.stitcher import _StitcherService as StitcherServic
 
 class DefinitionsScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/podcasts/intro_with_tables_2.mp3",
+        self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/podcasts/intro_with_tables_3.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -243,10 +243,11 @@ class DefinitionsScene(VoiceoverScene):
         with self.voiceover("We call it Y.") as tracker:
             self.play(TransformMatchingTex(breast_cancer_table, y_table))
 
-        with self.voiceover("Then we have one or more variables we think could be related, we’ll call them predictors here. Those are the radius, texture, area, etc. They can be any real number.") as tracker:
+        with self.voiceover("Then we have one or more variables we think could be related,") as tracker:
             self.play(FadeIn(yX_table))
             self.remove(y_table)
         
+        with self.voiceover("They have a lot of names, but") as tracker:
             x_names = [
                 "Predictor Variables",
                 "Independent Variables",
@@ -257,6 +258,8 @@ class DefinitionsScene(VoiceoverScene):
             x_names_tex = VGroup(*[Text(name) for name in x_names]).arrange(DOWN)
             x_names_tex.to_edge(RIGHT)
             self.play(Write(x_names_tex))
+        
+        with self.voiceover("we’ll call them predictors here. Those are the radius, texture, area, etc. They can be any real number.") as tracker:
             rect = SurroundingRectangle(x_names_tex[0], color=RED, buff=0.1)
             self.play(
                 x_names_tex[0].animate.set_color(RED),
