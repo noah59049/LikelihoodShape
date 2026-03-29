@@ -81,7 +81,7 @@ def create_graph(
 
 class LinearLogisticScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/added_sigmoid_voiceovers.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/added_sigmoid_voiceovers_2.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -297,4 +297,9 @@ class LinearLogisticScene(VoiceoverScene):
         with self.voiceover("a") as tracker:
             self.play(TransformByGlyphMap(sigmoid_defn3, sigmoid_defn4,
                                         ([11,12,13,14,15], [11], {"run_time": 0.75})))
-        self.wait(0.25)
+        
+        self.play(FadeOut(axes), FadeOut(axis_labels), FadeOut(func), FadeOut(sigmoid_defn4))
+        self.play(FadeIn(sigmoid6))
+        self.play(TransformByGlyphMap(sigmoid6, sigmoid7,
+                                      ([2,3], FadeOut),
+                                      (range(4,8), [2])))
