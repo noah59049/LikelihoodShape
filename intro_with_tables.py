@@ -179,14 +179,11 @@ from manim_voiceover import VoiceoverScene
 from MF_Tools import *
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 
-class DefinitionsScene(Scene):
+class DefinitionsScene(VoiceoverScene):
     def construct(self):
-        # self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/intro_with_tables.mp3",
-        #         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
-        #         min_silence_len=2000))
-
-        # Part 1: The tables
-
+        self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/podcasts/Intro With Tables Podcast.mp3",
+                cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+                min_silence_len=2000))
         
         y_labels_table = Tex(y_labels_tex).scale(0.6)
         y_labels_table.shift(LEFT * y_labels_table.width * 1.4)
@@ -200,35 +197,35 @@ class DefinitionsScene(Scene):
         yX_table = Tex(yX_tex).scale(0.6).align_to(y_labels_table, UL)
         yX_table_numbered = Tex(yX_tex_numbered).scale(0.6).align_to(y_labels_table, UL)
         
-        "Suppose you have a bunch of breast cancer patients, and you recorded some data for them. Whether the tumor is benign or malignant is the big variable of interest for them, so you recorded that."
-        self.play(Write(y_labels_table))
-        "You also recorded some other variables, like the radius, texture, and area."
-        self.play(FadeIn(yX_labels_table))
+        with self.voiceover("Suppose you have a bunch of breast cancer patients, and you recorded some data for them. Whether the tumor is benign or malignant is the big variable of interest for them, so you recorded that.") as tracker:
+            self.play(Write(y_labels_table))
+        with self.voiceover ("You also recorded some other variables, like the radius, texture, and area.") as tracker:
+            self.play(FadeIn(yX_labels_table))
 
-        "You might want to know some things like, is radius an increased or decreased risk factor for the tumor being malignant?"
-        question1 = Text("Is radius a risk factor?")
-        question1.to_edge(DOWN)
-        self.play(Write(question1))
+        with self.voiceover("You might want to know some things like, is radius an increased or decreased risk factor for the tumor being malignant?") as tracker:
+            question1 = Text("Is radius a risk factor?")
+            question1.to_edge(DOWN)
+            self.play(Write(question1))
 
-        "Or if you have a new patient who you have measured all those variables for, what’s the probability of her being malignant?"
-        self.play(FadeIn(yX_predict_table))
+        with self.voiceover("Or if you have a new patient who you have measured all those variables for, what’s the probability of her being malignant?") as tracker:
+            self.play(FadeIn(yX_predict_table))
 
-        """These are all the questions that logistic regression seeks to answer.
+        with self.voiceover("""These are all the questions that logistic regression seeks to answer.
 
         But first, some terminology.
 
-        The variable we’re interested in predicting has many names, we’ll call it the response variable."""
-        self.play(FadeOut(yX_labels_table), FadeOut(yX_predict_table), FadeOut(question1))
+        The variable we’re interested in predicting has many names, we’ll call it the response variable.""") as tracker:
+            self.play(FadeOut(yX_labels_table), FadeOut(yX_predict_table), FadeOut(question1))
 
-        "And it’s dichotomous, only 2 values, so we represent one of those values as 0 and the other as 1."
-        self.play(TransformMatchingTex(y_labels_table, breast_cancer_table))
-        
-        "We call it Y."
-        self.play(TransformMatchingTex(breast_cancer_table, y_table))
+        with self.voiceover("And it’s dichotomous, only 2 values, so we represent one of those values as 0 and the other as 1.") as tracker:
+            self.play(TransformMatchingTex(y_labels_table, breast_cancer_table))
 
-        "Then we have one or more variables we think could be related, we’ll call them predictors here. Those are the radius, texture, area, etc. They can be any real number."
-        self.play(FadeIn(yX_table))
-        self.remove(y_table)
+        with self.voiceover("We call it Y.") as tracker:
+            self.play(TransformMatchingTex(breast_cancer_table, y_table))
 
-        "We notate them X1, X2, etc."
-        self.play(TransformMatchingTex(yX_table, yX_table_numbered))
+        with self.voiceover("Then we have one or more variables we think could be related, we’ll call them predictors here. Those are the radius, texture, area, etc. They can be any real number.") as tracker:
+            self.play(FadeIn(yX_table))
+            self.remove(y_table)
+
+        with self.voiceover("We notate them X1, X2, etc.") as tracker:
+            self.play(TransformMatchingTex(yX_table, yX_table_numbered))
