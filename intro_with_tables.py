@@ -158,6 +158,7 @@ yX_tex_numbered = f"${numpy_to_latex(yX, make_table = True, colnames = ['Y'] + x
 yX_lines = yX_tex_numbered.split(r"\hline")
 yX_tex = f"${numpy_to_latex(yX, make_table = True, colnames = ['Y'] + colnames)}$"
 y_tex = f"${numpy_to_latex(y, make_table = True, colnames = ['Y'])}$"
+breast_cancer_tex = y_tex.replace("Y", "Breast Cancer")
 y_labels_tex = y_tex.replace("0", "Malignant").replace("1", "Benign").replace("Y", "Breast Cancer")
 yX_labels_tex = yX_tex.replace("    0 & ", "    Malignant & ").replace("    1 & ", "    Benign & ").replace("Y", "Breast Cancer")
 yX_predict_tex = yX_labels_tex.replace(r"\end{tabular}", r"""
@@ -186,8 +187,10 @@ class DefinitionsScene(Scene):
 
         # Part 1: The tables
 
+        
         y_labels_table = Tex(y_labels_tex).scale(0.6)
         y_labels_table.shift(LEFT * y_labels_table.width * 1.4)
+        breast_cancer_table = Tex(breast_cancer_tex).scale(0.6).align_to(y_labels_table, UL)
         yX_labels_table = Tex(yX_labels_tex).scale(0.6)
         yX_labels_table.align_to(y_labels_table,LEFT)
         yX_predict_table = Tex(yX_predict_tex).scale(0.6)
@@ -218,8 +221,10 @@ class DefinitionsScene(Scene):
         self.play(FadeOut(yX_labels_table), FadeOut(yX_predict_table), FadeOut(question1))
 
         "And it’s dichotomous, only 2 values, so we represent one of those values as 0 and the other as 1."
+        self.play(TransformMatchingTex(y_labels_table, breast_cancer_table))
+        
         "We call it Y."
-        self.play(TransformMatchingTex(y_labels_table, y_table))
+        self.play(TransformMatchingTex(breast_cancer_table, y_table))
 
         "Then we have one or more variables we think could be related, we’ll call them predictors here. Those are the radius, texture, area, etc. They can be any real number."
         self.play(FadeIn(yX_table))
