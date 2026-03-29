@@ -246,7 +246,7 @@ class DefinitionsScene(VoiceoverScene):
         with self.voiceover("Then we have one or more variables we think could be related, we’ll call them predictors here. Those are the radius, texture, area, etc. They can be any real number.") as tracker:
             self.play(FadeIn(yX_table))
             self.remove(y_table)
-
+        
             x_names = [
                 "Predictor Variables",
                 "Independent Variables",
@@ -254,6 +254,15 @@ class DefinitionsScene(VoiceoverScene):
                 "Regressors",
                 "Covariates"
             ]
+            x_names_tex = VGroup(*[Text(name) for name in x_names]).arrange(DOWN)
+            x_names_tex.to_edge(RIGHT)
+            self.play(Write(x_names_tex))
+            rect = SurroundingRectangle(x_names_tex[0], color=RED, buff=0.1)
+            self.play(
+                x_names_tex[0].animate.set_color(RED),
+                Create(rect)
+            )
+            self.remove(x_names_tex, rect)
 
         with self.voiceover("We notate them X1, X2, etc.") as tracker:
             self.play(TransformMatchingTex(yX_table, yX_table_numbered))
