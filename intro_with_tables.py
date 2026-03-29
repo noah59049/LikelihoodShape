@@ -160,6 +160,11 @@ yX_tex = f"${numpy_to_latex(yX, make_table = True, colnames = ['Y'] + colnames)}
 y_tex = f"${numpy_to_latex(y, make_table = True, colnames = ['Y'])}$"
 y_labels_tex = y_tex.replace("0", "Malignant").replace("1", "Benign").replace("Y", "Breast Cancer")
 yX_labels_tex = yX_tex.replace("    0 & ", "    Malignant & ").replace("    1 & ", "    Benign & ").replace("Y", "Breast Cancer")
+yX_predict_tex = yX_labels_tex.replace(r"\end{tabular}", r"""
+??? & 11.43 & 26.59 & 120.54 & 694.2 \\
+\hline
+\end{tabular}
+                                """) # Ridiculous way to add another row, but it works.
 
 # ------------------------------
 # Now actually animate the scene
@@ -185,11 +190,40 @@ class DefinitionsScene(Scene):
         y_labels_table.shift(LEFT * y_labels_table.width * 1.4)
         yX_labels_table = Tex(yX_labels_tex).scale(0.6)
         yX_labels_table.align_to(y_labels_table,LEFT)
+        yX_predict_table = Tex(yX_predict_tex).scale(0.6)
+        yX_predict_table.align_to(y_labels_table,UL)
 
         y_table = Tex(y_tex).scale(0.6).align_to(y_labels_table, UL)
         yX_table = Tex(yX_tex).scale(0.6).align_to(y_labels_table, UL)
         yX_table_numbered = Tex(yX_tex_numbered).scale(0.6).align_to(y_labels_table, UL)
         
+        "Suppose you have a bunch of breast cancer patients, and you recorded some data for them. Whether the tumor is benign or malignant is the big variable of interest for them, so you recorded that."
         self.play(Write(y_labels_table))
+        "You also recorded some other variables, like the radius, texture, and area."
         self.play(FadeIn(yX_labels_table))
-        self.remove(y_labels_table)
+
+        "You might want to know some things like, is radius an increased or decreased risk factor for the tumor being malignant?"
+        question1 = Text("Is radius a risk factor?")
+        question1.to_edge(DOWN)
+        self.play(Write(question1))
+
+        "Or if you have a new patient who you have measured all those variables for, what’s the probability of her being malignant?"
+        self.play(FadeIn(yX_predict_table))
+
+        """These are all the questions that logistic regression seeks to answer.
+
+        But first, some terminology.
+
+        The variable we’re interested in predicting has many names, we’ll call it the response variable."""
+        self.play(FadeOut(yX_labels_table), FadeOut(yX_predict_table), FadeOut(question1))
+
+        "And it’s dichotomous, only 2 values, so we represent one of those values as 0 and the other as 1."
+        "We call it Y."
+        self.play(TransformMatchingTex(y_labels_table, y_table))
+
+        "Then we have one or more variables we think could be related, we’ll call them predictors here. Those are the radius, texture, area, etc. They can be any real number."
+        self.play(FadeIn(yX_table))
+        self.remove(y_table)
+
+        "We notate them X1, X2, etc."
+        self.play(TransformMatchingTex(yX_table, yX_table_numbered))
