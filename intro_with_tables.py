@@ -159,46 +159,37 @@ yX_lines = yX_tex_numbered.split(r"\hline")
 yX_tex = f"${numpy_to_latex(yX, make_table = True, colnames = ['Y'] + colnames)}$"
 y_tex = f"${numpy_to_latex(y, make_table = True, colnames = ['Y'])}$"
 y_labels_tex = y_tex.replace("0", "Malignant").replace("1", "Benign").replace("Y", "Breast Cancer")
+yX_labels_tex = yX_tex.replace("    0 & ", "    Malignant & ").replace("    1 & ", "    Benign & ").replace("Y", "Breast Cancer")
+
 # ------------------------------
 # Now actually animate the scene
 # ------------------------------
+
+if __name__ == "__main__":
+    print(yX_labels_tex)
 
 from manim import *
 from manim_voiceover import VoiceoverScene
 from MF_Tools import *
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 
-class DefinitionsScene(VoiceoverScene):
+class DefinitionsScene(Scene):
     def construct(self):
-        self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/intro_with_tables.mp3",
-                cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
-                min_silence_len=2000))
+        # self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/intro_with_tables.mp3",
+        #         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+        #         min_silence_len=2000))
 
         # Part 1: The tables
 
         y_labels_table = Tex(y_labels_tex).scale(0.6)
         y_labels_table.shift(LEFT * y_labels_table.width * 1.4)
+        yX_labels_table = Tex(yX_labels_tex).scale(0.6)
+        yX_labels_table.align_to(y_labels_table,LEFT)
+
         y_table = Tex(y_tex).scale(0.6).align_to(y_labels_table, UL)
         yX_table = Tex(yX_tex).scale(0.6).align_to(y_labels_table, UL)
         yX_table_numbered = Tex(yX_tex_numbered).scale(0.6).align_to(y_labels_table, UL)
-        with self.voiceover(text = "We have a variable we're interested in predicting, and it's dichotomous." \
-                                    "It can only take on two different values." \
-                                    "And we have a bunch of individual observations of that variable" \
-                                    "Here we're using data from a real dataset, it's called the " \
-                                    "Breast Cancer Wisconsin dataset") as tracker:
-            self.play(Write(y_labels_table))
-        with self.voiceover("This variable can be called your dependent variable or your response variable" \
-                            "or many other names. We call it Y, "
-                            "and we pick one of the values to be 0 and another to be 1" \
-                            "Here 0 is malignant and 1 is benign") as tracker:
-            self.play(TransformMatchingShapes(y_labels_table, y_table))
-        with self.voiceover("And we have one or more other variables that we think are related" \
-                            "to our response variable. We likewise have one value of each variable"
-                            " for each individual. These are sometimes called explanatory variables" \
-                            "or predictor variables or independent variables." \
-                            "Unlike the response variable, these can be any real number.") as tracker:
-            self.play(FadeIn(yX_table))
-            self.remove(y_table)
-        with self.voiceover("We notate these variables as X1, X2, and so on") as tracker:
-            self.play(TransformMatchingShapes(yX_table, yX_table_numbered))
-        self.play(FadeOut(yX_table_numbered))
+        
+        self.play(Write(y_labels_table))
+        self.play(FadeIn(yX_labels_table))
+        self.remove(y_labels_table)
