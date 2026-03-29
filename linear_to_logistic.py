@@ -276,20 +276,25 @@ class LinearLogisticScene(VoiceoverScene):
 
         # Interlude, Part 3: The animation
         self.remove(sigmoid6)
-        self.play(Write(sigmoid_defn))
-        self.play(DrawBorderThenFill(axes), Write(axis_labels), run_time = 0.5)
-        self.play(Create(func))
+        with self.voiceover("a") as tracker:
+            self.play(Write(sigmoid_defn))
+        with self.voiceover("a") as tracker:
+            self.play(DrawBorderThenFill(axes), Write(axis_labels), run_time = 0.5)
+            self.play(Create(func))
 
-        self.play(TransformByGlyphMap(sigmoid_defn, sigmoid_defn2,
-                                      (FadeIn, [5,7,8,9]),
-                                      (FadeIn, [11,17,18,19])))
-        self.play(TransformByGlyphMap(sigmoid_defn2, sigmoid_defn3,
-                                      ([5,6,7], FadeOut, {"run_time": 0.25}),
-                                      ([11,17],FadeOut),
-                                      ([14,15,16], [13,14,15]),
-                                      ([18, 19], [11,12], {"path_arc": PI}),
-                                      ([12], [8,9]),
-                                      ([18,19], [8,9], {"path_arc": PI})))
-        self.play(TransformByGlyphMap(sigmoid_defn3, sigmoid_defn4,
-                                      ([11,12,13,14,15], [11], {"run_time": 0.75})))
+        with self.voiceover("a") as tracker:
+            self.play(TransformByGlyphMap(sigmoid_defn, sigmoid_defn2,
+                                        (FadeIn, [5,7,8,9]),
+                                        (FadeIn, [11,17,18,19])))
+        with self.voiceover("a") as tracker:
+            self.play(TransformByGlyphMap(sigmoid_defn2, sigmoid_defn3,
+                                        ([5,6,7], FadeOut, {"run_time": 0.25}),
+                                        ([11,17],FadeOut),
+                                        ([14,15,16], [13,14,15]),
+                                        ([18, 19], [11,12], {"path_arc": PI}),
+                                        ([12], [8,9]),
+                                        ([18,19], [8,9], {"path_arc": PI})))
+        with self.voiceover("a") as tracker:
+            self.play(TransformByGlyphMap(sigmoid_defn3, sigmoid_defn4,
+                                        ([11,12,13,14,15], [11], {"run_time": 0.75})))
         self.wait(0.25)
