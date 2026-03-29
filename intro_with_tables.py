@@ -183,7 +183,8 @@ class DefinitionsScene(VoiceoverScene):
     def construct(self):
         self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/podcasts/Intro With Tables Podcast.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
-                min_silence_len=2000))
+                min_silence_len=2000,
+                keep_silence=(0,0)))
         
         y_labels_table = Tex(y_labels_tex).scale(0.6)
         y_labels_table.shift(LEFT * y_labels_table.width * 1.4)
