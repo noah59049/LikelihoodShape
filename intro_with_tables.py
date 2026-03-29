@@ -218,6 +218,16 @@ class DefinitionsScene(VoiceoverScene):
         The variable we’re interested in predicting has many names, we’ll call it the response variable.""") as tracker:
             self.play(FadeOut(yX_labels_table), FadeOut(yX_predict_table), FadeOut(question1))
 
+            y_names = [
+                "Response Variable",
+                "Dependent Variable",
+                "Outcome Variable"
+            ]
+            y_names_tex = Text("\n".join(y_names))
+            y_names_tex.to_edge(RIGHT)
+            self.play(Write(y_names_tex))
+            self.play(y_names_tex[0].animate.set_color(RED))
+
         with self.voiceover("And it’s dichotomous, only 2 values, so we represent one of those values as 0 and the other as 1.") as tracker:
             self.play(TransformMatchingTex(y_labels_table, breast_cancer_table))
 
@@ -227,6 +237,14 @@ class DefinitionsScene(VoiceoverScene):
         with self.voiceover("Then we have one or more variables we think could be related, we’ll call them predictors here. Those are the radius, texture, area, etc. They can be any real number.") as tracker:
             self.play(FadeIn(yX_table))
             self.remove(y_table)
+
+            x_names = [
+                "Predictor Variables",
+                "Independent Variables",
+                "Explanatory Variables",
+                "Regressors",
+                "Covariates"
+            ]
 
         with self.voiceover("We notate them X1, X2, etc.") as tracker:
             self.play(TransformMatchingTex(yX_table, yX_table_numbered))
