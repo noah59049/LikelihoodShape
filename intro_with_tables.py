@@ -240,7 +240,7 @@ class DefinitionsScene(VoiceoverScene):
             self.remove(y_names_tex, rect)
             dichotomous_text = Text("0 = Malignant\n1 = Benign")
             self.play(FadeIn(dichotomous_text))
-            self.wait(1.5) # TODO: Find a better way of doing this, maybe?
+            self.wait(1.5) # TODO: Find a better way of doing this, maybe? I might want this to be controlled by the splitting of audio clips.
             self.play(TransformMatchingTex(y_labels_table, breast_cancer_table))
             self.remove(dichotomous_text)
 
