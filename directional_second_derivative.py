@@ -66,6 +66,11 @@ class SecondDerivativeScene(Scene):
         vTgrad = MathTex(v_row + grad_col)
         gradTv = MathTex(grad_row + v_col)
 
-        self.play(Write(vTgrad))
-        self.play(TransformMatchingShapes(vTgrad, gradTv))
-        self.play(TransformMatchingShapes(gradTv, vTgrad))
+        # self.play(Write(vTgrad))
+        # self.play(TransformMatchingShapes(vTgrad, gradTv))
+        # self.play(TransformMatchingShapes(gradTv, vTgrad))
+
+        hess1v = MathTex(create_hess_row(4, 1) + v_col)
+        self.add(hess1v)
+
+        
