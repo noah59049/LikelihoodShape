@@ -64,7 +64,7 @@ class DirectionalDerivativeScene(Scene):
 
         # --- Step 8: Substitute v ---
         simplified = MathTex(
-            "=",
+            "\\frac{\\partial g}{\\partial t} =",
             "\\frac{\\partial f}{\\partial x_1} v_1",
             "+",
             "\\frac{\\partial f}{\\partial x_2} v_2",
@@ -74,11 +74,12 @@ class DirectionalDerivativeScene(Scene):
             "\\frac{\\partial f}{\\partial x_4} v_4"
         )
         simplified.scale(0.8)
-        simplified.next_to(chain_rule, DOWN, buff=0.4)
+        simplified.align_to(chain_rule, UP)
 
-        self.play(TransformMatchingTex(chain_rule.copy(), simplified))
+        self.play(TransformMatchingShapes(chain_rule, simplified))
         self.wait()
 
+        return
         # --- Step 9: Final result ---
         final = MathTex("\\nabla f(\\vec{x}) \\cdot \\vec{v}")
         final.next_to(simplified, DOWN, buff=0.4)
