@@ -163,7 +163,7 @@ class DirectionalDerivativeScene(Scene):
 
         # --- Step 11: Making the Giga Hess ---
 
-        giga_hess0 = MathTex(
+        giga_hess0_list = [
             "\\frac{\\partial^2 g}{\\partial t^2} =",
             "\\frac{\\partial f}{\\partial x_1}",
             "v_1",
@@ -176,6 +176,10 @@ class DirectionalDerivativeScene(Scene):
             "+",
             "\\frac{\\partial f}{\\partial x_4}",
             "v_4",
+            ]
+
+        giga_hess0 = MathTex(
+            *giga_hess0_list.copy()
         )
         giga_hess0.scale(0.8)
         giga_hess0.align_to(simplified, UP)
@@ -184,26 +188,15 @@ class DirectionalDerivativeScene(Scene):
             *[ReplacementTransform(simplified[i], giga_hess0[i]) for i in range(12)]
         )
 
-        giga_hess1 = MathTex(
-            "\\frac{\\partial^2 g}{\\partial t^2} =",
-            create_hess_row(4,1) + v_col,
-            "v_1",
-            "+",
-            create_hess_row(4,2) + v_col,
-            "v_2",
-            "+",
-            create_hess_row(4,3) + v_col,
-            "v_3",
-            "+",
-            create_hess_row(4,4) + v_col,
-            "v_4",
-        )
-        giga_hess1.scale(0.3)
-        giga_hess1.align_to(giga_hess0, UP)
-        
-        self.play(
-            *[ReplacementTransform(giga_hess0[i], giga_hess1[i]) for i in range(12)]
-        )
+        for i in (1,2,3,4):
+            giga_hess0_list[3 * i - 2] = create_hess_row(4, i) + v_col
+            giga_hess1 = MathTex(*giga_hess0_list.copy())
+            giga_hess1.scale([None, 0.8, 0.55, 0.4, 0.34][i])
+            giga_hess1.align_to(giga_hess0, UP)
+            self.play(
+                *[ReplacementTransform(giga_hess0[i], giga_hess1[i]) for i in range(12)]
+            )
+            giga_hess0 = giga_hess1
 
         hess_vec0 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
                          v_row,
