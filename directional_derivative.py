@@ -1,6 +1,57 @@
 from manim import *
 from MF_Tools import *
 
+def latex_vector(elements, orientation="column", bracket="bmatrix"):
+    """
+    Convert a list of strings into a LaTeX vector.
+
+    Parameters:
+        elements (list of str): The entries of the vector.
+        orientation (str): "column" or "row".
+        bracket (str): LaTeX matrix environment (e.g., "pmatrix", "bmatrix", "vmatrix").
+
+    Returns:
+        str: LaTeX string representing the vector.
+    """
+    if not elements:
+        raise ValueError("elements list cannot be empty")
+
+    if orientation == "col":
+        orientation = "column"
+
+    if orientation not in {"column", "row"}:
+        raise ValueError("orientation must be 'column' or 'row'")
+
+    if orientation == "column":
+        body = " \\\\ ".join(elements)
+    else:  # row
+        body = " & ".join(elements)
+
+    return f"\\begin{{{bracket}}}{body}\\end{{{bracket}}}"
+
+def create_v(num_elements,
+             orientation = "row",
+             bracket = "bmatrix"):
+    return latex_vector([f"\\vec{{v}}_{i}" for i in range(1, 1 + num_elements)], 
+                        orientation=orientation,
+                        bracket = bracket)
+
+def create_grad(num_elements,
+                orientation = "column",
+                bracket = "bmatrix"):
+    return latex_vector([f"\\frac{{\\partial{{f}}}}{{\\partial{{x_{i}}}}}" for i in range(1, 1 + num_elements)], 
+                        orientation=orientation,
+                        bracket = bracket)
+
+def create_hess_row(num_elements,
+                    i,
+                    orientation = "row",
+                    bracket = "bmatrix"):
+    return latex_vector([f"\\frac{{\\partial^2{{f}}}}{{\\partial{{x_{i}}}\\partial{{x_{j}}}}}" for j in range(1, 1 + num_elements)], 
+                        orientation=orientation,
+                        bracket = bracket)
+
+
 class DirectionalDerivativeScene(Scene):
     def construct(self):
 
@@ -96,12 +147,7 @@ class DirectionalDerivativeScene(Scene):
             TransformMatchingTex(chain_rule, simplified),
             run_time=0.8
         )
-        self.wait()
 
-        return
-        # --- Step 9: Final result ---
-        final = MathTex("\\nabla f(\\vec{x}) \\cdot \\vec{v}")
-        final.next_to(simplified, DOWN, buff=0.4)
-
-        self.play(TransformMatchingTex(simplified, final))
-        self.wait(2)
+        # --- Step 9: Clear out the rest of the scene except for simplified ---
+        self.play(FadeOut(Group(*[m for m in self.mobjects if m is not simplified])))
+        self.play(simplified.animate.to_edge(UP))
