@@ -138,14 +138,7 @@ class DirectionalDerivativeScene(Scene):
         simplified.align_to(chain_rule, UP)
 
         self.play(
-            ReplacementTransform(chain_rule[2], simplified[2], run_time=0.8),  # dx1/dt → v1
-            ReplacementTransform(chain_rule[5], simplified[5], run_time=0.8),  # dx2/dt → v2
-            ReplacementTransform(chain_rule[8], simplified[8], run_time=0.8),  # dx3/dt → v3
-            ReplacementTransform(chain_rule[11],simplified[11],run_time=0.8), # dx4/dt → v4
-        )
-        self.play(
-            TransformMatchingTex(chain_rule, simplified),
-            run_time=0.8
+            *[ReplacementTransform(chain_rule[i], simplified[i]) for i in range(12)]
         )
 
         # --- Step 9: Clear out the rest of the scene except for simplified ---
