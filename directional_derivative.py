@@ -205,12 +205,11 @@ class DirectionalDerivativeScene(Scene):
         self.play(*[ReplacementTransform(vTgrad[i], hess_vec0[i]) for i in range(3)])
 
         # Change hess_vec0 into one that's identical, but only 1 part
-        self.remove(hess_vec0)
-        hess_vec0 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =" +
+        hess_vec0new = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =" +
                          v_row +
                          grad_col)
-        hess_vec0.align_to(vTgrad, UP)
-        self.add(hess_vec0)
+        hess_vec0new.align_to(vTgrad, UP)
+        self.play(TransformMatchingTex(hess_vec0, hess_vec0new))
         # We may need to change this to one that transforms smoothly
         
         hess_v = [f"\\frac{{\\partial{{f}}}}{{\\partial{{x_{i}}}}}" for i in (1,2,3,4)]
@@ -220,10 +219,11 @@ class DirectionalDerivativeScene(Scene):
                          v_row + 
                          latex_vector(hess_v.copy()))
             start_idx = 23 + 70 * (i - 1)
-            self.play(TransformByGlyphMap(hess_vec0, hess_vec1,
+            self.play(TransformByGlyphMap(hess_vec0new, hess_vec1,
                                           (range(start_idx, start_idx + 6), range(start_idx, start_idx + 70))
                                           ))
-            hess_vec0 = hess_vec1
+            hess_vec0new = hess_vec1
+            break # TODO: Remove this
 
             """
             [20,21,22,23,24,25] turns to a 52 long thing of glyphs
