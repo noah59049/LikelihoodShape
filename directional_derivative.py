@@ -160,3 +160,61 @@ class DirectionalDerivativeScene(Scene):
         self.play(TransformMatchingShapes(simplified.copy(), vTgrad))
         self.play(TransformMatchingShapes(vTgrad, gradTv))
         self.play(TransformMatchingShapes(gradTv, vTgrad))
+
+        # --- Step 11: Making the Giga Hess ---
+
+        giga_hess0 = MathTex(
+            "\\frac{\\partial^2 g}{\\partial t^2} =",
+            "\\frac{\\partial f}{\\partial x_1}",
+            "v_1",
+            "+",
+            "\\frac{\\partial f}{\\partial x_2}",
+            "v_2",
+            "+",
+            "\\frac{\\partial f}{\\partial x_3}",
+            "v_3",
+            "+",
+            "\\frac{\\partial f}{\\partial x_4}",
+            "v_4",
+        )
+        giga_hess0.scale(0.8)
+        giga_hess0.align_to(simplified, UP)
+
+        self.play(
+            *[ReplacementTransform(simplified[i], giga_hess0[i]) for i in range(12)]
+        )
+
+        giga_hess1 = MathTex(
+            "\\frac{\\partial^2 g}{\\partial t^2} =",
+            create_hess_row(4,1) + v_col,
+            "v_1",
+            "+",
+            create_hess_row(4,2) + v_col,
+            "v_2",
+            "+",
+            create_hess_row(4,3) + v_col,
+            "v_3",
+            "+",
+            create_hess_row(4,4) + v_col,
+            "v_4",
+        )
+        giga_hess1.scale(0.3)
+        giga_hess1.align_to(giga_hess0, UP)
+        
+        self.play(
+            *[ReplacementTransform(giga_hess0[i], giga_hess1[i]) for i in range(12)]
+        )
+
+        hess_vec0 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
+                         v_row,
+                         grad_col)
+        hess_vec0.align_to(vTgrad, UP)
+        self.play(*[ReplacementTransform(vTgrad[i], hess_vec0[i]) for i in range(3)])
+        
+        hess_v = latex_vector([create_hess_row(4, i) + v_col for i in (1,2,3,4)]) # Roughly, it's Hess * \vec{v}
+        hess_vec1 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
+                         v_row,
+                         hess_v)
+        # hess_vec1.align_to(hess_vec0, UP)
+        self.play(*[ReplacementTransform(hess_vec0[i], hess_vec1[i]) for i in range(3)])
+        
