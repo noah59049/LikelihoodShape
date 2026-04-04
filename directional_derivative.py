@@ -32,7 +32,7 @@ def latex_vector(elements, orientation="column", bracket="bmatrix"):
 def create_v(num_elements,
              orientation = "row",
              bracket = "bmatrix"):
-    return latex_vector([f"\\vec{{v}}_{i}" for i in range(1, 1 + num_elements)], 
+    return latex_vector([f"v_{i}" for i in range(1, 1 + num_elements)], 
                         orientation=orientation,
                         bracket = bracket)
 
