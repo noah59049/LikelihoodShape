@@ -164,6 +164,6 @@ class DirectionalDerivativeScene(Scene):
                          grad_row,
                          v_col)
 
-        self.play(Write(vTgrad))
+        self.play(TransformMatchingShapes(simplified.copy(), vTgrad))
         self.play(TransformMatchingShapes(vTgrad, gradTv))
         self.play(TransformMatchingShapes(gradTv, vTgrad))
