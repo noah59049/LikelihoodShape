@@ -50,13 +50,17 @@ class DirectionalDerivativeScene(Scene):
         # --- Step 7: Chain rule ---
         chain_rule = MathTex(
             "\\frac{\\partial g}{\\partial t} =",
-            "\\frac{\\partial f}{\\partial x_1}\\frac{\\partial x_1}{\\partial t}",
+            "\\frac{\\partial f}{\\partial x_1}",
+            "\\frac{\\partial x_1}{\\partial t}",
             "+",
-            "\\frac{\\partial f}{\\partial x_2}\\frac{\\partial x_2}{\\partial t}",
+            "\\frac{\\partial f}{\\partial x_2}",
+            "\\frac{\\partial x_2}{\\partial t}",
             "+",
-            "\\frac{\\partial f}{\\partial x_3}\\frac{\\partial x_3}{\\partial t}",
+            "\\frac{\\partial f}{\\partial x_3}",
+            "\\frac{\\partial x_3}{\\partial t}",
             "+",
-            "\\frac{\\partial f}{\\partial x_4}\\frac{\\partial x_4}{\\partial t}"
+            "\\frac{\\partial f}{\\partial x_4}",
+            "\\frac{\\partial x_4}{\\partial t}",
         )
         chain_rule.scale(0.8)
         chain_rule.next_to(deriv_relation, DOWN, buff=0.4)
@@ -67,18 +71,26 @@ class DirectionalDerivativeScene(Scene):
         # --- Step 8: Substitute v ---
         simplified = MathTex(
             "\\frac{\\partial g}{\\partial t} =",
-            "\\frac{\\partial f}{\\partial x_1} v_1",
+            "\\frac{\\partial f}{\\partial x_1}",
+            "v_1",
             "+",
-            "\\frac{\\partial f}{\\partial x_2} v_2",
+            "\\frac{\\partial f}{\\partial x_2}",
+            "v_2",
             "+",
-            "\\frac{\\partial f}{\\partial x_3} v_3",
+            "\\frac{\\partial f}{\\partial x_3}",
+            "v_3",
             "+",
-            "\\frac{\\partial f}{\\partial x_4} v_4"
+            "\\frac{\\partial f}{\\partial x_4}",
+            "v_4",
         )
         simplified.scale(0.8)
         simplified.align_to(chain_rule, UP)
 
-        self.play(TransformMatchingShapes(chain_rule, simplified))
+        self.play(
+            TransformMatchingTex(
+                chain_rule,
+                simplified,
+        ))
         self.wait()
 
         return
