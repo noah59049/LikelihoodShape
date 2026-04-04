@@ -157,8 +157,12 @@ class DirectionalDerivativeScene(Scene):
         v_col = create_v(4, "column")
         grad_row = create_grad(4, "row")
         grad_col = create_grad(4, "column")
-        vTgrad = MathTex(v_row + grad_col)
-        gradTv = MathTex(grad_row + v_col)
+        vTgrad = MathTex("\\frac{\\partial g}{\\partial t} =",
+                         v_row,
+                         grad_col)
+        gradTv = MathTex("\\frac{\\partial g}{\\partial t} =",
+                         grad_row,
+                         v_col)
 
         self.play(Write(vTgrad))
         self.play(TransformMatchingShapes(vTgrad, gradTv))
