@@ -35,12 +35,12 @@ def latex_vector(elements, orientation="column", bracket="bmatrix"):
 def create_v(num_elements,
              orientation = "row",
              bracket = "bmatrix"):
-    return latex_vector([f"v_{i}" for i in range(1, 1 + num_elements)], 
+    return latex_vector([f"\\vec{{v}}_{i}" for i in range(1, 1 + num_elements)], 
                         orientation=orientation,
                         bracket = bracket)
 
 def create_grad(num_elements,
-                orientation = "row",
+                orientation = "column",
                 bracket = "bmatrix"):
     return latex_vector([f"\\frac{{\\partial{{f}}}}{{\\partial{{x_{i}}}}}" for i in range(1, 1 + num_elements)], 
                         orientation=orientation,
@@ -48,6 +48,6 @@ def create_grad(num_elements,
 
 class SecondDerivativeScene(Scene):
     def construct(self):
-        rowvector1 = latex_vector([f"v_{i}" for i in range(1,5)], orientation="row")
-        colvector1 = latex_vector([f"\\frac{{\\partial{{f}}}}{{\\partial{{x_{i}}}}}" for i in range(1,5)])
-        self.add(MathTex(rowvector1 + colvector1))
+        v_row = create_v(4, "row")
+        grad_col = create_grad(4, "column")
+        self.add(MathTex(v_row + grad_col))
