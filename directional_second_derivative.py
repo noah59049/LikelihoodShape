@@ -53,5 +53,11 @@ class SecondDerivativeScene(Scene):
     def construct(self):
         v_row = create_v(4, "row")
         v_col = create_v(4, "column")
+        grad_row = create_grad(4, "row")
         grad_col = create_grad(4, "column")
         vTgrad = MathTex(v_row + grad_col)
+        gradTv = MathTex(grad_row + v_col)
+
+        self.play(Write(vTgrad))
+        self.play(TransformMatchingShapes(vTgrad, gradTv))
+        self.play(TransformMatchingShapes(gradTv, vTgrad))
