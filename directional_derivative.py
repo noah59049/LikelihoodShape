@@ -3,51 +3,49 @@ from manim import *
 class DirectionalDerivativeScene(Scene):
     def construct(self):
 
-        # Step 1: Start with explicit function
-        f_explicit = MathTex(
-            "f(x_1, x_2, x_3, x_4)"
-        )
+        # --- Step 1: First line at top ---
+        f_explicit = MathTex("f(x_1, x_2, x_3, x_4)")
+        f_explicit.to_edge(UP)
+
         self.play(Write(f_explicit))
         self.wait()
 
-        # Step 2: Transition to vector notation
+        # --- Step 2: Transform in place ---
         f_vector = MathTex("f(\\vec{x})")
+        f_vector.move_to(f_explicit)
+
         self.play(TransformMatchingTex(f_explicit, f_vector))
         self.wait()
 
-        # Step 3: Directional derivative notation
+        # --- Step 3: Directional derivative ---
         directional = MathTex("D_{\\vec{v}} f(\\vec{x})")
-        directional.next_to(f_vector, DOWN, buff=1)
+        directional.next_to(f_vector, DOWN, buff=0.4)
 
         self.play(Write(directional))
         self.wait()
 
-        # Step 4: Introduce path x = a + tv
+        # --- Step 4: Path ---
         path = MathTex("\\vec{x} = \\vec{a} + t\\vec{v}")
-        path.to_edge(UP)
+        path.next_to(directional, DOWN, buff=0.4)
 
         self.play(Write(path))
         self.wait()
 
-        # Step 5: Define g(t)
-        g_def = MathTex(
-            "g(t) = f(\\vec{a} + t\\vec{v}) = f(\\vec{x})"
-        )
-        g_def.next_to(directional, DOWN, buff=1)
+        # --- Step 5: g(t) definition ---
+        g_def = MathTex("g(t) = f(\\vec{a} + t\\vec{v}) = f(\\vec{x})")
+        g_def.next_to(path, DOWN, buff=0.4)
 
         self.play(Write(g_def))
         self.wait()
 
-        # Step 6: Relate directional derivative to g'(t)
-        deriv_relation = MathTex(
-            "D_{\\vec{v}} f(\\vec{x}) = g'(t)"
-        )
-        deriv_relation.next_to(g_def, DOWN, buff=1)
+        # --- Step 6: derivative relation ---
+        deriv_relation = MathTex("D_{\\vec{v}} f(\\vec{x}) = g'(t)")
+        deriv_relation.next_to(g_def, DOWN, buff=0.4)
 
         self.play(TransformMatchingTex(directional.copy(), deriv_relation))
         self.wait()
 
-        # Step 7: Chain rule expansion (long form)
+        # --- Step 7: Chain rule ---
         chain_rule = MathTex(
             "\\frac{\\partial g}{\\partial t} =",
             "\\frac{\\partial f}{\\partial x_1}\\frac{\\partial x_1}{\\partial t}",
@@ -58,14 +56,13 @@ class DirectionalDerivativeScene(Scene):
             "+",
             "\\frac{\\partial f}{\\partial x_4}\\frac{\\partial x_4}{\\partial t}"
         )
-
         chain_rule.scale(0.8)
-        chain_rule.to_edge(DOWN)
+        chain_rule.next_to(deriv_relation, DOWN, buff=0.4)
 
         self.play(Write(chain_rule))
         self.wait()
 
-        # Step 8: Substitute dx/dt = v
+        # --- Step 8: Substitute v ---
         simplified = MathTex(
             "=",
             "\\frac{\\partial f}{\\partial x_1} v_1",
@@ -76,19 +73,15 @@ class DirectionalDerivativeScene(Scene):
             "+",
             "\\frac{\\partial f}{\\partial x_4} v_4"
         )
-
         simplified.scale(0.8)
-        simplified.next_to(chain_rule, DOWN)
+        simplified.next_to(chain_rule, DOWN, buff=0.4)
 
         self.play(TransformMatchingTex(chain_rule.copy(), simplified))
         self.wait()
 
-        # Step 9: Final compact dot product form
-        final = MathTex(
-            "\\nabla f(\\vec{x}) \\cdot \\vec{v}"
-        )
-        final.scale(1.2)
-        final.to_edge(DOWN)
+        # --- Step 9: Final result ---
+        final = MathTex("\\nabla f(\\vec{x}) \\cdot \\vec{v}")
+        final.next_to(simplified, DOWN, buff=0.4)
 
         self.play(TransformMatchingTex(simplified, final))
         self.wait(2)
