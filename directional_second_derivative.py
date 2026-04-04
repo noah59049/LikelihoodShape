@@ -22,6 +22,9 @@ def latex_vector(elements, orientation="column", bracket="bmatrix"):
     if not elements:
         raise ValueError("elements list cannot be empty")
 
+    if orientation == "col":
+        orientation = "column"
+
     if orientation not in {"column", "row"}:
         raise ValueError("orientation must be 'column' or 'row'")
 
@@ -49,5 +52,6 @@ def create_grad(num_elements,
 class SecondDerivativeScene(Scene):
     def construct(self):
         v_row = create_v(4, "row")
+        v_col = create_v(4, "column")
         grad_col = create_grad(4, "column")
-        self.add(MathTex(v_row + grad_col))
+        vTgrad = MathTex(v_row + grad_col)
