@@ -1,4 +1,5 @@
 from manim import *
+from MF_Tools import *
 
 class DirectionalDerivativeScene(Scene):
     def construct(self):
@@ -14,7 +15,8 @@ class DirectionalDerivativeScene(Scene):
         f_vector = MathTex("f(\\vec{x})")
         f_vector.move_to(f_explicit)
 
-        self.play(TransformMatchingTex(f_explicit, f_vector))
+        self.play(TransformByGlyphMap(f_explicit, f_vector,
+                                      (range(2,13), range(2,4))))
         self.wait()
 
         # --- Step 3: Directional derivative ---
