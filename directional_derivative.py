@@ -212,12 +212,3 @@ class DirectionalDerivativeScene(Scene):
                          latex_vector(hess_v.copy()))
             self.play(*[ReplacementTransform(hess_vec0[i], hess_vec1[i]) for i in range(3)])
             hess_vec0 = hess_vec1
-            
-        return
-        hess_v = latex_vector([create_hess_row(4, i) + v_col for i in (1,2,3,4)]) # Roughly, it's Hess * \vec{v}
-        hess_vec1 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
-                         v_row,
-                         hess_v)
-        # hess_vec1.align_to(hess_vec0, UP)
-        self.play(*[ReplacementTransform(hess_vec0[i], hess_vec1[i]) for i in range(3)])
-        
