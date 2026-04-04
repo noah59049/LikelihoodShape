@@ -49,6 +49,14 @@ def create_grad(num_elements,
                         orientation=orientation,
                         bracket = bracket)
 
+def create_hess_row(num_elements,
+                    i,
+                    orientation = "column",
+                    bracket = "bmatrix"):
+    return latex_vector([f"\\frac{{\\partial^2{{f}}}}{{\\partial{{x_{i}}}\\partial{{x_{j}}}}}" for j in range(1, 1 + num_elements)], 
+                        orientation=orientation,
+                        bracket = bracket)
+
 class SecondDerivativeScene(Scene):
     def construct(self):
         v_row = create_v(4, "row")
