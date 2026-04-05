@@ -283,18 +283,31 @@ class DirectionalDerivativeScene(Scene):
         self.play(ReplacementTransform(hess_vec1_split[0], hess_vec2[0]),
                   TransformMatchingShapes(hess_vec1_split[1], hess_vec2[1]))
         
-        hess_vec2_split = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =" +
+        hess_vec2_split = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
                          v_row,
                          hessian_latex(4),
                          v_col)
         hess_vec2_split.scale(0.77)
         self.play(TransformMatchingTex(hess_vec2,hess_vec2_split))
 
-        hess_vec3 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =" +
+        hess_vec3 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
                          v_row,
                          "H",
                          v_col)
-        self.play(*[ReplacementTransform(hess_vec2_split[i], hess_vec3[i]) for i in range(3)])
+        self.play(*[ReplacementTransform(hess_vec2_split[i], hess_vec3[i]) for i in range(4)])
+
+        hess_vec4 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
+                         r"\vec{v}^T",
+                         "H",
+                         r"\vec{v}")
+        self.play(*[ReplacementTransform(hess_vec3[i], hess_vec4[i]) for i in range(4)])
+
+        hess_vec5 = MathTex(r"D^2_{\vec{v}}f(\vec{x}) =",
+                         r"\vec{v}^T",
+                         "H",
+                         r"\vec{v}")
+        self.play(*[ReplacementTransform(hess_vec4[i], hess_vec5[i]) for i in range(4)])
+
 
 if __name__ == "__main__":
     print(hessian_latex(4))
