@@ -267,5 +267,14 @@ class DirectionalDerivativeScene(Scene):
                                           ))
             hess_vec0new = hess_vec1
 
+        # --- Step 12: Showing that this is equal to the quadratic form of a matrix ---
+        hess_vec2 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =" +
+                         v_row + 
+                         hessian_latex(4) + 
+                         v_col)
+        hess_vec2.scale(0.77)
+        
+        self.play(TransformMatchingShapes(hess_vec1, hess_vec2))
+
 if __name__ == "__main__":
     print(hessian_latex(4))
