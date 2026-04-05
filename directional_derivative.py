@@ -213,21 +213,40 @@ class DirectionalDerivativeScene(Scene):
         # We may need to change this to one that transforms smoothly
         
         hess_v = [f"\\frac{{\\partial{{f}}}}{{\\partial{{x_{i}}}}}" for i in (1,2,3,4)]
+        glyph_index_transforms = [
+            [
+                (range(18,23), range(18,29)), # Left bracket
+                (range(23,29), range(29,87)), # Hess row
+                (range(47,52), range(105,116)) # Right bracket
+            ],
+            [
+
+            ],
+            [
+
+            ],
+            [
+
+            ]
+        ]
         for i in (1,2,3,4):
             hess_v[i - 1] = create_hess_row(4, i) + v_col
             hess_vec1 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =" +
                          v_row + 
                          latex_vector(hess_v.copy()))
-            start_idx = 23 + 70 * (i - 1)
+            hess_vec1.scale(0.3) # TODO: Remove this
+            # start_idx = 23 + 70 * (i - 1)
             self.play(TransformByGlyphMap(hess_vec0new, hess_vec1,
-                                          (range(start_idx, start_idx + 6), range(start_idx, start_idx + 70))
+                                          *glyph_index_transforms[i-1],
                                           ))
             hess_vec0new = hess_vec1
-            break # TODO: Remove this
+            # break # TODO: Remove this
 
             """
-            [20,21,22,23,24,25] turns to a 52 long thing of glyphs
-            so the first one is TransformByGlyphMap(hess_vec0, hess_vec1,
-                                range(20,25), range(20,72))
-                                the second one would've started at 26, but instead it starts at 72
-            """
+            0 to 1: 
+                left bracket: range(18, 22) turns to range(18, 28)
+                range(23,39) turns to range(29,87)
+                range(47,52) turns to range(105, 115)
+
+            1 to 2: 
+                                    """
