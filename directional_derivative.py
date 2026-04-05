@@ -198,6 +198,8 @@ class DirectionalDerivativeScene(Scene):
             )
             giga_hess0 = giga_hess1
 
+        self.play(FadeOut(giga_hess0)) # I don't like this but I need to do it to give hess_vec more room
+
         hess_vec0 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
                          v_row,
                          grad_col)
@@ -240,8 +242,7 @@ class DirectionalDerivativeScene(Scene):
             hess_vec1 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =" +
                          v_row + 
                          latex_vector(hess_v.copy()))
-            hess_vec1.scale(0.3) # TODO: Remove this
-            hess_vec1.shift(0.5 * hess_vec1.height * UP)
+            hess_vec1.scale(0.77)
             self.play(TransformByGlyphMap(hess_vec0new, hess_vec1,
                                           *glyph_index_transforms[i-1],
                                           ))
