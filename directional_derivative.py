@@ -51,6 +51,25 @@ def create_hess_row(num_elements,
                         orientation=orientation,
                         bracket = bracket)
 
+def hessian_latex(n, func_name="f"):
+    rows = []
+    
+    for i in range(1, n + 1):
+        row = []
+        for j in range(1, n + 1):
+            entry = f"\\frac{{\\partial^2 {func_name}}}{{\\partial x_{i} \\partial x_{j}}}"
+            row.append(entry)
+        rows.append(" & ".join(row))
+    
+    matrix_body = " \\\\\n".join(rows)
+    
+    latex = (
+        "\\begin{bmatrix}\n"
+        f"{matrix_body}\n"
+        "\\end{bmatrix}\n"
+    )
+    
+    return latex
 
 class DirectionalDerivativeScene(Scene):
     def construct(self):
@@ -247,3 +266,6 @@ class DirectionalDerivativeScene(Scene):
                                           *glyph_index_transforms[i-1],
                                           ))
             hess_vec0new = hess_vec1
+
+if __name__ == "__main__":
+    print(hessian_latex(4))
