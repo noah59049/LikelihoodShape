@@ -216,17 +216,23 @@ class DirectionalDerivativeScene(Scene):
         glyph_index_transforms = [
             [
                 (range(18,23), range(18,29)), # Left bracket
-                (range(23,29), range(29,87)), # Hess row
+                (range(23, 23 + 6), range(29, 29 + 58)), # Hess row
                 (range(47,52), range(105,116)) # Right bracket
             ],
             [
-
+                (range(18,29), range(18,34)), # Left bracket
+                (range(87, 87 + 6), range(92, 92 + 58)), # Hess row
+                (range(105,116), range(162, 178)) # Right bracket
             ],
             [
-
+                (range(18, 34), range(18, 40)), # Left bracket
+                (range(150, 150 + 6), range(156, 156 + 58)), # Center row
+                (range(162, 178), range(220, 242)) # Right bracket
             ],
             [
-
+                (range(18, 40), range(18, 46)), # Left bracket
+                (range(220 - 6, 220), range(278 - 58, 278)), # Center row
+                (range(220, 242), range(278, 306)) # Right bracket
             ]
         ]
         for i in (1,2,3,4):
@@ -235,18 +241,8 @@ class DirectionalDerivativeScene(Scene):
                          v_row + 
                          latex_vector(hess_v.copy()))
             hess_vec1.scale(0.3) # TODO: Remove this
-            # start_idx = 23 + 70 * (i - 1)
+            hess_vec1.shift(0.5 * hess_vec1.height * UP)
             self.play(TransformByGlyphMap(hess_vec0new, hess_vec1,
                                           *glyph_index_transforms[i-1],
                                           ))
             hess_vec0new = hess_vec1
-            # break # TODO: Remove this
-
-            """
-            0 to 1: 
-                left bracket: range(18, 22) turns to range(18, 28)
-                range(23,39) turns to range(29,87)
-                range(47,52) turns to range(105, 115)
-
-            1 to 2: 
-                                    """
