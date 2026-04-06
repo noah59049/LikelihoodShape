@@ -1,7 +1,7 @@
 from manim import *
 import numpy as np
 
-class DirectionalDerivativeSlice(ThreeDScene):
+class DirectionalDerivativeSlicePlane(ThreeDScene):
     def construct(self):
         # --- Function ---
         def f(x, y):
@@ -38,7 +38,7 @@ class DirectionalDerivativeSlice(ThreeDScene):
             u_range=[-2, 2],
             v_range=[-2, 2],
             resolution=(24, 24),
-            fill_opacity=0.6,
+            fill_opacity=0.5,
         )
 
         # --- Camera ---
@@ -69,7 +69,31 @@ class DirectionalDerivativeSlice(ThreeDScene):
         self.play(Create(arrow))
         self.wait()
 
-        # --- Slice curve data ---
+        # =========================================================
+        # 🔥 SLICE PLANE
+        # =========================================================
+
+        # Plane spanned by v and vertical direction
+        plane = Surface(
+            lambda s, t: axes.c2p(
+                x0 + s * v[0],
+                y0 + s * v[1],
+                z0 + t
+            ),
+            u_range=[-2, 2],   # along direction v
+            v_range=[-3, 3],   # vertical
+            resolution=(10, 10),
+            fill_opacity=0.3,
+            checkerboard_colors=[BLUE_D, BLUE_E],
+        )
+
+        self.play(FadeIn(plane))
+        self.wait()
+
+        # =========================================================
+        # Slice curve (intersection)
+        # =========================================================
+
         t_vals = np.linspace(-2, 2, 100)
 
         curve_3d_points = []
@@ -82,42 +106,44 @@ class DirectionalDerivativeSlice(ThreeDScene):
             curve_3d_points.append(axes.c2p(x, y, z))
             curve_2d_points.append(axes2d.c2p(t, z))
 
-        # --- Slice curve (3D) ---
         slice_curve = VMobject(color=ORANGE)
         slice_curve.set_points_smoothly(curve_3d_points)
 
         self.play(Create(slice_curve))
         self.wait()
 
-        # --- Rotate camera top-down ---
+        # =========================================================
+        # Top-down view
+        # =========================================================
+
         self.move_camera(phi=0, theta=-90 * DEGREES)
         self.wait()
 
-        # --- Prepare transformed curve ---
+        # =========================================================
+        # Transform into 2D graph
+        # =========================================================
+
         graph_curve = slice_curve.copy()
         graph_curve.set_points_smoothly(curve_2d_points)
 
-        # Optional: shift to align nicely with axes2d
-        # graph_curve.shift(DOWN * 1)
-
-        # --- Transform curve into 2D graph ---
         self.play(
             Transform(slice_curve, graph_curve),
             FadeIn(axes2d),
             FadeOut(surface),
+            FadeOut(plane),
             FadeOut(arrow),
         )
 
-        # --- Transform point to 2D ---
+        # --- Move point ---
         dot2d = Dot(axes2d.c2p(0, g(0)), color=RED)
-
-        self.play(
-            Transform(point, dot2d)
-        )
+        self.play(Transform(point, dot2d))
 
         self.wait()
 
-        # --- Tangent line ---
+        # =========================================================
+        # Tangent line
+        # =========================================================
+
         slope = directional_derivative
 
         tangent_line = axes2d.plot(
