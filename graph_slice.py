@@ -3,16 +3,15 @@ import numpy as np
 
 class DirectionalDerivativeSlice(ThreeDScene):
     def construct(self):
-        # --- Function definition ---
+        # --- Function ---
         def f(x, y):
             return 0.5 * (x**2 + y**2)
 
         # --- Point and direction ---
         x0, y0 = 1, 1
         v = np.array([1, 2])
-        v = v / np.linalg.norm(v)  # normalize
+        v = v / np.linalg.norm(v)
 
-        # Parametric slice: (x(t), y(t))
         def gamma(t):
             return np.array([x0 + t * v[0], y0 + t * v[1]])
 
@@ -20,12 +19,18 @@ class DirectionalDerivativeSlice(ThreeDScene):
             x, y = gamma(t)
             return f(x, y)
 
-        # --- 3D Axes ---
+        # --- Axes ---
         axes = ThreeDAxes(
             x_range=[-3, 3],
             y_range=[-3, 3],
             z_range=[0, 10],
         )
+
+        axes2d = Axes(
+            x_range=[-2, 2],
+            y_range=[0, 10],
+            axis_config={"include_numbers": True},
+        ).to_edge(DOWN)
 
         # --- Surface ---
         surface = Surface(
@@ -36,24 +41,20 @@ class DirectionalDerivativeSlice(ThreeDScene):
             fill_opacity=0.6,
         )
 
+        # --- Camera ---
         self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
 
         self.play(Create(axes), Create(surface))
         self.wait()
 
-        # --- Point on surface ---
+        # --- Point ---
         z0 = f(x0, y0)
         point = Dot3D(axes.c2p(x0, y0, z0), color=RED)
         self.play(FadeIn(point))
 
-        # --- Directional derivative vector ---
-        # gradient of f = (x, y)
+        # --- Directional derivative arrow ---
         grad = np.array([x0, y0])
         directional_derivative = np.dot(grad, v)
-
-        # Tangent direction lifted into 3D
-        tangent_vec = np.array([v[0], v[1], directional_derivative])
-        tangent_vec = tangent_vec / np.linalg.norm(tangent_vec)
 
         arrow = Arrow3D(
             start=axes.c2p(x0, y0, z0),
@@ -68,50 +69,61 @@ class DirectionalDerivativeSlice(ThreeDScene):
         self.play(Create(arrow))
         self.wait()
 
-        # --- Slice curve on surface ---
+        # --- Slice curve data ---
         t_vals = np.linspace(-2, 2, 100)
-        slice_points = [
-            axes.c2p(*(gamma(t)), f(*gamma(t)))
-            for t in t_vals
-        ]
 
+        curve_3d_points = []
+        curve_2d_points = []
+
+        for t in t_vals:
+            x, y = gamma(t)
+            z = f(x, y)
+
+            curve_3d_points.append(axes.c2p(x, y, z))
+            curve_2d_points.append(axes2d.c2p(t, z))
+
+        # --- Slice curve (3D) ---
         slice_curve = VMobject(color=ORANGE)
-        slice_curve.set_points_smoothly(slice_points)
+        slice_curve.set_points_smoothly(curve_3d_points)
 
         self.play(Create(slice_curve))
         self.wait()
 
-        # --- Transition to 2D slice graph ---
+        # --- Rotate camera top-down ---
         self.move_camera(phi=0, theta=-90 * DEGREES)
         self.wait()
 
-        # Fade out surface for clarity
-        self.play(FadeOut(surface), FadeOut(slice_curve), FadeOut(arrow), FadeOut(point), FadeOut(axes))
+        # --- Prepare transformed curve ---
+        graph_curve = slice_curve.copy()
+        graph_curve.set_points_smoothly(curve_2d_points)
 
-        # --- 2D axes for g(t) ---
-        axes2d = Axes(
-            x_range=[-2, 2],
-            y_range=[0, 10],
-            axis_config={"include_numbers": True},
-        ).to_edge(DOWN)
+        # Optional: shift to align nicely with axes2d
+        # graph_curve.shift(DOWN * 1)
 
-        graph = axes2d.plot(lambda t: g(t), color=BLUE)
+        # --- Transform curve into 2D graph ---
+        self.play(
+            Transform(slice_curve, graph_curve),
+            FadeIn(axes2d),
+            FadeOut(surface),
+            FadeOut(arrow),
+        )
 
-        self.play(Create(axes2d), Create(graph))
+        # --- Transform point to 2D ---
+        dot2d = Dot(axes2d.c2p(0, g(0)), color=RED)
+
+        self.play(
+            Transform(point, dot2d)
+        )
+
         self.wait()
 
-        # --- Point on 2D graph ---
-        dot2d = Dot(axes2d.c2p(0, g(0)), color=RED)
-        self.play(FadeIn(dot2d))
-
         # --- Tangent line ---
-        # g'(0) = directional derivative
         slope = directional_derivative
 
         tangent_line = axes2d.plot(
-            lambda t: g(0) + slope * (t - 0),
-            color=GREEN,
-            x_range=[-2, 2]
+            lambda t: g(0) + slope * t,
+            x_range=[-2, 2],
+            color=GREEN
         )
 
         self.play(Create(tangent_line))
