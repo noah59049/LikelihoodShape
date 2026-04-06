@@ -338,7 +338,7 @@ class DirectionalDerivativeScene(Scene):
                                       (FadeIn, range(188,197))))
 
         # Before we add the dot products, we need to scale this down
-        hess_mat2.animate.scale(0.66)
+        hess_mat2.animate.scale(0.7)
 
         # Add the dot products one by one
         left_bracket_ranges  = [range(189, 193), range(189, 199), range(189,205),range(189, 211),range(189,217)]
@@ -360,10 +360,7 @@ class DirectionalDerivativeScene(Scene):
             new_v_range = range(min(right_new) - 16, min(right_new))
             left_hess_row_range = range(40 * i - 34, 40 * i + 6)
             right_hess_row_range = range(min(right_new) - 57, min(right_new) - 17)
-            
-            
-
-            hess_mat3.scale(0.66)
+            hess_mat3.scale(0.7)
             hess_mat3.to_edge(LEFT)
             self.play(TransformByGlyphMap(hess_mat2, hess_mat3,
                                             (range(189), range(189)), # The LHS and equals sign stay fixed
@@ -374,7 +371,6 @@ class DirectionalDerivativeScene(Scene):
                                             (FadeIn, [min(right_new) - 58, min(right_new) - 17]), # Fade in the brackets of the hess row
                                         ))
             hess_mat2 = hess_mat3
-
         return # TODO: Remove this
 
         # Replace the whole Hessian with H
