@@ -292,7 +292,9 @@ class DirectionalDerivativeScene(Scene):
                          v_col)
         hess_vec2_split.scale(0.77)
         self.play(TransformMatchingTex(hess_vec2,hess_vec2_split))
-        
+        # Copy hess_vec2_split so we can get it back after copying
+        hess_vec2_split_copy = hess_vec2_split.copy() 
+
         # Interlude showing that matrix is correct
         # Move it over to the left and get rid of everything except the matmul
         hess_mat0 = MathTex(
@@ -371,14 +373,16 @@ class DirectionalDerivativeScene(Scene):
                                             (FadeIn, [min(right_new) - 58, min(right_new) - 17]), # Fade in the brackets of the hess row
                                         ))
             hess_mat2 = hess_mat3
-        return # TODO: Remove this
+
+        self.play(FadeOut(hess_mat3))
+        self.play(FadeIn(hess_vec2_split_copy))
 
         # Replace the whole Hessian with H
         hess_vec3 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
                          v_row,
                          "H",
                          v_col)
-        self.play(*[ReplacementTransform(hess_vec2_split[i], hess_vec3[i]) for i in range(4)])
+        self.play(*[ReplacementTransform(hess_vec2_split_copy[i], hess_vec3[i]) for i in range(4)])
 
         # Replace the v1,v2,v3,v4 with \vec{v}
         hess_vec4 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
