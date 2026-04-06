@@ -334,6 +334,7 @@ class DirectionalDerivativeScene(Scene):
         )
         hess_mat2.scale(0.77)
         hess_mat2.to_edge(LEFT)
+        hess_mat2.to_edge(UP) # TODO: Remove
         self.play(TransformByGlyphMap(hess_mat1, hess_mat2,
                                       (FadeIn, range(188,197))))
 
@@ -346,26 +347,44 @@ class DirectionalDerivativeScene(Scene):
         # 2) right bracket ranges
         # 3) So the thing that the left thing is transforming into will calculate itself
         # 4) And so will the right
-        """
-        left_bracket_ranges  = [range(189, 193),[],[],[],[]]
-        right_bracket_ranges = [range(193, 197),[],[],[],[]]
 
-        We do this thing with like:
-        (range(189), range(189)), # The left side stays fixed
-        (range(172, 178), range())
-        """
+        left_bracket_ranges  = [range(189, 193), range(189, 199), range(189,205),[4],[4]]
+        right_bracket_ranges = [range(193, 197), range(257, 267), range(321,337),[4],[4]]
+
         for i in (1,2,3,4):
-            rhs_tex = rhs_tex.replace(r"\phantom{0}", create_hess_row(4, i) + v_col, count = 1)
+            rhs_tex = rhs_tex.replace(r"\phantom{0}", 
+                                      create_hess_row(4, i) + v_col, 
+                                      count = 1)
             hess_mat3 = MathTex(
                 hessian_latex(4) +
                 v_col + 
                 rhs_tex
             )
+            # Compute a bunch of indices for the TransormByGlyphMap
+            left_old = left_bracket_ranges[i - 1]
+            left_new = left_bracket_ranges[i]
+            right_old = right_bracket_ranges[i - 1]
+            right_new = right_bracket_ranges[i]
+            new_v_range = range(min(right_new) - 16, min(right_new))
+            left_hess_row_range = range(40 * i - 34, 40 * i + 6)
+            right_hess_row_range = range(max(left_new) + 2, max(left_new) + 42)
+            
+            
+
             hess_mat3.scale(0.66)
             hess_mat3.to_edge(LEFT)
-            self.play(TransformByGlyphMap(hess_mat2, hess_mat3))
+            hess_mat3.to_edge(UP) # TODO: Remove
+            self.play(TransformByGlyphMap(hess_mat2, hess_mat3,
+                                            (range(189), range(189)), # The LHS and equals sign stay fixed
+                                            (left_old, left_new), # Enlarge the left bracket
+                                            (right_old, right_new), # Enlarge the right bracket
+                                            (range(172, 188), new_v_range), # Copy v_col over to the RHS matrix
+                                            (left_hess_row_range, right_hess_row_range), # Move a hess row from LHS to RHS 
+                                            (FadeIn, [max(left_new) + 1, max(left_new) + 42]) # Fade in the brackets of the hess row
+                                        ))
             hess_mat2 = hess_mat3
-            # break # TODO: Remove this
+            if i == 2:
+                break
 
         return # TODO: Remove this
 
