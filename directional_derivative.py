@@ -268,12 +268,14 @@ class DirectionalDerivativeScene(Scene):
             hess_vec0new = hess_vec1
 
         # --- Step 12: Showing that this is equal to the quadratic form of a matrix ---
+        # Switch the number of groups in here 
         hess_vec1_split = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =" +
                 v_row,
                 latex_vector(hess_v.copy()))
         hess_vec1_split.scale(0.77)
         self.play(TransformMatchingTex(hess_vec1,hess_vec1_split))
 
+        # Replace the 4 different dot products with the Hessian
         hess_vec2 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =" +
                          v_row,
                          hessian_latex(4) + 
@@ -283,25 +285,105 @@ class DirectionalDerivativeScene(Scene):
         self.play(ReplacementTransform(hess_vec1_split[0], hess_vec2[0]),
                   TransformMatchingShapes(hess_vec1_split[1], hess_vec2[1]))
         
+        # Split it into 4 groups
         hess_vec2_split = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
                          v_row,
                          hessian_latex(4),
                          v_col)
         hess_vec2_split.scale(0.77)
         self.play(TransformMatchingTex(hess_vec2,hess_vec2_split))
+        
+        # Interlude showing that matrix is correct
+        # Move it over to the left and get rid of everything except the matmul
+        hess_mat0 = MathTex(
+            hessian_latex(4),
+            v_col
+        )
+        hess_mat0.scale(0.77)
+        hess_mat0.to_edge(LEFT)
 
+        self.play(
+            FadeOut(VGroup(*hess_vec2_split[0:2]), run_time = 0.6),
+            ReplacementTransform(
+                VGroup(hess_vec2_split[2], hess_vec2_split[3]),
+                hess_mat0,
+                run_time = 1.3
+            ),
+        )
+
+        # Change it into just 1 object
+        hess_mat1 = MathTex(
+            hessian_latex(4) +
+            v_col
+        )
+        hess_mat1.scale(0.77)
+        hess_mat1.to_edge(LEFT)
+        self.play(TransformMatchingTex(hess_mat0, hess_mat1))
+
+        # Add a right hand side to the equation with an empty matrix
+        rhs_tex = r"""=\begin{bmatrix}
+            \phantom{0} \\
+            \phantom{0} \\
+            \phantom{0} \\
+            \phantom{0}
+            \end{bmatrix}"""
+        hess_mat2 = MathTex(
+            hessian_latex(4) +
+            v_col + 
+            rhs_tex
+        )
+        hess_mat2.scale(0.77)
+        hess_mat2.to_edge(LEFT)
+        self.play(TransformByGlyphMap(hess_mat1, hess_mat2,
+                                      (FadeIn, range(188,197))))
+
+        # Before we add the dot products, we need to scale this down
+        hess_mat2.animate.scale(0.66)
+        # Add the dot products one by one
+
+        # So what do we need?
+        # 1) left bracket ranges
+        # 2) right bracket ranges
+        # 3) So the thing that the left thing is transforming into will calculate itself
+        # 4) And so will the right
+        """
+        left_bracket_ranges  = [range(189, 193),[],[],[],[]]
+        right_bracket_ranges = [range(193, 197),[],[],[],[]]
+
+        We do this thing with like:
+        (range(189), range(189)), # The left side stays fixed
+        (range(172, 178), range())
+        """
+        for i in (1,2,3,4):
+            rhs_tex = rhs_tex.replace(r"\phantom{0}", create_hess_row(4, i) + v_col, count = 1)
+            hess_mat3 = MathTex(
+                hessian_latex(4) +
+                v_col + 
+                rhs_tex
+            )
+            hess_mat3.scale(0.66)
+            hess_mat3.to_edge(LEFT)
+            self.play(TransformByGlyphMap(hess_mat2, hess_mat3))
+            hess_mat2 = hess_mat3
+            # break # TODO: Remove this
+
+        return # TODO: Remove this
+
+        # Replace the whole Hessian with H
         hess_vec3 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
                          v_row,
                          "H",
                          v_col)
         self.play(*[ReplacementTransform(hess_vec2_split[i], hess_vec3[i]) for i in range(4)])
 
+        # Replace the v1,v2,v3,v4 with \vec{v}
         hess_vec4 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
                          r"\vec{v}^T",
                          "H",
                          r"\vec{v}")
         self.play(*[ReplacementTransform(hess_vec3[i], hess_vec4[i]) for i in range(4)])
 
+        # Replace the g''(t) with a directional second derivative using D^2
         hess_vec5 = MathTex(r"D^2_{\vec{v}}f(\vec{x}) =",
                          r"\vec{v}^T",
                          "H",
