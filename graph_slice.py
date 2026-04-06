@@ -1,7 +1,7 @@
 from manim import *
 import numpy as np
 
-class DirectionalDerivativeSlicePlane(ThreeDScene):
+class DirectionalDerivativeSliceCopy(ThreeDScene):
     def construct(self):
         # --- Function ---
         def f(x, y):
@@ -26,11 +26,12 @@ class DirectionalDerivativeSlicePlane(ThreeDScene):
             z_range=[0, 10],
         )
 
+        # 2D axes (fixed in frame)
         axes2d = Axes(
             x_range=[-2, 2],
             y_range=[0, 10],
             axis_config={"include_numbers": True},
-        ).to_edge(DOWN)
+        ).scale(0.7).to_corner(DR)
 
         # --- Surface ---
         surface = Surface(
@@ -41,7 +42,6 @@ class DirectionalDerivativeSlicePlane(ThreeDScene):
             fill_opacity=0.5,
         )
 
-        # --- Camera ---
         self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
 
         self.play(Create(axes), Create(surface))
@@ -70,18 +70,17 @@ class DirectionalDerivativeSlicePlane(ThreeDScene):
         self.wait()
 
         # =========================================================
-        # 🔥 SLICE PLANE
+        # Slice plane
         # =========================================================
 
-        # Plane spanned by v and vertical direction
         plane = Surface(
             lambda s, t: axes.c2p(
                 x0 + s * v[0],
                 y0 + s * v[1],
                 z0 + t
             ),
-            u_range=[-2, 2],   # along direction v
-            v_range=[-3, 3],   # vertical
+            u_range=[-2, 2],
+            v_range=[-3, 3],
             resolution=(10, 10),
             fill_opacity=0.3,
             checkerboard_colors=[BLUE_D, BLUE_E],
@@ -91,7 +90,7 @@ class DirectionalDerivativeSlicePlane(ThreeDScene):
         self.wait()
 
         # =========================================================
-        # Slice curve (intersection)
+        # Slice curve
         # =========================================================
 
         t_vals = np.linspace(-2, 2, 100)
@@ -113,30 +112,42 @@ class DirectionalDerivativeSlicePlane(ThreeDScene):
         self.wait()
 
         # =========================================================
-        # Top-down view
+        # Add 2D axes FIXED IN FRAME
         # =========================================================
 
-        self.move_camera(phi=0, theta=-90 * DEGREES)
+        self.add_fixed_in_frame_mobjects(axes2d)
+        self.play(FadeIn(axes2d))
+
+        # =========================================================
+        # Create 2D graph curve (target)
+        # =========================================================
+
+        graph_curve = VMobject(color=ORANGE)
+        graph_curve.set_points_smoothly(curve_2d_points)
+
+        self.add_fixed_in_frame_mobjects(graph_curve)
+
+        # =========================================================
+        # COPY animation
+        # =========================================================
+
+        self.play(
+            TransformFromCopy(slice_curve, graph_curve),
+            run_time=2
+        )
+
         self.wait()
 
         # =========================================================
-        # Transform into 2D graph
+        # Copy the point too
         # =========================================================
 
-        graph_curve = slice_curve.copy()
-        graph_curve.set_points_smoothly(curve_2d_points)
+        dot2d = Dot(axes2d.c2p(0, g(0)), color=RED)
+        self.add_fixed_in_frame_mobjects(dot2d)
 
         self.play(
-            Transform(slice_curve, graph_curve),
-            FadeIn(axes2d),
-            FadeOut(surface),
-            FadeOut(plane),
-            FadeOut(arrow),
+            TransformFromCopy(point, dot2d)
         )
-
-        # --- Move point ---
-        dot2d = Dot(axes2d.c2p(0, g(0)), color=RED)
-        self.play(Transform(point, dot2d))
 
         self.wait()
 
@@ -151,6 +162,8 @@ class DirectionalDerivativeSlicePlane(ThreeDScene):
             x_range=[-2, 2],
             color=GREEN
         )
+
+        self.add_fixed_in_frame_mobjects(tangent_line)
 
         self.play(Create(tangent_line))
         self.wait(2)
