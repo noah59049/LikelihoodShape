@@ -179,16 +179,20 @@ class DirectionalDerivativeScene(Scene):
         self.play(TransformMatchingShapes(simplified.copy(), vTgrad))
 
         # Interlude: showing that it's the gradient
+        # Copy it lower
         nabla_form = MathTex("\\frac{\\partial g}{\\partial t} =" +
                          v_row +
                          grad_col).scale(0.8).next_to(vTgrad, DOWN)
         self.play(FadeIn(nabla_form))
+        
+        # Replace that with nabla form
         nabla_form2 = MathTex(r"\frac{\partial g}{\partial t} =\vec{v}^T\nabla{f}").next_to(vTgrad,DOWN)
         self.play(TransformByGlyphMap(nabla_form,nabla_form2,
                                       (range(6), range(6)),
                                       (range(6,16), range(6,9)),
                                       (range(16,50), range(9,11))))
 
+        # Show that either vector can be transposed
         self.play(TransformMatchingShapes(vTgrad, gradTv))
         self.play(TransformMatchingShapes(gradTv, vTgrad))
 
@@ -411,6 +415,10 @@ class DirectionalDerivativeScene(Scene):
                          "H",
                          r"\vec{v}")
         self.play(*[ReplacementTransform(hess_vec4[i], hess_vec5[i]) for i in range(4)])
+
+        # Contrast that with the directional derivative
+        nabla_form3 = MathTex(r"D_{\vec{v}}f(\vec{x}) =\vec{v}^T\nabla{f}").next_to(hess_vec5,UP)
+        self.play(FadeIn(nabla_form3))
 
 
 if __name__ == "__main__":
