@@ -177,8 +177,22 @@ class DirectionalDerivativeScene(Scene):
                          v_col)
 
         self.play(TransformMatchingShapes(simplified.copy(), vTgrad))
+
+        # Interlude: showing that it's the gradient
+        nabla_form = MathTex("\\frac{\\partial g}{\\partial t} =" +
+                         v_row +
+                         grad_col).scale(0.8).next_to(vTgrad, DOWN)
+        self.play(FadeIn(nabla_form))
+        nabla_form2 = MathTex(r"\frac{\partial g}{\partial t} =\vec{v}^T\nabla{f}").next_to(vTgrad,DOWN)
+        self.play(TransformByGlyphMap(nabla_form,nabla_form2,
+                                      (range(6), range(6)),
+                                      (range(6,16), range(6,9)),
+                                      (range(16,50), range(9,11))))
+
         self.play(TransformMatchingShapes(vTgrad, gradTv))
         self.play(TransformMatchingShapes(gradTv, vTgrad))
+
+        self.play(FadeOut(nabla_form2))
 
         # --- Step 11: Making the Giga Hess ---
 
