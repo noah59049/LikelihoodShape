@@ -334,23 +334,15 @@ class DirectionalDerivativeScene(Scene):
         )
         hess_mat2.scale(0.77)
         hess_mat2.to_edge(LEFT)
-        hess_mat2.to_edge(UP) # TODO: Remove
         self.play(TransformByGlyphMap(hess_mat1, hess_mat2,
                                       (FadeIn, range(188,197))))
 
         # Before we add the dot products, we need to scale this down
         hess_mat2.animate.scale(0.66)
+
         # Add the dot products one by one
-
-        # So what do we need?
-        # 1) left bracket ranges
-        # 2) right bracket ranges
-        # 3) So the thing that the left thing is transforming into will calculate itself
-        # 4) And so will the right
-
         left_bracket_ranges  = [range(189, 193), range(189, 199), range(189,205),range(189, 211),range(189,217)]
         right_bracket_ranges = [range(193, 197), range(257, 267), range(321,337),range(385,407),range(449,477)]
-
         for i in (1,2,3,4):
             rhs_tex = rhs_tex.replace(r"\phantom{0}", 
                                       create_hess_row(4, i) + v_col, 
@@ -372,9 +364,7 @@ class DirectionalDerivativeScene(Scene):
             
 
             hess_mat3.scale(0.66)
-            hess_mat3.scale(0.4) # TODO: Remove
             hess_mat3.to_edge(LEFT)
-            hess_mat3.to_edge(UP) # TODO: Remove
             self.play(TransformByGlyphMap(hess_mat2, hess_mat3,
                                             (range(189), range(189)), # The LHS and equals sign stay fixed
                                             (left_old, left_new), # Enlarge the left bracket
@@ -382,7 +372,6 @@ class DirectionalDerivativeScene(Scene):
                                             (range(172, 188), new_v_range), # Copy v_col over to the RHS matrix
                                             (left_hess_row_range, right_hess_row_range), # Move a hess row from LHS to RHS 
                                             (FadeIn, [min(right_new) - 58, min(right_new) - 17]), # Fade in the brackets of the hess row
-                                            # show_indices = bool(i - 1) # TODO: remove this
                                         ))
             hess_mat2 = hess_mat3
 
