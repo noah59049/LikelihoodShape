@@ -348,8 +348,8 @@ class DirectionalDerivativeScene(Scene):
         # 3) So the thing that the left thing is transforming into will calculate itself
         # 4) And so will the right
 
-        left_bracket_ranges  = [range(189, 193), range(189, 199), range(189,205),[4],[4]]
-        right_bracket_ranges = [range(193, 197), range(257, 267), range(321,337),[4],[4]]
+        left_bracket_ranges  = [range(189, 193), range(189, 199), range(189,205),range(189, 211),range(189,217)]
+        right_bracket_ranges = [range(193, 197), range(257, 267), range(321,337),range(385,407),range(449,477)]
 
         for i in (1,2,3,4):
             rhs_tex = rhs_tex.replace(r"\phantom{0}", 
@@ -372,6 +372,7 @@ class DirectionalDerivativeScene(Scene):
             
 
             hess_mat3.scale(0.66)
+            hess_mat3.scale(0.4) # TODO: Remove
             hess_mat3.to_edge(LEFT)
             hess_mat3.to_edge(UP) # TODO: Remove
             self.play(TransformByGlyphMap(hess_mat2, hess_mat3,
@@ -384,8 +385,6 @@ class DirectionalDerivativeScene(Scene):
                                             # show_indices = bool(i - 1) # TODO: remove this
                                         ))
             hess_mat2 = hess_mat3
-            if i == 2:
-                break
 
         return # TODO: Remove this
 
