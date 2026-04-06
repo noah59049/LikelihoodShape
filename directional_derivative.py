@@ -367,7 +367,7 @@ class DirectionalDerivativeScene(Scene):
             right_new = right_bracket_ranges[i]
             new_v_range = range(min(right_new) - 16, min(right_new))
             left_hess_row_range = range(40 * i - 34, 40 * i + 6)
-            right_hess_row_range = range(max(left_new) + 2, max(left_new) + 42)
+            right_hess_row_range = range(min(right_new) - 57, min(right_new) - 17)
             
             
 
@@ -380,7 +380,8 @@ class DirectionalDerivativeScene(Scene):
                                             (right_old, right_new), # Enlarge the right bracket
                                             (range(172, 188), new_v_range), # Copy v_col over to the RHS matrix
                                             (left_hess_row_range, right_hess_row_range), # Move a hess row from LHS to RHS 
-                                            (FadeIn, [max(left_new) + 1, max(left_new) + 42]) # Fade in the brackets of the hess row
+                                            (FadeIn, [min(right_new) - 58, min(right_new) - 17]), # Fade in the brackets of the hess row
+                                            # show_indices = bool(i - 1) # TODO: remove this
                                         ))
             hess_mat2 = hess_mat3
             if i == 2:
