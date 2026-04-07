@@ -131,11 +131,14 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
         # COPY animation
         # =========================================================
 
-        slice_curve.make_smooth()
-        graph_curve.make_smooth()
+        slice_curve_2d_source = slice_curve.copy()
+        slice_curve_2d_source.apply_function(
+            lambda p: self.camera.project_point(p)
+        )
+        self.add_fixed_in_frame_mobjects(graph_curve)
 
         self.play(
-            TransformFromCopy(slice_curve, graph_curve),
+            TransformFromCopy(slice_curve_2d_source, graph_curve),
             run_time=2
         )
 
