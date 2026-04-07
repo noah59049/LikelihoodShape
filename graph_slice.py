@@ -9,7 +9,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
 
         # --- Point and direction ---
         x0, y0 = 1, 1
-        v = np.array([1, 2])
+        v = np.array([100, 1])
         v = v / np.linalg.norm(v)
 
         def gamma(t):
@@ -106,7 +106,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
             curve_2d_points.append(axes2d.c2p(t, z))
 
         slice_curve = VMobject(color=ORANGE)
-        slice_curve.set_points_smoothly(curve_3d_points)
+        slice_curve.set_points_as_corners(curve_3d_points)
 
         self.play(Create(slice_curve))
         self.wait()
@@ -123,13 +123,16 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
         # =========================================================
 
         graph_curve = VMobject(color=ORANGE)
-        graph_curve.set_points_smoothly(curve_2d_points)
+        graph_curve.set_points_as_corners(curve_2d_points)
 
         self.add_fixed_in_frame_mobjects(graph_curve)
 
         # =========================================================
         # COPY animation
         # =========================================================
+
+        slice_curve.make_smooth()
+        graph_curve.make_smooth()
 
         self.play(
             TransformFromCopy(slice_curve, graph_curve),
@@ -146,7 +149,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
         self.add_fixed_in_frame_mobjects(dot2d)
 
         self.play(
-            TransformFromCopy(point, dot2d)
+            Transform(point, dot2d)
         )
 
         self.wait()
