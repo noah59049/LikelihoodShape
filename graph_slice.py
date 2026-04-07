@@ -9,7 +9,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
 
         # --- Point and direction ---
         x0, y0 = 1, 1
-        v = np.array([100, 1])
+        v = np.array([0, 1])
         v = v / np.linalg.norm(v)
 
         def gamma(t):
@@ -29,7 +29,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
         # 2D axes (fixed in frame)
         axes2d = Axes(
             x_range=[-2, 2],
-            y_range=[0, 10],
+            y_range=[0, 4],
             axis_config={"include_numbers": True},
         ).scale(0.7).to_corner(DR)
 
@@ -39,7 +39,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
             u_range=[-2, 2],
             v_range=[-2, 2],
             resolution=(24, 24),
-            fill_opacity=0.5,
+            fill_opacity=0.35,
         )
 
         self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
@@ -82,8 +82,8 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
             u_range=[-2, 2],
             v_range=[-3, 3],
             resolution=(10, 10),
-            fill_opacity=0.3,
-            checkerboard_colors=[BLUE_D, BLUE_E],
+            fill_opacity=0.6,
+            checkerboard_colors=[RED_D, RED_E],
         )
 
         self.play(FadeIn(plane))
