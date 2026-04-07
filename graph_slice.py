@@ -148,13 +148,27 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
         # Copy the point too
         # =========================================================
 
+        # Get the 3D center of the point
+        p3d = point.get_center()
+
+        # Project it to screen space
+        p2d = self.camera.project_point(p3d)
+
+        # Create a proper 2D dot at that location
+        point_2d_source = Dot(p2d, color=RED)
+
+        # Hide it (so we only see the original)
+        point_2d_source.set_opacity(0)
+        self.add(point_2d_source)
+
+        # Target dot (already correct)
         dot2d = Dot(axes2d.c2p(0, g(0)), color=RED)
         self.add_fixed_in_frame_mobjects(dot2d)
 
+        # Animate
         self.play(
-            Transform(point, dot2d)
+            TransformFromCopy(point_2d_source, dot2d)
         )
-
         self.wait()
 
         # =========================================================
