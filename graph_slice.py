@@ -1,8 +1,63 @@
 from manim import *
 import numpy as np
+from MF_Tools import *
 
 class DirectionalDerivativeSliceCopy(ThreeDScene):
     def construct(self):
+                # --- Step 1: First line at top ---
+        f_explicit = MathTex("f(x_1, x_2, x_3, x_4)")
+        f_explicit.to_edge(UP)
+
+        # self.play(Write(f_explicit))
+        # self.wait()
+
+        # --- Step 2: Transform in place ---
+        f_vector = MathTex("f(\\vec{x})")
+        f_vector.move_to(f_explicit)
+
+        # self.play(TransformByGlyphMap(f_explicit, f_vector,
+        #                               (range(2,13), range(2,4))))
+        # self.wait()
+
+        # --- Step 3: Directional derivative ---
+        directional = MathTex("D_{\\vec{v}} f(\\vec{x})")
+        directional.next_to(f_vector, DOWN, buff=0.4)
+
+        # self.play(Write(directional))
+        # self.wait()
+
+        # --- Step 4: Path ---
+        path = MathTex("\\vec{x} = \\vec{a} + t\\vec{v}")
+        path.next_to(directional, DOWN, buff=0.4)
+
+        # --- Step 5: g(t) definition ---
+        g_def = MathTex("g(t) = f(\\vec{a} + t\\vec{v}) = f(\\vec{x})")
+        g_def.next_to(path, DOWN, buff=0.4)
+
+        # self.play(Write(g_def))
+        # self.wait()
+
+        # --- Step 6: derivative relation ---
+        deriv_relation = MathTex("D_{\\vec{v}} f(\\vec{x}) = g'(t)")
+        deriv_relation.next_to(g_def, DOWN, buff=0.4)
+
+        # self.play(TransformMatchingTex(directional.copy(), deriv_relation))
+        # self.wait()
+
+        self.add_fixed_in_frame_mobjects(f_explicit,
+                                         f_vector,
+                                         directional,
+                                         path,
+                                         g_def,
+                                         deriv_relation)
+        self.remove(f_explicit,
+                    f_vector,
+                    directional,
+                    path,
+                    g_def,
+                    deriv_relation)
+
+
         # --- Function ---
         def f(x, y):
             return 0.5 * (x**2 + y**2)
@@ -44,13 +99,23 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
 
         self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
 
+        # Yay tex
+        self.play(Create(f_explicit))
+
         self.play(Create(axes), Create(surface))
         self.wait()
+
+        # Yay tex
+        self.play(TransformByGlyphMap(f_explicit, f_vector,
+                                (range(2,13), range(2,4))))
 
         # --- Point ---
         z0 = f(x0, y0)
         point = Dot3D(axes.c2p(x0, y0, z0), color=RED)
         self.play(FadeIn(point))
+
+        # Yay tex
+        self.play(Write(directional))
 
         # --- Directional derivative arrow ---
         grad = np.array([x0, y0])
@@ -187,3 +252,9 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
 
         self.play(Create(tangent_line))
         self.wait(2)
+
+        # Yay tex
+        self.play(Write(directional))
+        self.play(Write(path))
+        self.play(Write(g_def))
+        self.play(Write(deriv_relation))
