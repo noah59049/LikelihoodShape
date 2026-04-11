@@ -1,9 +1,15 @@
 from manim import *
+from manim_voiceover import *
+from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 import numpy as np
 from MF_Tools import *
 
-class DirectionalDerivativeSliceCopy(ThreeDScene):
+class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
     def construct(self):
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/graph_slice_podcast0.mp3",
+        cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+        min_silence_len=2000,
+        keep_silence=(0,0)))
                 # --- Step 1: First line at top ---
         f_explicit = MathTex("f(x_1, x_2, x_3, x_4)")
         f_explicit.to_edge(UP)
@@ -99,159 +105,162 @@ class DirectionalDerivativeSliceCopy(ThreeDScene):
 
         self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
 
-        # Yay tex
-        self.play(Create(f_explicit))
+        with self.voiceover("So suppose we have a function f that inputs multiple variables, and it outputs a single value.") as tracker:
+            # Yay tex
+            self.play(Create(f_explicit))
 
-        self.play(Create(axes), Create(surface))
-        self.wait()
+            self.play(Create(axes), Create(surface))
+            self.wait()
 
-        # Yay tex
-        self.play(TransformByGlyphMap(f_explicit, f_vector,
-                                (range(2,13), range(2,4))))
+        with self.voiceover("We can think of it as inputting a vector.") as tracker:
+            # Yay tex
+            self.play(TransformByGlyphMap(f_explicit, f_vector,
+                                    (range(2,13), range(2,4))))
 
-        # --- Point ---
-        z0 = f(x0, y0)
-        point = Dot3D(axes.c2p(x0, y0, z0), color=RED)
-        self.play(FadeIn(point))
+        with self.voiceover("We consider the directional derivative in the direction of some vector v,") as tracker:
+            # Yay tex
+            self.play(Write(directional))
 
-        # Yay tex
-        self.play(Write(directional))
+        with self.voiceover(" the slope of the tangent line in that direction") as tracker:
+            # --- Point ---
+            z0 = f(x0, y0)
+            point = Dot3D(axes.c2p(x0, y0, z0), color=RED)
+            self.play(FadeIn(point))
 
-        # --- Directional derivative arrow ---
-        grad = np.array([x0, y0])
-        directional_derivative = np.dot(grad, v)
+            # --- Directional derivative arrow ---
+            grad = np.array([x0, y0])
+            directional_derivative = np.dot(grad, v)
 
-        arrow = Arrow3D(
-            start=axes.c2p(x0, y0, z0),
-            end=axes.c2p(
-                x0 + v[0],
-                y0 + v[1],
-                z0 + directional_derivative
-            ),
-            color=YELLOW
-        )
+            arrow = Arrow3D(
+                start=axes.c2p(x0, y0, z0),
+                end=axes.c2p(
+                    x0 + v[0],
+                    y0 + v[1],
+                    z0 + directional_derivative
+                ),
+                color=YELLOW
+            )
 
-        self.play(Create(arrow))
-        self.wait()
+            self.play(Create(arrow))
+            self.wait()
 
         # =========================================================
         # Slice plane
         # =========================================================
 
-        plane = Surface(
-            lambda s, t: axes.c2p(
-                x0 + s * v[0],
-                y0 + s * v[1],
-                z0 + t
-            ),
-            u_range=[-2, 2],
-            v_range=[-3, 3],
-            resolution=(10, 10),
-            fill_opacity=0.6,
-            checkerboard_colors=[RED_D, RED_E],
-        )
+        with self.voiceover("So the way we do that is we slice the graph along the vector, and that gives us a graph that’s just a function of 1 variable."):
+            plane = Surface(
+                lambda s, t: axes.c2p(
+                    x0 + s * v[0],
+                    y0 + s * v[1],
+                    z0 + t
+                ),
+                u_range=[-2, 2],
+                v_range=[-3, 3],
+                resolution=(10, 10),
+                fill_opacity=0.6,
+                checkerboard_colors=[RED_D, RED_E],
+            )
 
-        self.play(FadeIn(plane))
-        self.wait()
+            self.play(FadeIn(plane))
+            self.wait()
 
-        # =========================================================
-        # Slice curve
-        # =========================================================
+            # =========================================================
+            # Slice curve
+            # =========================================================
 
-        t_vals = np.linspace(-2, 2, 100)
+            t_vals = np.linspace(-2, 2, 100)
 
-        curve_3d_points = []
-        curve_2d_points = []
+            curve_3d_points = []
+            curve_2d_points = []
 
-        for t in t_vals:
-            x, y = gamma(t)
-            z = f(x, y)
+            for t in t_vals:
+                x, y = gamma(t)
+                z = f(x, y)
 
-            curve_3d_points.append(axes.c2p(x, y, z))
-            curve_2d_points.append(axes2d.c2p(t, z))
+                curve_3d_points.append(axes.c2p(x, y, z))
+                curve_2d_points.append(axes2d.c2p(t, z))
 
-        slice_curve = VMobject(color=ORANGE)
-        slice_curve.set_points_as_corners(curve_3d_points)
+            slice_curve = VMobject(color=ORANGE)
+            slice_curve.set_points_as_corners(curve_3d_points)
 
-        self.play(Create(slice_curve))
-        self.wait()
+            self.play(Create(slice_curve))
+            self.wait()
 
-        # =========================================================
-        # Add 2D axes FIXED IN FRAME
-        # =========================================================
+                        # =========================================================
+            # Add 2D axes FIXED IN FRAME
+            # =========================================================
 
-        self.add_fixed_in_frame_mobjects(axes2d)
-        self.play(FadeIn(axes2d))
+            self.add_fixed_in_frame_mobjects(axes2d)
+            self.play(FadeIn(axes2d))
 
-        # =========================================================
-        # Create 2D graph curve (target)
-        # =========================================================
+            # =========================================================
+            # Create 2D graph curve (target)
+            # =========================================================
 
-        graph_curve = VMobject(color=ORANGE)
-        graph_curve.set_points_as_corners(curve_2d_points)
+            graph_curve = VMobject(color=ORANGE)
+            graph_curve.set_points_as_corners(curve_2d_points)
 
-        self.add_fixed_in_frame_mobjects(graph_curve)
+            self.add_fixed_in_frame_mobjects(graph_curve)
 
-        # =========================================================
-        # COPY animation
-        # =========================================================
+            # =========================================================
+            # COPY animation
+            # =========================================================
 
-        slice_curve_2d_source = slice_curve.copy()
-        slice_curve_2d_source.apply_function(
-            lambda p: self.camera.project_point(p)
-        )
-        self.add_fixed_in_frame_mobjects(graph_curve)
+            slice_curve_2d_source = slice_curve.copy()
+            slice_curve_2d_source.apply_function(
+                lambda p: self.camera.project_point(p)
+            )
+            self.add_fixed_in_frame_mobjects(graph_curve)
 
-        self.play(
-            TransformFromCopy(slice_curve_2d_source, graph_curve),
-            run_time=2
-        )
+            self.play(
+                TransformFromCopy(slice_curve_2d_source, graph_curve),
+                run_time=2
+            )
 
-        self.wait()
+        with self.voiceover("And the derivative of that function there is the directional derivative."):
+            # =========================================================
+            # Copy the point too
+            # =========================================================
 
-        # =========================================================
-        # Copy the point too
-        # =========================================================
+            # Get the 3D center of the point
+            p3d = point.get_center()
 
-        # Get the 3D center of the point
-        p3d = point.get_center()
+            # Project it to screen space
+            p2d = self.camera.project_point(p3d)
 
-        # Project it to screen space
-        p2d = self.camera.project_point(p3d)
+            # Create a proper 2D dot at that location
+            point_2d_source = Dot(p2d, color=RED)
 
-        # Create a proper 2D dot at that location
-        point_2d_source = Dot(p2d, color=RED)
+            # Hide it (so we only see the original)
+            point_2d_source.set_opacity(0)
+            self.add(point_2d_source)
 
-        # Hide it (so we only see the original)
-        point_2d_source.set_opacity(0)
-        self.add(point_2d_source)
+            # Target dot (already correct)
+            dot2d = Dot(axes2d.c2p(0, g(0)), color=RED)
+            self.add_fixed_in_frame_mobjects(dot2d)
 
-        # Target dot (already correct)
-        dot2d = Dot(axes2d.c2p(0, g(0)), color=RED)
-        self.add_fixed_in_frame_mobjects(dot2d)
+            # Animate
+            self.play(
+                TransformFromCopy(point_2d_source, dot2d)
+            )
 
-        # Animate
-        self.play(
-            TransformFromCopy(point_2d_source, dot2d)
-        )
-        self.wait()
+            # =========================================================
+            # Tangent line
+            # =========================================================
 
-        # =========================================================
-        # Tangent line
-        # =========================================================
+            slope = directional_derivative
 
-        slope = directional_derivative
+            tangent_line = axes2d.plot(
+                lambda t: g(0) + slope * t,
+                x_range=[-2, 2],
+                color=GREEN
+            )
 
-        tangent_line = axes2d.plot(
-            lambda t: g(0) + slope * t,
-            x_range=[-2, 2],
-            color=GREEN
-        )
+            self.add_fixed_in_frame_mobjects(tangent_line)
 
-        self.add_fixed_in_frame_mobjects(tangent_line)
-
-        self.play(Create(tangent_line))
-        self.wait(2)
+            self.play(Create(tangent_line))
+            self.wait(2)
 
         # Yay tex
         self.play(Write(directional))
