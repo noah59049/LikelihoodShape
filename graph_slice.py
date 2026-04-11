@@ -6,7 +6,7 @@ from MF_Tools import *
 
 class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/graph_slice_podcast0.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/graph_slice_podcast1.mp3",
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
@@ -261,9 +261,12 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
 
             self.play(Create(tangent_line))
             self.wait(2)
+            self.play(Write(directional))
 
         # Yay tex
-        self.play(Write(directional))
-        self.play(Write(path))
-        self.play(Write(g_def))
-        self.play(Write(deriv_relation))
+        with self.voiceover("So, the way I like to formalize this is by parameterizing our inputs. So our input x is equal to any initial state a plus our direction vector v times t.") as tracker:
+            self.play(Write(path))
+        with self.voiceover("And then we just let g(t) equal f(x), or f(a + tv).") as tracker:
+            self.play(Write(g_def))
+        with self.voiceover("So g is just the function sliced along that line. Then the directional derivative is just g’(t), the derivative of g with respect to t, which makes sense.") as tracker:
+            self.play(Write(deriv_relation))
