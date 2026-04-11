@@ -6,7 +6,7 @@ from MF_Tools import *
 
 class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/graph_slice_podcast1.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/graph_slice_podcast2.mp3",
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
@@ -121,7 +121,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             # Yay tex
             self.play(Write(directional))
 
-        with self.voiceover(" the slope of the tangent line in that direction") as tracker:
+        # with self.voiceover(" the slope of the tangent line in that direction") as tracker:
             # --- Point ---
             z0 = f(x0, y0)
             point = Dot3D(axes.c2p(x0, y0, z0), color=RED)
