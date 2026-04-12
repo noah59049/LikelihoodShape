@@ -30,11 +30,14 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         # --- Step 5: g(t) definition ---
         g_def = MathTex("g(t) = f(\\vec{a} + t\\vec{v}) = f(\\vec{x})")
         g_def.next_to(path, DOWN, buff=0.4)
-        g_def.to_edge(LEFT)
 
         # --- Step 6: derivative relation ---
         deriv_relation = MathTex("D_{\\vec{v}} f(\\vec{x}) = g'(t)")
         deriv_relation.next_to(g_def, DOWN, buff=0.4)
+
+        # Send g_def to the left edge because it was going over the edge before
+        g_def.to_edge(LEFT)
+
 
         self.add_fixed_in_frame_mobjects(f_explicit,
                                          f_vector,
