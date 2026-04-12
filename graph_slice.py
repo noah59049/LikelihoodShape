@@ -30,6 +30,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         # --- Step 5: g(t) definition ---
         g_def = MathTex("g(t) = f(\\vec{a} + t\\vec{v}) = f(\\vec{x})")
         g_def.next_to(path, DOWN, buff=0.4)
+        g_def.to_edge(LEFT)
 
         # --- Step 6: derivative relation ---
         deriv_relation = MathTex("D_{\\vec{v}} f(\\vec{x}) = g'(t)")
@@ -77,7 +78,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             x_range=[-2, 2],
             y_range=[0, 4],
             axis_config={"include_numbers": True},
-        ).scale(0.7).to_corner(DR)
+        ).scale(0.56).to_corner(DL)
 
         # --- Surface ---
         surface = Surface(
@@ -172,7 +173,23 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             self.play(Create(slice_curve))
             self.wait()
 
-                        # =========================================================
+            # Move and shrink the 3D scene to make room for the 2D graph
+            three_d_group = VGroup(
+                axes,
+                surface,
+                plane,
+                slice_curve,
+                arrow,
+                point,
+            )
+
+            self.play(
+                three_d_group.animate.scale(0.8).to_edge(RIGHT, buff=0.5),
+                run_time=2
+            )
+            self.wait()
+
+            # =========================================================
             # Add 2D axes FIXED IN FRAME
             # =========================================================
 
