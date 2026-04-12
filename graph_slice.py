@@ -59,7 +59,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
 
         # --- Point and direction ---
         x0, y0 = 1, 1
-        v = np.array([0, 1])
+        v = np.array([-1, 1])
         v = v / np.linalg.norm(v)
 
         def gamma(t):
@@ -265,8 +265,6 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             self.add_fixed_in_frame_mobjects(tangent_line)
 
             self.play(Create(tangent_line))
-            self.wait(2)
-            self.play(Write(directional))
 
         # Yay tex
         with self.voiceover("So, the way I like to formalize this is by parameterizing our inputs. So our input x is equal to any initial state a plus our direction vector v times t.") as tracker:
