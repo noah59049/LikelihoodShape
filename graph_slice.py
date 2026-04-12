@@ -10,9 +10,10 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
-                # --- Step 1: First line at top ---
+        
+        # --- Step 1: First line at top ---
         f_explicit = MathTex("f(x_1, x_2, x_3, x_4)")
-        f_explicit.to_edge(UP)
+        f_explicit.to_corner(UL)
 
         # --- Step 2: Transform in place ---
         f_vector = MathTex("f(\\vec{x})")
