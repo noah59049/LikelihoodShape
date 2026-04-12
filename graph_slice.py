@@ -14,23 +14,13 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         f_explicit = MathTex("f(x_1, x_2, x_3, x_4)")
         f_explicit.to_edge(UP)
 
-        # self.play(Write(f_explicit))
-        # self.wait()
-
         # --- Step 2: Transform in place ---
         f_vector = MathTex("f(\\vec{x})")
         f_vector.move_to(f_explicit)
 
-        # self.play(TransformByGlyphMap(f_explicit, f_vector,
-        #                               (range(2,13), range(2,4))))
-        # self.wait()
-
         # --- Step 3: Directional derivative ---
         directional = MathTex("D_{\\vec{v}} f(\\vec{x})")
         directional.next_to(f_vector, DOWN, buff=0.4)
-
-        # self.play(Write(directional))
-        # self.wait()
 
         # --- Step 4: Path ---
         path = MathTex("\\vec{x} = \\vec{a} + t\\vec{v}")
@@ -40,15 +30,9 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         g_def = MathTex("g(t) = f(\\vec{a} + t\\vec{v}) = f(\\vec{x})")
         g_def.next_to(path, DOWN, buff=0.4)
 
-        # self.play(Write(g_def))
-        # self.wait()
-
         # --- Step 6: derivative relation ---
         deriv_relation = MathTex("D_{\\vec{v}} f(\\vec{x}) = g'(t)")
         deriv_relation.next_to(g_def, DOWN, buff=0.4)
-
-        # self.play(TransformMatchingTex(directional.copy(), deriv_relation))
-        # self.wait()
 
         self.add_fixed_in_frame_mobjects(f_explicit,
                                          f_vector,
