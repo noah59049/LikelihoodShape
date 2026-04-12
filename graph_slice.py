@@ -58,8 +58,8 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             return 0.5 * (x**2 + y**2)
 
         # --- Point and direction ---
-        x0, y0 = 1, 1
-        v = np.array([-1, 1])
+        x0, y0 = -1, 1
+        v = np.array([1,2])
         v = v / np.linalg.norm(v)
 
         def gamma(t):
