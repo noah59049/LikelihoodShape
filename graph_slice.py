@@ -335,14 +335,14 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             p2d = self.camera.project_point(p3d)
 
             # Create a proper 2D dot at that location
-            point_2d_source = Dot(p2d, color=RED)
+            point_2d_source = Dot(p2d, color=BLUE)
 
             # Hide it (so we only see the original)
             point_2d_source.set_opacity(0)
             self.add(point_2d_source)
 
             # Target dot (already correct)
-            dot2d = Dot(axes2d.c2p(0, g(0)), color=RED)
+            dot2d = Dot(axes2d.c2p(0, g(0)), color=BLUE)
             self.add_fixed_in_frame_mobjects(dot2d)
 
             # Animate
