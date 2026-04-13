@@ -176,6 +176,106 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             self.play(Create(slice_curve))
             self.wait()
 
+            # =========================================================
+            # Delta f / Delta x visualization on the 3D graph
+            # =========================================================
+
+            # with self.voiceover(
+            #     "To compute the directional derivative, we examine the change in the function "
+            #     "over a small change in the input along the direction v."
+            # ):
+            if True:
+                h_tracker = ValueTracker(1.0)
+
+                # Helper to compute a point on the surface along the direction v
+                def point_on_surface(t):
+                    x, y = gamma(t)
+                    z = f(x, y)
+                    return axes.c2p(x, y, z)
+
+                # Base point
+                base_dot = Dot3D(point_on_surface(0), color=RED)
+
+                # Moving point
+                moving_dot = always_redraw(
+                    lambda: Dot3D(
+                        point_on_surface(h_tracker.get_value()),
+                        color=BLUE
+                    )
+                )
+
+                # Secant line
+                secant_line = always_redraw(
+                    lambda: Line3D(
+                        start=point_on_surface(0),
+                        end=point_on_surface(h_tracker.get_value()),
+                        color=YELLOW
+                    )
+                )
+
+                # Δx: horizontal displacement along the slice direction
+                delta_x_line = always_redraw(
+                    lambda: Line3D(
+                        start=axes.c2p(x0, y0, z0),
+                        end=axes.c2p(
+                            x0 + h_tracker.get_value() * v[0],
+                            y0 + h_tracker.get_value() * v[1],
+                            z0
+                        ),
+                        color=GREEN
+                    )
+                )
+
+                # Δf: vertical displacement
+                delta_f_line = always_redraw(
+                    lambda: Line3D(
+                        start=axes.c2p(
+                            x0 + h_tracker.get_value() * v[0],
+                            y0 + h_tracker.get_value() * v[1],
+                            z0
+                        ),
+                        end=point_on_surface(h_tracker.get_value()),
+                        color=PURPLE
+                    )
+                )
+
+                # Labels for Δx and Δf
+                delta_x_label = always_redraw(
+                    lambda: MathTex(r"\Delta x")
+                    .scale(0.5)
+                    .move_to(delta_x_line.get_center())
+                )
+
+                delta_f_label = always_redraw(
+                    lambda: MathTex(r"\Delta f")
+                    .scale(0.5)
+                    .move_to(delta_f_line.get_center())
+                )
+
+                self.add(
+                    base_dot,
+                    moving_dot,
+                    secant_line,
+                    delta_x_line,
+                    delta_f_line,
+                    delta_x_label,
+                    delta_f_label,
+                )
+
+                self.wait()
+
+            # with self.voiceover(
+            #     "As the change in x approaches zero, the secant line approaches the tangent line. "
+            #     "Its slope is the directional derivative."
+            # ):
+                # Animate h shrinking to zero
+                self.play(
+                    h_tracker.animate.set_value(0.001),
+                    run_time=4,
+                    rate_func=smooth
+                )
+                self.wait()
+
             # Move and shrink the 3D scene to make room for the 2D graph
             three_d_group = VGroup(
                 axes,
