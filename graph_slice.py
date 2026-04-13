@@ -213,8 +213,8 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
 
         # with self.voiceover(" the slope of the tangent line in that direction") as tracker:
             # --- Point ---
-            point = Dot3D(axes.c2p(x0, y0, z0), color=RED)
-            self.play(FadeIn(point))
+            # point = Dot3D(axes.c2p(x0, y0, z0), color=RED)
+            # self.play(FadeIn(point))
 
             # --- Directional derivative arrow ---
             grad = np.array([x0, y0])
@@ -283,7 +283,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
                 plane,
                 slice_curve,
                 arrow,
-                point,
+                base_dot,
             )
 
             self.play(
@@ -329,7 +329,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             # =========================================================
 
             # Get the 3D center of the point
-            p3d = point.get_center()
+            p3d = base_dot.get_center()
 
             # Project it to screen space
             p2d = self.camera.project_point(p3d)
