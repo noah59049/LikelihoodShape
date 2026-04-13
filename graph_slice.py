@@ -59,6 +59,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
 
         # --- Point and direction ---
         x0, y0 = -1, 1
+        z0 = f(x0, y0)
         v = np.array([1,2])
         v = v / np.linalg.norm(v)
 
@@ -109,72 +110,6 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         with self.voiceover("We consider the directional derivative in the direction of some vector v,") as tracker:
             # Yay tex
             self.play(Write(directional))
-
-        # with self.voiceover(" the slope of the tangent line in that direction") as tracker:
-            # --- Point ---
-            z0 = f(x0, y0)
-            point = Dot3D(axes.c2p(x0, y0, z0), color=RED)
-            self.play(FadeIn(point))
-
-            # --- Directional derivative arrow ---
-            grad = np.array([x0, y0])
-            directional_derivative = np.dot(grad, v)
-
-            arrow = Arrow3D(
-                start=axes.c2p(x0, y0, z0),
-                end=axes.c2p(
-                    x0 + v[0],
-                    y0 + v[1],
-                    z0 + directional_derivative
-                ),
-                color=YELLOW
-            )
-
-            self.play(Create(arrow))
-            self.wait()
-
-        # =========================================================
-        # Slice plane
-        # =========================================================
-
-        with self.voiceover("So the way we do that is we slice the graph along the vector, and that gives us a graph that’s just a function of 1 variable."):
-            plane = Surface(
-                lambda s, t: axes.c2p(
-                    x0 + s * v[0],
-                    y0 + s * v[1],
-                    z0 + t
-                ),
-                u_range=[-2, 2],
-                v_range=[-3, 3],
-                resolution=(10, 10),
-                fill_opacity=0.6,
-                checkerboard_colors=[RED_D, RED_E],
-            )
-
-            self.play(FadeIn(plane))
-            self.wait()
-
-            # =========================================================
-            # Slice curve
-            # =========================================================
-
-            t_vals = np.linspace(-2, 2, 100)
-
-            curve_3d_points = []
-            curve_2d_points = []
-
-            for t in t_vals:
-                x, y = gamma(t)
-                z = f(x, y)
-
-                curve_3d_points.append(axes.c2p(x, y, z))
-                curve_2d_points.append(axes2d.c2p(t, z))
-
-            slice_curve = VMobject(color=ORANGE)
-            slice_curve.set_points_as_corners(curve_3d_points)
-
-            self.play(Create(slice_curve))
-            self.wait()
 
             # =========================================================
             # Delta f / Delta x visualization on the 3D graph
@@ -275,6 +210,71 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
                     rate_func=smooth
                 )
                 self.wait()
+
+        # with self.voiceover(" the slope of the tangent line in that direction") as tracker:
+            # --- Point ---
+            point = Dot3D(axes.c2p(x0, y0, z0), color=RED)
+            self.play(FadeIn(point))
+
+            # --- Directional derivative arrow ---
+            grad = np.array([x0, y0])
+            directional_derivative = np.dot(grad, v)
+
+            arrow = Arrow3D(
+                start=axes.c2p(x0, y0, z0),
+                end=axes.c2p(
+                    x0 + v[0],
+                    y0 + v[1],
+                    z0 + directional_derivative
+                ),
+                color=YELLOW
+            )
+
+            self.play(Create(arrow))
+            self.wait()
+
+        # =========================================================
+        # Slice plane
+        # =========================================================
+
+        with self.voiceover("So the way we do that is we slice the graph along the vector, and that gives us a graph that’s just a function of 1 variable."):
+            plane = Surface(
+                lambda s, t: axes.c2p(
+                    x0 + s * v[0],
+                    y0 + s * v[1],
+                    z0 + t
+                ),
+                u_range=[-2, 2],
+                v_range=[-3, 3],
+                resolution=(10, 10),
+                fill_opacity=0.6,
+                checkerboard_colors=[RED_D, RED_E],
+            )
+
+            self.play(FadeIn(plane))
+            self.wait()
+
+            # =========================================================
+            # Slice curve
+            # =========================================================
+
+            t_vals = np.linspace(-2, 2, 100)
+
+            curve_3d_points = []
+            curve_2d_points = []
+
+            for t in t_vals:
+                x, y = gamma(t)
+                z = f(x, y)
+
+                curve_3d_points.append(axes.c2p(x, y, z))
+                curve_2d_points.append(axes2d.c2p(t, z))
+
+            slice_curve = VMobject(color=ORANGE)
+            slice_curve.set_points_as_corners(curve_3d_points)
+
+            self.play(Create(slice_curve))
+            self.wait()
 
             # Move and shrink the 3D scene to make room for the 2D graph
             three_d_group = VGroup(
