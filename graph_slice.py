@@ -318,12 +318,6 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             )
             self.add_fixed_in_frame_mobjects(graph_curve)
 
-            self.play(
-                TransformFromCopy(slice_curve_2d_source, graph_curve),
-                run_time=2
-            )
-
-        with self.voiceover("And the derivative of that function there is the directional derivative."):
             # =========================================================
             # Copy the point too
             # =========================================================
@@ -347,8 +341,12 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
 
             # Animate
             self.play(
-                TransformFromCopy(point_2d_source, dot2d)
+                TransformFromCopy(slice_curve_2d_source, graph_curve),
+                TransformFromCopy(point_2d_source, dot2d),
+                run_time=2
             )
+            
+        with self.voiceover("And the derivative of that function there is the directional derivative."):
 
             # =========================================================
             # Tangent line
