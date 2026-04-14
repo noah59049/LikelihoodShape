@@ -378,10 +378,11 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             )
             # Ensure 2D objects remain fixed on screen
             self.add_fixed_in_frame_mobjects(parametric_dot2d)
-            
+
             self.add(parametric_dot)
             self.add(parametric_dot2d)
-            self.play(t_tracker.animate.set_value(1.0))
+            self.play(t_tracker.animate.set_value(1.0), run_time = 1.2)
+            self.play(t_tracker.animate.set_value(0.0), run_time = 1.2)
         with self.voiceover("So the directional derivative is g’(t).") as tracker:
             self.play(Write(deriv_relation))
             # TODO: Move the tangent lines
