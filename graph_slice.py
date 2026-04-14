@@ -20,7 +20,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         f_vector.move_to(f_explicit)
 
         # --- Step 3: Directional derivative ---
-        directional = MathTex("D_{\\vec{v}} f(\\vec{x})")
+        directional = MathTex(r"D_{\vec{v}} f(\vec{x})=\lim_{h \to 0}\frac{f(\vec{x}+h\vec{v})-f(\vec{x})}{h}")
         directional.next_to(f_vector, DOWN, buff=0.4)
 
         # --- Step 4: Path ---
