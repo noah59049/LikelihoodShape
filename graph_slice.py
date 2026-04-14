@@ -359,6 +359,8 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         with self.voiceover("Algebraically that means you choose some initial value a, and then parameterize x as a + tv,") as tracker:
             self.play(Write(atv))
             # TODO: Add a and v to the z=0 plane of the 3D graph
+
+            self.play(FadeOut(tangent_line), FadeOut(arrow), run_time = 0.7)
         with self.voiceover("and define g(t) as equal to f(x).") as tracker:
             self.play(Write(g_def))
             # Add g(t) labels to the lower graph
