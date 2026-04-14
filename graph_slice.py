@@ -6,7 +6,7 @@ from MF_Tools import *
 
 class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/graph_slice_podcast2.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/graph_slice_podcast4.mp3",
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
@@ -24,12 +24,12 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         directional.next_to(f_vector, DOWN, buff=0.4)
 
         # --- Step 4: Path ---
-        path = MathTex("\\vec{x} = \\vec{a} + t\\vec{v}")
-        path.next_to(directional, DOWN, buff=0.4)
+        atv = MathTex("\\vec{x} = \\vec{a} + t\\vec{v}")
+        atv.next_to(directional, DOWN, buff=0.4)
 
         # --- Step 5: g(t) definition ---
         g_def = MathTex("g(t) = f(\\vec{a} + t\\vec{v}) = f(\\vec{x})")
-        g_def.next_to(path, DOWN, buff=0.4)
+        g_def.next_to(atv, DOWN, buff=0.4)
 
         # --- Step 6: derivative relation ---
         deriv_relation = MathTex("D_{\\vec{v}} f(\\vec{x}) = g'(t)")
@@ -42,13 +42,13 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         self.add_fixed_in_frame_mobjects(f_explicit,
                                          f_vector,
                                          directional,
-                                         path,
+                                         atv,
                                          g_def,
                                          deriv_relation)
         self.remove(f_explicit,
                     f_vector,
                     directional,
-                    path,
+                    atv,
                     g_def,
                     deriv_relation)
 
@@ -95,127 +95,118 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
 
         self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
 
-        with self.voiceover("So suppose we have a function f that inputs multiple variables, and it outputs a single value.") as tracker:
+        with self.voiceover("If we have a function of a single variable f(x), the derivative is the change in the function value divided by the change in x, in the limit as the change in x goes to 0. And geometrically it’s the slope of the tangent line.") as tracker:
+            pass # TODO: Have stuff in here
+
+        with self.voiceover("If we have a function of multiple variables,") as tracker:
             # Yay tex
             self.play(Create(f_explicit))
 
             self.play(Create(axes), Create(surface))
             self.wait()
 
-        with self.voiceover("We can think of it as inputting a vector.") as tracker:
+        with self.voiceover("f(vector x),") as tracker:
             # Yay tex
             self.play(TransformByGlyphMap(f_explicit, f_vector,
                                     (range(2,13), range(2,4))))
 
-        with self.voiceover("We consider the directional derivative in the direction of some vector v,") as tracker:
+        with self.voiceover("If we have a function of multiple variables, f(vector x), the derivative in the direction of unit vector v is the change in the value of f divided by the distance in the direction of v,") as tracker:
             # Yay tex
             self.play(Write(directional))
 
             # =========================================================
             # Delta f / Delta x visualization on the 3D graph
             # =========================================================
+            h_tracker = ValueTracker(1.0)
 
-            # with self.voiceover(
-            #     "To compute the directional derivative, we examine the change in the function "
-            #     "over a small change in the input along the direction v."
-            # ):
-            if True:
-                h_tracker = ValueTracker(1.0)
+            # Helper to compute a point on the surface along the direction v
+            def point_on_surface(t):
+                x, y = gamma(t)
+                z = f(x, y)
+                return axes.c2p(x, y, z)
 
-                # Helper to compute a point on the surface along the direction v
-                def point_on_surface(t):
-                    x, y = gamma(t)
-                    z = f(x, y)
-                    return axes.c2p(x, y, z)
+            # Base point
+            base_dot = Dot3D(point_on_surface(0), color=RED)
 
-                # Base point
-                base_dot = Dot3D(point_on_surface(0), color=RED)
-
-                # Moving point
-                moving_dot = always_redraw(
-                    lambda: Dot3D(
-                        point_on_surface(h_tracker.get_value()),
-                        color=BLUE
-                    )
+            # Moving point
+            moving_dot = always_redraw(
+                lambda: Dot3D(
+                    point_on_surface(h_tracker.get_value()),
+                    color=BLUE
                 )
+            )
 
-                # Secant line
-                secant_line = always_redraw(
-                    lambda: Line3D(
-                        start=point_on_surface(0),
-                        end=point_on_surface(h_tracker.get_value()),
-                        color=YELLOW
-                    )
+            # Secant line
+            secant_line = always_redraw(
+                lambda: Line3D(
+                    start=point_on_surface(0),
+                    end=point_on_surface(h_tracker.get_value()),
+                    color=YELLOW
                 )
+            )
 
-                # Δx: horizontal displacement along the slice direction
-                delta_x_line = always_redraw(
-                    lambda: Line3D(
-                        start=axes.c2p(x0, y0, z0),
-                        end=axes.c2p(
-                            x0 + h_tracker.get_value() * v[0],
-                            y0 + h_tracker.get_value() * v[1],
-                            z0
-                        ),
-                        color=GREEN
-                    )
+            # Δx: horizontal displacement along the slice direction
+            delta_x_line = always_redraw(
+                lambda: Line3D(
+                    start=axes.c2p(x0, y0, z0),
+                    end=axes.c2p(
+                        x0 + h_tracker.get_value() * v[0],
+                        y0 + h_tracker.get_value() * v[1],
+                        z0
+                    ),
+                    color=GREEN
                 )
+            )
 
-                # Δf: vertical displacement
-                delta_f_line = always_redraw(
-                    lambda: Line3D(
-                        start=axes.c2p(
-                            x0 + h_tracker.get_value() * v[0],
-                            y0 + h_tracker.get_value() * v[1],
-                            z0
-                        ),
-                        end=point_on_surface(h_tracker.get_value()),
-                        color=PURPLE
-                    )
+            # Δf: vertical displacement
+            delta_f_line = always_redraw(
+                lambda: Line3D(
+                    start=axes.c2p(
+                        x0 + h_tracker.get_value() * v[0],
+                        y0 + h_tracker.get_value() * v[1],
+                        z0
+                    ),
+                    end=point_on_surface(h_tracker.get_value()),
+                    color=PURPLE
                 )
+            )
 
-                # Labels for Δx and Δf
-                delta_x_label = always_redraw(
-                    lambda: MathTex(r"\Delta x")
-                    .scale(0.5)
-                    .move_to(delta_x_line.get_center())
-                )
+            # Labels for Δx and Δf
+            delta_x_label = always_redraw(
+                lambda: MathTex(r"\Delta x")
+                .scale(0.5)
+                .move_to(delta_x_line.get_center())
+            )
 
-                delta_f_label = always_redraw(
-                    lambda: MathTex(r"\Delta f")
-                    .scale(0.5)
-                    .move_to(delta_f_line.get_center())
-                )
+            delta_f_label = always_redraw(
+                lambda: MathTex(r"\Delta f")
+                .scale(0.5)
+                .move_to(delta_f_line.get_center())
+            )
 
-                self.add(
-                    base_dot,
-                    moving_dot,
-                    secant_line,
-                    delta_x_line,
-                    delta_f_line,
-                    delta_x_label,
-                    delta_f_label,
-                )
+            self.add(
+                base_dot,
+                moving_dot,
+                secant_line,
+                delta_x_line,
+                delta_f_line,
+                delta_x_label,
+                delta_f_label,
+            )
 
-                self.wait()
+            self.wait()
 
-            # with self.voiceover(
-            #     "As the change in x approaches zero, the secant line approaches the tangent line. "
-            #     "Its slope is the directional derivative."
-            # ):
-                # Animate h shrinking to zero
-                self.play(
-                    h_tracker.animate.set_value(0.001),
-                    run_time=4,
-                    rate_func=smooth
-                )
-                self.wait()
+        with self.voiceover(
+            "in the limit as the change in x goes to 0."
+        ) as tracker:
+            # Animate h shrinking to zero
+            self.play(
+                h_tracker.animate.set_value(0.001),
+                run_time=4,
+                rate_func=smooth
+            )
 
-        # with self.voiceover(" the slope of the tangent line in that direction") as tracker:
-            # --- Point ---
-            # point = Dot3D(axes.c2p(x0, y0, z0), color=RED)
-            # self.play(FadeIn(point))
-
+        with self.voiceover("Geometrically it’s the slope of the tangent line in the direction of v.") as tracker:
             # --- Directional derivative arrow ---
             grad = np.array([x0, y0])
             directional_derivative = np.dot(grad, v)
@@ -237,7 +228,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         # Slice plane
         # =========================================================
 
-        with self.voiceover("So the way we do that is we slice the graph along the vector, and that gives us a graph that’s just a function of 1 variable."):
+        with self.voiceover("I like to think of it as taking a slice of the graph to get a function of 1 variable,"):
             plane = Surface(
                 lambda s, t: axes.c2p(
                     x0 + s * v[0],
@@ -345,8 +336,8 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
                 TransformFromCopy(point_2d_source, dot2d),
                 run_time=2
             )
-            
-        with self.voiceover("And the derivative of that function there is the directional derivative."):
+
+        with self.voiceover("and then taking the derivative of that function."):
 
             # =========================================================
             # Tangent line
@@ -365,9 +356,9 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             self.play(Create(tangent_line))
 
         # Yay tex
-        with self.voiceover("So, the way I like to formalize this is by parameterizing our inputs. So our input x is equal to any initial state a plus our direction vector v times t.") as tracker:
-            self.play(Write(path))
-        with self.voiceover("And then we just let g(t) equal f(x), or f(a + tv).") as tracker:
+        with self.voiceover("Algebraically that means you choose some initial value a, and then parameterize x as a + tv,") as tracker:
+            self.play(Write(atv))
+        with self.voiceover("and define g(t) as equal to f(x).") as tracker:
             self.play(Write(g_def))
-        with self.voiceover("So g is just the function sliced along that line. Then the directional derivative is just g’(t), the derivative of g with respect to t, which makes sense.") as tracker:
+        with self.voiceover("So the directional derivative is g’(t).") as tracker:
             self.play(Write(deriv_relation))
