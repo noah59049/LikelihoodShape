@@ -22,6 +22,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         # --- Step 3: Directional derivative ---
         directional = MathTex(r"D_{\vec{v}} f(\vec{x})=\lim_{h \to 0}\frac{f(\vec{x}+h\vec{v})-f(\vec{x})}{h}")
         directional.next_to(f_vector, DOWN, buff=0.4)
+        # TODO: Have directional added 1 at a time
 
         # --- Step 4: Path ---
         atv = MathTex("\\vec{x} = \\vec{a} + t\\vec{v}")
@@ -357,7 +358,11 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         # Yay tex
         with self.voiceover("Algebraically that means you choose some initial value a, and then parameterize x as a + tv,") as tracker:
             self.play(Write(atv))
+            # TODO: Add a and v to the z=0 plane of the 3D graph
         with self.voiceover("and define g(t) as equal to f(x).") as tracker:
             self.play(Write(g_def))
+            # TODO: Add g(t) labels to the lower graph
+            # TODO: Move the dots
         with self.voiceover("So the directional derivative is g’(t).") as tracker:
             self.play(Write(deriv_relation))
+            # TODO: Move the tangent lines
