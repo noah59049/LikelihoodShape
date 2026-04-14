@@ -362,7 +362,26 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         with self.voiceover("and define g(t) as equal to f(x).") as tracker:
             self.play(Write(g_def))
             # TODO: Add g(t) labels to the lower graph
-            # TODO: Move the dots
+
+            # --- Move the dots ---
+            def point_on_graph(t):
+                return axes2d.c2p(t, f(*gamma(t)))
+            t_tracker = ValueTracker(0.0)
+            parametric_dot2d = always_redraw(
+                lambda: Dot(point_on_graph(t_tracker.get_value()), color=RED)
+            )
+            parametric_dot = always_redraw(
+                lambda: Dot3D(
+                    point_on_surface(t_tracker.get_value()),
+                    color=RED
+                )
+            )
+            # Ensure 2D objects remain fixed on screen
+            self.add_fixed_in_frame_mobjects(parametric_dot2d)
+            
+            self.add(parametric_dot)
+            self.add(parametric_dot2d)
+            self.play(t_tracker.animate.set_value(1.0))
         with self.voiceover("So the directional derivative is g’(t).") as tracker:
             self.play(Write(deriv_relation))
             # TODO: Move the tangent lines
