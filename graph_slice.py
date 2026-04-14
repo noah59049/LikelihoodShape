@@ -35,7 +35,9 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         deriv_relation = MathTex("D_{\\vec{v}} f(\\vec{x}) = g'(t)")
         deriv_relation.next_to(g_def, DOWN, buff=0.4)
 
-        # Send g_def to the left edge because it was going over the edge before
+        # Stuff that would go over the left edge needs to get sent to the left edge
+        # But only after making everything else because otherwise we'd have misaligned things
+        directional.to_edge(LEFT)
         g_def.to_edge(LEFT)
 
 
