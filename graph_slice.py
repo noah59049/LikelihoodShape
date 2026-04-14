@@ -20,9 +20,10 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         f_vector.move_to(f_explicit)
 
         # --- Step 3: Directional derivative ---
+        pre_directional = MathTex(r"D_{\vec{v}} f(\vec{x})")
+        pre_directional.move_to(f_vector)
         directional = MathTex(r"D_{\vec{v}} f(\vec{x})=\lim_{h \to 0}\frac{f(\vec{x}+h\vec{v})-f(\vec{x})}{h}")
-        directional.next_to(f_vector, DOWN, buff=0.4)
-        # TODO: Have directional added 1 at a time
+        directional.to_corner(UL)
 
         # --- Step 4: Path ---
         atv = MathTex("\\vec{x} = \\vec{a} + t\\vec{v}")
@@ -38,18 +39,20 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
 
         # Stuff that would go over the left edge needs to get sent to the left edge
         # But only after making everything else because otherwise we'd have misaligned things
-        directional.to_edge(LEFT)
+        # directional.to_edge(LEFT)
         g_def.to_edge(LEFT)
 
 
         self.add_fixed_in_frame_mobjects(f_explicit,
                                          f_vector,
+                                         pre_directional,
                                          directional,
                                          atv,
                                          g_def,
                                          deriv_relation)
         self.remove(f_explicit,
                     f_vector,
+                    pre_directional,
                     directional,
                     atv,
                     g_def,
@@ -115,7 +118,11 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
 
         with self.voiceover("f(vector x), the derivative in the direction of unit vector v is the change in the value of f divided by the distance in the direction of v,") as tracker:
             # Yay tex
-            self.play(Write(directional))
+            self.play(TransformByGlyphMap(f_vector,pre_directional,
+                                          (FadeIn, range(3)),
+                                          ))
+            self.play(TransformByGlyphMap(pre_directional,directional,
+                                          (FadeIn, range(8,32))))
 
             # =========================================================
             # Delta f / Delta x visualization on the 3D graph
@@ -198,7 +205,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             )
 
             self.wait()
-
+        
         with self.voiceover(
             "in the limit as the change in x goes to 0."
         ) as tracker:
