@@ -361,7 +361,14 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             # TODO: Add a and v to the z=0 plane of the 3D graph
         with self.voiceover("and define g(t) as equal to f(x).") as tracker:
             self.play(Write(g_def))
-            # TODO: Add g(t) labels to the lower graph
+            # Add g(t) labels to the lower graph
+            axis_labels = axes2d.get_axis_labels(
+                MathTex("t").scale(0.7),
+                MathTex("g(t)").scale(0.7)
+            )
+
+            self.add_fixed_in_frame_mobjects(axis_labels)
+            self.play(Write(axis_labels), run_time = 0.5)
 
             # --- Move the dots ---
             def point_on_graph(t):
