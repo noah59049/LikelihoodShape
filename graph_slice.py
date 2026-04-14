@@ -243,7 +243,6 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             )
 
             self.play(FadeIn(plane))
-            self.wait()
 
             # =========================================================
             # Slice curve
@@ -265,7 +264,6 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             slice_curve.set_points_as_corners(curve_3d_points)
 
             self.play(Create(slice_curve))
-            self.wait()
 
             # Move and shrink the 3D scene to make room for the 2D graph
             three_d_group = VGroup(
@@ -279,9 +277,8 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
 
             self.play(
                 three_d_group.animate.scale(0.8).to_edge(RIGHT, buff=0.5),
-                run_time=2
+                run_time=1.35
             )
-            self.wait()
 
             # =========================================================
             # Add 2D axes FIXED IN FRAME
@@ -334,7 +331,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             self.play(
                 TransformFromCopy(slice_curve_2d_source, graph_curve),
                 TransformFromCopy(point_2d_source, dot2d),
-                run_time=2
+                run_time=1.35
             )
 
         with self.voiceover("and then taking the derivative of that function."):
