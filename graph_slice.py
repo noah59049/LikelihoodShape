@@ -110,7 +110,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             self.play(TransformByGlyphMap(f_explicit, f_vector,
                                     (range(2,13), range(2,4))))
 
-        with self.voiceover("If we have a function of multiple variables, f(vector x), the derivative in the direction of unit vector v is the change in the value of f divided by the distance in the direction of v,") as tracker:
+        with self.voiceover("f(vector x), the derivative in the direction of unit vector v is the change in the value of f divided by the distance in the direction of v,") as tracker:
             # Yay tex
             self.play(Write(directional))
 
@@ -202,7 +202,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             # Animate h shrinking to zero
             self.play(
                 h_tracker.animate.set_value(0.001),
-                run_time=4,
+                run_time=3,
                 rate_func=smooth
             )
 
