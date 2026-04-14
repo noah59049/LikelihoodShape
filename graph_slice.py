@@ -92,7 +92,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             lambda u, v_: axes.c2p(u, v_, f(u, v_)),
             u_range=[-2, 2],
             v_range=[-2, 2],
-            resolution=(24, 24),
+            resolution=(12, 12), # TODO: Make this bigger again during production
             fill_opacity=0.35,
         )
 
