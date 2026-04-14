@@ -393,3 +393,60 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         with self.voiceover("So the directional derivative is g’(t).") as tracker:
             self.play(Write(deriv_relation))
             # TODO: Move the tangent lines
+            def directional_derivative_at_t(t):
+                x, y = gamma(t)
+                grad = np.array([x, y])  # Gradient of f(x,y) = 0.5(x^2 + y^2)
+                return np.dot(grad, v)
+            
+            def directional_derivative_at_t(t):
+                x, y = gamma(t)
+                grad = np.array([x, y])  # Gradient of f(x,y) = 0.5(x^2 + y^2)
+                return np.dot(grad, v)
+            
+            tangent_line_2d = always_redraw(
+                lambda: axes2d.plot(
+                    lambda tau: (
+                        f(*gamma(t_tracker.get_value()))
+                        + directional_derivative_at_t(t_tracker.get_value())
+                        * (tau - t_tracker.get_value())
+                    ),
+                    x_range=[
+                        t_tracker.get_value() - 0.75,
+                        t_tracker.get_value() + 0.75
+                    ],
+                    color=GREEN,
+                )
+            )
+            tangent_line_3d = always_redraw(
+                lambda: Line3D(
+                    start=axes.c2p(
+                        gamma(t_tracker.get_value())[0] - 0.5 * v[0],
+                        gamma(t_tracker.get_value())[1] - 0.5 * v[1],
+                        f(*gamma(t_tracker.get_value()))
+                        - 0.5 * directional_derivative_at_t(t_tracker.get_value())
+                    ),
+                    end=axes.c2p(
+                        gamma(t_tracker.get_value())[0] + 0.5 * v[0],
+                        gamma(t_tracker.get_value())[1] + 0.5 * v[1],
+                        f(*gamma(t_tracker.get_value()))
+                        + 0.5 * directional_derivative_at_t(t_tracker.get_value())
+                    ),
+                    color=GREEN,
+                )
+            )
+
+            self.add_fixed_in_frame_mobjects(tangent_line_2d)
+            self.add(tangent_line_2d)
+            self.add(tangent_line_3d)
+
+            self.play(
+                t_tracker.animate.set_value(1.0),
+                run_time=2,
+                rate_func=linear
+            )
+            self.play(
+                t_tracker.animate.set_value(0.0),
+                run_time=2,
+                rate_func=linear
+            )
+
