@@ -76,7 +76,7 @@ def hessian_latex(n, func_name="f"):
 
 class DirectionalDerivativeScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/directional_derivative_podcast1.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/directional_derivative_podcast2.mp3",
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
@@ -194,7 +194,7 @@ class DirectionalDerivativeScene(VoiceoverScene):
 
         # Interlude: showing that it's the gradient
         # Copy it lower
-        with self.voiceover("5. v transpose times the gradient of f, or the dot product of v and the gradient. If we want to take the directional second derivative, we take the derivative of this sum with respect to t. The components of v are just constants,") as tracker:
+        with self.voiceover("v transpose times the gradient of f, or the dot product of v and the gradient. If we want to take the ") as tracker:
             nabla_form = MathTex("\\frac{\\partial g}{\\partial t} =" +
                             v_row +
                             grad_col).scale(0.8).next_to(vTgrad, DOWN)
@@ -232,9 +232,10 @@ class DirectionalDerivativeScene(VoiceoverScene):
         giga_hess0.scale(0.8)
         giga_hess0.align_to(simplified, UP)
 
-        self.play(
-            *[ReplacementTransform(simplified[i], giga_hess0[i]) for i in range(12)]
-        )
+        with self.voiceover("directional second derivative, we take the derivative of this sum with respect to t. The components of v are just constants,") as tracker:
+            self.play(
+                *[ReplacementTransform(simplified[i], giga_hess0[i]) for i in range(12)]
+            )
 
         with self.voiceover("but those partials of f become full vector products. We get this messy thing.") as tracker:
             for i in (1,2,3,4):
