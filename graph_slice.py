@@ -395,7 +395,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             self.play(t_tracker.animate.set_value(0.0), run_time = 1.2)
         with self.voiceover("So the directional derivative is g’(t).") as tracker:
             self.play(Write(deriv_relation))
-            # TODO: Move the tangent lines
+            # Move the tangent lines
             def directional_derivative_at_t(t):
                 x, y = gamma(t)
                 grad = np.array([x, y])  # Gradient of f(x,y) = 0.5(x^2 + y^2)
