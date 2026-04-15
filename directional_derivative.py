@@ -142,7 +142,7 @@ class DirectionalDerivativeScene(VoiceoverScene):
         chain_rule.scale(0.8)
         chain_rule.next_to(deriv_relation, DOWN, buff=0.4)
 
-        with self.voiceover("If we want to calculate the directional derivative, we just use the chain rule,") as tracker:
+        with self.voiceover("1. If we want to calculate the directional derivative, we just use the chain rule, and then the partials of x with respect to t just") as tracker:
             self.play(Write(chain_rule))
 
         # --- Step 8: Substitute v ---
@@ -163,7 +163,7 @@ class DirectionalDerivativeScene(VoiceoverScene):
         simplified.scale(0.8)
         simplified.align_to(chain_rule, UP)
 
-        with self.voiceover("and then the partials of x with respect to t just become the components of v.") as tracker:
+        with self.voiceover("become the components of v.") as tracker:
             self.play(
                 *[ReplacementTransform(chain_rule[i], simplified[i]) for i in range(12)]
             )
@@ -187,14 +187,14 @@ class DirectionalDerivativeScene(VoiceoverScene):
         with self.voiceover("And we can write this as a vector product between the derivatives of x and the components of v.") as tracker:
             self.play(TransformMatchingShapes(simplified.copy(), vTgrad))
 
-        with self.voiceover("We can have either one be the row or the column.") as tracker:
+        with self.voiceover("We can have either one be the row or the column. And we can simplify this into") as tracker:
             # Show that either vector can be transposed
             self.play(TransformMatchingShapes(vTgrad, gradTv))
             self.play(TransformMatchingShapes(gradTv, vTgrad))
 
         # Interlude: showing that it's the gradient
         # Copy it lower
-        with self.voiceover("And we can simplify this into the v transpose times the gradient of f, or the dot product of v and the gradient.") as tracker:
+        with self.voiceover("5. v transpose times the gradient of f, or the dot product of v and the gradient. If we want to take the directional second derivative, we take the derivative of this sum with respect to t. The components of v are just constants,") as tracker:
             nabla_form = MathTex("\\frac{\\partial g}{\\partial t} =" +
                             v_row +
                             grad_col).scale(0.8).next_to(vTgrad, DOWN)
@@ -236,7 +236,7 @@ class DirectionalDerivativeScene(VoiceoverScene):
             *[ReplacementTransform(simplified[i], giga_hess0[i]) for i in range(12)]
         )
 
-        with self.voiceover("If we want to take the directional second derivative, we take the derivative of this sum with respect to t. The components of v are just constants, but those partials of f get expanded out into full vector products. Note that we now have second order partials in here, since, well, the thing we were differentiating was a partial. We get this messy thing.") as tracker:
+        with self.voiceover("but those partials of f become full vector products. We get this messy thing.") as tracker:
             for i in (1,2,3,4):
                 giga_hess0_list[3 * i - 2] = create_hess_row(4, i) + v_col
                 giga_hess1 = MathTex(*giga_hess0_list.copy())
@@ -247,7 +247,7 @@ class DirectionalDerivativeScene(VoiceoverScene):
                 )
                 giga_hess0 = giga_hess1
 
-        with self.voiceover("If we take the second directional derivative in matrix form, we get this.") as tracker:
+        with self.voiceover("7. If we take the second directional derivative in matrix form, we get this. And hey, that looks like") as tracker:
             self.play(FadeOut(giga_hess0)) # I don't like this but I need to do it to give hess_vec more room
 
             hess_vec0 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
@@ -300,7 +300,7 @@ class DirectionalDerivativeScene(VoiceoverScene):
                 hess_vec0new = hess_vec1
 
         # --- Step 12: Showing that this is equal to the quadratic form of a matrix ---
-        with self.voiceover("And hey, that looks like a matrix multiplication, and indeed it is.") as tracker:
+        with self.voiceover("a matrix multiplication, and indeed it is.") as tracker:
             # Switch the number of groups in here 
             hess_vec1_split = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =" +
                     v_row,
@@ -409,7 +409,7 @@ class DirectionalDerivativeScene(VoiceoverScene):
                 hess_mat2 = hess_mat3
 
         # Replace the whole Hessian with H
-        with self.voiceover("So this matrix of second order partials is called the Hessian, and it’s notated H.") as tracker:
+        with self.voiceover("10. So this matrix of second order partials is called the Hessian, and it’s notated H. And now if we just replace these with") as tracker:
             self.play(FadeOut(hess_mat3))
             self.play(FadeIn(hess_vec2_split_copy))
 
@@ -421,14 +421,14 @@ class DirectionalDerivativeScene(VoiceoverScene):
             self.play(*[ReplacementTransform(hess_vec2_split_copy[i], hess_vec3[i]) for i in range(4)])
 
         # Replace the v1,v2,v3,v4 with \vec{v}
-        with self.voiceover("And now if we just replace these with v, we get this nice formula.") as tracker:
+        with self.voiceover("v, we get this nice formula.") as tracker:
             hess_vec4 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
                             r"\vec{v}^T",
                             "H",
                             r"\vec{v}")
             self.play(*[ReplacementTransform(hess_vec3[i], hess_vec4[i]) for i in range(4)])
 
-        with self.voiceover("And compare it with the formula for directional first derivatives. As a fun puzzle, try to find the formula for the directional third derivatives.") as tracker:
+        with self.voiceover("12. And compare it with the formula for directional first derivatives. It looks very similar.") as tracker:
             # Replace the g''(t) with a directional second derivative using D^2
             hess_vec5 = MathTex(r"D^2_{\vec{v}}f(\vec{x}) =",
                             r"\vec{v}^T",
