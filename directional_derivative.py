@@ -81,30 +81,30 @@ class DirectionalDerivativeScene(VoiceoverScene):
         min_silence_len=2000,
         keep_silence=(0,0)))
 
-        deriv_relation = MathTex("D_{\\vec{v}} f(\\vec{x}) = g'(t)")
-
-        self.play(Write(deriv_relation))
-        self.wait()
-
-        # --- Step 7: Chain rule ---
-        chain_rule = MathTex(
-            "\\frac{\\partial g}{\\partial t} =",
-            "\\frac{\\partial f}{\\partial x_1}",
-            "\\frac{\\partial x_1}{\\partial t}",
-            "+",
-            "\\frac{\\partial f}{\\partial x_2}",
-            "\\frac{\\partial x_2}{\\partial t}",
-            "+",
-            "\\frac{\\partial f}{\\partial x_3}",
-            "\\frac{\\partial x_3}{\\partial t}",
-            "+",
-            "\\frac{\\partial f}{\\partial x_4}",
-            "\\frac{\\partial x_4}{\\partial t}",
-        )
-        chain_rule.scale(0.8)
-        chain_rule.next_to(deriv_relation, DOWN, buff=0.4)
-
         with self.voiceover("If we want to calculate the directional derivative, we just use the chain rule, and then the partials of x with respect to t just") as tracker:
+            deriv_relation = MathTex("D_{\\vec{v}} f(\\vec{x}) = g'(t)")
+
+            self.play(Write(deriv_relation))
+            self.wait()
+
+            # --- Step 7: Chain rule ---
+            chain_rule = MathTex(
+                "\\frac{\\partial g}{\\partial t} =",
+                "\\frac{\\partial f}{\\partial x_1}",
+                "\\frac{\\partial x_1}{\\partial t}",
+                "+",
+                "\\frac{\\partial f}{\\partial x_2}",
+                "\\frac{\\partial x_2}{\\partial t}",
+                "+",
+                "\\frac{\\partial f}{\\partial x_3}",
+                "\\frac{\\partial x_3}{\\partial t}",
+                "+",
+                "\\frac{\\partial f}{\\partial x_4}",
+                "\\frac{\\partial x_4}{\\partial t}",
+            )
+            chain_rule.scale(0.8)
+            chain_rule.next_to(deriv_relation, DOWN, buff=0.4)
+
             self.play(Write(chain_rule))
 
         # --- Step 8: Substitute v ---
