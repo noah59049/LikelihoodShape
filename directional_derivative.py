@@ -76,7 +76,7 @@ def hessian_latex(n, func_name="f"):
 
 class DirectionalDerivativeScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/directional_derivative_podcast0.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/directional_derivative_podcast1.mp3",
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
@@ -163,7 +163,7 @@ class DirectionalDerivativeScene(VoiceoverScene):
         simplified.scale(0.8)
         simplified.align_to(chain_rule, UP)
 
-        with self.voiceover("2. and then the partials of x with respect to t just become the components of v.") as tracker:
+        with self.voiceover("and then the partials of x with respect to t just become the components of v.") as tracker:
             self.play(
                 *[ReplacementTransform(chain_rule[i], simplified[i]) for i in range(12)]
             )
@@ -247,16 +247,16 @@ class DirectionalDerivativeScene(VoiceoverScene):
                 )
                 giga_hess0 = giga_hess1
 
-        self.play(FadeOut(giga_hess0)) # I don't like this but I need to do it to give hess_vec more room
-
-        hess_vec0 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
-                         v_row,
-                         grad_col)
-        hess_vec0.align_to(vTgrad, UP)
-        self.play(*[ReplacementTransform(vTgrad[i], hess_vec0[i]) for i in range(3)])
-
-
         with self.voiceover("If we take the second directional derivative in matrix form, we get this.") as tracker:
+            self.play(FadeOut(giga_hess0)) # I don't like this but I need to do it to give hess_vec more room
+
+            hess_vec0 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
+                            v_row,
+                            grad_col)
+            hess_vec0.align_to(vTgrad, UP)
+            self.play(*[ReplacementTransform(vTgrad[i], hess_vec0[i]) for i in range(3)])
+
+
             # Change hess_vec0 into one that's identical, but only 1 part
             hess_vec0new = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =" +
                             v_row +
@@ -408,11 +408,12 @@ class DirectionalDerivativeScene(VoiceoverScene):
                                             ))
                 hess_mat2 = hess_mat3
 
+        # Replace the whole Hessian with H
+        with self.voiceover("So this matrix of second order partials is called the Hessian, and it’s notated H.") as tracker:
             self.play(FadeOut(hess_mat3))
             self.play(FadeIn(hess_vec2_split_copy))
 
-        # Replace the whole Hessian with H
-        with self.voiceover("So this matrix of second order partials is called the Hessian, and it’s notated H.") as tracker:
+
             hess_vec3 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
                             v_row,
                             "H",
