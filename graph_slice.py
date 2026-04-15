@@ -30,8 +30,11 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         atv.next_to(directional, DOWN, buff=0.4, aligned_edge=LEFT)
 
         # --- Step 5: g(t) definition ---
-        g_def = MathTex("g(t) = f(\\vec{a} + t\\vec{v}) = f(\\vec{x})")
+        g_def = MathTex(r"g(t) = f(\vec{a} + t\vec{v})")
         g_def.next_to(atv, DOWN, buff=0.4, aligned_edge=LEFT)
+
+        g_def2 = MathTex(r"g(t) = f(\vec{x})")
+        g_def2.next_to(atv, DOWN, buff=0.4, aligned_edge=LEFT)
 
         # --- Step 6: derivative relation ---
         deriv_relation = MathTex("D_{\\vec{v}} f(\\vec{x}) = g'(t)")
@@ -43,6 +46,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
                                          directional,
                                          atv,
                                          g_def,
+                                         g_def2,
                                          deriv_relation)
         self.remove(f_explicit,
                     f_vector,
@@ -50,6 +54,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
                     directional,
                     atv,
                     g_def,
+                    g_def2,
                     deriv_relation)
 
 
@@ -364,6 +369,9 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             self.play(FadeOut(tangent_line), FadeOut(arrow), run_time = 0.7)
         with self.voiceover("and define g(t) as equal to f(x).") as tracker:
             self.play(Write(g_def))
+            self.play(TransformByGlyphMap(g_def, g_def2,
+                                          (range(8,14), [8,9])))
+
             # Add g(t) labels to the lower graph
             axis_labels = axes2d.get_axis_labels(
                 MathTex("t").scale(0.7),
