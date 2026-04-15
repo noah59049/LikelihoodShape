@@ -248,7 +248,7 @@ class DirectionalDerivativeScene(VoiceoverScene):
                 )
                 giga_hess0 = giga_hess1
 
-        with self.voiceover("7. If we take the second directional derivative in matrix form, we get this. And hey, that looks like") as tracker:
+        with self.voiceover("If we take the second directional derivative in matrix form, we get this. And hey, that looks like") as tracker:
             self.play(FadeOut(giga_hess0)) # I don't like this but I need to do it to give hess_vec more room
 
             hess_vec0 = MathTex("\\frac{\\partial^2 g}{\\partial t^2} =",
