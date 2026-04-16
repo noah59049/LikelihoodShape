@@ -76,17 +76,17 @@ def hessian_latex(n, func_name="f"):
 
 class DirectionalDerivativeScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/directional_derivative_podcast2.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/directional_derivative_podcast4.mp3",
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
 
-        with self.voiceover("If we want to calculate the directional derivative, we just use the chain rule, and then the partials of x with respect to t just") as tracker:
+        with self.voiceover("If we want to calculate the directional derivative, ") as tracker:
+            # --- Steps 1-6: Were removed, now just derivative definition ---
             deriv_relation = MathTex("D_{\\vec{v}} f(\\vec{x}) = g'(t)")
-
             self.play(Write(deriv_relation))
-            self.wait()
 
+        with self.voiceover("we just use the chain rule, and then the partials of x with respect to t just") as tracker:
             # --- Step 7: Chain rule ---
             chain_rule = MathTex(
                 "\\frac{\\partial g}{\\partial t} =",
@@ -125,16 +125,12 @@ class DirectionalDerivativeScene(VoiceoverScene):
         simplified.scale(0.8)
         simplified.align_to(chain_rule, UP)
 
-        with self.voiceover("become the components of v.") as tracker:
+        with self.voiceover("become the components of v. ") as tracker:
             self.play(
                 *[ReplacementTransform(chain_rule[i], simplified[i]) for i in range(12)]
             )
 
             # --- Step 9: Clear out the rest of the scene except for simplified ---
-            to_remove = Group(
-                chain_rule,
-                deriv_relation,
-            )
             self.play(FadeOut(deriv_relation),
                       simplified.animate.to_edge(UP))
 
