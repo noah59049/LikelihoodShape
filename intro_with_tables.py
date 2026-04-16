@@ -166,6 +166,7 @@ yX_predict_tex = yX_labels_tex.replace(r"\end{tabular}", r"""
 \hline
 \end{tabular}
                                 """) # Ridiculous way to add another row, but it works.
+# Many of these can be removed, but I'm not ready to remove them quite yet.
 
 # ------------------------------
 # Now actually animate the scene
@@ -197,6 +198,7 @@ class DefinitionsScene(VoiceoverScene):
         y_table = Tex(y_tex).scale(0.6).align_to(y_labels_table, UL)
         yX_table = Tex(yX_tex).scale(0.6).align_to(y_labels_table, UL)
         yX_table_numbered = Tex(yX_tex_numbered).scale(0.6).align_to(y_labels_table, UL).to_edge(LEFT, buff = 0.4)
+        # Many of these can be removed, but I'm not ready to remove them quite yet.
         
         with self.voiceover("We have a variable we’re interested in predicting, like the status of the tumor.") as tracker:
             self.play(Write(y_labels_table))
