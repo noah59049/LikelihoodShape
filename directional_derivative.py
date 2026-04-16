@@ -127,12 +127,15 @@ class DirectionalDerivativeScene(VoiceoverScene):
 
         with self.voiceover("become the components of v. ") as tracker:
             self.play(
-                *[ReplacementTransform(chain_rule[i], simplified[i]) for i in range(12)]
+                *[ReplacementTransform(chain_rule[i], simplified[i]) for i in range(12)],
+                run_time=1
             )
 
             # --- Step 9: Clear out the rest of the scene except for simplified ---
+            self.wait(tracker.duration - 2)
             self.play(FadeOut(deriv_relation),
-                      simplified.animate.to_edge(UP))
+                      simplified.animate.to_edge(UP),
+                      run_time = 1)
 
         # --- Step 10: Vector form ---
         v_row = create_v(4, "row")
@@ -160,16 +163,17 @@ class DirectionalDerivativeScene(VoiceoverScene):
             nabla_form = MathTex("\\frac{\\partial g}{\\partial t} =" +
                             v_row +
                             grad_col).scale(0.8).next_to(vTgrad, DOWN)
-            self.play(FadeIn(nabla_form))
+            self.play(FadeIn(nabla_form), run_time = 1)
             
             # Replace that with nabla form
             nabla_form2 = MathTex(r"\frac{\partial g}{\partial t} =\vec{v}^T\nabla{f}").next_to(vTgrad,DOWN)
             self.play(TransformByGlyphMap(nabla_form,nabla_form2,
                                         (range(6), range(6)),
                                         (range(6,16), range(6,9)),
-                                        (range(16,50), range(9,11))))
+                                        (range(16,50), range(9,11))), run_time = 1)
 
-            self.play(FadeOut(nabla_form2))
+            self.wait(tracker.duration - 3)
+            self.play(FadeOut(nabla_form2), run_time = 1)
 
         # --- Step 11: Making the Giga Hess ---
 
