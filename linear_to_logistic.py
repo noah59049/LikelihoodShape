@@ -101,12 +101,12 @@ def create_graph(
 
 class LinearLogisticScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/added_sigmoid_voiceovers_2.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_990.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
         
-        with self.voiceover("So it’s always a good idea to graph your data, so here I’ve just graphed Y versus X1.") as tracker:
+        with self.voiceover("It’s always a good idea to graph your data, so here I’ve just graphed Y versus X1.") as tracker:
             x_range = max(X) - min(X)
             axes = Axes(x_range = [min(X) - 0.1 * x_range, max(X) + 0.1 * x_range], y_range = [-0.2, 1.2])
             axis_labels = axes.get_axis_labels(x_label = "X1", y_label = "Y")
@@ -132,22 +132,31 @@ class LinearLogisticScene(VoiceoverScene):
         tex4 = MathTex(r"p = f^{-1}(\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1})")
         tex5 = MathTex(r"\ln\frac{p}{1-p} = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
 
-        with self.voiceover("a") as tracker: # TODO: We added this voiceover
+        with self.voiceover("So for just 1 predictor variable, we’d just assume that P(Y=1),") as tracker:
             self.play(Write(tex0))
 
-        with self.voiceover("a") as tracker:
+        with self.voiceover("notated p, is a linear function of X with an unknown intercept and slope. And with more predictors,") as tracker:
             self.play(TransformByGlyphMap(tex0, tex1,
                                           (range(6), [0])))
-        with self.voiceover("a") as tracker:
+        with self.voiceover("we’d just have a separate slope for each predictor. These are the coefficients and they’re notated with B0 for the intercept and B1 and so on for the slopes.") as tracker:
             self.play(TransformByGlyphMap(tex1, tex2,
                                           (FadeIn, range(8,27))))
         
-        # TODO: There are 2 voiceovers in here that we removed
-        with self.voiceover("a") as tracker:
+        with self.voiceover("""
+        5. The reason that’s bad is that for some values of X, you’ll get probabilities 
+        6. greater than 1 or less than 0, which is impossible. So what we want instead is to assume that some
+        """) as tracker:
+            self.play(FadeOut(tex2))
+            self.play(FadeIn(scatterplot))
+            self.wait(tracker.duration - 4.1)
+            self.play(FadeOut(scatterplot))
+            self.play(FadeIn(tex2))
+
+        with self.voiceover("function of p is equal to that linear combination of the predictors. And we want this function to give values that range from") as tracker:
             self.play(TransformByGlyphMap(tex2, tex3,
                                         (FadeIn, [0,1,3])))
             
-        with self.voiceover("a") as tracker:
+        with self.voiceover("-∞ to ∞ as p ranges from 0 to 1. Or, sort of the INVERSE way to put it is that") as tracker:
             graph_group = create_graph(
                 lambda p: np.log(p / (1 - p)),
                 x_range=[0, 1.75, 1],
@@ -167,14 +176,14 @@ class LinearLogisticScene(VoiceoverScene):
 
         self.remove(graph_group[0], graph_group[1], graph_group[2])
         tex3_original = tex3.copy()
-        with self.voiceover("a") as tracker:
+        with self.voiceover("p is equal to some function of the linear combination of the predictors, some function that maps") as tracker:
             self.play(TransformByGlyphMap(tex3, tex4,
                                          ([0],[2], {"path_arc":-PI}),
                                         ([1],[5], {"path_arc":-PI}),
                                         ([3],[31],{"path_arc":-PI/6}),
                                         (FadeIn, [3,4])))
         
-        with self.voiceover("a") as tracker:
+        with self.voiceover("every number from -∞ to ∞ to a legal probability between 0 and 1.") as tracker:
             graph_group = create_graph(
                 lambda p: 1 / (1 + np.exp(-p)),
                 x_range=[-6, 6, 2],
@@ -190,7 +199,7 @@ class LinearLogisticScene(VoiceoverScene):
             self.add(graph_group[0],graph_group[1])
             self.play(Create(graph_group[2]))
          
-        with self.voiceover("a") as tracker:
+        with self.voiceover("Either way, no matter what the predictors are, we never get an impossible probability. The function we use is the ") as tracker:
             self.remove(graph_group[0], graph_group[1], graph_group[2])
             self.play(TransformByGlyphMap(tex4, tex3_original,
                 ([2],[0], {"path_arc": PI}),
@@ -199,7 +208,7 @@ class LinearLogisticScene(VoiceoverScene):
                 ([3,4], FadeOut)
             ))
         
-        with self.voiceover("a") as tracker:
+        with self.voiceover("logit, ln p over 1-p. If we want to put p in terms of the predictors, we just do a little algebra. We") as tracker:
             self.play(TransformByGlyphMap(tex3_original, tex5,
                                         (range(4), range(7))))
             
@@ -212,7 +221,7 @@ class LinearLogisticScene(VoiceoverScene):
         sigmoid7 = MathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
 
 
-        with self.voiceover("a") as tracker:
+        with self.voiceover("exponentiate both sides") as tracker:
             # This would have been a simple TransformByGlyphMap(tex5, sigmoid1)
             # But that was warping/twisting some glyphs.
             # So we have a rigid transformation of the glyphs we don't want to twist, which is more annoying
@@ -242,7 +251,7 @@ class LinearLogisticScene(VoiceoverScene):
                 ]
             )
 
-        with self.voiceover("a") as tracker:
+        with self.voiceover("Take the reciprocal, on the right hand side this negates the exponent,") as tracker:
             self.play(TransformByGlyphMap(sigmoid1, sigmoid2,
                                 ([0],[4], {"path_arc": PI * 0.5}),
                                 ([2,3,4],[0,1,2], {"path_arc": PI * 0.5}),
@@ -250,24 +259,24 @@ class LinearLogisticScene(VoiceoverScene):
                                 (FadeIn,[34])
                                 ))
         
-        with self.voiceover("a") as tracker:
+        with self.voiceover("Expand the fraction,") as tracker:
             self.play(TransformByGlyphMap(sigmoid2, sigmoid3,
                                         ([0,3,4],[0,1,2]),
                                         ([2,3,4],[4,5,6]),
                                         ([1],[3])
                                         ))
 
-        # with self.voiceover("a") as tracker: # Because I forgot to put this in the recording
+        with self.voiceover("P over p becomes 1,") as tracker:
             self.play(TransformByGlyphMap(sigmoid3, sigmoid4,
                                         ([4,5,6],[4])))
         
 
-        with self.voiceover("a") as tracker:
+        with self.voiceover("Add one to both sides,") as tracker:
             self.play(TransformByGlyphMap(sigmoid4, sigmoid5,
                                             ([4,5],[5,6], {"path_arc": -PI}),
                                             ([6],[4], {"path_arc":-PI})))
 
-        with self.voiceover("a") as tracker:
+        with self.voiceover("Take the reciprocal again, and If you’re familiar with machine learning, you may recognize a sigmoid here.") as tracker:
             self.play(TransformByGlyphMap(sigmoid5, sigmoid6,
                                             ([0,1], [2,3])))
             
@@ -289,17 +298,17 @@ class LinearLogisticScene(VoiceoverScene):
 
         # Interlude, Part 3: The animation
         self.remove(sigmoid6)
-        with self.voiceover("a") as tracker:
+        with self.voiceover("The sigmoid, denoted sigma of z, is 1 over 1 + e to the negative z.") as tracker:
             self.play(Write(sigmoid_defn))
-        with self.voiceover("a") as tracker:
+        with self.voiceover("It has this S shape. ") as tracker:
             self.play(DrawBorderThenFill(axes), Write(axis_labels), run_time = 0.5)
             self.play(Create(func))
 
-        with self.voiceover("a") as tracker:
+        with self.voiceover("If you multiply the top and bottom of the fraction by e to the z, ") as tracker:
             self.play(TransformByGlyphMap(sigmoid_defn, sigmoid_defn2,
                                         (FadeIn, [5,7,8,9]),
                                         (FadeIn, [11,17,18,19])))
-        with self.voiceover("a") as tracker:
+        with self.voiceover("and distribute, ") as tracker:
             self.play(TransformByGlyphMap(sigmoid_defn2, sigmoid_defn3,
                                         ([5,6,7], FadeOut, {"run_time": 0.25}),
                                         ([11,17],FadeOut),
@@ -307,12 +316,15 @@ class LinearLogisticScene(VoiceoverScene):
                                         ([18, 19], [11,12], {"path_arc": PI}),
                                         ([12], [8,9]),
                                         ([18,19], [8,9], {"path_arc": PI})))
-        with self.voiceover("a") as tracker:
+        with self.voiceover("and simplify, then you get this alternate formula, e to the z over e to the z + 1.") as tracker:
             self.play(TransformByGlyphMap(sigmoid_defn3, sigmoid_defn4,
                                         ([11,12,13,14,15], [11], {"run_time": 0.75})))
         
-        self.play(FadeOut(axes), FadeOut(axis_labels), FadeOut(func), FadeOut(sigmoid_defn4))
-        self.play(FadeIn(sigmoid6))
-        self.play(TransformByGlyphMap(sigmoid6, sigmoid7,
-                                      ([2,3], FadeOut),
-                                      (range(4,8), [2])))
+        with self.voiceover("So going back to our original equation, this formula just becomes") as tracker:
+            self.play(FadeOut(axes), FadeOut(axis_labels), FadeOut(func), FadeOut(sigmoid_defn4))
+            self.play(FadeIn(sigmoid6))
+        
+        with self.voiceover("p = sigmoid of the linear combination.") as tracker:
+            self.play(TransformByGlyphMap(sigmoid6, sigmoid7,
+                                        ([2,3], FadeOut),
+                                        (range(4,8), [2])))
