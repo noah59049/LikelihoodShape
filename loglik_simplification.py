@@ -22,9 +22,6 @@ class LoglikSimplificationScene(Scene):
         loglik16 = MathTex(r"l=\sum_{i=1}^{n}y_i\hat{z}_i+\ln(\frac{1}{e^{\hat{z}_i}+1})")
         loglik17 = MathTex(r"l=\sum_{i=1}^{n}y_i\hat{z}_i-\ln(e^{\hat{z}_i}+1)")
 
-        # yeetgroup = VGroup(loglik4, loglik5, loglik6, loglik7, loglik8).arrange(DOWN).scale(0.7).to_edge(UP)
-        # self.add(yeetgroup)
-
         self.play(Write(loglik4))
         self.play(TransformByGlyphMap(loglik4, loglik5,
                                       (range(21,30), range(15,24), {"path_arc":PI}),
@@ -76,3 +73,10 @@ class LoglikSimplificationScene(Scene):
                                       (range(23,29), range(28,34), {"path_arc":PI/2}),
                                       (range(35,41), range(28,34), {"path_arc":-PI/2}),
                                       ([22,34],[27])))
+        
+        self.play(TransformByGlyphMap(loglik15, loglik16,
+                                      (range(16,21), []),
+                                      (range(22,27), [])))
+        
+        self.play(TransformByGlyphMap(loglik16, loglik17,
+                                      ([16,17], FadeOut)))
