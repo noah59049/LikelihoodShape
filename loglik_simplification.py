@@ -91,7 +91,8 @@ class LoglikSimplificationScene(Scene):
         )
 
         grad2 = MathTex(
-            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
+             r"\frac{\partial l}{\partial \hat{\beta}_j}=",
+            r"\sum_{i=1}^{n}",
             r"y_i X_{ij}"
         )
 
@@ -136,7 +137,10 @@ class LoglikSimplificationScene(Scene):
 
         self.play(ReplacementTransform(loglik17_broken[1].copy(), grad1[1]))
         self.play(TransformMatchingTex(grad0, grad1, run_time = 0.001))
-        
+
+        self.play(ReplacementTransform(loglik17_broken[2].copy(), grad2[2]))
+        self.play(TransformMatchingTex(grad1, grad2, run_time = 0.001))
+
         # self.play(TransformMatchingShapes(grad1, grad2))
         # self.play(TransformMatchingShapes(grad2, grad3))
         # self.play(TransformMatchingShapes(grad3, grad4))
