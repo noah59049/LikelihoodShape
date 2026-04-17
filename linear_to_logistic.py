@@ -145,9 +145,10 @@ class LinearLogisticScene(VoiceoverScene):
         with self.voiceover("The reason that’s bad is that for some values of X, you’ll get probabilities ") as tracker:
             self.play(FadeOut(tex2))
             self.play(FadeIn(scatterplot))
+            self.wait(tracker.duration - 3.1)
+            self.play(FadeOut(dots))
 
         with self.voiceover("greater than 1 or less than 0, which is impossible. So what we want instead is to assume that some") as tracker:
-            self.play(FadeOut(dots))
             hlines = {}
             areas = {}
             for y in 0,1:
@@ -163,7 +164,7 @@ class LinearLogisticScene(VoiceoverScene):
                 )
                 self.add(areas[y])
                 scatterplot.add(areas[y])
-            self.wait(tracker.duration - 3.1) # BRITTLE but what else should I do
+            self.wait(tracker.duration - 2.1) # BRITTLE but what else should I do
             scatterplot.remove(dots) # Otherwise the dots will come back at the beginning of FadeOut(scatterplot)
             self.play(FadeOut(scatterplot))
             self.play(FadeIn(tex2))
