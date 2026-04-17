@@ -157,12 +157,13 @@ class LinearLogisticScene(VoiceoverScene):
                 areas[y] = axes.get_area(
                     hlines[y],
                     x_range=[min(X) - 0.1 * x_range, max(X) + 0.1 * x_range],
-                    bounded_graph=axes.plot(lambda x: (y - 0.5) * 6),  # goes up to y=3 for 1 and down to -3 for 0
+                    bounded_graph=axes.plot(lambda x: (y - 0.5) * 6),  # goes up to y=3 for 1 and down to -3 for 0 TODO: Maybe make a smaller range
                     color=RED,
                     opacity=0.2
                 )
                 self.add(areas[y])
                 scatterplot.add(areas[y])
+            self.wait(tracker.duration - 3.1) # BRITTLE but what else should I do
             self.play(FadeOut(scatterplot))
             self.play(FadeIn(tex2))
 
