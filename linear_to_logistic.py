@@ -123,6 +123,7 @@ class LinearLogisticScene(VoiceoverScene):
                                         color = RED)
             self.play(Create(regression_line))
             scatterplot = VGroup(axes, axis_labels, dots, regression_line)
+            self.wait(tracker.duration - 6.1 - 0.005 * len(dots)) # Why this timing? IDK but it works.
             self.play(FadeOut(scatterplot))
 
         tex0 = MathTex(r"P(Y=1) = \beta_0+\beta_1 X")
