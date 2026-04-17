@@ -142,13 +142,13 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(TransformByGlyphMap(tex1, tex2,
                                           (FadeIn, range(8,27))))
         
-        with self.voiceover("""
-        5. The reason that’s bad is that for some values of X, you’ll get probabilities 
-        6. greater than 1 or less than 0, which is impossible. So what we want instead is to assume that some
-        """) as tracker:
+        with self.voiceover("The reason that’s bad is that for some values of X, you’ll get probabilities ") as tracker:
             self.play(FadeOut(tex2))
             self.play(FadeIn(scatterplot))
-            self.wait(tracker.duration - 4.1)
+
+        with self.voiceover("greater than 1 or less than 0, which is impossible. So what we want instead is to assume that some") as tracker:
+            self.play(FadeOut(dots))
+            # TODO: The red thingy
             self.play(FadeOut(scatterplot))
             self.play(FadeIn(tex2))
 
