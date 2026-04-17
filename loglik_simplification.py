@@ -145,3 +145,23 @@ class LoglikSimplificationScene(Scene):
         
         # --- Part 3: The second derivative of the log likelihood ---
         self.play(LaggedStart(FadeOut(loglik17_broken2), grad_together3.animate.to_edge(UP), lag_ratio=0.5))
+        hess_texes = [
+            r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}=",
+            r"\sum_{i=1}^{n}",
+            r"",
+            r"- \sigma(\hat{z}_i)(1-\sigma(\hat{z}_i))",
+            r"X_{im}",
+            r"X_{ij}"
+        ]
+        hesses = [MathTex(*hess_texes[0:i+1]).next_to(grad_together3,DOWN,aligned_edge=LEFT) for i in range(len(hess_texes))]
+        grad_parts = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j} = ",
+                             r"\sum_{i=1}^{n}",
+                             r"y_i X_{ij}",
+                             r" - \sigma(\hat{z}_i)",
+                             r" X_{ij}").move_to(grad_together3)
+        self.play(TransformMatchingTex(grad_together3, grad_parts), run_time = 0.001)
+        
+        just_the_grad = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j} = ")
+        just_the_grad.next_to(grad_parts, DOWN, aligned_edge = LEFT)
+        self.play(ReplacementTransform(grad_parts[0].copy(),just_the_grad))
+        
