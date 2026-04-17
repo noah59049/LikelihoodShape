@@ -1,4 +1,5 @@
 from manim import *
+from MF_Tools import *
 
 class LoglikSimplificationScene(Scene):
     def construct(self):
@@ -21,5 +22,13 @@ class LoglikSimplificationScene(Scene):
         loglik16 = MathTex(r"l=\sum_{i=1}^{n}y_i\hat{z}_i+\ln(\frac{1}{e^{\hat{z}_i}+1})")
         loglik17 = MathTex(r"l=\sum_{i=1}^{n}y_i\hat{z}_i-\ln(e^{\hat{z}_i}+1)")
 
-        yeetgroup = VGroup(loglik12, loglik13, loglik14, loglik15, loglik16, loglik17).arrange(DOWN).scale(0.7).to_edge(UP)
-        self.add(yeetgroup)
+        # yeetgroup = VGroup(loglik4, loglik5, loglik6, loglik7, loglik8).arrange(DOWN).scale(0.7).to_edge(UP)
+        # self.add(yeetgroup)
+
+        self.play(Write(loglik4))
+        self.play(TransformByGlyphMap(loglik4, loglik5,
+                                      (range(21,30), range(15,24), {"path_arc":PI}),
+                                      (range(21,30), range(27,36)),
+                                      ([15,20], FadeOut, {"run_time":0.5}),
+                                      ([16], FadeOut),
+                                      ([17,18,19], [24,25,26])))
