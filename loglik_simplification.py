@@ -99,25 +99,18 @@ class LoglikSimplificationScene(Scene):
                                   r"-",
                                   r"\ln(e^{\hat{z}_i}+1)",
                                   )
+        self.play(TransformMatchingTex(loglik17, loglik17_broken, run_time = 0.001))
 
         grads[0].next_to(loglik17, DOWN, aligned_edge=LEFT)
         for grad in grads:
             grad.move_to(grads[0], aligned_edge=LEFT)
 
-        self.play(TransformMatchingTex(loglik17, loglik17_broken, run_time = 0.001))
+        
         self.play(Write(grads[0]))
 
-        self.play(ReplacementTransform(loglik17_broken[1].copy(), grads[1][1]))
-        self.play(TransformMatchingTex(grads[0], grads[1], run_time = 0.001))
-
-        self.play(ReplacementTransform(loglik17_broken[2].copy(), grads[2][2]))
-        self.play(TransformMatchingTex(grads[1], grads[2], run_time = 0.001))
-
-        self.play(ReplacementTransform(loglik17_broken[3].copy(), grads[3][3]))
-        self.play(TransformMatchingTex(grads[2], grads[3], run_time = 0.001))
-
-        self.play(ReplacementTransform(loglik17_broken[4].copy(), grads[4][4]))
-        self.play(TransformMatchingTex(grads[3], grads[4], run_time = 0.001))
+        for i in range(1,5):
+            self.play(ReplacementTransform(loglik17_broken[i].copy(), grads[i][i]))
+            self.play(TransformMatchingTex(grads[i - 1], grads[i], run_time = 0.001))
 
         loglik17_broken2 = MathTex(r"l=",
                                   r"\sum_{i=1}^{n}",
