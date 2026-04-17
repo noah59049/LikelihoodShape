@@ -160,7 +160,8 @@ class LoglikSimplificationScene(Scene):
                                   r"y_i\hat{z}_i",
                                   r"-",
                                   r"\ln(",
-                                  r"e^{\hat{z}_i}+1",
+                                  r"e^{\hat{z}_i}",
+                                  r"+1",
                                   r")",
                                   )
         self.play(TransformMatchingTex(loglik17_broken, loglik17_broken2, run_time = 0.001))
