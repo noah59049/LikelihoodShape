@@ -106,7 +106,7 @@ class LinearLogisticScene(VoiceoverScene):
                 min_silence_len=2000,
                 keep_silence=(0,0)))
         
-        with self.voiceover("a") as tracker: # TODO: We added this voiceover
+        with self.voiceover("So it’s always a good idea to graph your data, so here I’ve just graphed Y versus X1.") as tracker:
             x_range = max(X) - min(X)
             axes = Axes(x_range = [min(X) - 0.1 * x_range, max(X) + 0.1 * x_range], y_range = [-0.2, 1.2])
             axis_labels = axes.get_axis_labels(x_label = "X1", y_label = "Y")
@@ -126,7 +126,7 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(FadeOut(scatterplot))
 
         tex0 = MathTex(r"P(Y=1) = \beta_0+\beta_1 X")
-        tex1 = MathTex(r"P(Y=1) = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
+        tex1 = MathTex(r"p = \beta_0+\beta_1 X")
         tex2 = MathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         tex3 = MathTex(r"f(p) = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         tex4 = MathTex(r"p = f^{-1}(\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1})")
@@ -136,10 +136,11 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(Write(tex0))
 
         with self.voiceover("a") as tracker:
-            self.play(TransformMatchingTex(tex0, tex1))
+            self.play(TransformByGlyphMap(tex0, tex1,
+                                          (range(6), [0])))
         with self.voiceover("a") as tracker:
             self.play(TransformByGlyphMap(tex1, tex2,
-                                        ([0,1,2,3,4,5], [0])))
+                                          (FadeIn, range(8,27))))
         
         # TODO: There are 2 voiceovers in here that we removed
         with self.voiceover("a") as tracker:
