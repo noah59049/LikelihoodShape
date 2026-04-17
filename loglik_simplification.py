@@ -81,18 +81,63 @@ class LoglikSimplificationScene(Scene):
         self.play(TransformByGlyphMap(loglik16, loglik17,
                                       ([16,17], FadeOut)))
         
-        grad1 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}=")
-        grad2 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}=\sum_{i=1}^{n} y_i X_{ij}")
-        grad3 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}=\sum_{i=1}^{n} y_i X_{ij} + \frac{1}{e^{\hat{z}_i}+1}")
-        grad4 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}=\sum_{i=1}^{n} y_i X_{ij} + \frac{1}{e^{\hat{z}_i}+1} e^{\hat{z}_i}")
-        grad5 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}=\sum_{i=1}^{n} y_i X_{ij} + \frac{1}{e^{\hat{z}_i}+1} e^{\hat{z}_i} X_{ij}")
+        grad0 = MathTex(
+            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
+        )
 
-        grad1.next_to(loglik17, DOWN, aligned_edge=LEFT)
-        for grad in grad2,grad3,grad4,grad5:
-            grad.move_to(grad1, aligned_edge=LEFT)
+        grad1 = MathTex(
+            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
+            r"\sum_{i=1}^{n}"
+        )
 
-        self.play(Write(grad1))
-        self.play(TransformMatchingShapes(grad1, grad2))
-        self.play(TransformMatchingShapes(grad2, grad3))
-        self.play(TransformMatchingShapes(grad3, grad4))
-        self.play(TransformMatchingShapes(grad4, grad5))
+        grad2 = MathTex(
+            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
+            r"y_i X_{ij}"
+        )
+
+        grad3 = MathTex(
+            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
+            r"y_i X_{ij}",
+            r"+",
+            r"\frac{1}{e^{\hat{z}_i}+1}"
+        )
+
+        grad4 = MathTex(
+            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
+            r"y_i X_{ij}",
+            r"+",
+            r"\frac{1}{e^{\hat{z}_i}+1}",
+            r"e^{\hat{z}_i}"
+        )
+
+        grad5 = MathTex(
+            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
+            r"y_i X_{ij}",
+            r"+",
+            r"\frac{1}{e^{\hat{z}_i}+1}",
+            r"e^{\hat{z}_i}",
+            r"X_{ij}"
+        )
+
+        loglik17_broken = MathTex(r"l=",
+                                  r"\sum_{i=1}^{n}",
+                                  r"y_i\hat{z}_i",
+                                  r"-",
+                                  r"\ln(e^{\hat{z}_i}+1)",
+                                  # substrings_to_isolate=[r"\sum_{i=1}^{n}", r"y_i", r"\hat{z}_i"]
+                                  )
+
+        grad0.next_to(loglik17, DOWN, aligned_edge=LEFT)
+        for grad in grad1,grad2,grad3,grad4,grad5:
+            grad.move_to(grad0, aligned_edge=LEFT)
+
+        self.play(TransformMatchingTex(loglik17, loglik17_broken, run_time = 0.001))
+        self.play(Write(grad0))
+
+        self.play(ReplacementTransform(loglik17_broken[1].copy(), grad1[1]))
+        self.play(TransformMatchingTex(grad0, grad1, run_time = 0.001))
+        
+        # self.play(TransformMatchingShapes(grad1, grad2))
+        # self.play(TransformMatchingShapes(grad2, grad3))
+        # self.play(TransformMatchingShapes(grad3, grad4))
+        # self.play(TransformMatchingShapes(grad4, grad5))
