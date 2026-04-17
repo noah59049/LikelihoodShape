@@ -126,3 +126,15 @@ class LoglikSimplificationScene(Scene):
 
         self.play(ReplacementTransform(loglik17_broken2[5][1:].copy(), grads[6][6]))
         self.play(TransformMatchingTex(grads[5], grads[6], run_time = 0.001))
+        grad_together = MathTex("".join(grad_texes)).move_to(grads[0], aligned_edge=LEFT)
+        self.play(TransformMatchingTex(grads[6], grad_together, run_time = 0.001))
+
+        grad_together2 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}= \sum_{i=1}^{n} y_i X_{ij} - \frac{e^{\hat{z}_i}}{e^{\hat{z}_i}+1} X_{ij}").move_to(grads[0], aligned_edge=LEFT)
+        self.play(TransformByGlyphMap(grad_together,grad_together2,
+                                      ([27,28,29,30], [19,20,21,22]),
+                                      ([19], FadeOut),
+                                    ))
+        grad_together3 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}= \sum_{i=1}^{n} y_i X_{ij} - \sigma(\hat{z}_i) X_{ij}").move_to(grads[0], aligned_edge=LEFT)
+        self.play(TransformByGlyphMap(grad_together2,grad_together3,
+                                      (range(19,30), range(19,25))
+                                    ))
