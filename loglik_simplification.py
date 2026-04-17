@@ -3,6 +3,8 @@ from MF_Tools import *
 
 class LoglikSimplificationScene(Scene):
     def construct(self):
+        # --- Part 1: The log likelihood ---
+
         # We will probably start with loglik4, but it's nice to have these I guess
         loglik1  = MathTex(r"l=\ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
         loglik2  = MathTex(r"l=\sum_{i=1}^{n}\ln[\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}]")
@@ -81,6 +83,8 @@ class LoglikSimplificationScene(Scene):
         self.play(TransformByGlyphMap(loglik16, loglik17,
                                       ([16,17], FadeOut)))
         
+        # --- Part 2: The first derivative of the log likelihood ---
+
         grad_texes = [
             r"\frac{\partial l}{\partial \hat{\beta}_j}=",
             r"\sum_{i=1}^{n}",
@@ -138,3 +142,5 @@ class LoglikSimplificationScene(Scene):
         self.play(TransformByGlyphMap(grad_together2,grad_together3,
                                       (range(19,30), range(19,25))
                                     ))
+        
+        # --- Part 3: The second derivative of the log likelihood ---
