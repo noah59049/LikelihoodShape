@@ -81,46 +81,7 @@ class LoglikSimplificationScene(Scene):
         self.play(TransformByGlyphMap(loglik16, loglik17,
                                       ([16,17], FadeOut)))
         
-        grad0 = MathTex(
-            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
-        )
-
-        grad1 = MathTex(
-            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
-            r"\sum_{i=1}^{n}"
-        )
-
-        grad2 = MathTex(
-             r"\frac{\partial l}{\partial \hat{\beta}_j}=",
-            r"\sum_{i=1}^{n}",
-            r"y_i X_{ij}"
-        )
-
-        grad3 = MathTex(
-             r"\frac{\partial l}{\partial \hat{\beta}_j}=",
-            r"\sum_{i=1}^{n}",
-            r"y_i X_{ij}",
-            r"-"
-        )
-
-        grad4 = MathTex(
-            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
-            r"\sum_{i=1}^{n}",
-            r"y_i X_{ij}",
-            r"-",
-            r"\frac{1}{e^{\hat{z}_i}+1}",
-        )
-
-        grad5 = MathTex(
-            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
-            r"\sum_{i=1}^{n}",
-            r"y_i X_{ij}",
-            r"-",
-            r"\frac{1}{e^{\hat{z}_i}+1}",
-            r"e^{\hat{z}_i}",
-        )
-
-        grad6 = MathTex(
+        grad_texes = [
             r"\frac{\partial l}{\partial \hat{\beta}_j}=",
             r"\sum_{i=1}^{n}",
             r"y_i X_{ij}",
@@ -128,7 +89,9 @@ class LoglikSimplificationScene(Scene):
             r"\frac{1}{e^{\hat{z}_i}+1}",
             r"e^{\hat{z}_i}",
             r"X_{ij}"
-        )
+            ]
+
+        grads = [MathTex(*grad_texes[0:i+1]) for i in range(len(grad_texes))]
 
         loglik17_broken = MathTex(r"l=",
                                   r"\sum_{i=1}^{n}",
@@ -137,24 +100,24 @@ class LoglikSimplificationScene(Scene):
                                   r"\ln(e^{\hat{z}_i}+1)",
                                   )
 
-        grad0.next_to(loglik17, DOWN, aligned_edge=LEFT)
-        for grad in grad1,grad2,grad3,grad4,grad5,grad6:
-            grad.move_to(grad0, aligned_edge=LEFT)
+        grads[0].next_to(loglik17, DOWN, aligned_edge=LEFT)
+        for grad in grads:
+            grad.move_to(grads[0], aligned_edge=LEFT)
 
         self.play(TransformMatchingTex(loglik17, loglik17_broken, run_time = 0.001))
-        self.play(Write(grad0))
+        self.play(Write(grads[0]))
 
-        self.play(ReplacementTransform(loglik17_broken[1].copy(), grad1[1]))
-        self.play(TransformMatchingTex(grad0, grad1, run_time = 0.001))
+        self.play(ReplacementTransform(loglik17_broken[1].copy(), grads[1][1]))
+        self.play(TransformMatchingTex(grads[0], grads[1], run_time = 0.001))
 
-        self.play(ReplacementTransform(loglik17_broken[2].copy(), grad2[2]))
-        self.play(TransformMatchingTex(grad1, grad2, run_time = 0.001))
+        self.play(ReplacementTransform(loglik17_broken[2].copy(), grads[2][2]))
+        self.play(TransformMatchingTex(grads[1], grads[2], run_time = 0.001))
 
-        self.play(ReplacementTransform(loglik17_broken[3].copy(), grad3[3]))
-        self.play(TransformMatchingTex(grad2, grad3, run_time = 0.001))
+        self.play(ReplacementTransform(loglik17_broken[3].copy(), grads[3][3]))
+        self.play(TransformMatchingTex(grads[2], grads[3], run_time = 0.001))
 
-        self.play(ReplacementTransform(loglik17_broken[4].copy(), grad4[4]))
-        self.play(TransformMatchingTex(grad3, grad4, run_time = 0.001))
+        self.play(ReplacementTransform(loglik17_broken[4].copy(), grads[4][4]))
+        self.play(TransformMatchingTex(grads[3], grads[4], run_time = 0.001))
 
         loglik17_broken2 = MathTex(r"l=",
                                   r"\sum_{i=1}^{n}",
@@ -166,8 +129,8 @@ class LoglikSimplificationScene(Scene):
                                   r")",
                                   )
         self.play(TransformMatchingTex(loglik17_broken, loglik17_broken2, run_time = 0.001))
-        self.play(ReplacementTransform(loglik17_broken2[5].copy(), grad5[5]))
-        self.play(TransformMatchingTex(grad4, grad5, run_time = 0.001))
+        self.play(ReplacementTransform(loglik17_broken2[5].copy(), grads[5][5]))
+        self.play(TransformMatchingTex(grads[4], grads[5], run_time = 0.001))
 
-        self.play(ReplacementTransform(loglik17_broken2[5][1:].copy(), grad6[6]))
-        self.play(TransformMatchingTex(grad5, grad6, run_time = 0.001))
+        self.play(ReplacementTransform(loglik17_broken2[5][1:].copy(), grads[6][6]))
+        self.play(TransformMatchingTex(grads[5], grads[6], run_time = 0.001))
