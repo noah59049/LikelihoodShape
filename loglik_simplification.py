@@ -104,7 +104,7 @@ class LoglikSimplificationScene(Scene):
         )
 
         grad4 = MathTex(
-             r"\frac{\partial l}{\partial \hat{\beta}_j}=",
+            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
             r"\sum_{i=1}^{n}",
             r"y_i X_{ij}",
             r"-",
@@ -112,6 +112,15 @@ class LoglikSimplificationScene(Scene):
         )
 
         grad5 = MathTex(
+            r"\frac{\partial l}{\partial \hat{\beta}_j}=",
+            r"\sum_{i=1}^{n}",
+            r"y_i X_{ij}",
+            r"-",
+            r"\frac{1}{e^{\hat{z}_i}+1}",
+            r"e^{\hat{z}_i}",
+        )
+
+        grad6 = MathTex(
             r"\frac{\partial l}{\partial \hat{\beta}_j}=",
             r"y_i X_{ij}",
             r"+",
@@ -125,7 +134,6 @@ class LoglikSimplificationScene(Scene):
                                   r"y_i\hat{z}_i",
                                   r"-",
                                   r"\ln(e^{\hat{z}_i}+1)",
-                                  # substrings_to_isolate=[r"\sum_{i=1}^{n}", r"y_i", r"\hat{z}_i"]
                                   )
 
         grad0.next_to(loglik17, DOWN, aligned_edge=LEFT)
@@ -146,3 +154,15 @@ class LoglikSimplificationScene(Scene):
 
         self.play(ReplacementTransform(loglik17_broken[4].copy(), grad4[4]))
         self.play(TransformMatchingTex(grad3, grad4, run_time = 0.001))
+
+        loglik17_broken2 = MathTex(r"l=",
+                                  r"\sum_{i=1}^{n}",
+                                  r"y_i\hat{z}_i",
+                                  r"-",
+                                  r"\ln(",
+                                  r"e^{\hat{z}_i}+1",
+                                  r")",
+                                  )
+        self.play(TransformMatchingTex(loglik17_broken, loglik17_broken2, run_time = 0.001))
+        self.play(ReplacementTransform(loglik17_broken2[5].copy(), grad5[5]))
+        self.play(TransformMatchingTex(grad4, grad5, run_time = 0.001))
