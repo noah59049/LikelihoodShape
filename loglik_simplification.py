@@ -118,8 +118,7 @@ class LoglikSimplificationScene(Scene):
                                   r"-",
                                   r"\ln(",
                                   r"e^{\hat{z}_i}",
-                                  r"+1",
-                                  r")",
+                                  r"+1)",
                                   )
         self.play(TransformMatchingTex(loglik17_broken, loglik17_broken2, run_time = 0.001))
         self.play(ReplacementTransform(loglik17_broken2[5].copy(), grads[5][5]))
