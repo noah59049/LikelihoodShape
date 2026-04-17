@@ -80,3 +80,19 @@ class LoglikSimplificationScene(Scene):
         
         self.play(TransformByGlyphMap(loglik16, loglik17,
                                       ([16,17], FadeOut)))
+        
+        grad1 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}=")
+        grad2 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}=\sum_{i=1}^{n} y_i X_{ij}")
+        grad3 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}=\sum_{i=1}^{n} y_i X_{ij} + \frac{1}{e^{\hat{z}_i}+1}")
+        grad4 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}=\sum_{i=1}^{n} y_i X_{ij} + \frac{1}{e^{\hat{z}_i}+1} e^{\hat{z}_i}")
+        grad5 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}=\sum_{i=1}^{n} y_i X_{ij} + \frac{1}{e^{\hat{z}_i}+1} e^{\hat{z}_i} X_{ij}")
+
+        grad1.next_to(loglik17, DOWN, aligned_edge=LEFT)
+        for grad in grad2,grad3,grad4,grad5:
+            grad.move_to(grad1, aligned_edge=LEFT)
+
+        self.play(Write(grad1))
+        self.play(TransformMatchingShapes(grad1, grad2))
+        self.play(TransformMatchingShapes(grad2, grad3))
+        self.play(TransformMatchingShapes(grad3, grad4))
+        self.play(TransformMatchingShapes(grad4, grad5))
