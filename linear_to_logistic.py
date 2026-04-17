@@ -273,7 +273,8 @@ class LinearLogisticScene(VoiceoverScene):
 
         with self.voiceover("Add one to both sides,") as tracker:
             self.play(TransformByGlyphMap(sigmoid4, sigmoid5,
-                                            ([3,4],[4,5], {"path_arc": -PI}),
+                                            ([3],[5], {"path_arc": -PI}),
+                                            ([4],[4], {"path_arc": -PI}),
                                             ([5],[3], {"path_arc":-PI})))
 
         with self.voiceover("Take the reciprocal again, and If you’re familiar with machine learning, you may recognize a sigmoid here.") as tracker:
