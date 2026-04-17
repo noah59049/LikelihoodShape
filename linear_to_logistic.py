@@ -145,7 +145,7 @@ class LinearLogisticScene(VoiceoverScene):
         
         with self.voiceover("The reason that’s bad is that for some values of X, you’ll get probabilities ") as tracker:
             self.play(FadeOut(tex2))
-            self.play(FadeIn(scatterplot))
+            self.play(FadeIn(scatterplot)) # TODO: Use p instead here?
             self.wait(tracker.duration - 3.1)
             self.play(FadeOut(dots))
 
@@ -164,7 +164,7 @@ class LinearLogisticScene(VoiceoverScene):
                     opacity=0.2
                 )
 
-            self.play(FadeIn(areas[0]), FadeIn(areas[1]))
+            self.play(FadeIn(areas[0]), FadeIn(areas[1])) # TODO: Fade in the hlines too maybe?
             scatterplot.add(areas[0], areas[1])
             self.wait(tracker.duration - 3.1) # BRITTLE but what else should I do
             scatterplot.remove(dots) # Otherwise the dots will come back at the beginning of FadeOut(scatterplot)
