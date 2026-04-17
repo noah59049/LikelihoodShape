@@ -161,11 +161,15 @@ class LoglikSimplificationScene(Scene):
                              r" X_{ij}").move_to(grad_together3)
         self.play(TransformMatchingTex(grad_together3, grad_parts), run_time = 0.001)
         
-        # just_the_grad = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j} = ")
-        # just_the_grad.next_to(grad_parts, DOWN, aligned_edge = LEFT)
-        
         just_the_grad = grad_parts[0].copy()
         just_the_grad.generate_target()
         just_the_grad.target.next_to(grad_parts, DOWN, aligned_edge=LEFT)
         self.play(MoveToTarget(just_the_grad))
+        just_the_grad2 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j} = ")
+        just_the_grad2.next_to(grad_parts, DOWN, aligned_edge = LEFT)
+        self.play(TransformMatchingShapes(just_the_grad,just_the_grad2, run_time = 0.001))
+
+        self.play(TransformByGlyphMap(just_the_grad2, hesses[0],
+                                      (FadeIn, [1], {"delay":0.4, "run_time":0.7}),
+                                      (FadeIn, [8,9,10,11])))
         
