@@ -162,9 +162,10 @@ class LinearLogisticScene(VoiceoverScene):
                     color=RED,
                     opacity=0.2
                 )
-                self.add(areas[y])
-                scatterplot.add(areas[y])
-            self.wait(tracker.duration - 2.1) # BRITTLE but what else should I do
+
+            self.play(FadeIn(areas[0]), FadeIn(areas[1]))
+            scatterplot.add(areas[0], areas[1])
+            self.wait(tracker.duration - 3.1) # BRITTLE but what else should I do
             scatterplot.remove(dots) # Otherwise the dots will come back at the beginning of FadeOut(scatterplot)
             self.play(FadeOut(scatterplot))
             self.play(FadeIn(tex2))
