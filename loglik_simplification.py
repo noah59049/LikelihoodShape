@@ -144,3 +144,4 @@ class LoglikSimplificationScene(Scene):
                                     ))
         
         # --- Part 3: The second derivative of the log likelihood ---
+        self.play(LaggedStart(FadeOut(loglik17_broken2), grad_together3.animate.to_edge(UP), lag_ratio=0.5))
