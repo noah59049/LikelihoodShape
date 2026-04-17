@@ -148,7 +148,21 @@ class LinearLogisticScene(VoiceoverScene):
 
         with self.voiceover("greater than 1 or less than 0, which is impossible. So what we want instead is to assume that some") as tracker:
             self.play(FadeOut(dots))
-            # TODO: The red thingy
+            hlines = {}
+            areas = {}
+            for y in 0,1:
+                hlines[y] = axes.plot((lambda x : y), color = WHITE)
+                self.add(hlines[y])
+                scatterplot.add(hlines[y])
+                areas[y] = axes.get_area(
+                    hlines[y],
+                    x_range=[min(X) - 0.1 * x_range, max(X) + 0.1 * x_range],
+                    bounded_graph=axes.plot(lambda x: (y - 0.5) * 6),  # goes up to y=3 for 1 and down to -3 for 0
+                    color=RED,
+                    opacity=0.2
+                )
+                self.add(areas[y])
+                scatterplot.add(areas[y])
             self.play(FadeOut(scatterplot))
             self.play(FadeIn(tex2))
 
