@@ -40,3 +40,10 @@ class LoglikSimplificationScene(Scene):
         self.play(TransformByGlyphMap(loglik6, loglik7,
                                       ([15,16], FadeOut),
                                       (FadeIn, [9,25])))
+        
+        self.play(TransformByGlyphMap(loglik7, loglik8,
+                                      ([12,13,14], [12,13,14], {"path_arc": -PI/4}),
+                                      (range(19,24), range(16,21), {"path_arc": -PI/4}),
+                                      (FadeIn, [15]),
+                                      ([15,16,17], FadeOut, {"run_time":0.5}),
+                                      ([18,24], FadeOut, {"run_time":0.5})))
