@@ -1,5 +1,25 @@
 from manim import *
 from MF_Tools import *
+from typing import Callable
+
+def square_matrix_tex(n : int, 
+                      generator: Callable[[int, int], str]):
+    rows = []
+    for i in range(1, n + 1):
+        row = []
+        for j in range(1, n + 1):
+            entry = generator(i, j)
+            row.append(entry)
+        rows.append(" & ".join(row))
+    
+    matrix_body = " \\\\\n".join(rows)
+    
+    latex = (
+        "\\begin{bmatrix}\n"
+        f"{matrix_body}\n"
+        "\\end{bmatrix}\n"
+    )
+    return latex
 
 class LoglikSimplificationScene(Scene):
     def construct(self):
@@ -261,3 +281,7 @@ class LoglikSimplificationScene(Scene):
         dot2 = MathTex(r"X_{\cdot m}^T X_{\cdot j}").next_to(hess_simplified4, DOWN)
         self.play(TransformByGlyphMap(dot1, dot2,
                                       ([3],[1])))
+        
+        W = MathTex(square_matrix_tex(5, lambda i,j: f"w_{i}" if i == j else "0")).next_to(dot2, DOWN)
+        self.play(Write(W))
+        
