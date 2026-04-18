@@ -396,4 +396,47 @@ class LoglikSimplificationScene(Scene):
                                       (FadeIn, range(228, 232)) # Right bracket of XT
                                       ))
         
+        quadratic0 = MathTex("H=-X^T W X").move_to(glued_hess)
+        self.play(TransformByGlyphMap(glued_hess, quadratic0,
+                                      (range(206), [0]),
+                                      (range(208,232), [3,4]),
+                                      (range(233, 247), [6])))
+        self.play(LaggedStart(FadeOut(glued_row, hess_simplified6), quadratic0.animate.move_to(ORIGIN), lag_ratio=0.3))
         
+        quadratic1 = MathTex(r"\vec{v}^T H \vec{v} = -\vec{v}^TX^T W X \vec{v}")
+        self.play(TransformByGlyphMap(quadratic0,quadratic1,
+                                      (FadeIn, [0,1,2]),
+                                      (FadeIn, [4,5]),
+                                      (FadeIn, [8,9,10]),
+                                      (FadeIn, [15,16]),
+                                      ))
+        
+        quadratic2 = MathTex(r"D_{\vec{v}}^2(l) = -\vec{v}^TX^T W X \vec{v}")
+        self.play(TransformByGlyphMap(quadratic1, quadratic2,
+                                      (range(6), range(7))))
+        
+        quadratic3 = MathTex(r"D_{\vec{v}}^2(l) = -(X\vec{v})^T W X \vec{v}")
+        self.play(TransformByGlyphMap(quadratic2, quadratic3,
+                                      ([12],[10]),
+                                      ([9,10],[11,12]),
+                                      (FadeIn, [9,13]),
+                                      ([11],[14]),
+                                      ([13],[14]),
+                                      ))
+        
+        quadratic4 = MathTex(r"D_{\vec{v}}^2(l) = -\vec{u}^T W \vec{u}")
+        self.play(TransformByGlyphMap(quadratic3,quadratic4,
+                                      (range(9,14), [9,10]),
+                                      (range(16,19), [13,14]),
+                                      ))
+        
+        quadratic5 = MathTex(r"D_{\vec{v}}^2(l) = -\sum_{i=1}^{n} u_i w_i u_i")
+        self.play(TransformByGlyphMap(quadratic4, quadratic5,
+                                      (FadeIn, range(9,14)),
+                                      ([9,11], [15]),
+                                      (FadeIn, [17]),
+                                      show_indices=False))
+        
+        quadratic6 = MathTex(r"D_{\vec{v}}^2(l) = -\sum_{i=1}^{n} w_i u_i^2")
+        self.play(TransformByGlyphMap(quadratic5, quadratic6,
+                                      ([14,15],[17], {"path_arc": -PI/3})))
