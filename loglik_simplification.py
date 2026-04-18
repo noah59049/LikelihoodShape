@@ -148,7 +148,7 @@ class LoglikSimplificationScene(Scene):
         hess_texes = [
             r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}=",
             r"\sum_{i=1}^{n}",
-            r"",
+            r"\hspace{1pt}",
             r"- \sigma(\hat{z}_i)(1-\sigma(\hat{z}_i))",
             r"X_{im}",
             r"X_{ij}"
@@ -173,3 +173,6 @@ class LoglikSimplificationScene(Scene):
                                       (FadeIn, [1], {"delay":0.4, "run_time":0.7}),
                                       (FadeIn, [8,9,10,11])))
         
+        for i in range(1,5):
+            self.play(ReplacementTransform(grad_parts[i].copy(), hesses[i][i]))
+            self.play(TransformMatchingTex(hesses[i - 1], hesses[i], run_time = 0.001))
