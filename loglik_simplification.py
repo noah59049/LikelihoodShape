@@ -248,6 +248,7 @@ class LoglikSimplificationScene(Scene):
         self.play(LaggedStart(FadeOut(grad_parts2), 
                               hess_simplified4.animate.to_edge(UP), lag_ratio=0.5))
 
+        # --- Part 4: Assembling the second order partials into the Hessian ---
         sum_with_w = hess_simplified4[1].copy()
         sum_with_w.generate_target()
         sum_with_w.target.next_to(hess_simplified4, DOWN)
@@ -258,13 +259,33 @@ class LoglikSimplificationScene(Scene):
         sum_without_w = MathTex(r"\sum_{i=1}^{n} X_{im} X_{ij}").next_to(hess_simplified4, DOWN)
         self.play(TransformByGlyphMap(sum_with_w2,sum_without_w,
                                       ([8,9], FadeOut)))
-        dot1 = MathTex(r"\sum_{i=1}^{n} X_{im} X_{ij} = X_{\cdot m}\cdot X_{\cdot j}").next_to(hess_simplified4, DOWN)
-        self.play(TransformByGlyphMap(sum_without_w, dot1,
+        easy_dot1 = MathTex(r"\sum_{i=1}^{n} X_{im} X_{ij} = X_{\cdot m}\cdot X_{\cdot j}").next_to(hess_simplified4, DOWN)
+        self.play(TransformByGlyphMap(sum_without_w, easy_dot1,
                                       (FadeIn, range(11,19))))
-        dot2 = MathTex(r"\sum_{i=1}^{n} X_{im} X_{ij} = X_{\cdot m}^T X_{\cdot j}").next_to(hess_simplified4, DOWN)
-        self.play(TransformByGlyphMap(dot1, dot2,
+        easy_dot2 = MathTex(r"\sum_{i=1}^{n} X_{im} X_{ij} = X_{\cdot m}^T X_{\cdot j}").next_to(hess_simplified4, DOWN)
+        self.play(TransformByGlyphMap(easy_dot1, easy_dot2,
                                       ([15],[13])))
         
-        W = MathTex(square_matrix_tex(5, lambda i,j: f"w_{i}" if i == j else "0")).next_to(dot2, DOWN)
-        self.play(Write(W))
+        # --- Proving that that sum is a dot product with a diagonal matrix in between ---
+        dot0 = hess_simplified4[1].copy()
+        dot0.generate_target()
+        dot0.target.next_to(easy_dot2, DOWN)
+        self.play(MoveToTarget(dot0))
+        dot1 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(easy_dot2, DOWN)
+        self.play(TransformMatchingShapes(dot0,dot1, run_time = 0.001))
+        
+        dot2 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = X_{\cdot m}^T W X_{\cdot j}").next_to(easy_dot2, DOWN)
+        self.play(TransformByGlyphMap(dot1, dot2,
+                                      (FadeIn, range(13,22))))
+        dot3 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+        r"X_{\cdot m}^T",
+        r"W",
+        r"X_{\cdot j}").next_to(easy_dot2, DOWN)
+        self.play(TransformMatchingTex(dot2, dot3, run_time = 0.001))
+        W_tex = square_matrix_tex(5, lambda i,j: f"w_{i}" if i == j else "0")
+        dot4 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+        r"X_{\cdot m}^T",
+        W_tex,
+        r"X_{\cdot j}").next_to(easy_dot2, DOWN)
+        self.play(*[ReplacementTransform(dot3[i], dot4[i]) for i in range(4)])
         
