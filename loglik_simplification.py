@@ -255,13 +255,12 @@ class LoglikSimplificationScene(Scene):
         sum_without_w = MathTex(r"\sum_{i=1}^{n} X_{im} X_{ij}").next_to(hess_simplified4, DOWN)
         self.play(TransformByGlyphMap(sum_with_w2,sum_without_w,
                                       ([8,9], FadeOut)))
-        dot1 = MathTex(r"X_{\cdot m}\cdot X_{\cdot j}").next_to(hess_simplified4, DOWN)
+        dot1 = MathTex(r"\sum_{i=1}^{n} X_{im} X_{ij} = X_{\cdot m}\cdot X_{\cdot j}").next_to(hess_simplified4, DOWN)
         self.play(TransformByGlyphMap(sum_without_w, dot1,
-                                      (range(5), FadeOut),
-                                      (FadeIn, [3])))
-        dot2 = MathTex(r"X_{\cdot m}^T X_{\cdot j}").next_to(hess_simplified4, DOWN)
+                                      (FadeIn, range(11,19))))
+        dot2 = MathTex(r"\sum_{i=1}^{n} X_{im} X_{ij} = X_{\cdot m}^T X_{\cdot j}").next_to(hess_simplified4, DOWN)
         self.play(TransformByGlyphMap(dot1, dot2,
-                                      ([3],[1])))
+                                      ([15],[13])))
         
         W = MathTex(square_matrix_tex(5, lambda i,j: f"w_{i}" if i == j else "0")).next_to(dot2, DOWN)
         self.play(Write(W))
