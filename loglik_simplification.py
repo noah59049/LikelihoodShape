@@ -148,7 +148,7 @@ class LoglikSimplificationScene(Scene):
         hess_texes = [
             r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}=",
             r"\sum_{i=1}^{n}",
-            r"\hspace{1pt}",
+            r"\hspace{1pt}", # I want something that doesn't shrink to the center of the screen but I can't find out how
             r"- \sigma(\hat{z}_i)(1-\sigma(\hat{z}_i))",
             r"X_{im}",
             r"X_{ij}"
