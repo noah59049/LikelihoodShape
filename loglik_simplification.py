@@ -148,12 +148,14 @@ class LoglikSimplificationScene(Scene):
         hess_texes = [
             r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}=",
             r"\sum_{i=1}^{n}",
-            r"\hspace{1pt}", # I want something that doesn't shrink to the center of the screen but I can't find out how
+            r".", # We will set this to 0 opacity
             r"- \sigma(\hat{z}_i)(1-\sigma(\hat{z}_i))",
             r"X_{im}",
             r"X_{ij}"
         ]
         hesses = [MathTex(*hess_texes[0:i+1]).next_to(grad_together3,DOWN,aligned_edge=LEFT) for i in range(len(hess_texes))]
+        for hess in hesses[2:]:
+            hess[2].set_opacity(0) # Jank solution but it works
         grad_parts = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j} = ",
                              r"\sum_{i=1}^{n}",
                              r"y_i X_{ij}",
@@ -173,6 +175,6 @@ class LoglikSimplificationScene(Scene):
                                       (FadeIn, [1], {"delay":0.4, "run_time":0.7}),
                                       (FadeIn, [8,9,10,11])))
         
-        for i in range(1,5):
+        for i in range(1,4):
             self.play(ReplacementTransform(grad_parts[i].copy(), hesses[i][i]))
             self.play(TransformMatchingTex(hesses[i - 1], hesses[i], run_time = 0.001))
