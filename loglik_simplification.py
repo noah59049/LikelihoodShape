@@ -190,3 +190,16 @@ class LoglikSimplificationScene(Scene):
         self.play(TransformMatchingTex(hesses[3], hesses[4], run_time = 0.001))
         self.play(ReplacementTransform(grad_parts2[6].copy(), hesses[5][5]))
         self.play(TransformMatchingTex(hesses[4], hesses[5], run_time = 0.001))
+
+        hess_texes.remove(".") # No need for the placeholder dot now
+        hess_joined = MathTex("".join(hess_texes)).next_to(grad_together3,DOWN,aligned_edge=LEFT)
+        self.play(TransformMatchingTex(hesses[5], hess_joined, run_time = 0.55))
+        hess_simplified = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}=" +
+            r"\sum_{i=1}^{n}" +
+            r"- \hat{y}_i(1-\hat{y}_i)" +
+            r"X_{im}" +
+            r"X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
+        self.play(TransformByGlyphMap(hess_joined, hess_simplified,
+                                      (range(19,25), range(19,22)),
+                                      (range(28,34), range(28,31))))
+        
