@@ -357,29 +357,29 @@ class LoglikSimplificationScene(Scene):
         self.play(FadeOut(big_claim))
 
         hess_row_tex = latex_vector([r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)) for j in range(4)], "row")
-        glued_row = MathTex(hess_row_tex + r"= X_{\cdot m}^T W " + latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")).scale(0.93)
+        glued_row = MathTex(hess_row_tex + r"= -X_{\cdot m}^T W " + latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")).scale(0.9)
         self.play(TransformByGlyphMap(hess_simplified6.copy(), glued_row,
                                       (range(12), range(1 ,13)),
                                       (range(12), range(13,25)),
                                       (range(12), range(25,37)),
                                       (range(12), range(37,49)),
                                       (FadeIn, [0,49]), # Brackets on the left
-                                      (range(12,19), range(50,57)), # Middle stuff with W TODO: Get this not to warp
-                                      (FadeIn, [56,69]), # Brackets on the right
-                                      (range(19,22), range(57,60)),
-                                      (range(19,22), range(60,63)),
-                                      (range(19,22), range(63,66)),
-                                      (range(19,22), range(66,69)),
+                                      (range(12,19), range(50,57)), # Middle stuff with W
+                                      (FadeIn, [57,70]), # Brackets on the right
+                                      (range(19,22), range(58,61)),
+                                      (range(19,22), range(61,64)),
+                                      (range(19,22), range(64,67)),
+                                      (range(19,22), range(67,70)),
                                       ))
         
         entire_hess_tex = square_matrix_tex(4, 
                                             lambda m, j: r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)).replace("m", str(m)), start_ij = 0)
         glued_hess = MathTex(entire_hess_tex + 
-                             "=" +
+                             "=-" +
                              latex_vector([r"X_{\cdot m}^T".replace("m",str(m)) for m in range(4)], "col") + 
                              " W " + 
                              latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")
-                             ).scale(0.915).next_to(glued_row, DOWN)
+                             ).scale(0.89).next_to(glued_row, DOWN)
         self.play(TransformByGlyphMap(glued_row.copy(),glued_hess,
                                       ([0], range(7)), # Left bracket of hess
                                       (range(1,49), range(7,55)),
@@ -387,11 +387,13 @@ class LoglikSimplificationScene(Scene):
                                       (range(1,49), range(103,151)),
                                       (range(1,49), range(151,199)),
                                       ([49], range(199,206)), # Right bracket of hess
-                                      ([50], [206]), # Equals sign
-                                      (FadeIn, range(207,211)), # Left bracket of XT
-                                      (range(51,55), range(211,215)),
-                                      (range(51,55), range(215,219)),
-                                      (range(51,55), range(219,223)),
-                                      (range(51,55), range(223,227)),
-                                      (FadeIn, range(227, 231)) # Right bracket of XT
+                                      ([50,51], [206,207]), # Equals sign and minus sign
+                                      (FadeIn, range(208,212)), # Left bracket of XT
+                                      (range(52,56), range(212,216)),
+                                      (range(52,56), range(216,220)),
+                                      (range(52,56), range(220,224)),
+                                      (range(52,56), range(224,228)),
+                                      (FadeIn, range(228, 232)) # Right bracket of XT
                                       ))
+        
+        
