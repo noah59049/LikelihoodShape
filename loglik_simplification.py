@@ -4,11 +4,12 @@ from typing import Callable
 from directional_derivative import latex_vector
 
 def square_matrix_tex(n : int, 
-                      generator: Callable[[int, int], str]):
+                      generator: Callable[[int, int], str],
+                      start_ij: int = 1):
     rows = []
-    for i in range(1, n + 1):
+    for i in range(start_ij, n + start_ij):
         row = []
-        for j in range(1, n + 1):
+        for j in range(start_ij, n + start_ij):
             entry = generator(i, j)
             row.append(entry)
         rows.append(" & ".join(row))
@@ -372,7 +373,7 @@ class LoglikSimplificationScene(Scene):
                                       ))
         
         entire_hess_tex = square_matrix_tex(4, 
-                                            lambda m, j: r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)).replace("m", str(m)))
+                                            lambda m, j: r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)).replace("m", str(m)), start_ij = 0)
         glued_hess = MathTex(entire_hess_tex + 
                              "=" +
                              latex_vector([r"X_{\cdot m}^T".replace("m",str(m)) for m in range(4)], "col") + 
