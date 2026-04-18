@@ -356,7 +356,7 @@ class LoglikSimplificationScene(Scene):
         self.play(FadeOut(big_claim))
 
         hess_row_tex = latex_vector([r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)) for j in range(4)], "row")
-        glued_row = MathTex(hess_row_tex + r"= X_{\cdot m}^T W " + latex_vector(["X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")).scale(0.93)
+        glued_row = MathTex(hess_row_tex + r"= X_{\cdot m}^T W " + latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")).scale(0.93)
         self.play(TransformByGlyphMap(hess_simplified6.copy(), glued_row,
                                       (range(12), range(1 ,13)),
                                       (range(12), range(13,25)),
@@ -369,4 +369,28 @@ class LoglikSimplificationScene(Scene):
                                       (range(19,22), range(60,63)),
                                       (range(19,22), range(63,66)),
                                       (range(19,22), range(66,69)),
+                                      ))
+        
+        entire_hess_tex = square_matrix_tex(4, 
+                                            lambda m, j: r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)).replace("m", str(m)))
+        glued_hess = MathTex(entire_hess_tex + 
+                             "=" +
+                             latex_vector([r"X_{\cdot m}^T".replace("m",str(m)) for m in range(4)], "col") + 
+                             " W " + 
+                             latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")
+                             ).scale(0.915).next_to(glued_row, DOWN)
+        self.play(TransformByGlyphMap(glued_row.copy(),glued_hess,
+                                      ([0], range(7)), # Left bracket of hess
+                                      (range(1,49), range(7,55)),
+                                      (range(1,49), range(55,103)),
+                                      (range(1,49), range(103,151)),
+                                      (range(1,49), range(151,199)),
+                                      ([49], range(199,206)), # Right bracket of hess
+                                      ([50], [206]), # Equals sign
+                                      (FadeIn, range(207,211)), # Left bracket of XT
+                                      (range(51,55), range(211,215)),
+                                      (range(51,55), range(215,219)),
+                                      (range(51,55), range(219,223)),
+                                      (range(51,55), range(223,227)),
+                                      (FadeIn, range(227, 231)) # Right bracket of XT
                                       ))
