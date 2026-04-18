@@ -317,7 +317,8 @@ class LoglikSimplificationScene(Scene):
                         for i in range(1,5)])
         )
         dot7.scale(0.87)
-        self.play(*[ReplacementTransform(dot6[i], dot7[i]) for i in range(3)])
+        self.play(*[ReplacementTransform(dot6[i], dot7[i]) for i in range(2)],
+                  TransformMatchingShapes(dot6[2], dot7[2]))
         
 
         
