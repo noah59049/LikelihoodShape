@@ -205,10 +205,36 @@ class LoglikSimplificationScene(Scene):
                                       (range(29,35), range(25,28)),
                                       ))
         
-        hess_simplified2 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}= \sum_{i=1}^{n} - w_i X_{im} X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
-        hess_simplified3 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}= \sum_{i=1}^{n} - X_{im} w_i X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
+        hess_simplified2 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = \sum_{i=1}^{n} - w_i X_{im} X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
+        hess_simplified3 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = - \sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
         self.play(TransformByGlyphMap(hess_simplified, hess_simplified2,
                                       (range(19,29),[19,20])))
         self.play(TransformByGlyphMap(hess_simplified2, hess_simplified3,
+                                      ([18],[13], {"path_arc": -PI}),
+                                      (range(13,18), range(14,19), {"path_arc": -PI}),
                                       ([19,20], [22,23], {"path_arc": -PI}),
-                                      ([21,22,23], [19,20,21], {"path_arc": -PI})))
+                                      ([21,22,23], [19,20,21], {"path_arc": -PI}),
+                                      show_indices=False))
+        
+        def loglik_hessian(n):
+            rows = []
+            
+            for m in range(n):
+                row = []
+                for j in range(n):
+                    entry = r"-\sum_{i=1}^{n} X_{immm} w_i X_{ijjj}".replace("mmm",str(m)).replace("jjj",str(j))
+                    row.append(entry)
+                rows.append(" & ".join(row))
+            
+            matrix_body = " \\\\\n".join(rows)
+            
+            latex = (
+                "\\begin{bmatrix}\n"
+                f"{matrix_body}\n"
+                "\\end{bmatrix}\n"
+            )
+            
+            return latex
+        
+        matrix_hess_tex = MathTex(loglik_hessian(4)).scale(0.74).next_to(hess_simplified3,DOWN)
+        self.play(Write(matrix_hess_tex))
