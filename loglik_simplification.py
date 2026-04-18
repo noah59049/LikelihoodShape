@@ -245,6 +245,9 @@ class LoglikSimplificationScene(Scene):
                                    r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
         self.play(TransformMatchingTex(hess_simplified3, hess_simplified4, run_time = 0.001))
 
+        self.play(LaggedStart(FadeOut(grad_parts2), 
+                              hess_simplified4.animate.to_edge(UP), lag_ratio=0.5))
+
         sum_with_w = hess_simplified4[1].copy()
         sum_with_w.generate_target()
         sum_with_w.target.next_to(hess_simplified4, DOWN)
