@@ -238,7 +238,7 @@ class LoglikSimplificationScene(Scene):
                                       ([21,22,23], [19,20,21], {"path_arc": -PI}),
                                       show_indices=False))
 
-        matrix_hess_tex = MathTex(square_matrix_tex(4, lambda m,j: r"-\sum_{i=1}^{n} X_{immm} w_i X_{ijjj}".replace("mmm",str(m-1)).replace("jjj",str(j-1)))
+        matrix_hess_tex = MathTex(square_matrix_tex(4, lambda m,j: r"-\sum_{i=1}^{n} X_{immm} w_i X_{ijjj}".replace("mmm",str(m)).replace("jjj",str(j)), start_ij=0)
                                   ).scale(0.74).next_to(hess_simplified3,DOWN)
         self.play(Write(matrix_hess_tex))
         self.play(FadeOut(matrix_hess_tex))
