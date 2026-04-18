@@ -243,5 +243,21 @@ class LoglikSimplificationScene(Scene):
         hess_simplified4 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -",
                                    r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
         self.play(TransformMatchingTex(hess_simplified3, hess_simplified4, run_time = 0.001))
-        sum_with_w = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(hess_simplified4, DOWN)
-        self.play(TransformFromCopy(hess_simplified4[1], sum_with_w))
+
+        sum_with_w = hess_simplified4[1].copy()
+        sum_with_w.generate_target()
+        sum_with_w.target.next_to(hess_simplified4, DOWN)
+        self.play(MoveToTarget(sum_with_w))
+        sum_with_w2 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(hess_simplified4, DOWN)
+        self.play(TransformMatchingShapes(sum_with_w,sum_with_w2, run_time = 0.001))
+
+        sum_without_w = MathTex(r"\sum_{i=1}^{n} X_{im} X_{ij}").next_to(hess_simplified4, DOWN)
+        self.play(TransformByGlyphMap(sum_with_w2,sum_without_w,
+                                      ([8,9], FadeOut)))
+        dot1 = MathTex(r"X_{\cdot m}\cdot X_{\cdot j}").next_to(hess_simplified4, DOWN)
+        self.play(TransformByGlyphMap(sum_without_w, dot1,
+                                      (range(5), FadeOut),
+                                      (FadeIn, [3])))
+        dot2 = MathTex(r"X_{\cdot m}^T X_{\cdot j}").next_to(hess_simplified4, DOWN)
+        self.play(TransformByGlyphMap(dot1, dot2,
+                                      ([3],[1])))
