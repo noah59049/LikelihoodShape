@@ -235,28 +235,9 @@ class LoglikSimplificationScene(Scene):
                                       ([19,20], [22,23], {"path_arc": -PI}),
                                       ([21,22,23], [19,20,21], {"path_arc": -PI}),
                                       show_indices=False))
-        
-        def loglik_hessian(n):
-            rows = []
-            
-            for m in range(n):
-                row = []
-                for j in range(n):
-                    entry = r"-\sum_{i=1}^{n} X_{immm} w_i X_{ijjj}".replace("mmm",str(m)).replace("jjj",str(j))
-                    row.append(entry)
-                rows.append(" & ".join(row))
-            
-            matrix_body = " \\\\\n".join(rows)
-            
-            latex = (
-                "\\begin{bmatrix}\n"
-                f"{matrix_body}\n"
-                "\\end{bmatrix}\n"
-            )
-            
-            return latex
-        
-        matrix_hess_tex = MathTex(loglik_hessian(4)).scale(0.74).next_to(hess_simplified3,DOWN)
+
+        matrix_hess_tex = MathTex(square_matrix_tex(4, lambda m,j: r"-\sum_{i=1}^{n} X_{immm} w_i X_{ijjj}".replace("mmm",str(m-1)).replace("jjj",str(j-1)))
+                                  ).scale(0.74).next_to(hess_simplified3,DOWN)
         self.play(Write(matrix_hess_tex))
         self.play(FadeOut(matrix_hess_tex))
 
