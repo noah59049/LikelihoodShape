@@ -309,13 +309,13 @@ class LoglikSimplificationScene(Scene):
         dot6.scale(0.87)
         self.play(TransformMatchingTex(dot5, dot6, run_time = 0.001))
 
-        
+        self.play(FadeOut(easy_dot2, hess_simplified4)) # We need the whole screen for this transformation
         dot7 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
         latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
         latex_vector([latex_vector([W_generator(i,j) for j in range(1,5)],"row") + 
                       latex_vector([f"X_{{{j}j}}" for j in range(1,5)], orientation = "column")
                         for i in range(1,5)])
-        ).next_to(easy_dot2, DOWN)
+        )
         dot7.scale(0.87)
         self.play(*[ReplacementTransform(dot6[i], dot7[i]) for i in range(3)])
         
