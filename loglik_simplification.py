@@ -320,5 +320,28 @@ class LoglikSimplificationScene(Scene):
         self.play(*[ReplacementTransform(dot6[i], dot7[i]) for i in range(2)],
                   TransformMatchingShapes(dot6[2], dot7[2]))
         
+        dot8 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+        latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
+        latex_vector([f"w_{j} X_{{{j}j}}" for j in range(1,5)], orientation = "column")
+        )
+        dot8.scale(0.87)
+        self.play(*[ReplacementTransform(dot7[i], dot8[i]) for i in range(2)],
+                  TransformMatchingShapes(dot7[2], dot8[2]))
+        
+        dot9 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+        latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row") +
+        latex_vector([f"w_{j} X_{{{j}j}}" for j in range(1,5)], orientation = "column")
+        )
+        dot9.scale(0.87)
+        self.play(TransformMatchingTex(dot8, dot9, run_time = 0.001))
+
+        dot10 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+        r"X_{1m}w_1X_{1j}+X_{2m}w_2X_{2j}+X_{3m}w_3X_{3j}+X_{4m}w_4X_{4j}"
+        )
+        dot10.scale(0.87)
+        self.play(ReplacementTransform(dot9[0], dot10[0]), TransformMatchingShapes(dot9[1], dot10[1]))
+        
+
+        
 
         
