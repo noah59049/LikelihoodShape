@@ -1,6 +1,7 @@
 from manim import *
 from MF_Tools import *
 from typing import Callable
+from directional_derivative import latex_vector
 
 def square_matrix_tex(n : int, 
                       generator: Callable[[int, int], str]):
@@ -282,10 +283,19 @@ class LoglikSimplificationScene(Scene):
         r"W",
         r"X_{\cdot j}").next_to(easy_dot2, DOWN)
         self.play(TransformMatchingTex(dot2, dot3, run_time = 0.001))
-        W_tex = square_matrix_tex(5, lambda i,j: f"w_{i}" if i == j else "0")
+        W_tex = square_matrix_tex(4, lambda i,j: f"w_{i}" if i == j else "0")
         dot4 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
         r"X_{\cdot m}^T",
         W_tex,
         r"X_{\cdot j}").next_to(easy_dot2, DOWN)
         self.play(*[ReplacementTransform(dot3[i], dot4[i]) for i in range(4)])
+        dot5 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+        latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
+        W_tex,
+        latex_vector([f"X_{{{i}j}}" for i in range(1,5)], orientation = "column")
+        ).next_to(easy_dot2, DOWN)
+        dot5.scale(0.87)
+        self.play(*[ReplacementTransform(dot4[i], dot5[i]) for i in range(4)])
+
+        
         
