@@ -341,7 +341,32 @@ class LoglikSimplificationScene(Scene):
         dot10.scale(0.87)
         self.play(ReplacementTransform(dot9[0], dot10[0]), TransformMatchingShapes(dot9[1], dot10[1]))
         
+        self.play(FadeIn(hess_simplified4), FadeOut(dot10))
+        hess_simplified5 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -",
+                                   r"X_{\cdot m}^T W X_{\cdot j}").move_to(hess_simplified4, aligned_edge=LEFT)
+        self.play(*[ReplacementTransform(hess_simplified4[i], hess_simplified5[i]) for i in range(2)])
 
+        hess_simplified6 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -"+
+                                   r"X_{\cdot m}^T W X_{\cdot j}").move_to(hess_simplified4, aligned_edge=LEFT)
+        self.play(TransformMatchingTex(hess_simplified5, hess_simplified6, run_time = 0.001))
         
+        # --- Gluing the partials together into the Hessian
+        big_claim = MathTex("H=-X^T W X")
+        self.play(Write(big_claim))
+        self.play(FadeOut(big_claim))
 
-        
+        hess_row_tex = latex_vector([r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)) for j in range(4)], "row")
+        glued_row = MathTex(hess_row_tex + r"= X_{\cdot m}^T W " + latex_vector(["X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")).scale(0.93)
+        self.play(TransformByGlyphMap(hess_simplified6.copy(), glued_row,
+                                      (range(12), range(1 ,13)),
+                                      (range(12), range(13,25)),
+                                      (range(12), range(25,37)),
+                                      (range(12), range(37,49)),
+                                      (FadeIn, [0,49]), # Brackets on the left
+                                      (range(12,19), range(50,57)), # Middle stuff with W TODO: Get this not to warp
+                                      (FadeIn, [56,69]), # Brackets on the right
+                                      (range(19,22), range(57,60)),
+                                      (range(19,22), range(60,63)),
+                                      (range(19,22), range(63,66)),
+                                      (range(19,22), range(66,69)),
+                                      ))
