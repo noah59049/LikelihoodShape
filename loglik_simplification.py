@@ -174,7 +174,19 @@ class LoglikSimplificationScene(Scene):
         self.play(TransformByGlyphMap(just_the_grad2, hesses[0],
                                       (FadeIn, [1], {"delay":0.4, "run_time":0.7}),
                                       (FadeIn, [8,9,10,11])))
-        
         for i in range(1,4):
             self.play(ReplacementTransform(grad_parts[i].copy(), hesses[i][i]))
             self.play(TransformMatchingTex(hesses[i - 1], hesses[i], run_time = 0.001))
+        
+        grad_parts2 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j} = ",
+                              r"\sum_{i=1}^{n}",
+                              r"y_i X_{ij}",
+                              r" - \sigma(",
+                              r"\hat{z}_i",
+                              r")",
+                              r" X_{ij}").move_to(grad_together3)
+        self.play(TransformMatchingTex(grad_parts, grad_parts2, run_time = 0.001))
+        self.play(ReplacementTransform(grad_parts2[4].copy(), hesses[4][4]))
+        self.play(TransformMatchingTex(hesses[3], hesses[4], run_time = 0.001))
+        self.play(ReplacementTransform(grad_parts2[6].copy(), hesses[5][5]))
+        self.play(TransformMatchingTex(hesses[4], hesses[5], run_time = 0.001))
