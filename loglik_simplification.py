@@ -205,3 +205,10 @@ class LoglikSimplificationScene(Scene):
                                       (range(29,35), range(25,28)),
                                       ))
         
+        hess_simplified2 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}= \sum_{i=1}^{n} - w_i X_{im} X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
+        hess_simplified3 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}= \sum_{i=1}^{n} - X_{im} w_i X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
+        self.play(TransformByGlyphMap(hess_simplified, hess_simplified2,
+                                      (range(19,29),[19,20])))
+        self.play(TransformByGlyphMap(hess_simplified2, hess_simplified3,
+                                      ([19,20], [22,23], {"path_arc": -PI}),
+                                      ([21,22,23], [19,20,21], {"path_arc": -PI})))
