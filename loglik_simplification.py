@@ -238,3 +238,10 @@ class LoglikSimplificationScene(Scene):
         
         matrix_hess_tex = MathTex(loglik_hessian(4)).scale(0.74).next_to(hess_simplified3,DOWN)
         self.play(Write(matrix_hess_tex))
+        self.play(FadeOut(matrix_hess_tex))
+
+        hess_simplified4 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -",
+                                   r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
+        self.play(TransformMatchingTex(hess_simplified3, hess_simplified4, run_time = 0.001))
+        sum_with_w = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(hess_simplified4, DOWN)
+        self.play(TransformFromCopy(hess_simplified4[1], sum_with_w))
