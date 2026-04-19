@@ -1,7 +1,6 @@
 from manim import *
 from MF_Tools import *
-from directional_derivative import latex_vector
-from N_Tools import square_matrix_tex
+from N_Tools import latex_vector, square_matrix_tex
 
 class LoglikSimplificationScene(Scene):
     def construct(self):
