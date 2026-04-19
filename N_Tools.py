@@ -1,5 +1,6 @@
 from typing import Callable
 import numpy as np
+from manim import *
 
 def simple_linear_regression(X, Y):
     X = np.asarray(X)
@@ -199,3 +200,74 @@ def latex_vector(elements, orientation="column", bracket="bmatrix"):
         body = " & ".join(elements)
 
     return f"\\begin{{{bracket}}}{body}\\end{{{bracket}}}"
+
+def create_graph(
+    func,
+    x_range=None,
+    y_range=None,
+    x_label="x",
+    y_label="y",
+    domain=None,
+    inverse_mode=False,
+    inverse_func=None,   # maps y -> x (for inverse_mode mode)
+    t_range=None,        # range in output space (y-space)
+    n_points=1000,
+    width = None,
+    height = None,
+    color=RED,
+):
+    # ---- defaults (avoid mutable args) ----
+    x_range = x_range or [-5, 5, 1]
+    y_range = y_range or [-5, 5, 1]
+
+    if len(x_range) == 2:
+        x_range = [*x_range, (x_range[1] - x_range[0]) * 0.1]
+    if len(y_range) == 2:
+        y_range = [*y_range, (y_range[1] - y_range[0]) * 0.1]
+
+    domain = domain or x_range[0:2]
+    if len(domain) == 2:
+        step_size = (domain[1] - domain[0]) / n_points
+        domain = [*domain, step_size]
+
+    # ---- axes ----
+
+    axes = Axes(
+        x_range=x_range,
+        y_range=y_range,
+        x_length=width if width is not None else 6,
+        y_length=height if height is not None else 6,
+    ).add_coordinates()
+    labels = axes.get_axis_labels(x_label=x_label, y_label=y_label)
+    labels = axes.get_axis_labels(x_label=x_label, y_label=y_label)
+
+    # ---- choose plotting mode ----
+    if inverse_mode:
+        if inverse_func is None:
+            raise ValueError("inverse_mode=True requires inverse_func (mapping y -> x)")
+
+        # default t_range from visible y-axis
+        if t_range is None:
+            t_range = y_range[0:2]
+            # Apparently you can't control the step_size in t_range so never mind
+            # step_size = (t_range[1] - t_range[0]) / n_points
+            # t_range.append(step_size)
+
+        def parametric(t):
+            x = inverse_func(t)
+            return axes.c2p(x, t)
+
+        graph = ParametricFunction(
+            parametric,
+            t_range=t_range,
+            color=color,
+        )
+
+    else:
+        graph = axes.plot(
+            func,
+            x_range=domain,
+            color=color,
+        )
+
+    return VGroup(axes, labels, graph)
