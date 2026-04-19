@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from manim import *
 from MF_Tools import *
-from N_Tools import as_row, as_col, numpy_to_latex
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid
 from intro_with_tables import yX_tex_numbered
 
 COLS_TO_KEEP = 4 # If we set this to a different number it would minorly break things
@@ -52,10 +52,18 @@ class MLEScene(Scene):
         self.play(TransformMatchingTex(formula3, substituted_formula))
 
         substituted_formula_tex2 = substituted_formula_tex
-        for i, e in enumerate(X[0,:].reshape(-1)):
+        row_np = X[0,:]
+        for i, e in enumerate(row_np.reshape(-1)):
             substituted_formula_tex2 = substituted_formula_tex2.replace(f"X_{{{i+1}}}", f"({e})")
         substituted_formula2 = MathTex(substituted_formula_tex2).scale(0.83).to_edge(DOWN)
         self.play(TransformMatchingTex(substituted_formula, substituted_formula2))
+
+        new_table_tex = yXyhat_tex
+        zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
+        yhat_i = sigmoid(zi)
+        new_table_tex = new_table_tex.replace(r"& \\", f"& {yhat_i} \\\\", count = 1)
+        new_table = Tex(new_table_tex).scale(0.66).to_corner(UL)
+        self.play(TransformMatchingTex(yXyhat_table, new_table))
         
 
         junk_table = Tex(numpy_to_latex(yX[0:4,:], make_table = True, colnames = ["X1"] * (COLS_TO_KEEP + 1))).scale(0.66).to_corner(UL)
