@@ -48,11 +48,14 @@ def logistic_regression(X, y, max_iter=100, tol=1e-6, add_intercept = False):
         beta : (p,) estimated coefficients
     """
 
+    n, p = X.shape
+
     if add_intercept:
         X = np.c_[np.ones(n), X]
+        n, p = X.shape
 
-    n, p = X.shape
     beta = np.zeros(p)
+
 
     for _ in range(max_iter):
         z = X @ beta
