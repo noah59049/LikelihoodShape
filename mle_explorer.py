@@ -32,13 +32,24 @@ class MLEScene(Scene):
                                       (FadeIn, [15]),
                                       (FadeIn, [25]),
                                       ))
-        formula3 = MathTex(r"\hat{y}=\sigma(\hat{\beta_0}+" + "+".join(r"\hat{\beta_j} X_{j}".replace("j",str(j)) for j in range(1, 1 + COLS_TO_KEEP)) + ")").to_edge(DOWN)
+        formula3_tex = r"\hat{y}=\sigma(\hat{\beta_0}+" + "+".join(r"\hat{\beta_j} X_{j}".replace("j",str(j)) for j in range(1, 1 + COLS_TO_KEEP)) + ")"
+        formula3 = MathTex(formula3_tex).to_edge(DOWN)
         self.play(TransformMatchingShapes(formula2, formula3))
-
 
         self.play(FadeIn(yX_table))
         yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
         self.play(FadeIn(yXyhat_table))
+
+        bhat0 = [1.432, 0.3954, 12.43, 5.349, 0.0043]
+        bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat0)]).arrange(DOWN).to_corner(UR)
+        self.play(FadeIn(bhats_tex))
+
+        substituted_formula_tex = formula3_tex
+        for i,e in enumerate(bhat0):
+            substituted_formula_tex = substituted_formula_tex.replace(r"\hat{\beta_" + str(i) + "}", str(e))
+        substituted_formula = MathTex(substituted_formula_tex).to_edge(DOWN)
+        self.play(TransformMatchingTex(formula3, substituted_formula))
+        
 
         junk_table = Tex(numpy_to_latex(yX[0:4,:], make_table = True, colnames = ["X1"] * (COLS_TO_KEEP + 1))).scale(0.66).to_corner(UL)
         rect_height = junk_table.height / 5
