@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from manim import *
 from MF_Tools import *
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 
 COLS_TO_KEEP = 4 # If we set this to a different number it would minorly break things
@@ -42,12 +42,13 @@ class MLEScene(Scene):
         self.remove(yX_table)
 
         bhat0 = logistic_regression(X, y, add_intercept=True)
+        bhat0 = round_sig(bhat0, 4)
         bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat0)]).arrange(DOWN).to_corner(UR)
         self.play(FadeIn(bhats_tex))
 
         substituted_formula_tex = formula3_tex
         for i,e in enumerate(bhat0):
-            substituted_formula_tex = substituted_formula_tex.replace(r"\hat{\beta_" + str(i) + "}", f"{e:.{4}g}")
+            substituted_formula_tex = substituted_formula_tex.replace(r"\hat{\beta_" + str(i) + "}", str(e))
         substituted_formula = MathTex(substituted_formula_tex).to_edge(DOWN)
         self.play(TransformMatchingTex(formula3, substituted_formula))
 
