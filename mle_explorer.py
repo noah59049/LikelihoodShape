@@ -62,7 +62,7 @@ class MLEScene(Scene):
         new_table_tex = yXyhat_tex
         zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
         yhat_i = sigmoid(zi)
-        new_table_tex = new_table_tex.replace(r"& \\", f"& {yhat_i} \\\\", count = 1)
+        new_table_tex = new_table_tex.replace(r"& \\", f"& {yhat_i:.4g} \\\\", count = 1)
         new_table = Tex(new_table_tex).scale(0.66).to_corner(UL)
         self.play(TransformMatchingTex(yXyhat_table, new_table))
         
