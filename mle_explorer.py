@@ -60,21 +60,25 @@ class MLEScene(Scene):
             highlight_rect = Rectangle(color = RED, width = rect_width, height = rect_height).set_opacity(0.3).to_corner(UL)
             self.play(FadeIn(highlight_rect))
 
-            for _ in range(1):
+            old_table_tex = yXyhat_tex
+            old_table = yXyhat_table
+            for i in range(8):
                 self.play(highlight_rect.animate.shift(DOWN * highlight_rect.height))
 
                 substituted_formula_tex2 = substituted_formula_tex
-                row_np = X[0,:]
-                for i, e in enumerate(row_np.reshape(-1)):
-                    substituted_formula_tex2 = substituted_formula_tex2.replace(f"X_{{{i+1}}}", f"({e})")
+                row_np = X[i,:]
+                for j, e in enumerate(row_np.reshape(-1)):
+                    substituted_formula_tex2 = substituted_formula_tex2.replace(f"X_{{{j+1}}}", f"({e})")
                 substituted_formula2 = MathTex(substituted_formula_tex2).scale(0.83).to_edge(DOWN)
                 self.play(TransformMatchingTex(substituted_formula, substituted_formula2))
 
-                new_table_tex = yXyhat_tex
+                new_table_tex = old_table_tex
                 zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
                 yhat_i = sigmoid(zi)
                 new_table_tex = new_table_tex.replace(r"& \\", f"& {yhat_i:.4g} \\\\", count = 1)
                 new_table = Tex(new_table_tex).scale(0.66).to_corner(UL)
-                self.play(TransformMatchingTex(yXyhat_table, new_table))
+                self.play(TransformMatchingTex(old_table, new_table))
 
                 self.play(TransformMatchingTex(substituted_formula2, substituted_formula))
+                old_table_tex = new_table_tex
+                old_table = new_table
