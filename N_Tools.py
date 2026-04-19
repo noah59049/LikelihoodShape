@@ -10,6 +10,23 @@ from manim import *
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
+def round_sig(x, sig=4):
+    x = np.asarray(x)
+    
+    # Handle zeros separately to avoid log10 issues
+    zero_mask = (x == 0)
+    
+    # Compute scale factor
+    mags = np.floor(np.log10(np.abs(x)), where=~zero_mask, out=np.zeros_like(x))
+    factor = np.power(10, sig - 1 - mags)
+    
+    # Round and rescale
+    result = np.round(x * factor) / factor
+    
+    # Restore zeros
+    result[zero_mask] = 0
+    return result
+
 def simple_linear_regression(X, Y):
     X = np.asarray(X)
     Y = np.asarray(Y)
