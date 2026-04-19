@@ -41,36 +41,40 @@ class MLEScene(Scene):
         self.play(FadeIn(yXyhat_table))
         self.remove(yX_table)
 
-        bhat0 = logistic_regression(X, y, add_intercept=True)
-        bhat0 = round_sig(bhat0, 4)
-        bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat0)]).arrange(DOWN).to_corner(UR)
-        self.play(FadeIn(bhats_tex))
+        # This happens for every estimate of the betas
+        for _ in range(1):
+            bhat0 = logistic_regression(X, y, add_intercept=True)
+            bhat0 = round_sig(bhat0, 4)
+            bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat0)]).arrange(DOWN).to_corner(UR)
+            self.play(FadeIn(bhats_tex))
 
-        substituted_formula_tex = formula3_tex
-        for i,e in enumerate(bhat0):
-            substituted_formula_tex = substituted_formula_tex.replace(r"\hat{\beta_" + str(i) + "}", str(e))
-        substituted_formula = MathTex(substituted_formula_tex).to_edge(DOWN)
-        self.play(TransformMatchingTex(formula3, substituted_formula))
+            substituted_formula_tex = formula3_tex
+            for i,e in enumerate(bhat0):
+                substituted_formula_tex = substituted_formula_tex.replace(r"\hat{\beta_" + str(i) + "}", str(e))
+            substituted_formula = MathTex(substituted_formula_tex).to_edge(DOWN)
+            self.play(TransformMatchingTex(formula3, substituted_formula))
 
-        substituted_formula_tex2 = substituted_formula_tex
-        row_np = X[0,:]
-        for i, e in enumerate(row_np.reshape(-1)):
-            substituted_formula_tex2 = substituted_formula_tex2.replace(f"X_{{{i+1}}}", f"({e})")
-        substituted_formula2 = MathTex(substituted_formula_tex2).scale(0.83).to_edge(DOWN)
-        self.play(TransformMatchingTex(substituted_formula, substituted_formula2))
+            junk_table = Tex(numpy_to_latex(yX[0:4,:], make_table = True, colnames = ["X1"] * (COLS_TO_KEEP + 1))).scale(0.66).to_corner(UL)
+            rect_height = junk_table.height / 5
+            rect_width = yX_table.width
+            highlight_rect = Rectangle(color = RED, width = rect_width, height = rect_height).set_opacity(0.3).to_corner(UL)
+            self.play(FadeIn(highlight_rect))
 
-        new_table_tex = yXyhat_tex
-        zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
-        yhat_i = sigmoid(zi)
-        new_table_tex = new_table_tex.replace(r"& \\", f"& {yhat_i:.4g} \\\\", count = 1)
-        new_table = Tex(new_table_tex).scale(0.66).to_corner(UL)
-        self.play(TransformMatchingTex(yXyhat_table, new_table))
-        
+            for _ in range(1):
+                self.play(highlight_rect.animate.shift(DOWN * highlight_rect.height))
 
-        junk_table = Tex(numpy_to_latex(yX[0:4,:], make_table = True, colnames = ["X1"] * (COLS_TO_KEEP + 1))).scale(0.66).to_corner(UL)
-        rect_height = junk_table.height / 5
-        rect_width = yX_table.width
-        highlight_rect = Rectangle(color = RED, width = rect_width, height = rect_height).set_opacity(0.3).to_corner(UL)
-        highlight_rect.shift(DOWN * highlight_rect.height)
-        self.play(FadeIn(highlight_rect))
+                substituted_formula_tex2 = substituted_formula_tex
+                row_np = X[0,:]
+                for i, e in enumerate(row_np.reshape(-1)):
+                    substituted_formula_tex2 = substituted_formula_tex2.replace(f"X_{{{i+1}}}", f"({e})")
+                substituted_formula2 = MathTex(substituted_formula_tex2).scale(0.83).to_edge(DOWN)
+                self.play(TransformMatchingTex(substituted_formula, substituted_formula2))
 
+                new_table_tex = yXyhat_tex
+                zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
+                yhat_i = sigmoid(zi)
+                new_table_tex = new_table_tex.replace(r"& \\", f"& {yhat_i:.4g} \\\\", count = 1)
+                new_table = Tex(new_table_tex).scale(0.66).to_corner(UL)
+                self.play(TransformMatchingTex(yXyhat_table, new_table))
+
+                self.play(TransformMatchingTex(substituted_formula2, substituted_formula))
