@@ -1,6 +1,24 @@
 from typing import Callable
 import numpy as np
 
+def simple_linear_regression(X, Y):
+    X = np.asarray(X)
+    Y = np.asarray(Y)
+    
+    if X.shape != Y.shape:
+        raise ValueError("X and Y must have the same shape")
+    
+    x_mean = X.mean()
+    y_mean = Y.mean()
+    
+    # slope (beta_1)
+    beta_1 = np.sum((X - x_mean) * (Y - y_mean)) / np.sum((X - x_mean)**2)
+    
+    # intercept (beta_0)
+    beta_0 = y_mean - beta_1 * x_mean
+    
+    return beta_0, beta_1
+
 #Some useful helper methods
 def as_row(vec):
     return vec.reshape(1,-1)

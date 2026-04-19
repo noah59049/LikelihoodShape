@@ -4,28 +4,11 @@ from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 import numpy as np
 import pandas as pd
+from N_Tools import simple_linear_regression
 
 df = pd.read_csv("breast_cancer_sklearn.csv")
 X = np.array(df[df.columns[0]])
 Y = np.array(df["target"])
-
-def simple_linear_regression(X, Y):
-    X = np.asarray(X)
-    Y = np.asarray(Y)
-    
-    if X.shape != Y.shape:
-        raise ValueError("X and Y must have the same shape")
-    
-    x_mean = X.mean()
-    y_mean = Y.mean()
-    
-    # slope (beta_1)
-    beta_1 = np.sum((X - x_mean) * (Y - y_mean)) / np.sum((X - x_mean)**2)
-    
-    # intercept (beta_0)
-    beta_0 = y_mean - beta_1 * x_mean
-    
-    return beta_0, beta_1
 
 def create_graph(
     func,
