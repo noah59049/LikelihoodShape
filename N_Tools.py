@@ -1,3 +1,8 @@
+"""
+This is the place I store all my helper functions for the LikelihoodShape project
+the name N_Tools is patterned after MF_Tools
+"""
+
 from typing import Callable
 import numpy as np
 from manim import *
