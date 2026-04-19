@@ -47,7 +47,7 @@ class MLEScene(Scene):
 
         substituted_formula_tex = formula3_tex
         for i,e in enumerate(bhat0):
-            substituted_formula_tex = substituted_formula_tex.replace(r"\hat{\beta_" + str(i) + "}", str(e))
+            substituted_formula_tex = substituted_formula_tex.replace(r"\hat{\beta_" + str(i) + "}", f"{e:.{4}g}")
         substituted_formula = MathTex(substituted_formula_tex).to_edge(DOWN)
         self.play(TransformMatchingTex(formula3, substituted_formula))
 
