@@ -32,9 +32,11 @@ class MLEScene(Scene):
                                       (FadeIn, [15]),
                                       (FadeIn, [25]),
                                       ))
+        formula3 = MathTex(r"\hat{y}=\sigma(\hat{\beta_0}+" + "+".join(r"\hat{\beta_j} X_{j}".replace("j",str(j)) for j in range(1, 1 + COLS_TO_KEEP)) + ")").to_edge(DOWN)
+        self.play(TransformMatchingShapes(formula2, formula3))
+
 
         self.play(FadeIn(yX_table))
-
         yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
         self.play(FadeIn(yXyhat_table))
 
