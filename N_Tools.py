@@ -7,6 +7,9 @@ from typing import Callable
 import numpy as np
 from manim import *
 
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
+
 def simple_linear_regression(X, Y):
     X = np.asarray(X)
     Y = np.asarray(Y)

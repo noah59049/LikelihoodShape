@@ -2,9 +2,6 @@ import numpy as np
 from manim import *
 from MF_Tools import *
 
-def sigmoid(z):
-    return 1 / (1 + np.exp(-z))
-
 class SigmoidScene(Scene):
     def construct(self):
         # Part 1: Sigmoid definitions
