@@ -69,7 +69,8 @@ class MLEScene(Scene):
 
         junk_table = Tex(numpy_to_latex(yX[0:4,:], make_table = True, colnames = ["X1"] * (COLS_TO_KEEP + 1))).scale(0.66).to_corner(UL)
         rect_height = junk_table.height / 5
-        rect_width = yXyhat_table.width
+        rect_width = yX_table.width
         highlight_rect = Rectangle(color = RED, width = rect_width, height = rect_height).set_opacity(0.3).to_corner(UL)
+        highlight_rect.shift(DOWN * highlight_rect.height)
         self.play(FadeIn(highlight_rect))
 
