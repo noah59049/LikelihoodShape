@@ -39,8 +39,9 @@ class MLEScene(Scene):
         self.play(FadeIn(yX_table))
         yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
         self.play(FadeIn(yXyhat_table))
+        self.remove(yX_table)
 
-        bhat0 = [1.432, 0.3954, 12.43, 5.349, 0.0043]
+        bhat0 = np.array([1.432, 0.3954, 12.43, 5.349, 0.0043])
         bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat0)]).arrange(DOWN).to_corner(UR)
         self.play(FadeIn(bhats_tex))
 
@@ -49,6 +50,12 @@ class MLEScene(Scene):
             substituted_formula_tex = substituted_formula_tex.replace(r"\hat{\beta_" + str(i) + "}", str(e))
         substituted_formula = MathTex(substituted_formula_tex).to_edge(DOWN)
         self.play(TransformMatchingTex(formula3, substituted_formula))
+
+        substituted_formula_tex2 = substituted_formula_tex
+        for i, e in enumerate(X[0,:].reshape(-1)):
+            substituted_formula_tex2 = substituted_formula_tex2.replace(f"X_{{{i+1}}}", f"({e})")
+        substituted_formula2 = MathTex(substituted_formula_tex2).scale(0.83).to_edge(DOWN)
+        self.play(TransformMatchingTex(substituted_formula, substituted_formula2))
         
 
         junk_table = Tex(numpy_to_latex(yX[0:4,:], make_table = True, colnames = ["X1"] * (COLS_TO_KEEP + 1))).scale(0.66).to_corner(UL)
