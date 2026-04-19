@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 from manim import *
 from MF_Tools import *
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid
-from intro_with_tables import yX_tex_numbered
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression
+from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 
 COLS_TO_KEEP = 4 # If we set this to a different number it would minorly break things
 """
@@ -41,7 +41,7 @@ class MLEScene(Scene):
         self.play(FadeIn(yXyhat_table))
         self.remove(yX_table)
 
-        bhat0 = np.array([1.432, 0.3954, 12.43, 5.349, 0.0043])
+        bhat0 = logistic_regression(X, y, add_intercept=True)
         bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat0)]).arrange(DOWN).to_corner(UR)
         self.play(FadeIn(bhats_tex))
 
