@@ -48,6 +48,9 @@ class MLEScene(Scene):
             else: return 3 * j
         def formula4_x_index(j):
             return 1 + 3 * j
+        
+        self.play(*[formula4[formula4_beta_index(j)].animate.set_color(BLUE) for j in range(COLS_TO_KEEP + 1)])
+        self.play(*[formula4[formula4_x_index(j)].animate.set_color(RED) for j in range(1, COLS_TO_KEEP + 1)])
 
         self.play(FadeIn(yX_table))
         yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
@@ -58,7 +61,7 @@ class MLEScene(Scene):
         for _ in range(1):
             bhat0 = logistic_regression(X, y, add_intercept=True)
             bhat0 = round_sig(bhat0, 4)
-            bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat0)]).arrange(DOWN).to_corner(UR)
+            bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat0)]).set_color(BLUE).arrange(DOWN).to_corner(UR)
             self.play(FadeIn(bhats_tex))
 
             substituted_formula_parts = formula4_parts.copy()
@@ -71,6 +74,10 @@ class MLEScene(Scene):
                     substituted_formula_parts[idx - 1] = "-"
 
             substituted_formula = MathTex(*substituted_formula_parts).to_edge(DOWN)
+            for j in range(COLS_TO_KEEP + 1):
+                substituted_formula[formula4_beta_index(j)].set_color(BLUE)
+                if j != 0: 
+                    substituted_formula[formula4_x_index(j)].set_color(RED)
             self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
                          for i in range(len(formula4_parts))])
 
@@ -96,6 +103,11 @@ class MLEScene(Scene):
                 for j, e in enumerate(row_np.reshape(-1)):
                     substituted_formula_parts2[formula4_x_index(j + 1)] = f"({e})"
                 substituted_formula_new = MathTex(*substituted_formula_parts2).scale(0.83).to_edge(DOWN)
+                for j in range(COLS_TO_KEEP + 1):
+                    substituted_formula_new[formula4_beta_index(j)].set_color(BLUE)
+                    if j != 0: 
+                        substituted_formula_new[formula4_x_index(j)].set_color(RED)
+
                 self.play(*[ReplacementTransform(substituted_formula_old[i], substituted_formula_new[i])
                          for i in range(len(substituted_formula_parts2))])
 
