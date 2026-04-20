@@ -82,15 +82,17 @@ class MLEScene(Scene):
 
             old_table_tex = yXyhat_tex
             old_table = yXyhat_table
-            for i in range(1):
+
+            substituted_formula_old = substituted_formula
+            substituted_formula_parts2 = substituted_formula_parts.copy()
+            for i in range(3):
                 self.play(highlight_rect.animate.shift(DOWN * highlight_rect.height))
 
-                substituted_formula_parts2 = substituted_formula_parts.copy()
                 row_np = X[i,:]
                 for j, e in enumerate(row_np.reshape(-1)):
                     substituted_formula_parts2[formula4_x_index(j + 1)] = f"({e})"
-                substituted_formula2 = MathTex(*substituted_formula_parts2).scale(0.83).to_edge(DOWN)
-                self.play(*[ReplacementTransform(substituted_formula[i], substituted_formula2[i])
+                substituted_formula_new = MathTex(*substituted_formula_parts2).scale(0.83).to_edge(DOWN)
+                self.play(*[ReplacementTransform(substituted_formula_old[i], substituted_formula_new[i])
                          for i in range(len(substituted_formula_parts2))])
 
                 new_table_tex = old_table_tex
@@ -99,3 +101,7 @@ class MLEScene(Scene):
                 new_table_tex = new_table_tex.replace(r"& \\", f"& {yhat_i:.4g} \\\\", count = 1)
                 new_table = Tex(new_table_tex).scale(0.66).to_corner(UL)
                 self.play(TransformMatchingTex(old_table, new_table))
+
+                substituted_formula_old = substituted_formula_new
+                old_table_tex = new_table_tex
+                old_table = new_table
