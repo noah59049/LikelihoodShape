@@ -36,6 +36,19 @@ class MLEScene(Scene):
         formula3 = MathTex(formula3_tex).to_edge(DOWN)
         self.play(TransformMatchingShapes(formula2, formula3))
 
+        formula4_parts = [r"\hat{y}=\sigma(",r"\hat{\beta_0}"]
+        for j in range(1, 1 + COLS_TO_KEEP):
+            formula4_parts.append("+")
+            formula4_parts.append(rf"\hat{{\beta_{j}}}")
+            formula4_parts.append(rf"X_{{{j}}}")
+        formula4 = MathTex(*formula4_parts).to_edge(DOWN)
+        self.play(TransformMatchingTex(formula3, formula4, run_time = 0.001))
+        def formula4_beta_index(j):
+            if j == 0: return 1
+            else: return 3 * j
+        def formula4_x_index(j):
+            return 1 + 3 * j
+
         self.play(FadeIn(yX_table))
         yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
         self.play(FadeIn(yXyhat_table))
@@ -48,11 +61,13 @@ class MLEScene(Scene):
             bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat0)]).arrange(DOWN).to_corner(UR)
             self.play(FadeIn(bhats_tex))
 
-            substituted_formula_tex = formula3_tex
-            for i,e in enumerate(bhat0):
-                substituted_formula_tex = substituted_formula_tex.replace(r"\hat{\beta_" + str(i) + "}", str(e))
-            substituted_formula = MathTex(substituted_formula_tex).to_edge(DOWN)
-            self.play(TransformMatchingTex(formula3, substituted_formula))
+            substituted_formula_parts = formula4_parts.copy()
+            for j in range(COLS_TO_KEEP + 1):
+                idx = formula4_beta_index(j)
+                substituted_formula_parts[idx] = str(bhat0[j])
+            substituted_formula = MathTex(*substituted_formula_parts).to_edge(DOWN)
+            self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
+                         for i in range(len(formula4_parts))])
 
             junk_table = Tex(numpy_to_latex(yX[0:4,:], make_table = True, colnames = ["X1"] * (COLS_TO_KEEP + 1))).scale(0.66).to_corner(UL)
             rect_height = junk_table.height / 5
@@ -62,15 +77,16 @@ class MLEScene(Scene):
 
             old_table_tex = yXyhat_tex
             old_table = yXyhat_table
-            for i in range(8):
+            for i in range(1):
                 self.play(highlight_rect.animate.shift(DOWN * highlight_rect.height))
 
-                substituted_formula_tex2 = substituted_formula_tex
+                substituted_formula_parts2 = substituted_formula_parts.copy()
                 row_np = X[i,:]
                 for j, e in enumerate(row_np.reshape(-1)):
-                    substituted_formula_tex2 = substituted_formula_tex2.replace(f"X_{{{j+1}}}", f"({e})")
-                substituted_formula2 = MathTex(substituted_formula_tex2).scale(0.83).to_edge(DOWN)
-                self.play(TransformMatchingTex(substituted_formula, substituted_formula2))
+                    substituted_formula_parts2[formula4_x_index(j)] = str(e)
+                substituted_formula2 = MathTex(*substituted_formula_parts2).scale(0.83).to_edge(DOWN)
+                self.play(*[ReplacementTransform(substituted_formula[i], substituted_formula2[i])
+                         for i in range(len(substituted_formula_parts2))])
 
                 new_table_tex = old_table_tex
                 zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
@@ -78,7 +94,3 @@ class MLEScene(Scene):
                 new_table_tex = new_table_tex.replace(r"& \\", f"& {yhat_i:.4g} \\\\", count = 1)
                 new_table = Tex(new_table_tex).scale(0.66).to_corner(UL)
                 self.play(TransformMatchingTex(old_table, new_table))
-
-                self.play(TransformMatchingTex(substituted_formula2, substituted_formula))
-                old_table_tex = new_table_tex
-                old_table = new_table
