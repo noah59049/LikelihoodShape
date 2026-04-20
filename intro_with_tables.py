@@ -126,4 +126,9 @@ class DefinitionsScene(VoiceoverScene):
 
         with self.voiceover("We notate them X1, X2, etc.") as tracker:
             self.remove(x_names_tex, rect)
-            self.play(TransformMatchingTex(yX_table, yX_table_numbered))
+            self.play(TransformByGlyphMap(yX_table, yX_table_numbered,
+                                          (range(4,14),  [4,5]),
+                                          (range(15,26), [7,8]),
+                                          (range(27,40), [10,11]),
+                                          (range(41,49), [13,14]),
+                                          ))
