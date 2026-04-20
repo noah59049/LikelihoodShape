@@ -97,7 +97,8 @@ class DefinitionsScene(VoiceoverScene):
             self.remove(dichotomous_text)
 
         with self.voiceover("We call it Y.") as tracker:
-            self.play(TransformMatchingTex(breast_cancer_table, y_table))
+            self.play(TransformByGlyphMap(breast_cancer_table, y_table,
+                                          (range(2,14), [2])))
 
         with self.voiceover("We have one ore more other variables we’re using to predict our response variable. ") as tracker:
             self.play(FadeIn(yX_table))
