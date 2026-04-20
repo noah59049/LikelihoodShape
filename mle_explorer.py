@@ -64,7 +64,7 @@ class MLEScene(Scene):
             substituted_formula_parts = formula4_parts.copy()
             for j in range(COLS_TO_KEEP + 1):
                 idx = formula4_beta_index(j)
-                substituted_formula_parts[idx] = str(bhat0[j])
+                substituted_formula_parts[idx] = f"({bhat0[j]})"
             substituted_formula = MathTex(*substituted_formula_parts).to_edge(DOWN)
             self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
                          for i in range(len(formula4_parts))])
@@ -83,7 +83,7 @@ class MLEScene(Scene):
                 substituted_formula_parts2 = substituted_formula_parts.copy()
                 row_np = X[i,:]
                 for j, e in enumerate(row_np.reshape(-1)):
-                    substituted_formula_parts2[formula4_x_index(j)] = str(e)
+                    substituted_formula_parts2[formula4_x_index(j + 1)] = str(e)
                 substituted_formula2 = MathTex(*substituted_formula_parts2).scale(0.83).to_edge(DOWN)
                 self.play(*[ReplacementTransform(substituted_formula[i], substituted_formula2[i])
                          for i in range(len(substituted_formula_parts2))])
