@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from manim import *
 from MF_Tools import *
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, TransformByCellMap
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 
 COLS_TO_KEEP = 4 # If we set this to a different number it would minorly break things
@@ -116,7 +116,8 @@ class MLEScene(Scene):
                 yhat_i = sigmoid(zi)
                 new_table_tex = new_table_tex.replace(r"& \\", f"& {yhat_i:.4g} \\\\", count = 1)
                 new_table = Tex(new_table_tex).scale(0.66).to_corner(UL)
-                self.play(TransformMatchingTex(old_table, new_table))
+                self.play(TransformByCellMap(old_table, new_table,
+                                             ((i + 1, COLS_TO_KEEP + 1),(i + 1, COLS_TO_KEEP + 1))))
 
                 substituted_formula_old = substituted_formula_new
                 old_table_tex = new_table_tex
