@@ -41,6 +41,7 @@ class MLEScene(Scene):
             formula4_parts.append("+")
             formula4_parts.append(rf"\hat{{\beta_{j}}}")
             formula4_parts.append(rf"X_{{{j}}}")
+        formula4_parts.append(")")
         formula4 = MathTex(*formula4_parts).to_edge(DOWN)
         self.play(TransformMatchingTex(formula3, formula4, run_time = 0.001))
         def formula4_beta_index(j):
