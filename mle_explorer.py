@@ -49,11 +49,13 @@ class MLEScene(Scene):
 
         # This happens for every estimate of the betas
         for _ in range(1):
+            # --- Add the beta hats to the corner ---
             bhat0 = logistic_regression(X, y, add_intercept=True)
             bhat0 = round_sig(bhat0, 4)
             bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat0)]).set_color(BLUE).arrange(DOWN).to_corner(UR)
             self.play(FadeIn(bhats_tex))
 
+            # --- Substitute in the beta hats ---
             substituted_formula_parts = formula4_parts.copy()
             for j in range(COLS_TO_KEEP + 1):
                 idx = formula4_beta_index(j)
@@ -62,7 +64,6 @@ class MLEScene(Scene):
                 else: # For negative beta hats, we change the sign to a minus
                     substituted_formula_parts[idx] = f"{-bhat0[j]}"
                     substituted_formula_parts[idx - 1] = "-"
-
             substituted_formula = MathTex(*substituted_formula_parts).to_edge(DOWN)
             for j in range(COLS_TO_KEEP + 1):
                 substituted_formula[formula4_beta_index(j)].set_color(BLUE)
@@ -71,6 +72,7 @@ class MLEScene(Scene):
             self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
                          for i in range(len(formula4_parts))])
 
+            # --- Determine the height of the new rectangle ---
             junk_table = Tex(numpy_to_latex(yX[0:4,:], make_table = True, colnames = ["X1"] * (COLS_TO_KEEP + 1))).scale(0.66).to_corner(UL)
             rect_height = junk_table.height / 5
             rect_width = yX_table.width
@@ -78,15 +80,17 @@ class MLEScene(Scene):
             highlight_rect.shift(DOWN * highlight_rect.height)
             self.play(FadeIn(highlight_rect))
 
+            # --- add the y hats into the table one by one ---
             old_table_tex = yXyhat_tex
             old_table = yXyhat_table
-
             substituted_formula_old = substituted_formula
             substituted_formula_parts2 = substituted_formula_parts.copy()
             for i in range(8):
+                # --- Move the highlight rect down ---
                 if i != 0:
                     self.play(highlight_rect.animate.shift(DOWN * highlight_rect.height))
 
+                # --- Substitute stuff into the formula ---
                 row_np = X[i,:]
                 for j, e in enumerate(row_np.reshape(-1)):
                     substituted_formula_parts2[formula4_x_index(j + 1)] = f"({e})"
@@ -95,13 +99,13 @@ class MLEScene(Scene):
                     substituted_formula_new[formula4_beta_index(j)].set_color(BLUE)
                     if j != 0: 
                         substituted_formula_new[formula4_x_index(j)].set_color(RED)
-
                 self.play(*[ReplacementTransform(substituted_formula_old[i], substituted_formula_new[i])
                          for i in range(len(substituted_formula_parts2))])
 
-                new_table_tex = old_table_tex
+                # --- Add y hat ---
                 zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
                 yhat_i = sigmoid(zi)
+                new_table_tex = old_table_tex
                 new_table_tex = new_table_tex.replace(r"& \\", f"& {yhat_i:.4g} \\\\", count = 1)
                 new_table = Tex(new_table_tex).scale(0.66).to_corner(UL)
                 self.play(TransformMatchingCells(old_table, new_table))
@@ -110,7 +114,24 @@ class MLEScene(Scene):
                 old_table_tex = new_table_tex
                 old_table = new_table
 
-            partial_likelihoods_tex = old_table_tex.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("& \\\\\n", "& $L_i$ \\\\\n", count = 1)
-            print(partial_likelihoods_tex)
-            partial_likelihoods_table = Tex(partial_likelihoods_tex).scale(0.66).to_corner(UL)
-            self.play(FadeIn(partial_likelihoods_table))
+            # --- Add in the partial likelihoods ---
+            partial_likelihoods_tex_old = old_table_tex.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("& \\\\\n", "& $L_i$ \\\\\n", count = 1)
+            print(partial_likelihoods_tex_old)
+            partial_likelihoods_table_old = Tex(partial_likelihoods_tex_old).scale(0.66).to_corner(UL)
+            self.play(FadeIn(partial_likelihoods_table_old))
+            self.remove(new_table)
+            for i in range(8):
+                row_np = X[i,:]
+                zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
+                yhat_i = sigmoid(zi)
+                yi = y[i]
+                Li = yhat_i ** yi * (1 - yhat_i) ** (1 - yi)
+
+                partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace("& \\\\\n", f"& {Li:.4g} \\\\\n", count = 1)
+                partial_likelihoods_table_new = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
+                self.play(TransformMatchingCells(partial_likelihoods_table_old, partial_likelihoods_table_new))
+                partial_likelihoods_tex_old = partial_likelihoods_tex_new
+                partial_likelihoods_table_old = partial_likelihoods_table_new
+
+
+
