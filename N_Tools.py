@@ -423,6 +423,7 @@ def extract_table_grid(tex):
 
     return grid
 
+# This method is deprecated, and you should use TransformMatchingCells instead
 def TransformByCellMap(table1, table2, *maps):
     table1_grid = extract_table_grid(table1)
     table2_grid = extract_table_grid(table2)
@@ -431,6 +432,19 @@ def TransformByCellMap(table1, table2, *maps):
     for start, end in maps:
         start_indices = table1_grid[start] if start in table1_grid else []
         end_indices = table2_grid[end] if end in table2_grid else []
+        glyph_map.append((start_indices, end_indices))
+    
+    return TransformByGlyphMap(table1, table2, *glyph_map)
+
+def TransformMatchingCells(table1, table2):
+    table1_grid = extract_table_grid(table1)
+    table2_grid = extract_table_grid(table2)
+
+    glyph_map = []
+    maps = table1_grid.keys() | table2_grid.keys()
+    for coords in maps:
+        start_indices = table1_grid[coords] if coords in table1_grid else []
+        end_indices = table2_grid[coords] if coords in table2_grid else []
         glyph_map.append((start_indices, end_indices))
     
     return TransformByGlyphMap(table1, table2, *glyph_map)

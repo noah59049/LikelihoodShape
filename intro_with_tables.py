@@ -2,7 +2,7 @@
 
 import numpy as np
 import pandas as pd
-from N_Tools import as_row, as_col, numpy_to_latex
+from N_Tools import as_row, as_col, numpy_to_latex, TransformMatchingCells
 
 from data import COLS_TO_KEEP, colnames, X, y, yX # type: ignore
 
@@ -83,8 +83,7 @@ class DefinitionsScene(VoiceoverScene):
             self.remove(dichotomous_text)
 
         with self.voiceover("We call it Y.") as tracker:
-            self.play(TransformByGlyphMap(breast_cancer_table, y_table,
-                                          (range(2,14), [2])))
+            self.play(TransformMatchingCells(breast_cancer_table, y_table))
 
         with self.voiceover("We have one ore more other variables we’re using to predict our response variable. ") as tracker:
             self.play(FadeIn(yX_table))
@@ -112,9 +111,4 @@ class DefinitionsScene(VoiceoverScene):
 
         with self.voiceover("We notate them X1, X2, etc.") as tracker:
             self.remove(x_names_tex, rect)
-            self.play(TransformByGlyphMap(yX_table, yX_table_numbered,
-                                          (range(4,14),  [4,5]),
-                                          (range(15,26), [7,8]),
-                                          (range(27,40), [10,11]),
-                                          (range(41,49), [13,14]),
-                                          ))
+            self.play(TransformMatchingCells(yX_table, yX_table_numbered))
