@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from manim import *
 from MF_Tools import *
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, TransformMatchingCells, latex_table_to_array, highlight_row
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 
@@ -116,18 +116,29 @@ class MLEScene(Scene):
             partial_likelihoods_table_old = Tex(partial_likelihoods_tex_old).scale(0.66).to_corner(UL)
             self.play(FadeIn(partial_likelihoods_table_old))
             self.remove(new_table)
+            partial_likelihoods = []
             for i in range(array_latex.shape[0] - 1):
                 row_np = array_latex[i + 1, 1:]
                 zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
                 yhat_i = sigmoid(zi)
                 yi = y[i]
                 Li = yhat_i ** yi * (1 - yhat_i) ** (1 - yi)
+                Li_str = r"\vdots" if np.isnan(Li) else f"{Li:.4g}"
+                partial_likelihoods.append(Li_str)
 
-                partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", r"& \vdots \\" if np.isnan(Li) else f"& {Li:.4g} \\\\", count = 1)
+                partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str} \\\\", count = 1)
                 partial_likelihoods_table_new = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
                 self.play(TransformMatchingCells(partial_likelihoods_table_old, partial_likelihoods_table_new))
                 partial_likelihoods_tex_old = partial_likelihoods_tex_new
                 partial_likelihoods_table_old = partial_likelihoods_table_new
 
+            # --- Show the product of the partial likelihoods
+            likelihood_together_tex = "L = " + "*".join(partial_likelihoods)
+            likelihood_together = MathTex(likelihood_together_tex).scale_to_fit_width(config.frame_width).next_to(substituted_formula_new, UP)
+            self.play(TransformMatchingTex(partial_likelihoods_table_new, likelihood_together))
+            """
+            table_grid = extract_table_grid(partial_likelihoods_table_new)
+            glyph_map = []
+            col_idx = COLS_TO_KEEP + 2
+            """
 
-            
