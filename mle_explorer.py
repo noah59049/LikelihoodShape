@@ -88,8 +88,8 @@ class MLEScene(Scene):
                 # --- Substitute stuff into the formula ---
                 row_np = array_latex[i + 1, 1:]
 
-                for j, e in enumerate(row_np.reshape(-1)):
-                    substituted_formula_parts2[formula4_x_index(j + 1)] = f"({e})"
+                for j, Xij in enumerate(row_np.reshape(-1)):
+                    substituted_formula_parts2[formula4_x_index(j + 1)] = r"(\ldots)" if np.isnan(Xij) else f"({Xij})"
                 substituted_formula_new = MathTex(*substituted_formula_parts2).scale(0.83).to_edge(DOWN)
                 for j in range(COLS_TO_KEEP + 1):
                     substituted_formula_new[formula4_beta_index(j)].set_color(BLUE)
@@ -130,4 +130,4 @@ class MLEScene(Scene):
                 partial_likelihoods_table_old = partial_likelihoods_table_new
 
 
-
+            
