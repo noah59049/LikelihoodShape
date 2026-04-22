@@ -9,6 +9,7 @@ from N_Tools import simple_linear_regression, create_graph
 df = pd.read_csv("breast_cancer_sklearn.csv")
 X = np.array(df[df.columns[0]])
 Y = np.array(df["target"])
+# Here we don't need to use data.py because we don't care about order, and we want different Xs
 
 class LinearLogisticScene(VoiceoverScene):
     def construct(self):
