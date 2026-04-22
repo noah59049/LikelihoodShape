@@ -2,11 +2,12 @@ import numpy as np
 import pandas as pd
 from manim import *
 from MF_Tools import *
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, TransformMatchingCells
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, TransformMatchingCells, latex_table_to_array
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 
 yXyhat_tex = yX_tex_numbered.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("X4\n &", r"X4 & $\hat{y}$")
+array_latex = latex_table_to_array(yX_tex_numbered)
 
 class MLEScene(Scene):
     def construct(self):
@@ -85,13 +86,14 @@ class MLEScene(Scene):
             old_table = yXyhat_table
             substituted_formula_old = substituted_formula
             substituted_formula_parts2 = substituted_formula_parts.copy()
-            for i in range(8):
+            for i in range(array_latex.shape[0] - 1):
                 # --- Move the highlight rect down ---
                 if i != 0:
                     self.play(highlight_rect.animate.shift(DOWN * highlight_rect.height))
 
                 # --- Substitute stuff into the formula ---
-                row_np = X[i,:]
+                row_np = array_latex[i + 1, 1:]
+
                 for j, e in enumerate(row_np.reshape(-1)):
                     substituted_formula_parts2[formula4_x_index(j + 1)] = f"({e})"
                 substituted_formula_new = MathTex(*substituted_formula_parts2).scale(0.83).to_edge(DOWN)
@@ -120,8 +122,8 @@ class MLEScene(Scene):
             partial_likelihoods_table_old = Tex(partial_likelihoods_tex_old).scale(0.66).to_corner(UL)
             self.play(FadeIn(partial_likelihoods_table_old))
             self.remove(new_table)
-            for i in range(8):
-                row_np = X[i,:]
+            for i in range(array_latex.shape[0] - 1):
+                row_np = array_latex[i + 1, 1:]
                 zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
                 yhat_i = sigmoid(zi)
                 yi = y[i]

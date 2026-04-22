@@ -245,12 +245,12 @@ def latex_table_to_array(latex_str):
     latex_str = latex_str.replace(r"\hline", "")
     latex_str = latex_str.replace("$", "")
 
-    print(f"{latex_str=}")
+    # print(f"{latex_str=}")
     
     # Split into rows
     rows = re.split(r"\\\\", latex_str)
 
-    print(f"{rows=}")
+    # print(f"{rows=}")
 
     table = []
     
@@ -264,7 +264,7 @@ def latex_table_to_array(latex_str):
         # Split into cells
         cells = row.split("&")
 
-        print(f"{cells=}")
+        # print(f"{cells=}")
         
         parsed_row = []
         for cell in cells:
