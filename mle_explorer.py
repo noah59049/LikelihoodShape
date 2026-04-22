@@ -88,6 +88,7 @@ class MLEScene(Scene):
             substituted_formula_parts2 = substituted_formula_parts.copy()
             for i in range(array_latex.shape[0] - 1):
                 # --- Move the highlight rect down ---
+                # TODO: Currently the highlight rect becomes misaligned with table rows when it reaches the vdots row.
                 if i != 0:
                     self.play(highlight_rect.animate.shift(DOWN * highlight_rect.height))
 
@@ -108,7 +109,7 @@ class MLEScene(Scene):
                 zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
                 yhat_i = sigmoid(zi)
                 new_table_tex = old_table_tex
-                new_table_tex = new_table_tex.replace(r"& \\", f"& {yhat_i:.4g} \\\\", count = 1)
+                new_table_tex = new_table_tex.replace(r"& \\", r"& \vdots \\" if np.isnan(yhat_i) else f"& {yhat_i:.4g} \\\\", count = 1)
                 new_table = Tex(new_table_tex).scale(0.66).to_corner(UL)
                 self.play(TransformMatchingCells(old_table, new_table))
 
@@ -129,7 +130,7 @@ class MLEScene(Scene):
                 yi = y[i]
                 Li = yhat_i ** yi * (1 - yhat_i) ** (1 - yi)
 
-                partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace("& \\\\\n", f"& {Li:.4g} \\\\\n", count = 1)
+                partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", r"& \vdots \\" if np.isnan(Li) else f"& {Li:.4g} \\\\", count = 1)
                 partial_likelihoods_table_new = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
                 self.play(TransformMatchingCells(partial_likelihoods_table_old, partial_likelihoods_table_new))
                 partial_likelihoods_tex_old = partial_likelihoods_tex_new
