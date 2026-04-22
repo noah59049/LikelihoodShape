@@ -4,7 +4,7 @@ from manim import *
 from MF_Tools import *
 from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, TransformByCellMap
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
-from data import COLS_TO_KEEP, X, y, yX
+from data import COLS_TO_KEEP, X, y, yX # type: ignore
 
 yXyhat_tex = yX_tex_numbered.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("X4\n &", r"X4 & $\hat{y}$")
 
