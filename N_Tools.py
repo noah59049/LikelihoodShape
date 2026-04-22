@@ -3,6 +3,7 @@ This is the place I store all my helper functions for the LikelihoodShape projec
 the name N_Tools is patterned after MF_Tools
 """
 
+import re
 from typing import Callable
 import numpy as np
 from manim import *
@@ -237,6 +238,49 @@ def numpy_to_latex(
             f"    {body}\n"
             "\\end{bmatrix}"
         )
+    
+def latex_table_to_array(latex_str):
+    # Remove common LaTeX table wrappers
+    latex_str = re.sub(r"\\begin\{.*?\}|\\end\{.*?\}", "", latex_str)
+    latex_str = latex_str.replace(r"\hline", "")
+    latex_str = latex_str.replace("$", "")
+
+    print(f"{latex_str=}")
+    
+    # Split into rows
+    rows = re.split(r"\\\\", latex_str)
+
+    print(f"{rows=}")
+
+    table = []
+    
+    for row in rows:
+        row = row.strip()
+        
+        # Skip empty lines and \hline rows
+        if not row:
+            continue
+        
+        # Split into cells
+        cells = row.split("&")
+
+        print(f"{cells=}")
+        
+        parsed_row = []
+        for cell in cells:
+            cell = cell.strip()
+                        
+            # Try to parse float
+            try:
+                val = float(cell)
+            except ValueError: # Can't be parsed as a float
+                val = np.nan
+            
+            parsed_row.append(val)
+        
+        table.append(parsed_row)
+    
+    return np.array(table, dtype=np.float64)
 
 def square_matrix_tex(n : int, 
                       generator: Callable[[int, int], str],
