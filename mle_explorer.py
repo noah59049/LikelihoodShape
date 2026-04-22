@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from manim import *
 from MF_Tools import *
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid, log_likelihood
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 
@@ -136,7 +136,6 @@ class MLEScene(Scene):
             # --- Show the product of the partial likelihoods
             likelihood_together_tex = "L = " + "*".join(partial_likelihoods).replace(r"\vdots", r"\ldots")
             likelihood_together = MathTex(likelihood_together_tex).scale_to_fit_width(config.frame_width).next_to(substituted_formula_new, UP)
-            # self.play(TransformMatchingTex(partial_likelihoods_table_new, likelihood_together))
 
             # Transform the matching numbers
             table_grid = extract_table_grid(partial_likelihoods_table_new)
@@ -160,7 +159,16 @@ class MLEScene(Scene):
             
             print(f"{glyph_map=}")
             print(f"{len(likelihood_together[0])=}")
+
             # Play the transform yeet
             self.play(TransformByGlyphMap(partial_likelihoods_table_new, likelihood_together,
                                           *glyph_map))
+            
+            # Actually calculate the likelihood
+            likelihood = np.exp(log_likelihood(X, y, bhat0, add_intercept=True))
+            likelihood_str = f"L={likelihood:.4g}"
+
+            likelihood_final = MathTex(likelihood_str)
+            self.play(TransformByGlyphMap(likelihood_together, likelihood_final,
+                                          (range(2, eq_idx), range(2, len(likelihood_str)))))
 
