@@ -8,6 +8,7 @@ from data import COLS_TO_KEEP, X, y, yX # type: ignore
 
 yXyhat_tex = yX_tex_numbered.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("X4\n &", r"X4 & $\hat{y}$")
 array_latex = latex_table_to_array(yX_tex_numbered)
+array_latex = array_latex[1:] # The first row is the title row with just nans
 
 class MLEScene(Scene):
     def construct(self):
@@ -78,7 +79,7 @@ class MLEScene(Scene):
             old_table = yXyhat_table
             substituted_formula_old = substituted_formula
             substituted_formula_parts2 = substituted_formula_parts.copy()
-            for i in range(array_latex.shape[0] - 1):
+            for i in range(array_latex.shape[0]):
                 # --- Move the highlight rect down ---
                 highlight_rect_transforms = [FadeOut(highlight_rect)] if i > 0 else []
                 highlight_rect = highlight_row(yX_table, row_idx = i + 1)
@@ -86,7 +87,7 @@ class MLEScene(Scene):
                 self.play(*highlight_rect_transforms)
 
                 # --- Substitute stuff into the formula ---
-                row_np = array_latex[i + 1, 1:]
+                row_np = array_latex[i, 1:]
 
                 for j, Xij in enumerate(row_np.reshape(-1)):
                     substituted_formula_parts2[formula4_x_index(j + 1)] = r"(\ldots)" if np.isnan(Xij) else f"({Xij})"
@@ -117,8 +118,8 @@ class MLEScene(Scene):
             self.play(FadeIn(partial_likelihoods_table_old))
             self.remove(new_table)
             partial_likelihoods = []
-            for i in range(array_latex.shape[0] - 1):
-                row_np = array_latex[i + 1, 1:]
+            for i in range(array_latex.shape[0]):
+                row_np = array_latex[i, 1:]
                 zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
                 yhat_i = sigmoid(zi)
                 yi = y[i]
@@ -136,9 +137,9 @@ class MLEScene(Scene):
             likelihood_together_tex = "L = " + "*".join(partial_likelihoods)
             likelihood_together = MathTex(likelihood_together_tex).scale_to_fit_width(config.frame_width).next_to(substituted_formula_new, UP)
             self.play(TransformMatchingTex(partial_likelihoods_table_new, likelihood_together))
-            """
-            table_grid = extract_table_grid(partial_likelihoods_table_new)
+
+            """table_grid = extract_table_grid(partial_likelihoods_table_new)
             glyph_map = []
             col_idx = COLS_TO_KEEP + 2
-            """
+            for row_idx in range()"""
 
