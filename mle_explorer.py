@@ -112,6 +112,7 @@ class MLEScene(Scene):
                 old_table = new_table
 
             # --- Add in the partial likelihoods ---
+            self.play(FadeOut(highlight_rect))
             partial_likelihoods_tex_old = old_table_tex.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("& \\\\\n", "& $L_i$ \\\\\n", count = 1)
             print(partial_likelihoods_tex_old)
             partial_likelihoods_table_old = Tex(partial_likelihoods_tex_old).scale(0.66).to_corner(UL)
@@ -168,7 +169,7 @@ class MLEScene(Scene):
             likelihood = np.exp(log_likelihood(X, y, bhat0, add_intercept=True))
             likelihood_str = f"L={likelihood:.4g}"
 
-            likelihood_final = MathTex(likelihood_str)
+            likelihood_final = MathTex(likelihood_str).next_to(substituted_formula_new, UP)
             self.play(TransformByGlyphMap(likelihood_together, likelihood_final,
                                           (range(2, eq_idx), range(2, len(likelihood_str)))))
 
