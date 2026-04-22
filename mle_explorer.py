@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from manim import *
 from MF_Tools import *
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, TransformMatchingCells, latex_table_to_array
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, TransformMatchingCells, latex_table_to_array, highlight_row
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 
@@ -73,14 +73,6 @@ class MLEScene(Scene):
             self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
                          for i in range(len(formula4_parts))])
 
-            # --- Determine the height of the new rectangle ---
-            junk_table = Tex(numpy_to_latex(yX[0:4,:], make_table = True, colnames = ["X1"] * (COLS_TO_KEEP + 1))).scale(0.66).to_corner(UL)
-            rect_height = junk_table.height / 5
-            rect_width = yX_table.width
-            highlight_rect = Rectangle(color = RED, width = rect_width, height = rect_height).set_opacity(0.3).to_corner(UL)
-            highlight_rect.shift(DOWN * highlight_rect.height)
-            self.play(FadeIn(highlight_rect))
-
             # --- add the y hats into the table one by one ---
             old_table_tex = yXyhat_tex
             old_table = yXyhat_table
@@ -88,9 +80,10 @@ class MLEScene(Scene):
             substituted_formula_parts2 = substituted_formula_parts.copy()
             for i in range(array_latex.shape[0] - 1):
                 # --- Move the highlight rect down ---
-                # TODO: Currently the highlight rect becomes misaligned with table rows when it reaches the vdots row.
-                if i != 0:
-                    self.play(highlight_rect.animate.shift(DOWN * highlight_rect.height))
+                highlight_rect_transforms = [FadeOut(highlight_rect)] if i > 0 else []
+                highlight_rect = highlight_row(yX_table, row_idx = i + 1)
+                highlight_rect_transforms.append(FadeIn(highlight_rect))
+                self.play(*highlight_rect_transforms)
 
                 # --- Substitute stuff into the formula ---
                 row_np = array_latex[i + 1, 1:]

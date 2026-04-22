@@ -492,3 +492,49 @@ def TransformMatchingCells(table1, table2):
         glyph_map.append((start_indices, end_indices))
     
     return TransformByGlyphMap(table1, table2, *glyph_map)
+
+def highlight_row(tex, row_idx, color=RED, opacity=0.3):
+    glyphs = tex[0]  # important fix
+
+    # --- classify horizontal lines ---
+    horizontal_lines = []
+    for g in glyphs:
+        w, h = g.width, g.height
+        if w > 3 * h:  # horizontal line
+            horizontal_lines.append(g)
+
+    # --- extract and deduplicate y positions ---
+    y_lines = sorted([g.get_center()[1] for g in horizontal_lines], reverse=True)
+
+    def dedup(vals, tol=1e-2):
+        out = []
+        for v in vals:
+            if not any(abs(v - o) < tol for o in out):
+                out.append(v)
+        return out
+
+    y_lines = dedup(y_lines)
+
+    # --- safety check ---
+    if row_idx >= len(y_lines) - 1:
+        raise ValueError("Row index out of range")
+
+    y_top = y_lines[row_idx]
+    y_bottom = y_lines[row_idx + 1]
+
+    # --- compute rectangle geometry ---
+    height = y_top - y_bottom
+    y_center = (y_top + y_bottom) / 2
+
+    # full table width
+    left = min(g.get_left()[0] for g in glyphs)
+    right = max(g.get_right()[0] for g in glyphs)
+    width = right - left
+    x_center = (left + right) / 2
+
+    rect = Rectangle(width=width, height=height)
+    rect.move_to([x_center, y_center, 0])
+    rect.set_fill(color, opacity=opacity)
+    rect.set_stroke(width=0)
+
+    return rect
