@@ -81,7 +81,7 @@ class MLEScene(Scene):
 
             substituted_formula_old = substituted_formula
             substituted_formula_parts2 = substituted_formula_parts.copy()
-            for i in range(3):
+            for i in range(8):
                 if i == 0:
                     highlight_rect = Rectangle(color = RED, width = rect_width, height = rect_height).set_opacity(0.3).to_corner(UL)
                     highlight_rect.shift(DOWN * highlight_rect.height)
