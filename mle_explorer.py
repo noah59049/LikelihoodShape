@@ -134,12 +134,33 @@ class MLEScene(Scene):
                 partial_likelihoods_table_old = partial_likelihoods_table_new
 
             # --- Show the product of the partial likelihoods
-            likelihood_together_tex = "L = " + "*".join(partial_likelihoods)
+            likelihood_together_tex = "L = " + "*".join(partial_likelihoods).replace(r"\vdots", r"\ldots")
             likelihood_together = MathTex(likelihood_together_tex).scale_to_fit_width(config.frame_width).next_to(substituted_formula_new, UP)
-            self.play(TransformMatchingTex(partial_likelihoods_table_new, likelihood_together))
+            # self.play(TransformMatchingTex(partial_likelihoods_table_new, likelihood_together))
 
-            """table_grid = extract_table_grid(partial_likelihoods_table_new)
-            glyph_map = []
+            # Transform the matching numbers
+            table_grid = extract_table_grid(partial_likelihoods_table_new)
+            glyph_map = [(FadeIn, [0,1])] # We start with fading in the "L="
             col_idx = COLS_TO_KEEP + 2
-            for row_idx in range()"""
+            eq_idx = 2
+            used_table_glyphs = []
+            for row_idx in range(array_latex.shape[0]):
+                if row_idx != 0:
+                    glyph_map.append((FadeIn, [eq_idx])) # The "*"
+                    eq_idx += 1
+                table_glyphs = table_grid[(row_idx + 1, col_idx)]
+                eq_glyphs = range(eq_idx, eq_idx + len(table_glyphs))
+                glyph_map.append((table_glyphs, eq_glyphs))
+                used_table_glyphs += table_glyphs
+                eq_idx += len(table_glyphs)
+
+            # Fade out the entire table that's not involved
+            unused_table_glyphs = [i for i in range(len(partial_likelihoods_table_new[0])) if i not in used_table_glyphs]
+            glyph_map.append((unused_table_glyphs, FadeOut))
+            
+            print(f"{glyph_map=}")
+            print(f"{len(likelihood_together[0])=}")
+            # Play the transform yeet
+            self.play(TransformByGlyphMap(partial_likelihoods_table_new, likelihood_together,
+                                          *glyph_map))
 
