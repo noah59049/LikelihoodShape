@@ -4,19 +4,8 @@ from manim import *
 from MF_Tools import *
 from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, TransformByCellMap
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
+from data import COLS_TO_KEEP, X, y, yX
 
-COLS_TO_KEEP = 4 # If we set this to a different number it would minorly break things
-"""
-colnames = list(load_breast_cancer().feature_names[0:COLS_TO_KEEP])
-X, y = load_breast_cancer(return_X_y=True)
-X = X[:,0:COLS_TO_KEEP]
-yX = np.hstack([as_col(y.astype(X.dtype)), X])
-"""
-df = pd.read_csv("breast_cancer_sklearn.csv")
-colnames = list(df.columns[0:COLS_TO_KEEP])
-X = np.array(df[colnames])
-y = np.array(df["target"])
-yX = np.hstack([as_col(y.astype(X.dtype)), X])
 yXyhat_tex = yX_tex_numbered.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("X4\n &", r"X4 & $\hat{y}$")
 
 class MLEScene(Scene):
