@@ -3,22 +3,8 @@
 import numpy as np
 import pandas as pd
 from N_Tools import as_row, as_col, numpy_to_latex
-# from sklearn.datasets import load_breast_cancer
-# from sklearn.linear_model import LogisticRegression
-# import statsmodels.api as sm
 
-COLS_TO_KEEP = 4 # If we set this to a different number it would minorly break things
-"""
-colnames = list(load_breast_cancer().feature_names[0:COLS_TO_KEEP])
-X, y = load_breast_cancer(return_X_y=True)
-X = X[:,0:COLS_TO_KEEP]
-yX = np.hstack([as_col(y.astype(X.dtype)), X])
-"""
-df = pd.read_csv("breast_cancer_sklearn.csv")
-colnames = list(df.columns[0:COLS_TO_KEEP])
-X = np.array(df[colnames])
-y = np.array(df["target"])
-yX = np.hstack([as_col(y.astype(X.dtype)), X])
+from data import COLS_TO_KEEP, colnames, X, y, yX
 
 x_names = [f"X{i + 1}" for i, e in enumerate(colnames)]
 yX_tex_numbered = f"${numpy_to_latex(yX, make_table = True, colnames = ['Y'] + x_names)}$"
