@@ -74,7 +74,9 @@ class MLEScene(Scene):
             junk_table = Tex(numpy_to_latex(yX[0:4,:], make_table = True, colnames = ["X1"] * (COLS_TO_KEEP + 1))).scale(0.66).to_corner(UL)
             rect_height = junk_table.height / 5
             rect_width = yX_table.width
-            
+            highlight_rect = Rectangle(color = RED, width = rect_width, height = rect_height).set_opacity(0.3).to_corner(UL)
+            highlight_rect.shift(DOWN * highlight_rect.height)
+            self.play(FadeIn(highlight_rect))
 
             old_table_tex = yXyhat_tex
             old_table = yXyhat_table
@@ -82,11 +84,7 @@ class MLEScene(Scene):
             substituted_formula_old = substituted_formula
             substituted_formula_parts2 = substituted_formula_parts.copy()
             for i in range(8):
-                if i == 0:
-                    highlight_rect = Rectangle(color = RED, width = rect_width, height = rect_height).set_opacity(0.3).to_corner(UL)
-                    highlight_rect.shift(DOWN * highlight_rect.height)
-                    self.play(FadeIn(highlight_rect))
-                else:
+                if i != 0:
                     self.play(highlight_rect.animate.shift(DOWN * highlight_rect.height))
 
                 row_np = X[i,:]
@@ -112,3 +110,8 @@ class MLEScene(Scene):
                 substituted_formula_old = substituted_formula_new
                 old_table_tex = new_table_tex
                 old_table = new_table
+
+            partial_likelihoods_tex = old_table_tex.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("& \\\\\n", "& $L_i$ \\\\\n", count = 1)
+            print(partial_likelihoods_tex)
+            partial_likelihoods_table = Tex(partial_likelihoods_tex).scale(0.66).to_corner(UL)
+            self.play(FadeIn(partial_likelihoods_table))
