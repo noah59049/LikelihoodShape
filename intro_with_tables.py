@@ -6,7 +6,7 @@ from N_Tools import as_row, as_col, numpy_to_latex
 
 from data import COLS_TO_KEEP, colnames, X, y, yX
 
-x_names = [f"X{i + 1}" for i, e in enumerate(colnames)]
+x_names = [f"X{i + 1}" for i, _ in enumerate(colnames)]
 yX_tex_numbered = f"${numpy_to_latex(yX, make_table = True, colnames = ['Y'] + x_names)}$"
 yX_lines = yX_tex_numbered.split(r"\hline")
 yX_tex = f"${numpy_to_latex(yX, make_table = True, colnames = ['Y'] + colnames)}$"
