@@ -54,7 +54,7 @@ class MLEScene(Scene):
         rng = np.random.default_rng(seed = 186)
 
         # This happens for every estimate of the betas
-        for _ in range(2):
+        for _ in range(1):
             # --- Choose beta hats for our example that are normally distributed with mean at the MLE and covariance equal to the covariance matrix of the model
             bhat = bhat_mle + cov @ rng.normal(loc=0.0, scale=1.0, size=len(bhat_mle))
             bhat = round_sig(bhat, 4)
