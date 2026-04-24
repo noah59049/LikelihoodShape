@@ -52,9 +52,9 @@ class MLEScene(Scene):
         result = logistic_regression(X, y, add_intercept=True, return_stats=True)
         bhat_mle, cov, se = result
         rng = np.random.default_rng(seed = 186)
-        
+
         # This happens for every estimate of the betas
-        for _ in range(1):
+        for _ in range(2):
             # --- Choose beta hats for our example that are normally distributed with mean at the MLE and covariance equal to the covariance matrix of the model
             bhat = bhat_mle + cov @ rng.normal(loc=0.0, scale=1.0, size=len(bhat_mle))
             bhat = round_sig(bhat, 4)
@@ -178,4 +178,6 @@ class MLEScene(Scene):
             likelihood_final = MathTex(likelihood_str).next_to(substituted_formula_new, UP)
             self.play(TransformByGlyphMap(likelihood_together, likelihood_final,
                                           (range(2, eq_idx), range(2, len(likelihood_str)))))
+            
+            self.play(FadeOut(likelihood_final, bhats_tex))
 
