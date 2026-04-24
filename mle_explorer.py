@@ -49,22 +49,28 @@ class MLEScene(Scene):
         self.play(FadeIn(yXyhat_table))
         self.remove(yX_table)
 
+        result = logistic_regression(X, y, add_intercept=True, return_stats=True)
+        bhat_mle, cov, se = result
+        rng = np.random.default_rng(seed = 186)
+        
         # This happens for every estimate of the betas
         for _ in range(1):
+            # --- Choose beta hats for our example that are normally distributed with mean at the MLE and covariance equal to the covariance matrix of the model
+            bhat = bhat_mle + cov @ rng.normal(loc=0.0, scale=1.0, size=len(bhat_mle))
+            bhat = round_sig(bhat, 4)
+
             # --- Add the beta hats to the corner ---
-            bhat0 = logistic_regression(X, y, add_intercept=True)
-            bhat0 = round_sig(bhat0, 4)
-            bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat0)]).set_color(BLUE).arrange(DOWN).to_corner(UR)
+            bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat)]).set_color(BLUE).arrange(DOWN).to_corner(UR)
             self.play(FadeIn(bhats_tex))
 
             # --- Substitute in the beta hats ---
             substituted_formula_parts = formula4_parts.copy()
             for j in range(COLS_TO_KEEP + 1):
                 idx = formula4_beta_index(j)
-                if j == 0 or bhat0[j] >= 0:
-                    substituted_formula_parts[idx] = f"{bhat0[j]}"
+                if j == 0 or bhat[j] >= 0:
+                    substituted_formula_parts[idx] = f"{bhat[j]}"
                 else: # For negative beta hats, we change the sign to a minus
-                    substituted_formula_parts[idx] = f"{-bhat0[j]}"
+                    substituted_formula_parts[idx] = f"{-bhat[j]}"
                     substituted_formula_parts[idx - 1] = "-"
             substituted_formula = MathTex(*substituted_formula_parts).to_edge(DOWN)
             for j in range(COLS_TO_KEEP + 1):
@@ -100,7 +106,7 @@ class MLEScene(Scene):
                          for i in range(len(substituted_formula_parts2))])
 
                 # --- Add y hat ---
-                zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
+                zi = np.sum(bhat * np.hstack([np.array([1.0]), row_np]))
                 yhat_i = sigmoid(zi)
                 new_table_tex = old_table_tex
                 new_table_tex = new_table_tex.replace(r"& \\", r"& \vdots \\" if np.isnan(yhat_i) else f"& {yhat_i:.4g} \\\\", count = 1)
@@ -121,7 +127,7 @@ class MLEScene(Scene):
             partial_likelihoods = []
             for i in range(array_latex.shape[0]):
                 row_np = array_latex[i, 1:]
-                zi = np.sum(bhat0 * np.hstack([np.array([1.0]), row_np]))
+                zi = np.sum(bhat * np.hstack([np.array([1.0]), row_np]))
                 yhat_i = sigmoid(zi)
                 yi = y[i]
                 Li = yhat_i ** yi * (1 - yhat_i) ** (1 - yi)
@@ -166,7 +172,7 @@ class MLEScene(Scene):
                                           *glyph_map))
             
             # Actually calculate the likelihood
-            likelihood = np.exp(log_likelihood(X, y, bhat0, add_intercept=True))
+            likelihood = np.exp(log_likelihood(X, y, bhat, add_intercept=True))
             likelihood_str = f"L={likelihood:.4g}"
 
             likelihood_final = MathTex(likelihood_str).next_to(substituted_formula_new, UP)
