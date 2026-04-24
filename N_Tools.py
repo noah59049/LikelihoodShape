@@ -106,7 +106,8 @@ def logistic_regression(X, y, max_iter=100, tol=1e-6, add_intercept = False, ret
 
         # Convergence check
         if np.linalg.norm(beta_new - beta) < tol:
-            return beta_new
+            beta = beta_new
+            break
 
         beta = beta_new
 
