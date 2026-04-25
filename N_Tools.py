@@ -507,7 +507,7 @@ def TransformByCellMap(table1, table2, *maps):
     
     return TransformByGlyphMap(table1, table2, *glyph_map)
 
-def TransformMatchingCells(table1, table2):
+def get_matching_cell_map(table1, table2):
     table1_grid = extract_table_grid(table1)
     table2_grid = extract_table_grid(table2)
 
@@ -517,8 +517,11 @@ def TransformMatchingCells(table1, table2):
         start_indices = table1_grid[coords] if coords in table1_grid else []
         end_indices = table2_grid[coords] if coords in table2_grid else []
         glyph_map.append((start_indices, end_indices))
-    
-    return TransformByGlyphMap(table1, table2, *glyph_map)
+
+    return glyph_map
+
+def TransformMatchingCells(table1, table2):
+    return TransformByGlyphMap(table1, table2, *get_matching_cell_map(table1, table2))
 
 def highlight_row(tex, row_idx, color=RED, opacity=0.3):
     glyphs = tex[0]  # important fix
