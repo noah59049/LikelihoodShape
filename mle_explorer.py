@@ -53,7 +53,7 @@ class MLEScene(Scene):
         bhat_mle, cov, se = result
         rng = np.random.default_rng(seed = 186)
 
-        # This happens for every estimate of the betas
+        # This loop happens for every estimate of the betas
         for _ in range(1):
             # --- Choose beta hats for our example that are normally distributed with mean at the MLE and covariance equal to the covariance matrix of the model
             bhat = bhat_mle + cov @ rng.normal(loc=0.0, scale=1.0, size=len(bhat_mle))
@@ -85,12 +85,12 @@ class MLEScene(Scene):
             old_table = yXyhat_table
             substituted_formula_old = substituted_formula
             substituted_formula_parts2 = substituted_formula_parts.copy()
+            # This loop happens for every row
             for i in range(array_latex.shape[0]):
                 # --- Move the highlight rect down ---
                 highlight_rect_transforms = [FadeOut(highlight_rect)] if i > 0 else []
                 highlight_rect = highlight_row(yX_table, row_idx = i + 1)
                 highlight_rect_transforms.append(FadeIn(highlight_rect))
-                self.play(*highlight_rect_transforms)
 
                 # --- Substitute stuff into the formula ---
                 row_np = array_latex[i, 1:]
@@ -102,8 +102,13 @@ class MLEScene(Scene):
                     substituted_formula_new[formula4_beta_index(j)].set_color(BLUE)
                     if j != 0: 
                         substituted_formula_new[formula4_x_index(j)].set_color(RED)
-                self.play(*[ReplacementTransform(substituted_formula_old[i], substituted_formula_new[i])
-                         for i in range(len(substituted_formula_parts2))])
+                substituted_formula_transforms = [
+                    ReplacementTransform(substituted_formula_old[i], 
+                                         substituted_formula_new[i])
+                         for i in range(len(substituted_formula_parts2))]
+                
+                # Play the formula that moves the highlight rect and substitutes
+                self.play(*(highlight_rect_transforms + substituted_formula_transforms))
 
                 # --- Add y hat ---
                 zi = np.sum(bhat * np.hstack([np.array([1.0]), row_np]))
@@ -125,6 +130,7 @@ class MLEScene(Scene):
             self.play(FadeIn(partial_likelihoods_table_old))
             self.remove(new_table)
             partial_likelihoods = []
+            # This loop happens for every row
             for i in range(array_latex.shape[0]):
                 row_np = array_latex[i, 1:]
                 zi = np.sum(bhat * np.hstack([np.array([1.0]), row_np]))
