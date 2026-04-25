@@ -2,13 +2,13 @@ import numpy as np
 import pandas as pd
 from manim import *
 from MF_Tools import *
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid, log_likelihood
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid, log_likelihood
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 
 yXyhat_tex = yX_tex_numbered.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("X4\n &", r"X4 & $\hat{y}$")
-array_latex = latex_table_to_array(yX_tex_numbered)
-array_latex = array_latex[1:] # The first row is the title row with just nans
+array_from_latex = latex_table_to_array(yX_tex_numbered)
+array_from_latex = array_from_latex[1:] # The first row is the title row with just nans
 
 class MLEScene(Scene):
     def construct(self):
@@ -86,14 +86,14 @@ class MLEScene(Scene):
             substituted_formula_old = substituted_formula
             substituted_formula_parts2 = substituted_formula_parts.copy()
             # This loop happens for every row
-            for i in range(array_latex.shape[0]):
+            for i in range(array_from_latex.shape[0]):
                 # --- Move the highlight rect down ---
                 highlight_rect_transforms = [FadeOut(highlight_rect)] if i > 0 else []
                 highlight_rect = highlight_row(yX_table, row_idx = i + 1)
                 highlight_rect_transforms.append(FadeIn(highlight_rect))
 
                 # --- Substitute stuff into the formula ---
-                row_np = array_latex[i, 1:]
+                row_np = array_from_latex[i, 1:]
 
                 for j, Xij in enumerate(row_np.reshape(-1)):
                     substituted_formula_parts2[formula4_x_index(j + 1)] = r"(\ldots)" if np.isnan(Xij) else f"({Xij})"
@@ -131,8 +131,8 @@ class MLEScene(Scene):
             self.remove(new_table)
             partial_likelihoods = []
             # This loop happens for every row
-            for i in range(array_latex.shape[0]):
-                row_np = array_latex[i, 1:]
+            for i in range(array_from_latex.shape[0]):
+                row_np = array_from_latex[i, 1:]
                 zi = np.sum(bhat * np.hstack([np.array([1.0]), row_np]))
                 yhat_i = sigmoid(zi)
                 yi = y[i]
@@ -142,7 +142,23 @@ class MLEScene(Scene):
 
                 partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str} \\\\", count = 1)
                 partial_likelihoods_table_new = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
-                self.play(TransformMatchingCells(partial_likelihoods_table_old, partial_likelihoods_table_new))
+
+                
+                cell_map = get_matching_cell_map(partial_likelihoods_table_old, partial_likelihoods_table_new)
+                yhati_glyphs = extract_table_grid(partial_likelihoods_table_old)[(i + 1, COLS_TO_KEEP + 1)]
+                Li_glyphs    = extract_table_grid(partial_likelihoods_table_new)[(i + 1, COLS_TO_KEEP + 2)]
+                cell_map.append((yhati_glyphs, Li_glyphs))
+                print(f"{Li_glyphs=}")
+                for start, end in cell_map.copy():
+                    print(f"{start=} {end=}")
+                    if end == Li_glyphs and start != yhati_glyphs:
+                        cell_map.remove((start, end))
+                        print("yay we removed some stuff")
+                # print(f"{cell_map=}")
+                self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map,
+                                              ))
+                # return
+
                 partial_likelihoods_tex_old = partial_likelihoods_tex_new
                 partial_likelihoods_table_old = partial_likelihoods_table_new
 
@@ -156,7 +172,7 @@ class MLEScene(Scene):
             col_idx = COLS_TO_KEEP + 2
             eq_idx = 2
             used_table_glyphs = []
-            for row_idx in range(array_latex.shape[0]):
+            for row_idx in range(array_from_latex.shape[0]):
                 if row_idx != 0:
                     glyph_map.append((FadeIn, [eq_idx])) # The "*"
                     eq_idx += 1
