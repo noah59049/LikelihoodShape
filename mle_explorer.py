@@ -158,10 +158,16 @@ class MLEScene(Scene):
                     cell_map.append((yhati_glyphs, Li_glyphs, {"path_arc": -PI / 5}))
                 else:
                     cell_map.append((yhati_glyphs, Li_glyphs[2:], {"path_arc": -PI / 5}))
-                    cell_map.append(([], Li_glyphs[0:2]))
+                    cell_map.append(([], Li_glyphs[0:2], {"delay":0.5, "run_time": 0.5}))
                 self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map))
+                if Li_str1 != Li_str2:
+                    partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str2} \\\\", count = 1)
+                    partial_likelihoods_table_new_simplified = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
+                    self.play(TransformMatchingCells(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified))
+                    partial_likelihoods_table_old = partial_likelihoods_table_new_simplified
+                else:
+                    partial_likelihoods_table_old = partial_likelihoods_table_new
                 partial_likelihoods_tex_old = partial_likelihoods_tex_new
-                partial_likelihoods_table_old = partial_likelihoods_table_new
 
             return 
             # --- Show the product of the partial likelihoods
@@ -169,7 +175,7 @@ class MLEScene(Scene):
             likelihood_together = MathTex(likelihood_together_tex).scale_to_fit_width(config.frame_width).next_to(substituted_formula_new, UP)
 
             # Transform the matching numbers
-            table_grid = extract_table_grid(partial_likelihoods_table_new)
+            table_grid = extract_table_grid(partial_likelihoods_table_old)
             glyph_map = [(FadeIn, [0,1])] # We start with fading in the "L="
             col_idx = COLS_TO_KEEP + 2
             eq_idx = 2
