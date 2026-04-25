@@ -136,32 +136,34 @@ class MLEScene(Scene):
                 zi = np.sum(bhat * np.hstack([np.array([1.0]), row_np]))
                 yhat_i = sigmoid(zi)
                 yi = y[i]
+                if np.isnan(yhat_i):
+                    Li_str1 = r"\vdots"
+                elif yi == 0:
+                    Li_str1 = f"1-{yhat_i:.4g}"
+                else:
+                    Li_str1 = f"{yhat_i:.4g}" 
                 Li = yhat_i ** yi * (1 - yhat_i) ** (1 - yi)
-                Li_str = r"\vdots" if np.isnan(Li) else f"{Li:.4g}"
-                partial_likelihoods.append(Li_str)
+                Li_str2 = r"\vdots" if np.isnan(Li) else f"{Li:.4g}"
+                partial_likelihoods.append(Li_str2)
 
-                partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str} \\\\", count = 1)
+                partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str1} \\\\", count = 1)
                 partial_likelihoods_table_new = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
-
-                
                 cell_map = get_matching_cell_map(partial_likelihoods_table_old, partial_likelihoods_table_new)
                 yhati_glyphs = extract_table_grid(partial_likelihoods_table_old)[(i + 1, COLS_TO_KEEP + 1)]
                 Li_glyphs    = extract_table_grid(partial_likelihoods_table_new)[(i + 1, COLS_TO_KEEP + 2)]
-                # print(f"{Li_glyphs=}")
                 for start, end in cell_map.copy():
-                    # print(f"{start=} {end=}")
                     if end == Li_glyphs:
                         cell_map.remove((start, end))
-                        # print("yay we removed some stuff")
-                # print(f"{cell_map=}")
-                cell_map.append((yhati_glyphs, Li_glyphs))
-                self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map,
-                                              ))
-                # return
-
+                if yi == 1 or np.isnan(Li):
+                    cell_map.append((yhati_glyphs, Li_glyphs, {"path_arc": -PI / 5}))
+                else:
+                    cell_map.append((yhati_glyphs, Li_glyphs[2:], {"path_arc": -PI / 5}))
+                    cell_map.append(([], Li_glyphs[0:2]))
+                self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map))
                 partial_likelihoods_tex_old = partial_likelihoods_tex_new
                 partial_likelihoods_table_old = partial_likelihoods_table_new
 
+            return 
             # --- Show the product of the partial likelihoods
             likelihood_together_tex = "L = " + "*".join(partial_likelihoods).replace(r"\vdots", r"\ldots")
             likelihood_together = MathTex(likelihood_together_tex).scale_to_fit_width(config.frame_width).next_to(substituted_formula_new, UP)
