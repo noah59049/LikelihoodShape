@@ -190,14 +190,14 @@ class MLEScene(Scene):
                 eq_idx += len(table_glyphs)
 
             # Fade out the entire table that's not involved
-            unused_table_glyphs = [i for i in range(len(partial_likelihoods_table_new[0])) if i not in used_table_glyphs]
+            unused_table_glyphs = [i for i in range(len(partial_likelihoods_table_old[0])) if i not in used_table_glyphs]
             glyph_map.append((unused_table_glyphs, FadeOut))
             
             print(f"{glyph_map=}")
             print(f"{len(likelihood_together[0])=}")
 
             # Play the transform yeet
-            self.play(TransformByGlyphMap(partial_likelihoods_table_new, likelihood_together,
+            self.play(TransformByGlyphMap(partial_likelihoods_table_old, likelihood_together,
                                           *glyph_map))
             
             # Actually calculate the likelihood
