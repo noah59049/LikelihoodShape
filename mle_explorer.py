@@ -147,14 +147,14 @@ class MLEScene(Scene):
                 cell_map = get_matching_cell_map(partial_likelihoods_table_old, partial_likelihoods_table_new)
                 yhati_glyphs = extract_table_grid(partial_likelihoods_table_old)[(i + 1, COLS_TO_KEEP + 1)]
                 Li_glyphs    = extract_table_grid(partial_likelihoods_table_new)[(i + 1, COLS_TO_KEEP + 2)]
-                cell_map.append((yhati_glyphs, Li_glyphs))
-                print(f"{Li_glyphs=}")
+                # print(f"{Li_glyphs=}")
                 for start, end in cell_map.copy():
-                    print(f"{start=} {end=}")
-                    if end == Li_glyphs and start != yhati_glyphs:
+                    # print(f"{start=} {end=}")
+                    if end == Li_glyphs:
                         cell_map.remove((start, end))
-                        print("yay we removed some stuff")
+                        # print("yay we removed some stuff")
                 # print(f"{cell_map=}")
+                cell_map.append((yhati_glyphs, Li_glyphs))
                 self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map,
                                               ))
                 # return
