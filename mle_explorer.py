@@ -158,7 +158,7 @@ class MLEScene(Scene):
                     cell_map.append((yhati_glyphs, Li_glyphs, {"path_arc": -PI / 5}))
                 else:
                     cell_map.append((yhati_glyphs, Li_glyphs[2:], {"path_arc": -PI / 5}))
-                    cell_map.append(([], Li_glyphs[0:2], {"delay":0.5, "run_time": 0.5}))
+                    cell_map.append(([], Li_glyphs[0:2], {"delay":0.35, "run_time": 0.6}))
                 self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map))
                 if Li_str1 != Li_str2:
                     partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str2} \\\\", count = 1)
@@ -169,7 +169,6 @@ class MLEScene(Scene):
                     partial_likelihoods_table_old = partial_likelihoods_table_new
                 partial_likelihoods_tex_old = partial_likelihoods_tex_new
 
-            return 
             # --- Show the product of the partial likelihoods
             likelihood_together_tex = "L = " + "*".join(partial_likelihoods).replace(r"\vdots", r"\ldots")
             likelihood_together = MathTex(likelihood_together_tex).scale_to_fit_width(config.frame_width).next_to(substituted_formula_new, UP)
