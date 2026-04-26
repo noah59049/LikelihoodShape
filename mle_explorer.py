@@ -14,7 +14,7 @@ array_from_latex = array_from_latex[1:] # The first row is the title row with ju
 
 class MLEScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast10.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast11.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -33,7 +33,6 @@ class MLEScene(VoiceoverScene):
                                         (FadeIn, [25]),
                                         ))
 
-
         with self.voiceover("Let's take a look at our data table") as tracker:
             self.play(FadeIn(yX_table))
 
@@ -47,7 +46,7 @@ class MLEScene(VoiceoverScene):
         rng = np.random.default_rng(seed = 186)
 
         # This loop happens for every estimate of the betas
-        for m in range(1):
+        for m in range(3):
             # --- Choose beta hats for our example that are normally distributed with mean at the MLE and covariance equal to the covariance matrix of the model
             bhat = bhat_mle + cov @ rng.normal(loc=0.0, scale=1.0, size=len(bhat_mle))
             bhat = round_sig(bhat, 4)
@@ -100,7 +99,7 @@ class MLEScene(VoiceoverScene):
             substituted_formula_old = substituted_formula
             substituted_formula_parts2 = substituted_formula_parts.copy()
             # This loop happens for every row
-            with self.voiceover("7. In the first row, y hat is 0.9051. In the second row, y hat is 0.0001702, and so on.") as tracker:
+            with self.voiceover("In the first row, y hat is 0.9051. In the second row, y hat is 0.0001702, and so on.") as tracker:
                 for i in range(array_from_latex.shape[0]):
                     # --- Move the highlight rect down ---
                     highlight_rect_transforms = [FadeOut(highlight_rect)] if i > 0 else []
@@ -217,7 +216,7 @@ class MLEScene(VoiceoverScene):
             with self.voiceover("we multiply all the probabilities assigned to the actual outcome from each row together.") as tracker:
                 self.play(TransformByGlyphMap(partial_likelihoods_table_old, likelihood_together,
                                             *glyph_map,
-                                            run_time = 3))
+                                            run_time = 2.2))
             
             # Actually calculate the likelihood
             likelihood = np.exp(log_likelihood(X, y, bhat, add_intercept=True))
