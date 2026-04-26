@@ -74,7 +74,7 @@ class MLEScene(VoiceoverScene):
                         return 1 + 3 * j
                     
                     self.play(*[formula4[formula4_beta_index(j)].animate.set_color(BLUE) for j in range(COLS_TO_KEEP + 1)])
-                    self.play(*[formula4[formula4_x_index(j)].animate.set_color(RED) for j in range(1, COLS_TO_KEEP + 1)])
+                    # self.play(*[formula4[formula4_x_index(j)].animate.set_color(RED) for j in range(1, COLS_TO_KEEP + 1)])
 
                     # --- Substitute in the beta hats ---
                     substituted_formula_parts = formula4_parts.copy()
@@ -88,8 +88,8 @@ class MLEScene(VoiceoverScene):
                     substituted_formula = MathTex(*substituted_formula_parts).to_edge(DOWN)
                     for j in range(COLS_TO_KEEP + 1):
                         substituted_formula[formula4_beta_index(j)].set_color(BLUE)
-                        if j != 0: 
-                            substituted_formula[formula4_x_index(j)].set_color(RED)
+                        # if j != 0: 
+                        #     substituted_formula[formula4_x_index(j)].set_color(RED)
                     self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
                                 for i in range(len(formula4_parts))])
 
