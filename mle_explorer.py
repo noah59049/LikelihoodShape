@@ -37,7 +37,7 @@ class MLEScene(VoiceoverScene):
         with self.voiceover("Let's take a look at our data table") as tracker:
             self.play(FadeIn(yX_table))
 
-        with self.voiceover("In this case we have an intercept and 4 predictors. So let’s show that in our formula.") as tracker:
+        with self.voiceover("In this case we have 4 predictors. So let’s show that in our formula.") as tracker:
             formula3_tex = r"\hat{y}=\sigma(\hat{\beta_0}+" + "+".join(r"\hat{\beta_j} X_{j}".replace("j",str(j)) for j in range(1, 1 + COLS_TO_KEEP)) + ")"
             formula3 = MathTex(formula3_tex).to_edge(DOWN)
             self.play(TransformMatchingShapes(formula2, formula3))
@@ -58,7 +58,6 @@ class MLEScene(VoiceoverScene):
                 self.play(FadeIn(bhats_tex))
 
                 if m == 0:
-                # with self.voiceover("We call them beta hats because they are estimates. In most of statistics, putting a hat over something means it’s the estimate of that from data. ") as tracker:
                     formula4_parts = [r"\hat{y}=\sigma(",r"\hat{\beta_0}"]
                     for j in range(1, 1 + COLS_TO_KEEP):
                         formula4_parts.append("+")
@@ -74,7 +73,6 @@ class MLEScene(VoiceoverScene):
                         return 1 + 3 * j
                     
                     self.play(*[formula4[formula4_beta_index(j)].animate.set_color(BLUE) for j in range(COLS_TO_KEEP + 1)])
-                    # self.play(*[formula4[formula4_x_index(j)].animate.set_color(RED) for j in range(1, COLS_TO_KEEP + 1)])
 
                     # --- Substitute in the beta hats ---
                     substituted_formula_parts = formula4_parts.copy()
@@ -88,12 +86,10 @@ class MLEScene(VoiceoverScene):
                     substituted_formula = MathTex(*substituted_formula_parts).to_edge(DOWN)
                     for j in range(COLS_TO_KEEP + 1):
                         substituted_formula[formula4_beta_index(j)].set_color(BLUE)
-                        # if j != 0: 
-                        #     substituted_formula[formula4_x_index(j)].set_color(RED)
                     self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
                                 for i in range(len(formula4_parts))])
 
-            with self.voiceover("For each individual, we get an estimate of the probability of y being 1, which we call y hat. ") as tracker:
+            with self.voiceover("For each individual, we get an estimate of the probability of y being 1, which we call y hat.") as tracker:
                 yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
                 self.play(FadeIn(yXyhat_table))
                 self.remove(yX_table)
@@ -104,7 +100,7 @@ class MLEScene(VoiceoverScene):
             substituted_formula_old = substituted_formula
             substituted_formula_parts2 = substituted_formula_parts.copy()
             # This loop happens for every row
-            with self.voiceover("In the first row, y hat is 0.756. In the second row, y hat is 0.284, and so on. ") as tracker:
+            with self.voiceover("In the first row, y hat is 0.756. In the second row, y hat is 0.284, and so on.") as tracker:
                 for i in range(array_from_latex.shape[0]):
                     # --- Move the highlight rect down ---
                     highlight_rect_transforms = [FadeOut(highlight_rect)] if i > 0 else []
@@ -227,7 +223,7 @@ class MLEScene(VoiceoverScene):
             likelihood_str = f"L={likelihood:.4g}"
 
             likelihood_final = MathTex(likelihood_str).next_to(substituted_formula_new, UP)
-            with self.voiceover("7. And we get 10^-46. This might seem bad, but since we’re multiplying 569 things together, it’s not that bad.") as tracker:
+            with self.voiceover("And we get 10^-46. This might seem bad, but since we’re multiplying 569 things together, it’s not that bad.") as tracker:
                 self.play(TransformByGlyphMap(likelihood_together, likelihood_final,
                                             (range(2, eq_idx), range(2, len(likelihood_str)))))
                 self.play(FadeOut(likelihood_final, bhats_tex))
