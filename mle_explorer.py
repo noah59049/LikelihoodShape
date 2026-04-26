@@ -14,7 +14,7 @@ array_from_latex = array_from_latex[1:] # The first row is the title row with ju
 
 class MLEScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast3.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast5.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -50,6 +50,9 @@ class MLEScene(VoiceoverScene):
                                                 ))
                     formula3_tex = r"\hat{y}=\sigma(\hat{\beta_0}+" + "+".join(r"\hat{\beta_j} X_{j}".replace("j",str(j)) for j in range(1, 1 + COLS_TO_KEEP)) + ")"
                     formula3 = MathTex(formula3_tex).to_edge(DOWN)
+                with self.voiceover("Let's take a look at our data table") as tracker:
+                    self.play(FadeIn(yX_table))
+
                 with self.voiceover("In this case we have an intercept and 4 predictors. So let’s show that in our formula.") as tracker:
                     self.play(TransformMatchingShapes(formula2, formula3))
 
@@ -70,11 +73,6 @@ class MLEScene(VoiceoverScene):
                     self.play(*[formula4[formula4_beta_index(j)].animate.set_color(BLUE) for j in range(COLS_TO_KEEP + 1)])
                     self.play(*[formula4[formula4_x_index(j)].animate.set_color(RED) for j in range(1, COLS_TO_KEEP + 1)])
 
-                    self.play(FadeIn(yX_table))
-                    yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
-                    self.play(FadeIn(yXyhat_table))
-                    self.remove(yX_table)
-
                     # --- Substitute in the beta hats ---
                     substituted_formula_parts = formula4_parts.copy()
                     for j in range(COLS_TO_KEEP + 1):
@@ -92,13 +90,18 @@ class MLEScene(VoiceoverScene):
                     self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
                                 for i in range(len(formula4_parts))])
 
+                with self.voiceover("For each individual, we get an estimate of the probability of y being 1, which we call y hat. ") as tracker:
+                    yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
+                    self.play(FadeIn(yXyhat_table))
+                    self.remove(yX_table)
+
             # --- add the y hats into the table one by one ---
             old_table_tex = yXyhat_tex
             old_table = yXyhat_table
             substituted_formula_old = substituted_formula
             substituted_formula_parts2 = substituted_formula_parts.copy()
             # This loop happens for every row
-            with self.voiceover("For each individual, we get an estimate of the probability of y being 1, which we call y hat. In the first row, y hat is 0.756. In the second row, y hat is 0.284, and so on. ") as tracker:
+            with self.voiceover("In the first row, y hat is 0.756. In the second row, y hat is 0.284, and so on. ") as tracker:
                 for i in range(array_from_latex.shape[0]):
                     # --- Move the highlight rect down ---
                     highlight_rect_transforms = [FadeOut(highlight_rect)] if i > 0 else []
