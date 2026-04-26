@@ -14,7 +14,7 @@ array_from_latex = array_from_latex[1:] # The first row is the title row with ju
 
 class MLEScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast7.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast9.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -22,6 +22,25 @@ class MLEScene(VoiceoverScene):
         formula = MathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})").to_edge(DOWN)
         with self.voiceover("If our assumptions are correct, these betas are unknown facts about the population our data is drawn from. So we need to estimate them, but how? The answer is maximum likelihood estimation. If we have an estimate of our betas, the likelihood of that estimate is the probability that it would produce the observed values of Y.") as tracker:
             self.play(Write(formula))
+
+        with self.voiceover("In order to indicate that they're estimated, we put a hat over the betas, and a hat over y, as we do in most of statistics") as tracker:
+            formula2 = MathTex(r"\hat{y}=\sigma(\hat{\beta_0}+\hat{\beta_1} X_{1}+\hat{\beta_2} X_{2}+\ldots+\hat{\beta}_{k-1} X_{k-1})").to_edge(DOWN)
+            self.play(TransformByGlyphMap(formula, formula2,
+                                        (FadeIn, [1]),
+                                        (FadeIn, [5]),
+                                        (FadeIn, [9]),
+                                        (FadeIn, [15]),
+                                        (FadeIn, [25]),
+                                        ))
+
+
+        with self.voiceover("Let's take a look at our data table") as tracker:
+            self.play(FadeIn(yX_table))
+
+        with self.voiceover("In this case we have an intercept and 4 predictors. So let’s show that in our formula.") as tracker:
+            formula3_tex = r"\hat{y}=\sigma(\hat{\beta_0}+" + "+".join(r"\hat{\beta_j} X_{j}".replace("j",str(j)) for j in range(1, 1 + COLS_TO_KEEP)) + ")"
+            formula3 = MathTex(formula3_tex).to_edge(DOWN)
+            self.play(TransformMatchingShapes(formula2, formula3))
 
         result = logistic_regression(X, y, add_intercept=True, return_stats=True)
         bhat_mle, cov, se = result
@@ -38,24 +57,8 @@ class MLEScene(VoiceoverScene):
                 bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat)]).set_color(BLUE).arrange(DOWN).to_corner(UR)
                 self.play(FadeIn(bhats_tex))
 
-            if m == 0:
-                with self.voiceover("We call them beta hats because they are estimates. In most of statistics, putting a hat over something means it’s the estimate of that from data. ") as tracker:
-                    formula2 = MathTex(r"\hat{y}=\sigma(\hat{\beta_0}+\hat{\beta_1} X_{1}+\hat{\beta_2} X_{2}+\ldots+\hat{\beta}_{k-1} X_{k-1})").to_edge(DOWN)
-                    self.play(TransformByGlyphMap(formula, formula2,
-                                                (FadeIn, [1]),
-                                                (FadeIn, [5]),
-                                                (FadeIn, [9]),
-                                                (FadeIn, [15]),
-                                                (FadeIn, [25]),
-                                                ))
-                    formula3_tex = r"\hat{y}=\sigma(\hat{\beta_0}+" + "+".join(r"\hat{\beta_j} X_{j}".replace("j",str(j)) for j in range(1, 1 + COLS_TO_KEEP)) + ")"
-                    formula3 = MathTex(formula3_tex).to_edge(DOWN)
-                with self.voiceover("Let's take a look at our data table") as tracker:
-                    self.play(FadeIn(yX_table))
-
-                with self.voiceover("In this case we have an intercept and 4 predictors. So let’s show that in our formula.") as tracker:
-                    self.play(TransformMatchingShapes(formula2, formula3))
-
+                if m == 0:
+                # with self.voiceover("We call them beta hats because they are estimates. In most of statistics, putting a hat over something means it’s the estimate of that from data. ") as tracker:
                     formula4_parts = [r"\hat{y}=\sigma(",r"\hat{\beta_0}"]
                     for j in range(1, 1 + COLS_TO_KEEP):
                         formula4_parts.append("+")
@@ -90,10 +93,10 @@ class MLEScene(VoiceoverScene):
                     self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
                                 for i in range(len(formula4_parts))])
 
-                with self.voiceover("For each individual, we get an estimate of the probability of y being 1, which we call y hat. ") as tracker:
-                    yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
-                    self.play(FadeIn(yXyhat_table))
-                    self.remove(yX_table)
+            with self.voiceover("For each individual, we get an estimate of the probability of y being 1, which we call y hat. ") as tracker:
+                yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
+                self.play(FadeIn(yXyhat_table))
+                self.remove(yX_table)
 
             # --- add the y hats into the table one by one ---
             old_table_tex = yXyhat_tex
