@@ -14,7 +14,7 @@ array_from_latex = array_from_latex[1:] # The first row is the title row with ju
 
 class MLEScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast2.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast3.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -50,6 +50,7 @@ class MLEScene(VoiceoverScene):
                                                 ))
                     formula3_tex = r"\hat{y}=\sigma(\hat{\beta_0}+" + "+".join(r"\hat{\beta_j} X_{j}".replace("j",str(j)) for j in range(1, 1 + COLS_TO_KEEP)) + ")"
                     formula3 = MathTex(formula3_tex).to_edge(DOWN)
+                with self.voiceover("In this case we have an intercept and 4 predictors. So let’s show that in our formula.") as tracker:
                     self.play(TransformMatchingShapes(formula2, formula3))
 
                     formula4_parts = [r"\hat{y}=\sigma(",r"\hat{\beta_0}"]
