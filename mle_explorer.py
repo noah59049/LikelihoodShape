@@ -14,7 +14,7 @@ array_from_latex = array_from_latex[1:] # The first row is the title row with ju
 
 class MLEScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast5.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast7.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -139,7 +139,7 @@ class MLEScene(VoiceoverScene):
                     old_table = new_table
 
             # --- Add in the partial likelihoods ---
-            with self.voiceover("Now we want to consider the probabilities the model assigned to the actual outcome. So in the first row, since y is 1, the predicted probability of y being 1 is y hat ,which is 0.756. In the second row, y hat is 0, so y hat is the predicted probability of y being 1, so  1 - y hat is the predicted probability of y being 0, so here that’s just 1 - 0.284, or 0.716. So now we continue that process for all of the rows. We see that some of them are extremely accurate, and some are further off. And then to get the overall likelihood, ") as tracker:
+            with self.voiceover("Now we want to consider the probabilities the model assigned to the actual outcome. ") as tracker:
                 self.play(FadeOut(highlight_rect))
                 partial_likelihoods_tex_old = old_table_tex.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("& \\\\\n", "& $L_i$ \\\\\n", count = 1)
                 print(partial_likelihoods_tex_old)
@@ -147,6 +147,7 @@ class MLEScene(VoiceoverScene):
                 self.play(FadeIn(partial_likelihoods_table_old))
                 self.remove(new_table)
                 partial_likelihoods = []
+            with self.voiceover("So in the first row, since y is 1, the predicted probability of y being 1 is y hat ,which is 0.756. In the second row, y hat is 0, so y hat is the predicted probability of y being 1, so  1 - y hat is the predicted probability of y being 0, so here that’s just 1 - 0.284, or 0.716. So now we continue that process for all of the rows. We see that some of them are extremely accurate, and some are further off. And then to get the overall likelihood, ") as tracker:
                 # This loop happens for every row
                 for i in range(array_from_latex.shape[0]):
                     row_np = array_from_latex[i, 1:]
