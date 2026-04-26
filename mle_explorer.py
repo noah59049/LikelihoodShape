@@ -33,6 +33,11 @@ class MLEScene(VoiceoverScene):
             bhat = bhat_mle + cov @ rng.normal(loc=0.0, scale=1.0, size=len(bhat_mle))
             bhat = round_sig(bhat, 4)
 
+            # --- Add the beta hats to the corner ---
+            with self.voiceover("Let’s look at a mostly arbitrarily chosen estimate of the betas.") as tracker:
+                bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat)]).set_color(BLUE).arrange(DOWN).to_corner(UR)
+                self.play(FadeIn(bhats_tex))
+
             if m == 0:
                 with self.voiceover("We call them beta hats because they are estimates. In most of statistics, putting a hat over something means it’s the estimate of that from data. ") as tracker:
                     formula2 = MathTex(r"\hat{y}=\sigma(\hat{\beta_0}+\hat{\beta_1} X_{1}+\hat{\beta_2} X_{2}+\ldots+\hat{\beta}_{k-1} X_{k-1})").to_edge(DOWN)
@@ -69,28 +74,22 @@ class MLEScene(VoiceoverScene):
                     self.play(FadeIn(yXyhat_table))
                     self.remove(yX_table)
 
-
-            # --- Add the beta hats to the corner ---
-            with self.voiceover("Let’s look at a mostly arbitrarily chosen estimate of the betas.") as tracker:
-                bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat)]).set_color(BLUE).arrange(DOWN).to_corner(UR)
-                self.play(FadeIn(bhats_tex))
-
-                # --- Substitute in the beta hats ---
-                substituted_formula_parts = formula4_parts.copy()
-                for j in range(COLS_TO_KEEP + 1):
-                    idx = formula4_beta_index(j)
-                    if j == 0 or bhat[j] >= 0:
-                        substituted_formula_parts[idx] = f"{bhat[j]}"
-                    else: # For negative beta hats, we change the sign to a minus
-                        substituted_formula_parts[idx] = f"{-bhat[j]}"
-                        substituted_formula_parts[idx - 1] = "-"
-                substituted_formula = MathTex(*substituted_formula_parts).to_edge(DOWN)
-                for j in range(COLS_TO_KEEP + 1):
-                    substituted_formula[formula4_beta_index(j)].set_color(BLUE)
-                    if j != 0: 
-                        substituted_formula[formula4_x_index(j)].set_color(RED)
-                self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
-                            for i in range(len(formula4_parts))])
+                    # --- Substitute in the beta hats ---
+                    substituted_formula_parts = formula4_parts.copy()
+                    for j in range(COLS_TO_KEEP + 1):
+                        idx = formula4_beta_index(j)
+                        if j == 0 or bhat[j] >= 0:
+                            substituted_formula_parts[idx] = f"{bhat[j]}"
+                        else: # For negative beta hats, we change the sign to a minus
+                            substituted_formula_parts[idx] = f"{-bhat[j]}"
+                            substituted_formula_parts[idx - 1] = "-"
+                    substituted_formula = MathTex(*substituted_formula_parts).to_edge(DOWN)
+                    for j in range(COLS_TO_KEEP + 1):
+                        substituted_formula[formula4_beta_index(j)].set_color(BLUE)
+                        if j != 0: 
+                            substituted_formula[formula4_x_index(j)].set_color(RED)
+                    self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
+                                for i in range(len(formula4_parts))])
 
             # --- add the y hats into the table one by one ---
             old_table_tex = yXyhat_tex
