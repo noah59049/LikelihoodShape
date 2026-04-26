@@ -14,7 +14,7 @@ array_from_latex = array_from_latex[1:] # The first row is the title row with ju
 
 class MLEScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast9.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast10.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -23,7 +23,7 @@ class MLEScene(VoiceoverScene):
         with self.voiceover("If our assumptions are correct, these betas are unknown facts about the population our data is drawn from. So we need to estimate them, but how? The answer is maximum likelihood estimation. If we have an estimate of our betas, the likelihood of that estimate is the probability that it would produce the observed values of Y.") as tracker:
             self.play(Write(formula))
 
-        with self.voiceover("In order to indicate that they're estimated, we put a hat over the betas, and a hat over y, as we do in most of statistics") as tracker:
+        with self.voiceover("In order to indicate that they're estimated, we put a hat over the betas, and we use y hat to mean our estimate of p. In general a hat over something means an estimate from data.") as tracker:
             formula2 = MathTex(r"\hat{y}=\sigma(\hat{\beta_0}+\hat{\beta_1} X_{1}+\hat{\beta_2} X_{2}+\ldots+\hat{\beta}_{k-1} X_{k-1})").to_edge(DOWN)
             self.play(TransformByGlyphMap(formula, formula2,
                                         (FadeIn, [1]),
@@ -100,7 +100,7 @@ class MLEScene(VoiceoverScene):
             substituted_formula_old = substituted_formula
             substituted_formula_parts2 = substituted_formula_parts.copy()
             # This loop happens for every row
-            with self.voiceover("In the first row, y hat is 0.756. In the second row, y hat is 0.284, and so on.") as tracker:
+            with self.voiceover("7. In the first row, y hat is 0.9051. In the second row, y hat is 0.0001702, and so on.") as tracker:
                 for i in range(array_from_latex.shape[0]):
                     # --- Move the highlight rect down ---
                     highlight_rect_transforms = [FadeOut(highlight_rect)] if i > 0 else []
@@ -138,7 +138,7 @@ class MLEScene(VoiceoverScene):
                     old_table = new_table
 
             # --- Add in the partial likelihoods ---
-            with self.voiceover("Now we want to consider the probabilities the model assigned to the actual outcome. ") as tracker:
+            with self.voiceover("Now we want to consider the probabilities the model assigned to the actual outcome.") as tracker:
                 self.play(FadeOut(highlight_rect))
                 partial_likelihoods_tex_old = old_table_tex.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("& \\\\\n", "& $L_i$ \\\\\n", count = 1)
                 print(partial_likelihoods_tex_old)
@@ -146,7 +146,7 @@ class MLEScene(VoiceoverScene):
                 self.play(FadeIn(partial_likelihoods_table_old))
                 self.remove(new_table)
                 partial_likelihoods = []
-            with self.voiceover("So in the first row, since y is 1, the predicted probability of y being 1 is y hat ,which is 0.756. In the second row, y hat is 0, so y hat is the predicted probability of y being 1, so  1 - y hat is the predicted probability of y being 0, so here that’s just 1 - 0.284, or 0.716. So now we continue that process for all of the rows. We see that some of them are extremely accurate, and some are further off. And then to get the overall likelihood, ") as tracker:
+            with self.voiceover("So in the first row, y is 1, the predicted probability of y being 1 is y hat ,which is 0.9051. In the second row, y is 0, and the predicted probability of y being 0 is 1 - y hat, which is 0.9998. So now we continue that process for all of the rows. And then to get the overall likelihood,") as tracker:
                 # This loop happens for every row
                 for i in range(array_from_latex.shape[0]):
                     row_np = array_from_latex[i, 1:]
@@ -216,14 +216,15 @@ class MLEScene(VoiceoverScene):
             # Play the transform yeet
             with self.voiceover("we multiply all the probabilities assigned to the actual outcome from each row together.") as tracker:
                 self.play(TransformByGlyphMap(partial_likelihoods_table_old, likelihood_together,
-                                            *glyph_map))
+                                            *glyph_map,
+                                            run_time = 3))
             
             # Actually calculate the likelihood
             likelihood = np.exp(log_likelihood(X, y, bhat, add_intercept=True))
             likelihood_str = f"L={likelihood:.4g}"
 
             likelihood_final = MathTex(likelihood_str).next_to(substituted_formula_new, UP)
-            with self.voiceover("And we get 10^-46. This might seem bad, but since we’re multiplying 569 things together, it’s not that bad.") as tracker:
+            with self.voiceover("And we get 3.394 times 10^-47. This might seem bad, but since we’re multiplying 569 things together, it’s not that bad.") as tracker:
                 self.play(TransformByGlyphMap(likelihood_together, likelihood_final,
                                             (range(2, eq_idx), range(2, len(likelihood_str)))))
                 self.play(FadeOut(likelihood_final, bhats_tex))
