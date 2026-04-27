@@ -226,5 +226,6 @@ class MLEScene(VoiceoverScene):
             with self.voiceover("And we get 3.394 times 10^-47. This might seem bad, but since we’re multiplying 569 things together, it’s not that bad.") as tracker:
                 self.play(TransformByGlyphMap(likelihood_together, likelihood_final,
                                             (range(2, eq_idx), range(2, len(likelihood_str)))))
-                self.play(FadeOut(likelihood_final, bhats_tex))
+                self.wait(tracker.duration - 2.5)
+                self.play(FadeOut(likelihood_final, bhats_tex, substituted_formula_old))
 
