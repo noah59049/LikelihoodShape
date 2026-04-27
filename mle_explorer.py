@@ -152,10 +152,22 @@ class MLEScene(VoiceoverScene):
                     
                     # --- Play the animations ---
                     if bundled:
-                        self.play(*(highlight_rect_transforms + substituted_formula_transforms), TransformMatchingCells(old_table, new_table), run_time = run_time)
+                        if run_time > 1:
+                            self.play(*(highlight_rect_transforms + substituted_formula_transforms), TransformMatchingCells(old_table, new_table), run_time = 1)
+                            self.wait(run_time - 1)
+                        else:
+                            self.play(*(highlight_rect_transforms + substituted_formula_transforms), TransformMatchingCells(old_table, new_table), run_time = run_time)
                     else:
-                        self.play(*(highlight_rect_transforms + substituted_formula_transforms), run_time = rect_time)
-                        self.play(TransformMatchingCells(old_table, new_table), run_time = table_time)
+                        if rect_time > 1:
+                            self.play(*(highlight_rect_transforms + substituted_formula_transforms), run_time = 1)
+                            self.wait(rect_time - 1)
+                        else:
+                            self.play(*(highlight_rect_transforms + substituted_formula_transforms), run_time = rect_time)
+                        if table_time > 1:
+                            self.play(TransformMatchingCells(old_table, new_table), run_time = 1)
+                            self.wait(table_time - 1)
+                        else:
+                            self.play(TransformMatchingCells(old_table, new_table), run_time = table_time)
 
                     # --- Get ready for the next iteration of the loop ---
                     substituted_formula_old = substituted_formula_new
@@ -214,11 +226,19 @@ class MLEScene(VoiceoverScene):
                     else:
                         cell_map.append((yhati_glyphs, Li_glyphs[2:], {"path_arc": -PI / 5}))
                         cell_map.append(([], Li_glyphs[0:2], {"delay":0.35, "run_time": 0.6}))
-                    self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map), run_time = run_time)
+                    if run_time > 1:
+                        self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map), run_time = 1)
+                        self.wait(run_time - 1)
+                    else:
+                        self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map), run_time = run_time)
                     if Li_str1 != Li_str2:
                         partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str2} \\\\", count = 1)
                         partial_likelihoods_table_new_simplified = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
-                        self.play(TransformMatchingCells(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified), run_time = squish_time)
+                        if squish_time > 1:
+                            self.play(TransformMatchingCells(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified), run_time = 1)
+                            self.wait(squish_time - 1)
+                        else:
+                            self.play(TransformMatchingCells(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified), run_time = squish_time)
                         partial_likelihoods_table_old = partial_likelihoods_table_new_simplified
                     else:
                         partial_likelihoods_table_old = partial_likelihoods_table_new
