@@ -92,7 +92,7 @@ class MLEScene(VoiceoverScene):
 
             with self.voiceover("For each individual, we get an estimate of the probability of y being 1, which we call y hat.") as tracker:
                 yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
-                self.play(FadeIn(yXyhat_table))
+                self.play(FadeIn(yXyhat_table, run_time = min(1, tracker.duration)))
                 self.remove(yX_table)
 
             # --- add the y hats into the table one by one ---
@@ -140,11 +140,10 @@ class MLEScene(VoiceoverScene):
 
             # --- Add in the partial likelihoods ---
             with self.voiceover("Now we want to consider the probabilities the model assigned to the actual outcome.") as tracker:
-                self.play(FadeOut(highlight_rect))
                 partial_likelihoods_tex_old = old_table_tex.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("& \\\\\n", "& $L_i$ \\\\\n", count = 1)
                 print(partial_likelihoods_tex_old)
                 partial_likelihoods_table_old = Tex(partial_likelihoods_tex_old).scale(0.66).to_corner(UL)
-                self.play(FadeIn(partial_likelihoods_table_old))
+                self.play(FadeOut(highlight_rect), FadeIn(partial_likelihoods_table_old), run_time = min(1, tracker.duration))
                 self.remove(new_table)
                 partial_likelihoods = []
             with self.voiceover("So in the first row, y is 1, the predicted probability of y being 1 is y hat ,which is 0.9051. In the second row, y is 0, and the predicted probability of y being 0 is 1 - y hat, which is 0.9998. So now we continue that process for all of the rows. And then to get the overall likelihood,") as tracker:
