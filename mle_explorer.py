@@ -11,6 +11,7 @@ from data import COLS_TO_KEEP, X, y, yX # type: ignore
 yXyhat_tex = yX_tex_numbered.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("X4\n &", r"X4 & $\hat{y}$")
 array_from_latex = latex_table_to_array(yX_tex_numbered)
 array_from_latex = array_from_latex[1:] # The first row is the title row with just nans
+y_latex = array_from_latex[:,0].reshape(-1)
 
 class MLEScene(VoiceoverScene):
     def construct(self):
@@ -103,6 +104,24 @@ class MLEScene(VoiceoverScene):
             # This loop happens for every row
             with self.voiceover("In the first row, y hat is 0.9051. In the second row, y hat is 0.0001702, and so on.") as tracker:
                 for i in range(array_from_latex.shape[0]):
+                    # --- Determine the run times of transforms
+                    if m == 0:
+                        if i == 0:
+                            rect_time = 2 # Determined from the audio
+                            table_time = 3.2 # Determined from the audio
+                            bundled = False
+                        elif i == 1:
+                            rect_time = 2 # Determined from the audio
+                            table_time = 2.5 # Determined from the audio
+                            bundled = False
+                        else:
+                            run_time = 0.8
+                            bundled = True
+                    else:
+                        run_time = tracker.duration / array_from_latex.shape[0]
+                        bundled = True
+
+
                     # --- Move the highlight rect down ---
                     highlight_rect_transforms = [FadeOut(highlight_rect)] if i > 0 else []
                     highlight_rect = highlight_row(yX_table, row_idx = i + 1)
@@ -123,8 +142,6 @@ class MLEScene(VoiceoverScene):
                                             substituted_formula_new[i])
                             for i in range(len(substituted_formula_parts2))]
                     
-                    # Play the formula that moves the highlight rect and substitutes
-                    self.play(*(highlight_rect_transforms + substituted_formula_transforms))
 
                     # --- Add y hat ---
                     zi = np.sum(bhat * np.hstack([np.array([1.0]), row_np]))
@@ -132,8 +149,15 @@ class MLEScene(VoiceoverScene):
                     new_table_tex = old_table_tex
                     new_table_tex = new_table_tex.replace(r"& \\", r"& \vdots \\" if np.isnan(yhat_i) else f"& {yhat_i:.4g} \\\\", count = 1)
                     new_table = Tex(new_table_tex).scale(0.66).to_corner(UL)
-                    self.play(TransformMatchingCells(old_table, new_table))
+                    
+                    # --- Play the animations ---
+                    if bundled:
+                        self.play(*(highlight_rect_transforms + substituted_formula_transforms), TransformMatchingCells(old_table, new_table), run_time = run_time)
+                    else:
+                        self.play(*(highlight_rect_transforms + substituted_formula_transforms), run_time = rect_time)
+                        self.play(TransformMatchingCells(old_table, new_table), run_time = table_time)
 
+                    # --- Get ready for the next iteration of the loop ---
                     substituted_formula_old = substituted_formula_new
                     old_table_tex = new_table_tex
                     old_table = new_table
@@ -147,12 +171,26 @@ class MLEScene(VoiceoverScene):
                 self.remove(new_table)
                 partial_likelihoods = []
             with self.voiceover("So in the first row, y is 1, the predicted probability of y being 1 is y hat ,which is 0.9051. In the second row, y is 0, and the predicted probability of y being 0 is 1 - y hat, which is 0.9998. So now we continue that process for all of the rows. And then to get the overall likelihood,") as tracker:
+                total_transforms = array_from_latex.shape[0] + np.sum(y_latex == 0)
                 # This loop happens for every row
                 for i in range(array_from_latex.shape[0]):
+                    # --- Determine the run time
+                    if m == 0:
+                        if i == 0:
+                            run_time = 10 # Determined from the audio
+                            squish_time = None # We shouldn't need to use this
+                        elif i == 1:
+                            run_time = 8 # Determined from the audio
+                            squish_time = 4 # Determined from the audio
+                        else:
+                            run_time = squish_time = 0.8
+                    else:
+                        run_time = squish_time = tracker.duration / total_transforms
+
                     row_np = array_from_latex[i, 1:]
                     zi = np.sum(bhat * np.hstack([np.array([1.0]), row_np]))
                     yhat_i = sigmoid(zi)
-                    yi = y[i]
+                    yi = y_latex[i]
                     if np.isnan(yhat_i):
                         Li_str1 = r"\vdots"
                     elif yi == 0:
@@ -176,11 +214,11 @@ class MLEScene(VoiceoverScene):
                     else:
                         cell_map.append((yhati_glyphs, Li_glyphs[2:], {"path_arc": -PI / 5}))
                         cell_map.append(([], Li_glyphs[0:2], {"delay":0.35, "run_time": 0.6}))
-                    self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map))
+                    self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map), run_time = run_time)
                     if Li_str1 != Li_str2:
                         partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str2} \\\\", count = 1)
                         partial_likelihoods_table_new_simplified = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
-                        self.play(TransformMatchingCells(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified))
+                        self.play(TransformMatchingCells(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified), run_time = squish_time)
                         partial_likelihoods_table_old = partial_likelihoods_table_new_simplified
                     else:
                         partial_likelihoods_table_old = partial_likelihoods_table_new
