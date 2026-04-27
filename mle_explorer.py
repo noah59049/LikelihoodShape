@@ -56,37 +56,39 @@ class MLEScene(VoiceoverScene):
                 bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat)]).set_color(BLUE).arrange(DOWN).to_corner(UR)
                 self.play(FadeIn(bhats_tex))
 
-                if m == 0:
-                    formula4_parts = [r"\hat{y}=\sigma(",r"\hat{\beta_0}"]
-                    for j in range(1, 1 + COLS_TO_KEEP):
-                        formula4_parts.append("+")
-                        formula4_parts.append(rf"\hat{{\beta_{j}}}")
-                        formula4_parts.append(rf"X_{{{j}}}")
-                    formula4_parts.append(")")
-                    formula4 = MathTex(*formula4_parts).to_edge(DOWN)
-                    self.play(TransformMatchingTex(formula3, formula4, run_time = 0.001))
-                    def formula4_beta_index(j):
-                        if j == 0: return 1
-                        else: return 3 * j
-                    def formula4_x_index(j):
-                        return 1 + 3 * j
-                    
-                    self.play(*[formula4[formula4_beta_index(j)].animate.set_color(BLUE) for j in range(COLS_TO_KEEP + 1)])
+                formula4_parts = [r"\hat{y}=\sigma(",r"\hat{\beta_0}"]
+                for j in range(1, 1 + COLS_TO_KEEP):
+                    formula4_parts.append("+")
+                    formula4_parts.append(rf"\hat{{\beta_{j}}}")
+                    formula4_parts.append(rf"X_{{{j}}}")
+                formula4_parts.append(")")
+                formula4 = MathTex(*formula4_parts).to_edge(DOWN)
+                def formula4_beta_index(j):
+                    if j == 0: return 1
+                    else: return 3 * j
+                def formula4_x_index(j):
+                    return 1 + 3 * j
 
-                    # --- Substitute in the beta hats ---
-                    substituted_formula_parts = formula4_parts.copy()
-                    for j in range(COLS_TO_KEEP + 1):
-                        idx = formula4_beta_index(j)
-                        if j == 0 or bhat[j] >= 0:
-                            substituted_formula_parts[idx] = f"{bhat[j]}"
-                        else: # For negative beta hats, we change the sign to a minus
-                            substituted_formula_parts[idx] = f"{-bhat[j]}"
-                            substituted_formula_parts[idx - 1] = "-"
-                    substituted_formula = MathTex(*substituted_formula_parts).to_edge(DOWN)
-                    for j in range(COLS_TO_KEEP + 1):
-                        substituted_formula[formula4_beta_index(j)].set_color(BLUE)
+                # --- Substitute in the beta hats ---
+                substituted_formula_parts = formula4_parts.copy()
+                for j in range(COLS_TO_KEEP + 1):
+                    idx = formula4_beta_index(j)
+                    if j == 0 or bhat[j] >= 0:
+                        substituted_formula_parts[idx] = f"{bhat[j]}"
+                    else: # For negative beta hats, we change the sign to a minus
+                        substituted_formula_parts[idx] = f"{-bhat[j]}"
+                        substituted_formula_parts[idx - 1] = "-"
+                substituted_formula = MathTex(*substituted_formula_parts).to_edge(DOWN)
+                for j in range(COLS_TO_KEEP + 1):
+                    substituted_formula[formula4_beta_index(j)].set_color(BLUE)
+
+                if m == 0:
+                    self.play(TransformMatchingTex(formula3, formula4, run_time = 0.001))
+                    self.play(*[formula4[formula4_beta_index(j)].animate.set_color(BLUE) for j in range(COLS_TO_KEEP + 1)])
                     self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
                                 for i in range(len(formula4_parts))])
+                else:
+                    self.play(FadeIn(substituted_formula))
 
             with self.voiceover("For each individual, we get an estimate of the probability of y being 1, which we call y hat.") as tracker:
                 yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
