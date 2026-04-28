@@ -58,16 +58,22 @@ class MLEScene(VoiceoverScene):
         result = logistic_regression(X, y, add_intercept=True, return_stats=True)
         bhat_mle, cov, se = result
         rng = np.random.default_rng(seed = 186)
+        
+        all_bhats = []
+        all_bhat_texes = []
+        all_likelihoods = []
 
         # This loop happens for every estimate of the betas
         for m in range(3):
             # --- Choose beta hats for our example that are normally distributed with mean at the MLE and covariance equal to the covariance matrix of the model
             bhat = bhat_mle + cov @ rng.normal(loc=0.0, scale=1.0, size=len(bhat_mle))
             bhat = round_sig(bhat, 4)
+            all_bhats.append(bhat.copy())
 
             # --- Add the beta hats to the corner ---
             with self.voiceover("Let’s look at a mostly arbitrarily chosen estimate of the betas.") as tracker:
                 bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat)]).set_color(BLUE).arrange(DOWN).to_corner(UR)
+                all_bhat_texes.append(bhats_tex.copy())
                 self.play(FadeIn(bhats_tex))
 
                 formula4_parts = [r"\hat{y}=\sigma(",r"\hat{\beta_0}"]
@@ -295,9 +301,16 @@ class MLEScene(VoiceoverScene):
             likelihood_str = f"L={likelihood:.4g}"
 
             likelihood_final = MathTex(likelihood_str).next_to(substituted_formula_new, UP)
+            all_likelihoods.append(likelihood_final.copy())
             with self.voiceover("And we get 3.394 times 10^-47. This might seem bad, but since we’re multiplying 569 things together, it’s not that bad.") as tracker:
                 self.play(TransformByGlyphMap(likelihood_together, likelihood_final,
                                             (range(2, eq_idx), range(2, len(likelihood_str)))))
                 self.wait(tracker.duration - 2.5)
                 self.play(FadeOut(likelihood_final, bhats_tex, substituted_formula_old))
 
+        # --- Comparing the likelihoods ---
+        # for bhat, bhat_tex, likelihood_tex in zip(all_bhats, all_bhat_texes, all_likelihoods):
+        #     my_mob = VGroup(bhat_tex, likelihood_tex).arrange(DOWN)
+
+        likelihood_grid = VGroup(*[VGroup(bhat_tex, likelihood_tex).arrange(DOWN) for bhat_tex, likelihood_tex in zip(all_bhat_texes, all_likelihoods)]).arrange(RIGHT)
+        self.play(FadeIn(likelihood_grid))
