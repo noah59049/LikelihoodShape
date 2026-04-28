@@ -4,7 +4,7 @@ from manim import *
 from MF_Tools import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid, log_likelihood
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid, log_likelihood, FadeInRHS, FlashAround
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 
@@ -15,14 +15,27 @@ y_latex = array_from_latex[:,0].reshape(-1)
 
 class MLEScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast11.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast12.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
         yX_table = Tex(yX_tex_numbered).scale(0.66).to_corner(UL)
         formula = MathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})").to_edge(DOWN)
-        with self.voiceover("If our assumptions are correct, these betas are unknown facts about the population our data is drawn from. So we need to estimate them, but how? The answer is maximum likelihood estimation. If we have an estimate of our betas, the likelihood of that estimate is the probability that it would produce the observed values of Y.") as tracker:
+        with self.voiceover("If our assumptions are correct, these betas are unknown facts about the population our data is drawn from. So we need to estimate them, but how? The answer is") as tracker:
             self.play(Write(formula))
+            mle_words = Text("Maximum Likelihood Estimation")
+            tex1 = MathTex(r"L(\hat{\beta})")
+            tex2 = MathTex(r"L(\hat{\beta})=P(Y|\hat{\beta})")
+            mle_words.next_to(tex1, UP)
+
+        with self.voiceover("maximum likelihood estimation. If we have an estimate of our betas, the") as tracker:
+            self.play(FadeIn(mle_words), FlashAround(mle_words))
+        with self.voiceover("likelihood, indicated L, of that estimate is the") as tracker:
+            self.play(FadeIn(tex1))
+        with self.voiceover("probability that it would produce the observed values of Y.") as tracker:
+            self.play(FadeInRHS(tex1, tex2))
+            self.wait(max(0, tracker.duration - 1.7))
+            self.play(FadeOut(mle_words, tex2, run_time = 0.6))
 
         with self.voiceover("In order to indicate that they're estimated, we put a hat over the betas, and we use y hat to mean our estimate of p. In general a hat over something means an estimate from data.") as tracker:
             formula2 = MathTex(r"\hat{y}=\sigma(\hat{\beta_0}+\hat{\beta_1} X_{1}+\hat{\beta_2} X_{2}+\ldots+\hat{\beta}_{k-1} X_{k-1})").to_edge(DOWN)
