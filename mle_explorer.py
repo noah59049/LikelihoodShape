@@ -363,7 +363,12 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         max_point = Dot3D(axes.c2p(*max_coords))
 
         with self.voiceover("Somewhere this function has a maximum, and the beta hats at the maximum are the beta hats that our model uses.") as tracker:
-            self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
+            self.move_camera(
+                phi=60 * DEGREES,
+                theta=-45 * DEGREES,
+                run_time=1,
+                rate_func=smooth
+            )
             self.play(Create(axes), Create(surface), Write(x_label, y_label, z_label))
             self.play(FadeIn(max_point))
 
