@@ -13,9 +13,9 @@ array_from_latex = latex_table_to_array(yX_tex_numbered)
 array_from_latex = array_from_latex[1:] # The first row is the title row with just nans
 y_latex = array_from_latex[:,0].reshape(-1)
 
-class MLEScene(VoiceoverScene):
+class MLEScene(VoiceoverScene, ThreeDScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast13.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast14.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -310,10 +310,8 @@ class MLEScene(VoiceoverScene):
                 self.wait(tracker.duration - 2.5)
                 self.play(FadeOut(likelihood_final, bhats_tex, substituted_formula_old))
 
-        # --- Comparing the likelihoods ---
-        # for bhat, bhat_tex, likelihood_tex in zip(all_bhats, all_bhat_texes, all_likelihoods):
-        #     my_mob = VGroup(bhat_tex, likelihood_tex).arrange(DOWN)
 
+        # --- Show that we have a likelihood for every point and there's one MLE ---
         likelihood_grid = VGroup(*[VGroup(bhat_tex, likelihood_tex).arrange(DOWN) for bhat_tex, likelihood_tex in zip(all_bhat_texes, all_likelihood_texes)]).arrange(RIGHT)
         with self.voiceover("So for every set of beta hats, you get a likelihood for those betas.") as tracker:
             self.play(FadeIn(likelihood_grid))
@@ -327,5 +325,47 @@ class MLEScene(VoiceoverScene):
             l_vector_texes.append(new_likelihood_tex)
 
         l_vectors = VGroup(*l_vector_texes).arrange(RIGHT).scale_to_fit_width(config.frame_width)
-        with self.voiceover("In this way, you can think of the likelihood as a function of the beta hats. Somewhere this function has a maximum, and the beta hats at the maximum are the beta hats that our model uses.") as tracker:
+        with self.voiceover("In this way, you can think of the likelihood as a function of the beta hats. ") as tracker:
             self.play(TransformMatchingShapes(likelihood_grid, l_vectors))
+            self.wait(tracker.duration - 2.1)
+            self.play(FadeOut(l_vectors))
+
+
+        # --- Graph the likelihood ---
+        
+        # Function 
+        def f(x, y):
+            return np.exp(-0.5 * (x - 0.54)**2 - (y + 0.82)**2 - 0.2) # I just made this up because it's nice
+
+        # Axes
+        axes = ThreeDAxes(
+            x_range=[-3, 3],
+            y_range=[-3, 3],
+            z_range=[0, 10],
+        )
+
+        x_label = Text(r"\hat{beta}_0").next_to(axes.x_axis.get_end(), RIGHT)
+        y_label = Text(r"\hat{beta}_0").next_to(axes.y_axis.get_end(), UP)
+        z_label = Text("L").next_to(axes.z_axis.get_end(), OUT)
+        self.add_fixed_orientation_mobjects(x_label, y_label, z_label)
+
+        # Surface 
+        surface = Surface(
+            lambda u, v_: axes.c2p(u, v_, f(u, v_)),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(12, 12), # TODO: Make this bigger again during production
+            fill_opacity=0.35,
+        )
+
+        # point at the max
+        max_coords = 0.54, -0.82, f(0.54, -0.82)
+        max_point = Dot3D(axes.c2p(*max_coords))
+
+        with self.voiceover("Somewhere this function has a maximum, and the beta hats at the maximum are the beta hats that our model uses.") as tracker:
+            self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
+            self.play(Create(axes), Create(surface), Write(x_label, y_label, z_label))
+            self.play(FadeIn(max_point))
+
+
+
