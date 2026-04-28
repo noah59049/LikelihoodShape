@@ -4,7 +4,7 @@ from manim import *
 from MF_Tools import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid, log_likelihood, FadeInRHS, FlashAround
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid, log_likelihood, FadeInRHS, FlashAround, latex_vector
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 
@@ -61,7 +61,8 @@ class MLEScene(VoiceoverScene):
         
         all_bhats = []
         all_bhat_texes = []
-        all_likelihoods = []
+        all_likelihood_strs = []
+        all_likelihood_texes = []
 
         # This loop happens for every estimate of the betas
         for m in range(3):
@@ -299,9 +300,10 @@ class MLEScene(VoiceoverScene):
             # Actually calculate the likelihood
             likelihood = np.exp(log_likelihood(X, y, bhat, add_intercept=True))
             likelihood_str = f"L={likelihood:.4g}"
+            all_likelihood_strs.append(likelihood_str[2:]) # We don't want the "L="
 
             likelihood_final = MathTex(likelihood_str).next_to(substituted_formula_new, UP)
-            all_likelihoods.append(likelihood_final.copy())
+            all_likelihood_texes.append(likelihood_final.copy())
             with self.voiceover("And we get 3.394 times 10^-47. This might seem bad, but since we’re multiplying 569 things together, it’s not that bad.") as tracker:
                 self.play(TransformByGlyphMap(likelihood_together, likelihood_final,
                                             (range(2, eq_idx), range(2, len(likelihood_str)))))
@@ -312,5 +314,15 @@ class MLEScene(VoiceoverScene):
         # for bhat, bhat_tex, likelihood_tex in zip(all_bhats, all_bhat_texes, all_likelihoods):
         #     my_mob = VGroup(bhat_tex, likelihood_tex).arrange(DOWN)
 
-        likelihood_grid = VGroup(*[VGroup(bhat_tex, likelihood_tex).arrange(DOWN) for bhat_tex, likelihood_tex in zip(all_bhat_texes, all_likelihoods)]).arrange(RIGHT)
+        likelihood_grid = VGroup(*[VGroup(bhat_tex, likelihood_tex).arrange(DOWN) for bhat_tex, likelihood_tex in zip(all_bhat_texes, all_likelihood_texes)]).arrange(RIGHT)
         self.play(FadeIn(likelihood_grid))
+
+        l_vector_texes = []
+        for bhat, likelihood_str in zip(all_bhats, all_likelihood_strs):
+            print(f"{bhat=}")
+            likelihood_vector = numpy_to_latex(as_col(bhat))
+            big_string = f"L({likelihood_vector})={likelihood_str}"
+            l_vector_texes.append(MathTex(big_string))
+
+        l_vectors = VGroup(*l_vector_texes).arrange(RIGHT).scale_to_fit_width(config.frame_width)
+        self.play(TransformMatchingShapes(likelihood_grid, l_vectors))
