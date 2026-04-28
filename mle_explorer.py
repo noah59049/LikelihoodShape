@@ -15,7 +15,7 @@ y_latex = array_from_latex[:,0].reshape(-1)
 
 class MLEScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast12.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast13.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -74,7 +74,7 @@ class MLEScene(VoiceoverScene):
             # --- Add the beta hats to the corner ---
             with self.voiceover("Let’s look at a mostly arbitrarily chosen estimate of the betas.") as tracker:
                 bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat)]).set_color(BLUE).arrange(DOWN).to_corner(UR)
-                all_bhat_texes.append(bhats_tex.copy())
+                all_bhat_texes.append(bhats_tex.copy().arrange(DOWN, aligned_edge = LEFT))
                 self.play(FadeIn(bhats_tex))
 
                 formula4_parts = [r"\hat{y}=\sigma(",r"\hat{\beta_0}"]
@@ -315,14 +315,17 @@ class MLEScene(VoiceoverScene):
         #     my_mob = VGroup(bhat_tex, likelihood_tex).arrange(DOWN)
 
         likelihood_grid = VGroup(*[VGroup(bhat_tex, likelihood_tex).arrange(DOWN) for bhat_tex, likelihood_tex in zip(all_bhat_texes, all_likelihood_texes)]).arrange(RIGHT)
-        self.play(FadeIn(likelihood_grid))
+        with self.voiceover("So for every set of beta hats, you get a likelihood for those betas.") as tracker:
+            self.play(FadeIn(likelihood_grid))
 
         l_vector_texes = []
         for bhat, likelihood_str in zip(all_bhats, all_likelihood_strs):
             print(f"{bhat=}")
             likelihood_vector = numpy_to_latex(as_col(bhat))
-            big_string = f"L({likelihood_vector})={likelihood_str}"
-            l_vector_texes.append(MathTex(big_string))
+            new_likelihood_tex = MathTex("L(",likelihood_vector, ")=", likelihood_str)
+            new_likelihood_tex[1].set_color(BLUE)
+            l_vector_texes.append(new_likelihood_tex)
 
         l_vectors = VGroup(*l_vector_texes).arrange(RIGHT).scale_to_fit_width(config.frame_width)
-        self.play(TransformMatchingShapes(likelihood_grid, l_vectors))
+        with self.voiceover("In this way, you can think of the likelihood as a function of the beta hats. Somewhere this function has a maximum, and the beta hats at the maximum are the beta hats that our model uses.") as tracker:
+            self.play(TransformMatchingShapes(likelihood_grid, l_vectors))
