@@ -523,6 +523,10 @@ def get_matching_cell_map(table1, table2):
 def TransformMatchingCells(table1, table2):
     return TransformByGlyphMap(table1, table2, *get_matching_cell_map(table1, table2))
 
+def FadeInRHS(tex1, tex2):
+    return TransformByGlyphMap(tex1, tex2,
+                               (FadeIn, range(len(tex1[0]), len(tex2[0]))))
+
 def highlight_row(tex, row_idx, color=RED, opacity=0.3):
     glyphs = tex[0]  # important fix
 
@@ -568,3 +572,41 @@ def highlight_row(tex, row_idx, color=RED, opacity=0.3):
     rect.set_stroke(width=0)
 
     return rect
+
+def FlashAround(
+    mobject,
+    color=YELLOW,
+    line_length=0.25,
+    num_lines=6,
+    point_density=0.15,  # higher = more points
+    lag_ratio=0.002,
+    run_time=1
+):
+    anims = []
+
+    # Flatten to leaf submobjects (glyph-level)
+    submobs = mobject.family_members_with_points()
+
+    for sm in submobs:
+        pts = sm.get_points()
+        if len(pts) == 0:
+            continue
+
+        # Sample points along the outline
+        step = max(1, int(1 / point_density))
+        sampled = pts[::step]
+
+        for p in sampled:
+            anims.append(
+                Flash(
+                    p,
+                    color=color,
+                    line_length=line_length,
+                    num_lines=num_lines,
+                )
+            )
+
+    if not anims:
+        return AnimationGroup()  # safe no-op
+
+    return LaggedStart(*anims, lag_ratio=lag_ratio, run_time=run_time)
