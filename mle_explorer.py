@@ -347,7 +347,8 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         x_label = Text(r"\hat{beta}_0").next_to(axes.x_axis.get_end(), RIGHT)
         y_label = Text(r"\hat{beta}_0").next_to(axes.y_axis.get_end(), UP)
         z_label = Text("L").next_to(axes.z_axis.get_end(), OUT)
-        self.add_fixed_orientation_mobjects(x_label, y_label, z_label)
+        axis_labels = VGroup(x_label, y_label, z_label)
+        self.add_fixed_orientation_mobjects(axis_labels)
 
         # Surface 
         surface = Surface(
@@ -366,10 +367,9 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             self.move_camera(
                 phi=60 * DEGREES,
                 theta=-45 * DEGREES,
-                run_time=1,
-                rate_func=smooth
+                run_time=1
             )
-            self.play(Create(axes), Create(surface), Write(x_label, y_label, z_label))
+            self.play(Create(axes), Create(surface), Write(axis_labels))
             self.play(FadeIn(max_point))
 
 
