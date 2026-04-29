@@ -348,7 +348,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         y_label = Text(r"\hat{beta}_0").next_to(axes.y_axis.get_end(), UP)
         z_label = Text("L").next_to(axes.z_axis.get_end(), OUT)
         axis_labels = VGroup(x_label, y_label, z_label)
-        self.add_fixed_orientation_mobjects(axis_labels)
+        self.add_fixed_orientation_mobjects(x_label, y_label, z_label)
 
         # Surface 
         surface = Surface(
