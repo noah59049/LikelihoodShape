@@ -328,25 +328,19 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             new_likelihood_tex[1].set_color(BLUE)
             return new_likelihood_tex
 
-        l_vector_texes = [l_function_tex(bhat) for bhat in all_bhats]
-        l_vectors = VGroup(*l_vector_texes).arrange(RIGHT).scale_to_fit_width(config.frame_width)
+        for m in range(100):
+            all_bhats.append(arbitrarily_choose_bhat())
         with self.voiceover("In this way, you can think of the likelihood as a function of the beta hats. ") as tracker:
-            self.play(TransformMatchingShapes(likelihood_grid, l_vectors))
+            l_vectors_old = likelihood_grid
+            dims = (1,3),(3,3),(5,5),(7,7)
+            for rows, cols in dims:
+                l_vector_texes = [l_function_tex(bhat) for bhat in all_bhats[0:rows * cols]]
+                l_vectors_new = VGroup(*l_vector_texes).arrange_in_grid(rows=rows, cols=cols).scale_to_fit_width(config.frame_width)
+                self.play(TransformMatchingShapes(l_vectors_old, l_vectors_new), run_time = 0.8)
+                l_vectors_old = l_vectors_new
 
-            # --- Now remove all the beta hats ---
-            for m in range(100):
-                all_bhats.append(arbitrarily_choose_bhat())
-
-            l_vectors_old = l_vectors
-            for side in 3,5,7:
-                num_texes = side * side
-                l_vector_texes = [l_function_tex(bhat) for bhat in all_bhats[0:num_texes]]
-                l_vectors = VGroup(*l_vector_texes).arrange_in_grid(rows=side, cols=side).scale_to_fit_width(config.frame_width)
-                self.play(TransformMatchingShapes(l_vectors_old, l_vectors))
-                l_vectors_old = l_vectors
-
-            self.wait(tracker.duration - 2.1)
-            self.play(FadeOut(l_vectors))
+            self.wait(max(tracker.duration - len(dims) * 0.8 - 1.1, 0))
+            self.play(FadeOut(l_vectors_new))
 
         # --- Graph the likelihood ---
         with self.voiceover("Somewhere this function has a maximum, and the beta hats at the maximum are the beta hats that our model uses.") as tracker:
