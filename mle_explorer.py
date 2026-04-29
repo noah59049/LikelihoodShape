@@ -316,21 +316,20 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         with self.voiceover("So for every set of beta hats, you get a likelihood for those betas.") as tracker:
             self.play(FadeIn(likelihood_grid))
 
-        l_vector_texes = []
-        for bhat, likelihood_str in zip(all_bhats, all_likelihood_strs):
-            print(f"{bhat=}")
+        def l_function_tex(bhat):
+            likelihood = np.exp(log_likelihood(X, y, bhat, add_intercept=True))
+            likelihood_str = f"{likelihood:.4g}"
             likelihood_vector = numpy_to_latex(as_col(bhat))
             new_likelihood_tex = MathTex("L(",likelihood_vector, ")=", likelihood_str)
             new_likelihood_tex[1].set_color(BLUE)
-            l_vector_texes.append(new_likelihood_tex)
+            return new_likelihood_tex
 
+        l_vector_texes = [l_function_tex(bhat) for bhat in all_bhats]
         l_vectors = VGroup(*l_vector_texes).arrange(RIGHT).scale_to_fit_width(config.frame_width)
         with self.voiceover("In this way, you can think of the likelihood as a function of the beta hats. ") as tracker:
             self.play(TransformMatchingShapes(likelihood_grid, l_vectors))
             self.wait(tracker.duration - 2.1)
             self.play(FadeOut(l_vectors))
-
-        log_likelihood
 
         # --- Graph the likelihood ---
         with self.voiceover("Somewhere this function has a maximum, and the beta hats at the maximum are the beta hats that our model uses.") as tracker:
