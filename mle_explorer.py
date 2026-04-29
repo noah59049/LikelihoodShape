@@ -64,11 +64,15 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         all_likelihood_strs = []
         all_likelihood_texes = []
 
+        def arbitrarily_choose_bhat():
+            bhat = bhat_mle + cov @ rng.normal(loc=0.0, scale=1.0, size=len(bhat_mle))
+            bhat = round_sig(bhat, 4)
+            return bhat
+
         # This loop happens for every estimate of the betas
         for m in range(3):
             # --- Choose beta hats for our example that are normally distributed with mean at the MLE and covariance equal to the covariance matrix of the model
-            bhat = bhat_mle + cov @ rng.normal(loc=0.0, scale=1.0, size=len(bhat_mle))
-            bhat = round_sig(bhat, 4)
+            bhat = arbitrarily_choose_bhat()
             all_bhats.append(bhat.copy())
 
             # --- Add the beta hats to the corner ---
@@ -328,6 +332,19 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         l_vectors = VGroup(*l_vector_texes).arrange(RIGHT).scale_to_fit_width(config.frame_width)
         with self.voiceover("In this way, you can think of the likelihood as a function of the beta hats. ") as tracker:
             self.play(TransformMatchingShapes(likelihood_grid, l_vectors))
+
+            # --- Now remove all the beta hats ---
+            for m in range(100):
+                all_bhats.append(arbitrarily_choose_bhat())
+
+            l_vectors_old = l_vectors
+            for side in 3,5,7:
+                num_texes = side * side
+                l_vector_texes = [l_function_tex(bhat) for bhat in all_bhats[0:num_texes]]
+                l_vectors = VGroup(*l_vector_texes).arrange_in_grid(rows=side, cols=side).scale_to_fit_width(config.frame_width)
+                self.play(TransformMatchingShapes(l_vectors_old, l_vectors))
+                l_vectors_old = l_vectors
+
             self.wait(tracker.duration - 2.1)
             self.play(FadeOut(l_vectors))
 
