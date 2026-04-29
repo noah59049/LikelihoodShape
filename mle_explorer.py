@@ -341,12 +341,12 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         axes = ThreeDAxes(
             x_range=[-3, 3],
             y_range=[-3, 3],
-            z_range=[0, 10],
+            z_range=[-3, 3],
         )
 
-        x_label = Text(r"\hat{beta}_0").next_to(axes.x_axis.get_end(), RIGHT)
-        y_label = Text(r"\hat{beta}_0").next_to(axes.y_axis.get_end(), UP)
-        z_label = Text("L").next_to(axes.z_axis.get_end(), OUT)
+        x_label = MathTex(r"\hat{beta}_0").next_to(axes.x_axis.get_end(), RIGHT)
+        y_label = MathTex(r"\hat{beta}_0").next_to(axes.y_axis.get_end(), UP)
+        z_label = MathTex("L").next_to(axes.z_axis.get_end(), OUT)
         axis_labels = VGroup(x_label, y_label, z_label)
         self.add_fixed_orientation_mobjects(x_label, y_label, z_label)
 
