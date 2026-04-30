@@ -162,8 +162,8 @@ class ShrinkingSecantScene(VoiceoverScene):
                 Create(delta_f),
                 Write(label_dx),
                 Write(label_df),
+                FadeInRHS(derivs[0], derivs[1])
             )
-            self.play(FadeInRHS(derivs[0], derivs[1]))
 
         # -------------------------------------------------
         # Shrink Δx → 0
@@ -171,22 +171,23 @@ class ShrinkingSecantScene(VoiceoverScene):
         with self.voiceover("in the limit as the change in x goes to 0. And geometrically it’s ") as tracker:
             self.play(
                 dx_tracker.animate.set_value(0.001),
+                TransformByGlyphMap(derivs[1], derivs[2],
+                                      (FadeIn, range(6,13))),
                 run_time=4,
                 rate_func=smooth,
             )
-            self.play(TransformByGlyphMap(derivs[1], derivs[2],
-                                      (FadeIn, range(6,13))))
-            self.play(TransformByGlyphMap(derivs[2], derivs[3],
-                                        ([13,14], range(13,25))))
-            self.play(TransformByGlyphMap(derivs[3], derivs[4],
-                                        ([9,10], [9]),
-                                        ([17,18], [16]),
-                                        ([26,27], [24]),
-                                        ))
 
         # Show tangent line
         with self.voiceover("the slope of the tangent line.") as tracker:
             self.play(
                 FadeOut(secant_line),
                 Create(tangent_line),
+                TransformByGlyphMap(derivs[2], derivs[3],
+                                        ([13,14], range(13,25)))
             )
+
+            self.play(TransformByGlyphMap(derivs[3], derivs[4],
+                                        ([9,10], [9]),
+                                        ([17,18], [16]),
+                                        ([26,27], [24]),
+                                        ))
