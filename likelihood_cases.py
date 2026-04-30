@@ -92,6 +92,7 @@ class LikelihoodCasesScene(VoiceoverScene):
 
         success1 = MathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
         success2 = MathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{1}(1-\hat{y}_i)^{1-{1}}")
+        success2a= MathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{1}(1-\hat{y}_i)^{0}")
         success3 = MathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{1}")
         success4 = MathTex(r"L=\prod_{i=1}^{n}\hat{y}_i")
 
@@ -101,16 +102,18 @@ class LikelihoodCasesScene(VoiceoverScene):
         box1 = SurroundingRectangle(row1, color = RED)
         with self.voiceover("if we look at the case where yi=1, ") as tracker:
             self.play(row1.animate.set_color(RED), Create(box1, run_time = 0.5))
-
-        with self.voiceover("the right hand term becomes 1-yi hat raised to the power of 0,") as tracker:
-            self.play(TransformByGlyphMap(success1, success2,
+            self.play(TransformWithBoxes(success1, success2,
                 ([9,10], [9]),
                 ([21,22], [20])))
 
+        with self.voiceover("the right hand term becomes 1-yi hat raised to the power of 0,") as tracker:
+            self.play(TransformByGlyphMap(success2, success2a,
+                                          ([18,19,20], [18])))
+
         with self.voiceover("so it goes away, and the left hand term becomes yi hat, same as in the first formula") as tracker:
-            self.play(TransformByGlyphMap(success2, success3,
+            self.play(TransformByGlyphMap(success2a, success3,
                 (range(11), range(11), {"delay": 0.7}),
-                (range(11,21), FadeOut)))
+                (range(11,19), FadeOut)))
 
             self.play(TransformByGlyphMap(success3, success4,
                 (range(9), range(9), {"delay": 0.4}),
@@ -131,15 +134,6 @@ class LikelihoodCasesScene(VoiceoverScene):
         with self.voiceover("If you look at the case where yi=0,") as tracker:
             box2 = SurroundingRectangle(row2, color = RED)
             self.play(row2.animate.set_color(RED), Create(box2))
-
-        with self.voiceover("the left hand term becomes yi hat raised to the 0,") as tracker:
-            # boxes = boxes_for_glyph_groups(
-            #     failure1,
-            #     [[9, 10], [21, 22]],
-            #     color=YELLOW,
-            #     buff=0.1
-            # )
-            # self.play(Create(boxes))
             self.play(
                 TransformWithBoxes(
                     failure1, failure2,
@@ -147,11 +141,13 @@ class LikelihoodCasesScene(VoiceoverScene):
                     ([21,22], [20])
                 )
             )
-            # self.play(FadeOut(boxes))
 
-        with self.voiceover("so it goes away, ") as tracker:
+        with self.voiceover("the left hand term becomes yi hat raised to the 0,") as tracker:
             self.play(TransformByGlyphMap(failure2, failure3,
                 ([7,8,9,10], FadeOut)))
+
+        with self.voiceover("so it goes away, ") as tracker:
+            pass # TODO: Just make this a part of the voiceover above
 
         with self.voiceover("and the right hand term becomes 1 - yi hat, again, same as above. The log-likelihood, written lowercase l, is just the") as tracker:
             self.play(TransformByGlyphMap(failure3, failure4,
