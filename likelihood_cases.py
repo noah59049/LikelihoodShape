@@ -59,7 +59,7 @@ class TransformWithBoxes(AnimationGroup):
         
 class LikelihoodCasesScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/likelihood_cases_podcast1.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/likelihood_cases_podcast2.mp3",
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
@@ -110,16 +110,17 @@ class LikelihoodCasesScene(VoiceoverScene):
             self.play(TransformByGlyphMap(success2, success2a,
                                           ([18,19,20], [18])))
 
-        with self.voiceover("so it goes away, and the left hand term becomes yi hat, same as in the first formula") as tracker:
+        with self.voiceover("so it goes away, and the left hand term ") as tracker:
             self.play(TransformByGlyphMap(success2a, success3,
                 (range(11), range(11), {"delay": 0.7}),
                 (range(11,19), FadeOut)))
 
+        with self.voiceover("becomes yi hat, same as in the first formula") as tracker:
             self.play(TransformByGlyphMap(success3, success4,
                 (range(9), range(9), {"delay": 0.4}),
                 (range(9,10), FadeOut)))
 
-        
+            self.wait(tracker.duration - 2.1)        
             self.play(FadeOut(success4), row1.animate.set_color(WHITE), FadeOut(box1))
         
             # Step 3: Likelihood simplification for case y_i=0
