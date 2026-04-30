@@ -17,7 +17,7 @@ TableTransform = TransformMatchingCells # TransformMatchingCells for production,
 
 class MLEScene(VoiceoverScene, ThreeDScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast14.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast15.mp3",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -25,10 +25,11 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         formula = MathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})").to_edge(DOWN)
         with self.voiceover("If our assumptions are correct, these betas are unknown facts about the population our data is drawn from. So we need to estimate them, but how? The answer is") as tracker:
             self.play(Write(formula))
-            mle_words = Text("Maximum Likelihood Estimation")
-            tex1 = MathTex(r"L(\hat{\beta})")
-            tex2 = MathTex(r"L(\hat{\beta})=P(Y|\hat{\beta})")
-            mle_words.next_to(tex1, UP)
+        
+        mle_words = Text("Maximum Likelihood Estimation")
+        tex1 = MathTex(r"L(\hat{\beta})")
+        tex2 = MathTex(r"L(\hat{\beta})=P(Y|\hat{\beta})")
+        mle_words.next_to(tex1, UP)
 
         with self.voiceover("maximum likelihood estimation. If we have an estimate of our betas, the") as tracker:
             self.play(FadeIn(mle_words), FlashAround(mle_words))
@@ -208,7 +209,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 self.play(FadeOut(highlight_rect), FadeIn(partial_likelihoods_table_old), run_time = min(1, tracker.duration))
                 self.remove(new_table)
                 partial_likelihoods = []
-            with self.voiceover("So in the first row, y is 1, the predicted probability of y being 1 is y hat ,which is 0.9051. In the second row, y is 0, and the predicted probability of y being 0 is 1 - y hat, which is 0.9998. So now we continue that process for all of the rows. And then to get the overall likelihood,") as tracker:
+            with self.voiceover("So in the first row, y is 1, the predicted probability of y being 1 is y hat ,which is 0.9051. In the second row, y is 0, and the predicted probability of y being 0 is 1 - y hat, which is 0.9998. So now we continue that process for all of the rows.") as tracker:
                 total_transforms = array_from_latex.shape[0] + np.sum(y_latex == 0)
                 # This loop happens for every row
                 for i in range(array_from_latex.shape[0]):
@@ -269,6 +270,10 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                     else:
                         partial_likelihoods_table_old = partial_likelihoods_table_new
                     partial_likelihoods_tex_old = partial_likelihoods_tex_new
+
+            if m == 0:
+                with self.voiceover("And then to get the overall likelihood,"):
+                    pass
 
             # --- Show the product of the partial likelihoods
             likelihood_together_tex = "L = " + "*".join(partial_likelihoods).replace(r"\vdots", r"\ldots")
