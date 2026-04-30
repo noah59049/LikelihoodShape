@@ -6,7 +6,7 @@ from MF_Tools import *
 
 class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/graph_slice_podcast4.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/graph_slice_podcast5.mp3",
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
@@ -98,12 +98,9 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             fill_opacity=0.35,
         )
 
-        self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
-
-        with self.voiceover("If we have a function of a single variable f(x), the derivative is the change in the function value divided by the change in x, in the limit as the change in x goes to 0. And geometrically it’s the slope of the tangent line.") as tracker:
-            pass # TODO: Have stuff in here
-
+        # --- Time to actually animate the scene ---
         with self.voiceover("If we have a function of multiple variables,") as tracker:
+            self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
             # Yay tex
             self.play(Create(f_explicit))
 
