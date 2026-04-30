@@ -13,6 +13,8 @@ array_from_latex = latex_table_to_array(yX_tex_numbered)
 array_from_latex = array_from_latex[1:] # The first row is the title row with just nans
 y_latex = array_from_latex[:,0].reshape(-1)
 
+TableTransform = TransformMatchingCells # TransformMatchingCells for production, FadeTransform for fast rendering
+
 class MLEScene(VoiceoverScene, ThreeDScene):
     def construct(self):
         self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast14.mp3",
@@ -177,10 +179,10 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                     # --- Play the animations ---
                     if bundled:
                         if run_time > 1:
-                            self.play(*(highlight_rect_transforms + substituted_formula_transforms), TransformMatchingCells(old_table, new_table), run_time = 1)
+                            self.play(*(highlight_rect_transforms + substituted_formula_transforms), TableTransform(old_table, new_table), run_time = 1)
                             self.wait(run_time - 1)
                         else:
-                            self.play(*(highlight_rect_transforms + substituted_formula_transforms), TransformMatchingCells(old_table, new_table), run_time = run_time)
+                            self.play(*(highlight_rect_transforms + substituted_formula_transforms), TableTransform(old_table, new_table), run_time = run_time)
                     else:
                         if rect_time > 1:
                             self.play(*(highlight_rect_transforms + substituted_formula_transforms), run_time = 1)
@@ -188,10 +190,10 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                         else:
                             self.play(*(highlight_rect_transforms + substituted_formula_transforms), run_time = rect_time)
                         if table_time > 1:
-                            self.play(TransformMatchingCells(old_table, new_table), run_time = 1)
+                            self.play(TableTransform(old_table, new_table), run_time = 1)
                             self.wait(table_time - 1)
                         else:
-                            self.play(TransformMatchingCells(old_table, new_table), run_time = table_time)
+                            self.play(TableTransform(old_table, new_table), run_time = table_time)
 
                     # --- Get ready for the next iteration of the loop ---
                     substituted_formula_old = substituted_formula_new
@@ -259,10 +261,10 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                         partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str2} \\\\", count = 1)
                         partial_likelihoods_table_new_simplified = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
                         if squish_time > 1:
-                            self.play(TransformMatchingCells(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified), run_time = 1)
+                            self.play(TableTransform(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified), run_time = 1)
                             self.wait(squish_time - 1)
                         else:
-                            self.play(TransformMatchingCells(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified), run_time = squish_time)
+                            self.play(TableTransform(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified), run_time = squish_time)
                         partial_likelihoods_table_old = partial_likelihoods_table_new_simplified
                     else:
                         partial_likelihoods_table_old = partial_likelihoods_table_new
