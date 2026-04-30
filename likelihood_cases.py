@@ -3,6 +3,7 @@ from MF_Tools import *
 
 class LikelihoodDefinition(Scene):
     def construct(self):
+
         # Step 1: Write the piecewise expression for the likelihood
         base = MathTex(r"L=\prod_{i=1}^{n}")
         brace = MathTex(r"\left\{").scale(1.6).next_to(base, RIGHT)
@@ -10,12 +11,19 @@ class LikelihoodDefinition(Scene):
         row2 = MathTex(r"1-\hat{y}_i \quad \thinspace \thinspace (y_i=0)") # This leads to the conditions being aligned somehow, probably not the best fix but it works
         rows = VGroup(row1, row2).arrange(DOWN, aligned_edge=LEFT, buff=0.15).next_to(brace, RIGHT, aligned_edge = UP)
         cases = VGroup(base, brace, rows).to_edge(UP)
+
+        row1_basic = MathTex(r"\hat{y} \quad \quad \quad (y=1)")
+        row2_basic = MathTex(r"1-\hat{y} \quad \thinspace \thinspace (y=0)") # This leads to the conditions being aligned somehow, probably not the best fix but it works
+        rows_basic = VGroup(row1_basic, row2_basic).arrange(DOWN, aligned_edge=LEFT, buff=0.15).next_to(brace, RIGHT, aligned_edge = UP)
+        
         
         self.play(Write(base, run_time = 0.5))
         self.add(brace)
-        self.play(Write(row1, run_time = 0.5))
+        self.play(Write(row1_basic, run_time = 0.5))
 
-        self.play(Write(row2, run_time = 0.5))
+        self.play(Write(row2_basic, run_time = 0.5))
+
+        self.play(TransformMatchingShapes(row1_basic, row1), TransformMatchingShapes(row2_basic, row2))
 
 
         # Step 2: Likelihood simplification for case y_i=1
