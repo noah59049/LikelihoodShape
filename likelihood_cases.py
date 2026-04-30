@@ -6,7 +6,7 @@ from manim_voiceover.services.stitcher import _StitcherService as StitcherServic
 def boxes_for_glyph_groups(mobj, groups, **kwargs):
     return VGroup(*[
         SurroundingRectangle(
-            VGroup(*[mobj[0][i] for i in group]),
+            VGroup(*[mobj[0][i] for i in group]).copy(),
             **kwargs
         )
         for group in groups
@@ -14,50 +14,55 @@ def boxes_for_glyph_groups(mobj, groups, **kwargs):
 
 def _glyph_group(mobj, indices):
     """
-    Robust glyph extraction for Text, Tex, MathTex, etc.
+    Robust glyph extraction for Text / Tex / MathTex.
     """
     try:
         return VGroup(*[mobj[i] for i in indices])
     except Exception:
         return VGroup(*[mobj[0][i] for i in indices])
 
-class TransformWithBoxes(AnimationGroup):
-    def __init__(
-        self,
-        src,
-        dst,
-        *mappings,                 # same format as TransformByGlyphMap
-        box_kwargs=None,
-        create_boxes_anim=Create,
-        remove_boxes_anim=FadeOut,
-        lag_ratio=0.0,
-        **kwargs                  # passed to AnimationGroup
-    ):
-        box_kwargs = box_kwargs or {"color": YELLOW, "buff": 0.1}
 
-        # Build boxes
-        boxes = VGroup(*[
-            SurroundingRectangle(
-                _glyph_group(src, src_inds),
-                **box_kwargs
-            )
-            for src_inds, _ in mappings
-        ])
+def TransformWithBoxes(
+    src,
+    dst,
+    *mappings,  # ([src_inds], [dst_inds])
+    box_kwargs=None,
+    create_anim=Create,
+    remove_anim=FadeOut,
+):
+    """
+    Returns an AnimationGroup:
+    1. draw boxes
+    2. TransformByGlyphMap
+    3. remove boxes
 
-        # Core animation
-        transform = TransformByGlyphMap(src, dst, *mappings)
+    Safe: operates on a copy to avoid corrupting src.
+    """
+    box_kwargs = box_kwargs or {"color": YELLOW, "buff": 0.1}
 
-        # Full animation sequence
-        animations = [
-            create_boxes_anim(boxes),
-            AnimationGroup(
-                transform,
-                remove_boxes_anim(boxes),
-            )
-        ]
+    # Work on a copy to avoid mutating src
+    src_copy = src#.copy()
 
-        super().__init__(*animations, lag_ratio=lag_ratio, **kwargs)
+    # Build boxes on the copy (so they follow correctly)
+    boxes = VGroup(*[
+        SurroundingRectangle(
+            _glyph_group(src_copy, src_inds),
+            **box_kwargs
+        )
+        for src_inds, _ in mappings
+    ])
 
+    return AnimationGroup(
+        FadeIn(src_copy),               # bring in clean copy
+        create_anim(boxes),             # draw boxes
+        AnimationGroup(
+            TransformByGlyphMap(src_copy, dst, *mappings),
+            remove_anim(boxes),
+        ),
+        FadeOut(src),                  # remove original
+        lag_ratio=0.0
+    )
+        
 class LikelihoodCasesScene(VoiceoverScene):
     def construct(self):
         self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/likelihood_cases_podcast1.mp3",
@@ -134,21 +139,21 @@ class LikelihoodCasesScene(VoiceoverScene):
             self.play(row2.animate.set_color(RED), Create(box2))
 
         with self.voiceover("the left hand term becomes yi hat raised to the 0,") as tracker:
-            # boxes = boxes_for_glyph_groups(
-            #     success1,
-            #     [[9, 10], [21, 22]],
-            #     color=YELLOW,
-            #     buff=0.1
-            # ).copy()
-
-            # self.play(Create(boxes))
+            boxes = boxes_for_glyph_groups(
+                failure1.copy(),
+                [[9, 10], [21, 22]],
+                color=YELLOW,
+                buff=0.1
+            )
+            self.play(Create(boxes))
             self.play(
-                TransformWithBoxes(
-                    success1, success2,
+                TransformByGlyphMap(
+                    failure1, failure2,
                     ([9,10], [9]),
                     ([21,22], [20])
                 )
             )
+            self.play(FadeOut(boxes))
 
         with self.voiceover("so it goes away, ") as tracker:
             self.play(TransformByGlyphMap(failure2, failure3,
