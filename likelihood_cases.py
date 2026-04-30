@@ -1,7 +1,7 @@
 from manim import *
 from MF_Tools import *
 
-class LikelihoodDefinition(Scene):
+class LikelihoodCasesScene(Scene):
     def construct(self):
 
         # Step 1: Write the piecewise expression for the likelihood
