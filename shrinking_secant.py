@@ -8,7 +8,7 @@ from N_Tools import FadeInRHS
 
 class ShrinkingSecantScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/shrinking_secant_podcast0.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/shrinking_secant_podcast1.mp3",
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
@@ -46,10 +46,11 @@ class ShrinkingSecantScene(VoiceoverScene):
 
         graph = axes.plot(f, x_range=[-3, 3], color=BLUE)
 
-        with self.voiceover("If we have a function of a single variable f(x), the derivative is the ") as tracker:
+        with self.voiceover("If we have a function of a single variable f(x), ") as tracker:
             self.play(Create(axes), Write(labels))
             self.play(Create(graph))
-            self.play(Write(derivs[0]))
+        with self.voiceover("the derivative is the ") as tracker:
+            self.play(Write(derivs[0]), run_time = min(1, tracker.duration))
 
 
         # -------------------------------------------------
