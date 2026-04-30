@@ -92,7 +92,7 @@ class LikelihoodCasesScene(VoiceoverScene):
                 ([7],FadeOut),
                 ([13,14,15,16], FadeOut)))
 
-        
+            self.wait(tracker.duration - 3.1)
             self.play(FadeOut(failure4), row2.animate.set_color(WHITE), FadeOut(box2))
             self.play(FadeIn(failure1))
         
