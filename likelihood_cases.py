@@ -14,7 +14,7 @@ def boxes_for_glyph_groups(mobj, groups, **kwargs):
 
 def _glyph_group(mobj, indices):
     """
-    Robust glyph extraction for Text / Tex / MathTex.
+    Robust glyph extraction for Text, Tex, MathTex, etc.
     """
     try:
         return VGroup(*[mobj[i] for i in indices])
@@ -22,46 +22,40 @@ def _glyph_group(mobj, indices):
         return VGroup(*[mobj[0][i] for i in indices])
 
 
-def TransformWithBoxes(
-    src,
-    dst,
-    *mappings,  # ([src_inds], [dst_inds])
-    box_kwargs=None,
-    create_anim=Create,
-    remove_anim=FadeOut,
-):
-    """
-    Returns an AnimationGroup:
-    1. draw boxes
-    2. TransformByGlyphMap
-    3. remove boxes
+class TransformWithBoxes(AnimationGroup):
+    def __init__(
+        self,
+        src,
+        dst,
+        *mappings,                 # same format as TransformByGlyphMap
+        box_kwargs=None,
+        create_boxes_anim=Create,
+        remove_boxes_anim=FadeOut,
+        lag_ratio=1.0,
+        **kwargs                  # passed to AnimationGroup
+    ):
+        box_kwargs = box_kwargs or {"color": YELLOW, "buff": 0.1}
 
-    Safe: operates on a copy to avoid corrupting src.
-    """
-    box_kwargs = box_kwargs or {"color": YELLOW, "buff": 0.1}
+        # Build boxes
+        boxes = VGroup(*[
+            SurroundingRectangle(
+                _glyph_group(src, src_inds),
+                **box_kwargs
+            )
+            for src_inds, _ in mappings
+        ])
 
-    # Work on a copy to avoid mutating src
-    src_copy = src#.copy()
+        # Core animation
+        transform = TransformByGlyphMap(src, dst, *mappings)
 
-    # Build boxes on the copy (so they follow correctly)
-    boxes = VGroup(*[
-        SurroundingRectangle(
-            _glyph_group(src_copy, src_inds),
-            **box_kwargs
-        )
-        for src_inds, _ in mappings
-    ])
+        # Full animation sequence
+        animations = [
+            create_boxes_anim(boxes),
+            transform,
+            remove_boxes_anim(boxes),
+        ]
 
-    return AnimationGroup(
-        FadeIn(src_copy),               # bring in clean copy
-        create_anim(boxes),             # draw boxes
-        AnimationGroup(
-            TransformByGlyphMap(src_copy, dst, *mappings),
-            remove_anim(boxes),
-        ),
-        FadeOut(src),                  # remove original
-        lag_ratio=0.0
-    )
+        super().__init__(*animations, lag_ratio=lag_ratio, **kwargs)
         
 class LikelihoodCasesScene(VoiceoverScene):
     def construct(self):
@@ -139,21 +133,21 @@ class LikelihoodCasesScene(VoiceoverScene):
             self.play(row2.animate.set_color(RED), Create(box2))
 
         with self.voiceover("the left hand term becomes yi hat raised to the 0,") as tracker:
-            boxes = boxes_for_glyph_groups(
-                failure1,
-                [[9, 10], [21, 22]],
-                color=YELLOW,
-                buff=0.1
-            )
-            self.play(Create(boxes))
+            # boxes = boxes_for_glyph_groups(
+            #     failure1,
+            #     [[9, 10], [21, 22]],
+            #     color=YELLOW,
+            #     buff=0.1
+            # )
+            # self.play(Create(boxes))
             self.play(
-                TransformByGlyphMap(
+                TransformWithBoxes(
                     failure1, failure2,
                     ([9,10], [9]),
                     ([21,22], [20])
                 )
             )
-            self.play(FadeOut(boxes))
+            # self.play(FadeOut(boxes))
 
         with self.voiceover("so it goes away, ") as tracker:
             self.play(TransformByGlyphMap(failure2, failure3,
