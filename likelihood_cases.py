@@ -6,7 +6,7 @@ from manim_voiceover.services.stitcher import _StitcherService as StitcherServic
 def boxes_for_glyph_groups(mobj, groups, **kwargs):
     return VGroup(*[
         SurroundingRectangle(
-            VGroup(*[mobj[0][i] for i in group]).copy(),
+            VGroup(*[mobj[0][i] for i in group]),
             **kwargs
         )
         for group in groups
@@ -140,7 +140,7 @@ class LikelihoodCasesScene(VoiceoverScene):
 
         with self.voiceover("the left hand term becomes yi hat raised to the 0,") as tracker:
             boxes = boxes_for_glyph_groups(
-                failure1.copy(),
+                failure1,
                 [[9, 10], [21, 22]],
                 color=YELLOW,
                 buff=0.1
