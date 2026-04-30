@@ -87,7 +87,7 @@ class LikelihoodCasesScene(VoiceoverScene):
             self.play(TransformByGlyphMap(failure2, failure3,
                 ([7,8,9,10], FadeOut)))
 
-        with self.voiceover("and the right hand term becomes 1 - yi hat, again, same as above.") as tracker:
+        with self.voiceover("and the right hand term becomes 1 - yi hat, again, same as above. The log-likelihood, written lowercase l, is just the") as tracker:
             self.play(TransformByGlyphMap(failure3, failure4,
                 ([7],FadeOut),
                 ([13,14,15,16], FadeOut)))
@@ -102,7 +102,7 @@ class LikelihoodCasesScene(VoiceoverScene):
         loglik3 = MathTex(r"l=\sum_{i=1}^{n}ln\hat{y}_i^{y_i}+ln(1-\hat{y}_i)^{1-{y_i}}")
         loglik4 = MathTex(r"l=\sum_{i=1}^{n}y_iln\hat{y}_i+({1-{y_i}})ln(1-\hat{y}_i)")
 
-        with self.voiceover("The log-likelihood, written lowercase l, is just the ln of the likelihood. If we simplify a bit, ") as tracker:
+        with self.voiceover(" ln of the likelihood. If we simplify a bit, ") as tracker:
             self.play(TransformByGlyphMap(failure1, loglik1,
                                         ([0], [0]),
                                         ([], [2,3])))
