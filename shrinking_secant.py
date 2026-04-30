@@ -2,6 +2,8 @@ from manim import *
 import numpy as np
 from manim_voiceover import *
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
+from MF_Tools import *
+from N_Tools import FadeInRHS
 
 
 class ShrinkingSecantScene(VoiceoverScene):
@@ -10,6 +12,21 @@ class ShrinkingSecantScene(VoiceoverScene):
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
+
+        # -------------------------------------------------
+        # Tex definitions of the derivative
+        # -------------------------------------------------      
+        derivs = [
+        MathTex(r"f'(x)"),
+        MathTex(r"f'(x) = \frac{\Delta{f}}{\Delta{x}}"),
+        MathTex(r"f'(x) = \lim_{\Delta{x} \to 0} \frac{\Delta{f}}{\Delta{x}}"),
+        MathTex(r"f'(x) = \lim_{\Delta{x} \to 0} \frac{f(x + \Delta{x}) - f(x)}{\Delta{x}}"),
+        MathTex(r"f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}"),
+        ]
+
+        for deriv in derivs:
+            deriv.to_corner(UL)
+
         # -------------------------------------------------
         # Function definition
         # -------------------------------------------------
@@ -32,7 +49,8 @@ class ShrinkingSecantScene(VoiceoverScene):
         with self.voiceover("If we have a function of a single variable f(x), the derivative is the ") as tracker:
             self.play(Create(axes), Write(labels))
             self.play(Create(graph))
-            # self.wait()
+            self.play(Write(derivs[0]))
+
 
         # -------------------------------------------------
         # Base point and tracker for Δx
@@ -145,7 +163,7 @@ class ShrinkingSecantScene(VoiceoverScene):
                 Write(label_dx),
                 Write(label_df),
             )
-            # self.wait()
+            self.play(FadeInRHS(derivs[0], derivs[1]))
 
         # -------------------------------------------------
         # Shrink Δx → 0
@@ -156,7 +174,15 @@ class ShrinkingSecantScene(VoiceoverScene):
                 run_time=4,
                 rate_func=smooth,
             )
-            # self.wait()
+            self.play(TransformByGlyphMap(derivs[1], derivs[2],
+                                      (FadeIn, range(6,13))))
+            self.play(TransformByGlyphMap(derivs[2], derivs[3],
+                                        ([13,14], range(13,25))))
+            self.play(TransformByGlyphMap(derivs[3], derivs[4],
+                                        ([9,10], [9]),
+                                        ([17,18], [16]),
+                                        ([26,27], [24]),
+                                        ))
 
         # Show tangent line
         with self.voiceover("the slope of the tangent line.") as tracker:
@@ -164,13 +190,3 @@ class ShrinkingSecantScene(VoiceoverScene):
                 FadeOut(secant_line),
                 Create(tangent_line),
             )
-            # self.wait()
-
-        return
-
-        # Final shrink for emphasis
-        self.play(
-            dx_tracker.animate.set_value(0.001),
-            run_time=2,
-        )
-        self.wait()
