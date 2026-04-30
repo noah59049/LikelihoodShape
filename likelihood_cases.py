@@ -100,13 +100,13 @@ class LikelihoodCasesScene(VoiceoverScene):
             self.play(FadeIn(success1))
 
         box1 = SurroundingRectangle(row1, color = RED)
-        with self.voiceover("if we look at the case where yi=1, ") as tracker:
+        with self.voiceover("if we look at the case where yi=1, the right hand term becomes 1-yi hat raised") as tracker:
             self.play(row1.animate.set_color(RED), Create(box1, run_time = 0.5))
             self.play(TransformWithBoxes(success1, success2,
                 ([9,10], [9]),
                 ([21,22], [20])))
 
-        with self.voiceover("the right hand term becomes 1-yi hat raised to the power of 0,") as tracker:
+        with self.voiceover(" to the power of 0,") as tracker:
             self.play(TransformByGlyphMap(success2, success2a,
                                           ([18,19,20], [18])))
 
