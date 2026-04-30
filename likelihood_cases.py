@@ -143,11 +143,11 @@ class LikelihoodCasesScene(VoiceoverScene):
             )
 
         with self.voiceover("the left hand term becomes yi hat raised to the 0,") as tracker:
-            self.play(TransformByGlyphMap(failure2, failure3,
-                ([7,8,9,10], FadeOut)))
+            pass
 
         with self.voiceover("so it goes away, ") as tracker:
-            pass # TODO: Just make this a part of the voiceover above
+            self.play(TransformByGlyphMap(failure2, failure3,
+                ([7,8,9,10], FadeOut)))
 
         with self.voiceover("and the right hand term becomes 1 - yi hat, again, same as above. The log-likelihood, written lowercase l, is just the") as tracker:
             self.play(TransformByGlyphMap(failure3, failure4,
