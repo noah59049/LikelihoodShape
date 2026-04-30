@@ -1,8 +1,15 @@
 from manim import *
 import numpy as np
+from manim_voiceover import *
+from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 
-class ShrinkingSecantScene(Scene):
+
+class ShrinkingSecantScene(VoiceoverScene):
     def construct(self):
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/shrinking_secant_podcast0.mp3",
+        cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+        min_silence_len=2000,
+        keep_silence=(0,0)))
         # -------------------------------------------------
         # Function definition
         # -------------------------------------------------
@@ -22,9 +29,10 @@ class ShrinkingSecantScene(Scene):
 
         graph = axes.plot(f, x_range=[-3, 3], color=BLUE)
 
-        self.play(Create(axes), Write(labels))
-        self.play(Create(graph))
-        self.wait()
+        with self.voiceover("If we have a function of a single variable f(x), the derivative is the ") as tracker:
+            self.play(Create(axes), Write(labels))
+            self.play(Create(graph))
+            # self.wait()
 
         # -------------------------------------------------
         # Base point and tracker for Δx
@@ -126,34 +134,39 @@ class ShrinkingSecantScene(Scene):
         # -------------------------------------------------
         # Animate appearance
         # -------------------------------------------------
-        self.play(
-            FadeIn(dot_a),
-            FadeIn(dot_b),
-            FadeIn(dot_proj),
-            Create(secant_line),
-            Create(delta_x),
-            Create(delta_f),
-            Write(label_dx),
-            Write(label_df),
-        )
-        self.wait()
+        with self.voiceover("change in the function value divided by the change in x, ") as tracker:
+            self.play(
+                FadeIn(dot_a),
+                FadeIn(dot_b),
+                FadeIn(dot_proj),
+                Create(secant_line),
+                Create(delta_x),
+                Create(delta_f),
+                Write(label_dx),
+                Write(label_df),
+            )
+            # self.wait()
 
         # -------------------------------------------------
         # Shrink Δx → 0
         # -------------------------------------------------
-        self.play(
-            dx_tracker.animate.set_value(0.05),
-            run_time=4,
-            rate_func=smooth,
-        )
-        self.wait()
+        with self.voiceover("in the limit as the change in x goes to 0. And geometrically it’s ") as tracker:
+            self.play(
+                dx_tracker.animate.set_value(0.001),
+                run_time=4,
+                rate_func=smooth,
+            )
+            # self.wait()
 
         # Show tangent line
-        self.play(
-            FadeOut(secant_line),
-            Create(tangent_line),
-        )
-        self.wait()
+        with self.voiceover("the slope of the tangent line.") as tracker:
+            self.play(
+                FadeOut(secant_line),
+                Create(tangent_line),
+            )
+            # self.wait()
+
+        return
 
         # Final shrink for emphasis
         self.play(
