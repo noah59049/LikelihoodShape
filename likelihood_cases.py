@@ -34,7 +34,7 @@ class TransformWithBoxes(AnimationGroup):
         lag_ratio=1.0,
         **kwargs                  # passed to AnimationGroup
     ):
-        box_kwargs = box_kwargs or {"color": YELLOW, "buff": 0.1}
+        box_kwargs = box_kwargs or {"color": RED, "buff": 0.1}
 
         # Build boxes
         boxes = VGroup(*[
