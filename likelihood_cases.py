@@ -42,7 +42,7 @@ class TransformWithBoxes(Succession):
         box_kwargs = box_kwargs or {"color": RED, "buff": 0.1}
 
         # Build boxes
-        boxes = VGroup(*[
+        src_boxes = VGroup(*[
             SurroundingRectangle(
                 _glyph_group(src, src_inds),
                 **box_kwargs
@@ -50,14 +50,24 @@ class TransformWithBoxes(Succession):
             for src_inds, _ in mappings
         ])
 
+        dst_boxes = VGroup(*[
+            SurroundingRectangle(
+                _glyph_group(dst, dst_inds),
+                **box_kwargs
+            )
+            for _, dst_inds in mappings
+        ])
+
         # Core animation
         transform = TransformByGlyphMap(src, dst, *mappings, run_time = time2)
+        box_transform = Transform(src_boxes, dst_boxes, run_time = time2)
+        transforms = AnimationGroup(transform, box_transform)
 
         # Full animation sequence
         animations = [
-            create_boxes_anim(boxes, run_time = time1),
-            transform,
-            remove_boxes_anim(boxes, run_time = time3),
+            create_boxes_anim(src_boxes, run_time = time1),
+            transforms,
+            remove_boxes_anim(src_boxes, run_time = time3),
         ]
 
         super().__init__(*animations, **kwargs)
