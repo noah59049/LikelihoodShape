@@ -121,8 +121,8 @@ def surface_from_function(
 
     return surface
 
-x_radius = se0 / 2
-y_radius = se1 / 2
+x_radius = se0 * 0.65
+y_radius = se1 * 0.65
 beta0, beta1 = beta.reshape(-1)
 x_range = (beta0 - x_radius, beta0 + x_radius)
 y_range = (beta1 - y_radius, beta1 + y_radius)
@@ -166,7 +166,7 @@ class PlotSurfaceExample(ThreeDScene):
             axes=axes,
             x_range=x_range,
             y_range=y_range,
-            resolution=40,
+            resolution=39,
             color=BLUE_C,
         )
 
