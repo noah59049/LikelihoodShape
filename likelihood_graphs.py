@@ -14,8 +14,9 @@ def as_col(vec):
     return vec.reshape(-1,1)
 
 X = as_col(X[:,0]) # We want to have only 2 parameters so we can graph the log-likelihood
-beta = logistic_regression(X, y, add_intercept = True, return_stats = False)
+beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
 beta0, beta1 = beta.reshape(2)
+se0, se1 = se.reshape(2)
 
 from manim import *
 
@@ -124,8 +125,8 @@ def surface_from_function(
 class PlotSurfaceExample(ThreeDScene):
     def construct(self):
 
-        x_radius = 0.014
-        y_radius = 0.014
+        x_radius = se0 / 3
+        y_radius = se1 / 3
         beta0, beta1 = beta.reshape(-1)
         x_range = (beta0 - x_radius, beta0 + x_radius)
         y_range = (beta1 - y_radius, beta1 + y_radius)
@@ -137,6 +138,8 @@ class PlotSurfaceExample(ThreeDScene):
             y_range=y_range,
             samples=30
         )
+
+        print(f"{x_range=} {y_range=} {z_range=}")
 
         axes = ThreeDAxes(
             x_range=(*x_range, (x_range[1] - x_range[0]) / 4),
@@ -155,9 +158,9 @@ class PlotSurfaceExample(ThreeDScene):
 
         if True:
             self.set_camera_orientation(
-                phi=70 * DEGREES,
+                phi=55 * DEGREES,
                 theta=-45 * DEGREES,
-                zoom=1.1
+                zoom=0.55
             )
 
         self.add(axes)
