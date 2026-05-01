@@ -22,7 +22,7 @@ def _glyph_group(mobj, indices):
         return VGroup(*[mobj[0][i] for i in indices])
 
 
-class TransformWithBoxes(AnimationGroup):
+class TransformWithBoxes(Succession):
     def __init__(
         self,
         src,
@@ -32,7 +32,7 @@ class TransformWithBoxes(AnimationGroup):
         create_boxes_anim=Create,
         remove_boxes_anim=FadeOut,
         lag_ratio=1.0,
-        **kwargs                  # passed to AnimationGroup
+        **kwargs                  # passed to Succession
     ):
         box_kwargs = box_kwargs or {"color": RED, "buff": 0.1}
 
@@ -55,7 +55,7 @@ class TransformWithBoxes(AnimationGroup):
             remove_boxes_anim(boxes),
         ]
 
-        super().__init__(*animations, lag_ratio=lag_ratio, **kwargs)
+        super().__init__(*animations, **kwargs)
         
 class LikelihoodCasesScene(VoiceoverScene):
     def construct(self):
