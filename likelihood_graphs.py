@@ -135,8 +135,8 @@ def create_mle_graph(x_radius,
         y_range=y_range,
         samples=30,
         padding = 0
-    )[0:2]
-    loglik_offset = np.mean(np.array(loglik_range))
+    )
+    loglik_offset = loglik_range[1]
 
     def lik_scaled(beta_hat0, beta_hat1):
         return np.exp(loglik(beta_hat0, beta_hat1) - loglik_offset)
@@ -172,9 +172,9 @@ def create_mle_graph(x_radius,
 
 class PlotSurfaceExample(ThreeDScene):
     def construct(self):
-        axes, surface = create_mle_graph(x_radius = se0 * 0.62,
-                                         y_radius = se1 * 0.62,
-                                         resolution=21)
+        axes, surface = create_mle_graph(x_radius = se0 * 1,
+                                         y_radius = se1 * 1,
+                                         resolution=41)
 
         if True:
             self.set_camera_orientation(
