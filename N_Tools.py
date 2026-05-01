@@ -132,11 +132,20 @@ def logistic_regression(X, y, max_iter=100, tol=1e-6, add_intercept = False, ret
     return beta, cov, se
 
 def log_likelihood(X, y, beta, add_intercept = False):
+    if len(beta.shape) != 1:
+        raise ValueError(f"Beta must be 1D tensor, instead got shape {beta.shape}")
     n, p = X.shape
 
     if add_intercept:
         X = np.c_[np.ones(n), X]
     z = X @ beta
+    # print(f"{X.shape=}")
+    # print(f"{beta.shape=}")
+    # print(f"{y.shape=}")
+    # print(f"{z.shape=}")
+    # print(f"{(y * z).shape=}")
+    # print(f"{(y * z - np.logaddexp(0, z)).shape=}")
+
     return np.sum(y * z - np.logaddexp(0, z))
 
 # Turns a numpy tensor into TeX which is nice for displaying.
