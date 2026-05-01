@@ -31,9 +31,14 @@ class TransformWithBoxes(Succession):
         box_kwargs=None,
         create_boxes_anim=Create,
         remove_boxes_anim=FadeOut,
-        lag_ratio=1.0,
+        run_time=1.0,
         **kwargs                  # passed to Succession
     ):
+        if type(run_time) == list or type(run_time) == tuple:
+            time1, time2, time3 = run_time
+        else:
+            time1, time2, time3 = run_time, run_time, run_time
+
         box_kwargs = box_kwargs or {"color": RED, "buff": 0.1}
 
         # Build boxes
@@ -46,13 +51,13 @@ class TransformWithBoxes(Succession):
         ])
 
         # Core animation
-        transform = TransformByGlyphMap(src, dst, *mappings)
+        transform = TransformByGlyphMap(src, dst, *mappings, run_time = time2)
 
         # Full animation sequence
         animations = [
-            create_boxes_anim(boxes),
+            create_boxes_anim(boxes, run_time = time1),
             transform,
-            remove_boxes_anim(boxes),
+            remove_boxes_anim(boxes, run_time = time3),
         ]
 
         super().__init__(*animations, **kwargs)
