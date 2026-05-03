@@ -12,15 +12,25 @@ beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = T
 beta0, beta1 = beta.reshape(2)
 se0, se1 = se.reshape(2)
 
-def loglik(beta_hat0, beta_hat1):
-    beta_hat = beta_hat0, beta_hat1
-    beta_hat = np.array(beta_hat)
-    result = log_likelihood(X, y, beta_hat, add_intercept=True)
-    # print(f"loglik{float(beta_hat0), float(beta_hat1)}={float(result)}")
-    return log_likelihood(X, y, beta_hat, add_intercept=True)
+def loglik_generator(X, y):
+    beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
+    beta0, beta1 = beta.reshape(2)
+    se0, se1 = se.reshape(2)
+    def loglik(beta_hat0, beta_hat1):
+        beta_hat = beta_hat0, beta_hat1
+        beta_hat = np.array(beta_hat)
+        result = log_likelihood(X, y, beta_hat, add_intercept=True)
+        return result
+    return loglik
 
-def lik(beta_hat0, beta_hat1):
-    return np.exp(loglik(beta_hat0, beta_hat1))
+def lik_generator(X, y):
+    loglik = loglik_generator(X, y)
+    def lik(beta_hat0, beta_hat1):
+        return np.exp(loglik(beta_hat0, beta_hat1))
+    return lik
+
+loglik = loglik_generator(X, y)
+lik = lik_generator(X, y)
 
 mle_loglik = log_likelihood(X, y, beta, add_intercept = True)
 mle_lik = np.exp(mle_loglik)
