@@ -8,9 +8,6 @@ from manim import *
 from N_Tools import logistic_regression, log_likelihood, as_row, as_col, compute_z_range, surface_from_function
 
 X = as_col(X[:,0]) # We want to have only 2 parameters so we can graph the log-likelihood
-# beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
-# beta0, beta1 = beta.reshape(2)
-# se0, se1 = se.reshape(2)
 
 def loglik_generator(X, y):
     def loglik(beta_hat0, beta_hat1):
@@ -27,24 +24,13 @@ def lik_generator(X, y):
     return lik
 
 def lik_scaled_generator(X, y):
-    beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
-    beta0, beta1 = beta.reshape(2)
-    se0, se1 = se.reshape(2)
+    beta = logistic_regression(X, y, add_intercept = True, return_stats = False)
     loglik = loglik_generator(X, y)
     mle_loglik =log_likelihood(X, y, beta, add_intercept=True)
     def lik_scaled(beta_hat0, beta_hat1):
         print(f"{beta_hat0=} {beta_hat1=}")
         return np.exp(loglik(beta_hat0, beta_hat1) - mle_loglik)
     return lik_scaled
-
-
-loglik = loglik_generator(X, y)
-lik = lik_generator(X, y)
-lik_scaled = lik_scaled_generator(X, y)
-
-# mle_loglik = log_likelihood(X, y, beta, add_intercept = True)
-# mle_lik = np.exp(mle_loglik)
-# print(f"Log likelihood = {mle_loglik}")
 
 def create_mle_graph(X, y, resolution = 32):
     beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
@@ -53,7 +39,6 @@ def create_mle_graph(X, y, resolution = 32):
 
     x_range = (beta0 - se0 * 1, beta0 + se0 * 1)
     y_range = (beta1 - se1 * 1, beta1 + se1 * 1)
-    # print(f"{x_range=}{y_range=}")
 
     lik_scaled = lik_scaled_generator(X, y)
 
@@ -63,8 +48,6 @@ def create_mle_graph(X, y, resolution = 32):
         y_range=y_range,
         samples=30
     )
-
-    # print(f"{x_range=} {y_range=} {z_range=}")
 
     axes = ThreeDAxes(
         x_range=(*x_range, (x_range[1] - x_range[0]) / 4),
@@ -99,8 +82,6 @@ class PlotSurfaceExample(ThreeDScene):
 
         self.add(axes)
         self.play(Create(surface))
-        # mle_dot_scaled = Dot3D(axes.c2p(beta0, beta1, mle_lik_scaled), color = RED)
-        # self.play(FadeIn(mle_dot_scaled))
         self.wait(1)
         self.begin_ambient_camera_rotation(rate=0.2)
         self.wait(6)
