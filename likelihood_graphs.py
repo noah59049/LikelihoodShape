@@ -1,13 +1,7 @@
-#!/usr/bin/env python
-
-# In order to have our example matrices be realistic, we are generating them from an actual logistic regression model on the sklearn breast cancer dataset
-
 import numpy as np
-from data import X, y # type: ignore
+import data # type: ignore
 from manim import *
 from N_Tools import logistic_regression, log_likelihood, as_row, as_col, compute_z_range, surface_from_function
-
-X = as_col(X[:,0]) # We want to have only 2 parameters so we can graph the log-likelihood
 
 def loglik_generator(X, y, add_intercept = True):
     def loglik(beta_hat0, beta_hat1):
@@ -84,9 +78,12 @@ def create_likelihood_graph(X,
 
 class PlotSurfaceExample(ThreeDScene):
     def construct(self):
-        axes, surface = create_likelihood_graph(X, 
-                                         y,
-                                         resolution=41)
+        axes, surface = create_likelihood_graph(as_col(data.X[:,2]), 
+                                         data.y,
+                                         x_ses = 5,
+                                         y_ses = 5,
+                                         use_loglik=True,
+                                         resolution=21)
 
         if True:
             self.set_camera_orientation(
