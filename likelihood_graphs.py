@@ -1,11 +1,11 @@
 import numpy as np
 import data # type: ignore
 from manim import *
-from N_Tools import as_col, create_likelihood_graph
+from N_Tools import create_likelihood_graph
 
 class PlotSurfaceExample(ThreeDScene):
     def construct(self):
-        axes, surface = create_likelihood_graph(as_col(data.X[:,2]), 
+        axes, surface = create_likelihood_graph(data.X[:,2], 
                                          data.y,
                                          x_ses = 5,
                                          y_ses = 5,

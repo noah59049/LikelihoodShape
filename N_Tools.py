@@ -824,10 +824,13 @@ def create_likelihood_graph(X,
                             y,
                             x_ses = 1,
                             y_ses = 1,
+                            columnify = True, # We are only graphing 1 variable and intercept anyway
                             add_intercept = True,
                             resolution = 32,
                             color = BLUE_C,
                             use_loglik = False):
+    if columnify:
+        X = as_col(X)
     beta, cov, se = logistic_regression(X, y, add_intercept = add_intercept, return_stats = True)
     x_range = (beta[0] - se[0] * x_ses, beta[0] + se[0] * x_ses)
     y_range = (beta[1] - se[1] * y_ses, beta[1] + se[1] * y_ses)
