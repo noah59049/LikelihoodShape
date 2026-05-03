@@ -9,31 +9,33 @@ from N_Tools import logistic_regression, log_likelihood, as_row, as_col, compute
 
 X = as_col(X[:,0]) # We want to have only 2 parameters so we can graph the log-likelihood
 
-def loglik_generator(X, y):
+def loglik_generator(X, y, add_intercept = True):
     def loglik(beta_hat0, beta_hat1):
         beta_hat = beta_hat0, beta_hat1
         beta_hat = np.array(beta_hat)
-        result = log_likelihood(X, y, beta_hat, add_intercept=True)
+        result = log_likelihood(X, y, beta_hat, add_intercept=add_intercept)
         return result
     return loglik
 
-def lik_generator(X, y):
-    loglik = loglik_generator(X, y)
+def lik_generator(X, y, add_intercept = True):
+    loglik = loglik_generator(X, y, add_intercept = True)
     def lik(beta_hat0, beta_hat1):
         return np.exp(loglik(beta_hat0, beta_hat1))
     return lik
 
-def lik_scaled_generator(X, y):
-    beta = logistic_regression(X, y, add_intercept = True, return_stats = False)
+def lik_scaled_generator(X, y, add_intercept = True):
+    beta = logistic_regression(X, y, add_intercept = add_intercept, return_stats = False)
     loglik = loglik_generator(X, y)
-    mle_loglik =log_likelihood(X, y, beta, add_intercept=True)
+    mle_loglik = log_likelihood(X, y, beta, add_intercept=add_intercept)
     def lik_scaled(beta_hat0, beta_hat1):
-        print(f"{beta_hat0=} {beta_hat1=}")
         return np.exp(loglik(beta_hat0, beta_hat1) - mle_loglik)
     return lik_scaled
 
-def create_likelihood_graph(X, y, resolution = 32):
-    beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
+def create_likelihood_graph(X, 
+                            y, 
+                            add_intercept = True,
+                            resolution = 32):
+    beta, cov, se = logistic_regression(X, y, add_intercept = add_intercept, return_stats = True)
     beta0, beta1 = beta.flatten()
     se0, se1 = se.flatten()
 
