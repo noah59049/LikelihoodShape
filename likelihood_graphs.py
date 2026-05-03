@@ -4,22 +4,13 @@
 
 import numpy as np
 from data import X, y # type: ignore
-from N_Tools import logistic_regression, log_likelihood
-import time
-
-#Some useful helper methods
-def as_row(vec):
-    return vec.reshape(1,-1)
-def as_col(vec):
-    return vec.reshape(-1,1)
+from manim import *
+from N_Tools import logistic_regression, log_likelihood, as_row, as_col, compute_z_range
 
 X = as_col(X[:,0]) # We want to have only 2 parameters so we can graph the log-likelihood
 beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
 beta0, beta1 = beta.reshape(2)
 se0, se1 = se.reshape(2)
-
-from manim import *
-from N_Tools import compute_z_range
 
 def loglik(beta_hat0, beta_hat1):
     beta_hat = beta_hat0, beta_hat1
