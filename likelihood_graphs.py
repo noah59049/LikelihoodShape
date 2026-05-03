@@ -31,24 +31,18 @@ def lik_scaled_generator(X, y, add_intercept = True):
         return np.exp(loglik(beta_hat0, beta_hat1) - mle_loglik)
     return lik_scaled
 
-def create_likelihood_graph(X, 
-                            y, 
-                            add_intercept = True,
-                            resolution = 32):
-    beta, cov, se = logistic_regression(X, y, add_intercept = add_intercept, return_stats = True)
-    beta0, beta1 = beta.flatten()
-    se0, se1 = se.flatten()
-
-    x_range = (beta0 - se0 * 1, beta0 + se0 * 1)
-    y_range = (beta1 - se1 * 1, beta1 + se1 * 1)
-
-    lik_scaled = lik_scaled_generator(X, y)
-
+def create_3d_graph(z_func,
+                    x_range,
+                    y_range,
+                    z_range = "auto",
+                    resolution = 32,
+                    color = BLUE_C):
+    
     z_range = compute_z_range(
-        z_func=lik_scaled,
+        z_func=z_func,
         x_range=x_range,
         y_range=y_range,
-        samples=30
+        samples=resolution
     )
 
     axes = ThreeDAxes(
@@ -58,15 +52,37 @@ def create_likelihood_graph(X,
     )
 
     surface = surface_from_function(
-        z_func=lik_scaled,
+        z_func=z_func,
         axes=axes,
         x_range=x_range,
         y_range=y_range,
         resolution=resolution,
-        color=BLUE_C,
+        color=color,
     )
 
     return axes, surface
+    
+
+def create_likelihood_graph(X,
+                            y,
+                            x_ses = 1,
+                            y_ses = 1,
+                            add_intercept = True,
+                            resolution = 32,
+                            color = BLUE_C):
+    beta, cov, se = logistic_regression(X, y, add_intercept = add_intercept, return_stats = True)
+    beta0, beta1 = beta.flatten()
+    se0, se1 = se.flatten()
+
+    x_range = (beta0 - se0 * x_ses, beta0 + se0 * x_ses)
+    y_range = (beta1 - se1 * y_ses, beta1 + se1 * y_ses)
+
+    return create_3d_graph(z_func = lik_scaled_generator(X, y),
+                           x_range=x_range,
+                           y_range = y_range,
+                           z_range = "auto",
+                           resolution=resolution,
+                           color = color)
 
 
 class PlotSurfaceExample(ThreeDScene):
