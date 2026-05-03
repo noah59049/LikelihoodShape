@@ -8,9 +8,9 @@ from manim import *
 from N_Tools import logistic_regression, log_likelihood, as_row, as_col, compute_z_range, surface_from_function
 
 X = as_col(X[:,0]) # We want to have only 2 parameters so we can graph the log-likelihood
-beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
-beta0, beta1 = beta.reshape(2)
-se0, se1 = se.reshape(2)
+# beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
+# beta0, beta1 = beta.reshape(2)
+# se0, se1 = se.reshape(2)
 
 def loglik_generator(X, y):
     beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
@@ -43,18 +43,21 @@ loglik = loglik_generator(X, y)
 lik = lik_generator(X, y)
 lik_scaled = lik_scaled_generator(X, y)
 
-mle_loglik = log_likelihood(X, y, beta, add_intercept = True)
-mle_lik = np.exp(mle_loglik)
-print(f"Log likelihood = {mle_loglik}")
+# mle_loglik = log_likelihood(X, y, beta, add_intercept = True)
+# mle_lik = np.exp(mle_loglik)
+# print(f"Log likelihood = {mle_loglik}")
 
-def create_mle_graph(x_radius,
-                     y_radius,
-                     resolution = 32):
-    beta0, beta1 = beta.reshape(-1)
-    x_range = (beta0 - x_radius, beta0 + x_radius)
-    y_range = (beta1 - y_radius, beta1 + y_radius)
-    print(f"{x_range=}{y_range=}")
-    
+def create_mle_graph(X, y, resolution = 32):
+    beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
+    beta0, beta1 = beta.flatten()
+    se0, se1 = se.flatten()
+
+    x_range = (beta0 - se0 * 1, beta0 + se * 1)
+    y_range = (beta1 - se1 * 1, beta1 + se1 * 1)
+    # print(f"{x_range=}{y_range=}")
+
+    lik_scaled = lik_scaled_generator(X, y)
+
     z_range = compute_z_range(
         z_func=lik_scaled,
         x_range=x_range,
@@ -62,7 +65,7 @@ def create_mle_graph(x_radius,
         samples=30
     )
 
-    print(f"{x_range=} {y_range=} {z_range=}")
+    # print(f"{x_range=} {y_range=} {z_range=}")
 
     axes = ThreeDAxes(
         x_range=(*x_range, (x_range[1] - x_range[0]) / 4),
@@ -84,8 +87,8 @@ def create_mle_graph(x_radius,
 
 class PlotSurfaceExample(ThreeDScene):
     def construct(self):
-        axes, surface = create_mle_graph(x_radius = se0 * 1,
-                                         y_radius = se1 * 1,
+        axes, surface = create_mle_graph(X, 
+                                         y,
                                          resolution=41)
 
         if True:
