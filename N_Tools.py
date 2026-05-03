@@ -4,6 +4,7 @@ the name N_Tools is patterned after MF_Tools
 """
 
 import re
+import time
 from typing import Callable
 import numpy as np
 from manim import *
@@ -679,3 +680,40 @@ class TransformWithBoxes(Succession):
         ]
 
         super().__init__(*animations, **kwargs)
+
+def compute_z_range(
+    z_func,
+    x_range,
+    y_range,
+    samples=50,
+    padding=0.1,
+):
+    print("Beginning to compute z range")
+    t0 = time.time()
+    x_min, x_max = x_range
+    y_min, y_max = y_range
+
+    xs = np.linspace(x_min, x_max, samples)
+    ys = np.linspace(y_min, y_max, samples)
+
+    Z = [
+        z_func(x, y)
+        for x in xs
+        for y in ys
+    ]
+
+    z_min = min(Z)
+    z_max = max(Z)
+
+    span = z_max - z_min
+    if span == 0:
+        print("We artificially set span to 1")
+        span = 1.0
+
+    t1 = time.time()
+    print(f"Finished compute_z_range, elapsed time = {t1-t0}")
+    return (
+        z_min - padding * span,
+        z_max + padding * span,
+        span / 4,  # tick step (optional heuristic)
+    )
