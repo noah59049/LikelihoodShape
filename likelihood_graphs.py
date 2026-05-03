@@ -15,7 +15,6 @@ se0, se1 = se.reshape(2)
 def loglik_generator(X, y):
     beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
     beta0, beta1 = beta.reshape(2)
-    se0, se1 = se.reshape(2)
     def loglik(beta_hat0, beta_hat1):
         beta_hat = beta_hat0, beta_hat1
         beta_hat = np.array(beta_hat)
@@ -29,8 +28,20 @@ def lik_generator(X, y):
         return np.exp(loglik(beta_hat0, beta_hat1))
     return lik
 
+def lik_scaled_generator(X, y):
+    beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
+    beta0, beta1 = beta.reshape(2)
+    se0, se1 = se.reshape(2)
+    loglik = loglik_generator(X, y)
+    mle_loglik =log_likelihood(X, y, beta, add_intercept=True)
+    def lik_scaled(beta_hat0, beta_hat1):
+        return np.exp(loglik(beta_hat0, beta_hat1) - mle_loglik)
+    return lik_scaled
+
+
 loglik = loglik_generator(X, y)
 lik = lik_generator(X, y)
+lik_scaled = lik_scaled_generator(X, y)
 
 mle_loglik = log_likelihood(X, y, beta, add_intercept = True)
 mle_lik = np.exp(mle_loglik)
@@ -43,21 +54,7 @@ def create_mle_graph(x_radius,
     x_range = (beta0 - x_radius, beta0 + x_radius)
     y_range = (beta1 - y_radius, beta1 + y_radius)
     print(f"{x_range=}{y_range=}")
-
-    loglik_range = compute_z_range(
-        z_func=loglik,
-        x_range=x_range,
-        y_range=y_range,
-        samples=30,
-        padding = 0
-    )
-    loglik_offset = loglik_range[1]
-
-    def lik_scaled(beta_hat0, beta_hat1):
-        return np.exp(loglik(beta_hat0, beta_hat1) - loglik_offset)
-
-    mle_lik_scaled = np.exp(mle_loglik - loglik_offset)
-
+    
     z_range = compute_z_range(
         z_func=lik_scaled,
         x_range=x_range,
