@@ -18,7 +18,7 @@ def loglik_generator(X, y, add_intercept = True):
     return loglik
 
 def lik_generator(X, y, add_intercept = True):
-    loglik = loglik_generator(X, y, add_intercept = True)
+    loglik = loglik_generator(X, y, add_intercept = add_intercept)
     def lik(beta_hat0, beta_hat1):
         return np.exp(loglik(beta_hat0, beta_hat1))
     return lik
