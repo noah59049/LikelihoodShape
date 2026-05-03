@@ -13,8 +13,6 @@ X = as_col(X[:,0]) # We want to have only 2 parameters so we can graph the log-l
 # se0, se1 = se.reshape(2)
 
 def loglik_generator(X, y):
-    beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
-    beta0, beta1 = beta.reshape(2)
     def loglik(beta_hat0, beta_hat1):
         beta_hat = beta_hat0, beta_hat1
         beta_hat = np.array(beta_hat)
@@ -35,6 +33,7 @@ def lik_scaled_generator(X, y):
     loglik = loglik_generator(X, y)
     mle_loglik =log_likelihood(X, y, beta, add_intercept=True)
     def lik_scaled(beta_hat0, beta_hat1):
+        print(f"{beta_hat0=} {beta_hat1=}")
         return np.exp(loglik(beta_hat0, beta_hat1) - mle_loglik)
     return lik_scaled
 
@@ -52,7 +51,7 @@ def create_mle_graph(X, y, resolution = 32):
     beta0, beta1 = beta.flatten()
     se0, se1 = se.flatten()
 
-    x_range = (beta0 - se0 * 1, beta0 + se * 1)
+    x_range = (beta0 - se0 * 1, beta0 + se0 * 1)
     y_range = (beta1 - se1 * 1, beta1 + se1 * 1)
     # print(f"{x_range=}{y_range=}")
 
