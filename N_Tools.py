@@ -717,3 +717,52 @@ def compute_z_range(
         z_max + padding * span,
         span / 4,  # tick step (optional heuristic)
     )
+
+def surface_from_function(
+    z_func,
+    axes,
+    x_range,
+    y_range,
+    resolution=32,
+    color=BLUE_D,
+):
+    """
+    Create a Manim Surface from a scalar function z(x, y).
+
+    Parameters
+    ----------
+    z_func : callable
+        Function z(x, y) -> float
+    x_range : tuple
+        (x_min, x_max)
+    y_range : tuple
+        (y_min, y_max)
+    resolution : int
+        Number of grid subdivisions per axis
+    color : Manim color
+
+    Returns
+    -------
+    Surface
+    """
+
+    x_min, x_max = x_range
+    y_min, y_max = y_range
+
+    def param_func(u, v):
+        x = interpolate(x_min, x_max, u)
+        y = interpolate(y_min, y_max, v)
+        z = z_func(x, y)
+        return axes.c2p(x, y, z)
+
+    surface = Surface(
+        param_func,
+        u_range=(0, 1),
+        v_range=(0, 1),
+        resolution=(resolution, resolution),
+        fill_color=color,
+        fill_opacity=0.8,
+        checkerboard_colors=[color, color],
+    )
+
+    return surface

@@ -5,7 +5,7 @@
 import numpy as np
 from data import X, y # type: ignore
 from manim import *
-from N_Tools import logistic_regression, log_likelihood, as_row, as_col, compute_z_range
+from N_Tools import logistic_regression, log_likelihood, as_row, as_col, compute_z_range, surface_from_function
 
 X = as_col(X[:,0]) # We want to have only 2 parameters so we can graph the log-likelihood
 beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
@@ -25,57 +25,6 @@ def lik(beta_hat0, beta_hat1):
 mle_loglik = log_likelihood(X, y, beta, add_intercept = True)
 mle_lik = np.exp(mle_loglik)
 print(f"Log likelihood = {mle_loglik}")
-
-
-
-def surface_from_function(
-    z_func,
-    axes,
-    x_range,
-    y_range,
-    resolution=32,
-    color=BLUE_D,
-):
-    """
-    Create a Manim Surface from a scalar function z(x, y).
-
-    Parameters
-    ----------
-    z_func : callable
-        Function z(x, y) -> float
-    x_range : tuple
-        (x_min, x_max)
-    y_range : tuple
-        (y_min, y_max)
-    resolution : int
-        Number of grid subdivisions per axis
-    color : Manim color
-
-    Returns
-    -------
-    Surface
-    """
-
-    x_min, x_max = x_range
-    y_min, y_max = y_range
-
-    def param_func(u, v):
-        x = interpolate(x_min, x_max, u)
-        y = interpolate(y_min, y_max, v)
-        z = z_func(x, y)
-        return axes.c2p(x, y, z)
-
-    surface = Surface(
-        param_func,
-        u_range=(0, 1),
-        v_range=(0, 1),
-        resolution=(resolution, resolution),
-        fill_color=color,
-        fill_opacity=0.8,
-        checkerboard_colors=[color, color],
-    )
-
-    return surface
 
 def create_mle_graph(x_radius,
                      y_radius,
