@@ -32,7 +32,7 @@ def lik_scaled_generator(X, y):
         return np.exp(loglik(beta_hat0, beta_hat1) - mle_loglik)
     return lik_scaled
 
-def create_mle_graph(X, y, resolution = 32):
+def create_likelihood_graph(X, y, resolution = 32):
     beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
     beta0, beta1 = beta.flatten()
     se0, se1 = se.flatten()
@@ -69,7 +69,7 @@ def create_mle_graph(X, y, resolution = 32):
 
 class PlotSurfaceExample(ThreeDScene):
     def construct(self):
-        axes, surface = create_mle_graph(X, 
+        axes, surface = create_likelihood_graph(X, 
                                          y,
                                          resolution=41)
 
