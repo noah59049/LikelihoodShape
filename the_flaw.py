@@ -57,9 +57,7 @@ class FlawScene(ThreeDScene):
                                       z_range = z_range,
                                       resolution=21,
                                       color = BLUE_C)
-        self.play(FadeIn(surface2))
-        self.wait()
-
-        mle_dot2 = Dot3D(axes.c2p(mle_x, mle_y, upside_down_loglik(mle_x, mle_y)))
-        self.play(FadeIn(mle_dot2))
-        self.wait(13)
+        self.play(Transform(surface, surface2))
+        self.play(Transform(surface2, surface))
+        
+        
