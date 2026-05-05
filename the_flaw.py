@@ -57,7 +57,24 @@ class FlawScene(ThreeDScene):
                                       z_range = z_range,
                                       resolution=21,
                                       color = BLUE_C)
+        surface.save_state()
         self.play(Transform(surface, surface2))
-        self.play(Transform(surface2, surface))
+        self.play(Restore(surface))
+
+        # --- What if it's a saddle point ---
+        def saddle_loglik(beta_hat0, beta_hat1):
+            return loglik(beta_hat0, beta_hat1) - \
+                   loglik(*rotate_90_cw(mle_x, mle_y, beta_hat0, beta_hat1)) + \
+                   mle_z
         
+        _, saddle_surface = create_3d_graph(z_func = saddle_loglik,
+                                            x_range=x_range,
+                                            y_range = y_range,
+                                            z_range = z_range,
+                                            resolution=21,
+                                            color = BLUE_C)
         
+        surface.save_state()
+        self.play(Transform(surface, saddle_surface))
+        self.play(Restore(surface))
+        self.wait()

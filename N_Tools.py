@@ -841,3 +841,15 @@ def create_likelihood_graph(X,
                            z_range = "auto",
                            resolution=resolution,
                            color = color)
+
+def rotate_90_cw(x0, y0, x, y):
+    # Translate point relative to pivot
+    dx = x - x0
+    dy = y - y0
+
+    # Rotate 90° clockwise
+    new_dx = dy
+    new_dy = -dx
+
+    # Translate back
+    return x0 + new_dx, y0 + new_dy
