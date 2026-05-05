@@ -8,7 +8,7 @@ y = X % 2
 
 class PlotSurfaceExample(ThreeDScene):
     def construct(self):
-        for ses in 0.0001, 0.001:#, 0.003, 0.01, 0.03, 0.1, 3, 1, 3, 10, 30, 100:
+        for ses in 0.0001, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30, 100:
             axes, surface = create_likelihood_graph(data.X[:,0], 
                                             data.y,
                                             x_ses = ses,
