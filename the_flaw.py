@@ -48,9 +48,6 @@ class FlawScene(ThreeDScene):
         def upside_down_loglik(beta_hat0, beta_hat1):
             return 2 * mle_z - loglik(beta_hat0, beta_hat1)
         
-        print(f"loglik mle = {loglik(*beta)}")
-        print(f"upside down loglik mle = {upside_down_loglik(*beta)}")
-        
         _, surface2 = create_3d_graph(z_func = upside_down_loglik,
                                       x_range=x_range,
                                       y_range = y_range,
