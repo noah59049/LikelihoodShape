@@ -75,3 +75,28 @@ class FlawScene(ThreeDScene):
         self.play(Transform(surface, saddle_surface))
         self.play(Restore(surface))
         self.wait()
+
+        def bump(beta_hat0, beta_hat1):
+            x0 = mle_x + se[0] * ses / 2 # I would rather do this with eigenvectors or something
+            y0 = mle_y - se[1] * ses / 2 # I would rather do this with eigenvectors or something
+            x_screen = (beta_hat0 - x0) / (se[0] * ses / 6)
+            y_screen = (beta_hat1 - y0) / (se[1] * ses / 6)
+            z_scale = (z_range[1] - z_range[0]) / 4
+            exponential = np.exp(-(x_screen**2 + y_screen**2))
+            # print(f"{exponential=}")
+            return exponential * z_scale
+        
+        def bumped_loglik(beta_hat0, beta_hat1):
+            return loglik(beta_hat0, beta_hat1) + bump(beta_hat0, beta_hat1)
+        
+        _, bumped_surface = create_3d_graph(z_func = bumped_loglik,
+                                            x_range=x_range,
+                                            y_range = y_range,
+                                            z_range = z_range,
+                                            resolution=21,
+                                            color = BLUE_C)
+        
+        surface.save_state()
+        self.play(Transform(surface, bumped_surface))
+        self.play(Restore(surface))
+        self.wait()
