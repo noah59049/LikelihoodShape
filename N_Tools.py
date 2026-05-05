@@ -842,14 +842,18 @@ def create_likelihood_graph(X,
                            resolution=resolution,
                            color = color)
 
-def rotate_90_cw(x0, y0, x, y):
+def rotate_90_cw(x0, y0, x, y, x_scale=1, y_scale=1):
     # Translate point relative to pivot
     dx = x - x0
     dy = y - y0
+
+    # Scale
+    dx /= x_scale
+    dy /= y_scale
 
     # Rotate 90° clockwise
     new_dx = dy
     new_dy = -dx
 
     # Translate back
-    return x0 + new_dx, y0 + new_dy
+    return x0 + new_dx * x_scale, y0 + new_dy * y_scale

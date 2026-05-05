@@ -64,7 +64,7 @@ class FlawScene(ThreeDScene):
         # --- What if it's a saddle point ---
         def saddle_loglik(beta_hat0, beta_hat1):
             return loglik(beta_hat0, beta_hat1) - \
-                   loglik(*rotate_90_cw(mle_x, mle_y, beta_hat0, beta_hat1)) + \
+                   loglik(*rotate_90_cw(mle_x, mle_y, beta_hat0, beta_hat1, x_scale = se[0], y_scale = se[1])) + \
                    mle_z
         
         _, saddle_surface = create_3d_graph(z_func = saddle_loglik,
