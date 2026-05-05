@@ -795,13 +795,13 @@ def create_3d_graph(z_func,
                     z_range = "auto",
                     resolution = 32,
                     color = BLUE_C):
-    
-    z_range = compute_z_range(
-        z_func=z_func,
-        x_range=x_range,
-        y_range=y_range,
-        samples=resolution
-    )
+    if z_range == "auto":
+        z_range = compute_z_range(
+            z_func=z_func,
+            x_range=x_range,
+            y_range=y_range,
+            samples=resolution
+        )
 
     axes = ThreeDAxes(
         x_range=(*x_range, (x_range[1] - x_range[0]) / 4),
