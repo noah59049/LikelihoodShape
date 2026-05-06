@@ -82,6 +82,23 @@ class FlawScene(ThreeDScene):
             rate_func=smooth
         )
 
+        # --- Force a clean rebuild of the MathTex ---
+        deriv_tex.clear_updaters()
+        self.remove(deriv_tex)
+
+        deriv_tex = VGroup(
+            MathTex(
+                r"\frac{\partial \ell}{\partial \hat{\beta}_0} = "
+                f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[0]:.3f}"
+            ),
+            MathTex(
+                r"\frac{\partial \ell}{\partial \hat{\beta}_1} = "
+                f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[1]:.3f}"
+            )
+        ).arrange(DOWN, aligned_edge=LEFT).to_corner(UL)
+
+        self.add_fixed_in_frame_mobjects(deriv_tex)
+
         # --- Define the functions for what if the log likelihood is something else ---
         def upside_down_loglik(beta_hat0, beta_hat1):
             return 2 * mle_z - loglik(beta_hat0, beta_hat1)
