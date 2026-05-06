@@ -136,4 +136,5 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                                             color = BLUE_C)
                 surface.save_state()
                 self.play(Transform(surface, surface2))
+                self.wait(tracker.duration - 2.1)
                 self.play(Restore(surface))
