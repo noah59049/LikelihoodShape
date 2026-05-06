@@ -1,10 +1,16 @@
 import numpy as np
 import data # type: ignore
 from manim import *
+from manim_voiceover import *
+from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 from N_Tools import *
 
-class FlawScene(ThreeDScene):
+class FlawScene(ThreeDScene, VoiceoverScene):
     def construct(self):
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/the_flaw_podcast.mp3",
+        cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+        min_silence_len=2000,
+        keep_silence=(0,0)))
         # --- Get our actual log likelihood ---
         X = as_col(data.X[:,0])
         y = data.y
@@ -32,10 +38,11 @@ class FlawScene(ThreeDScene):
             theta=-45 * DEGREES,
             zoom=0.55
         )
-        self.add(axes)
-        self.play(Create(surface))
-        self.wait(1)
-        self.begin_ambient_camera_rotation(rate=0.2)
+        with self.voiceover("At this point most explanations go: in order to find the maximum of the log likelihood,") as tracker:
+            self.add(axes)
+            self.play(Create(surface))
+            self.wait(1)
+            self.begin_ambient_camera_rotation(rate=0.2)
 
         # --- Add the MLE dot ---
         mle_x, mle_y = beta
@@ -44,60 +51,61 @@ class FlawScene(ThreeDScene):
         start_y = mle_y - 0.5 * ses * se[1]
         start_z = loglik(start_x, start_y)
 
-        dot = Dot3D(axes.c2p(start_x, start_y, start_z), color=YELLOW)
-        self.play(FadeIn(dot))
+        with self.voiceover("the logic being, at a local min or max, the derivative must be 0. But this explanation is incomplete.") as tracker:
+            dot = Dot3D(axes.c2p(start_x, start_y, start_z), color=YELLOW)
+            self.play(FadeIn(dot))
 
-        x_tracker = ValueTracker(start_x)
-        y_tracker = ValueTracker(start_y)
+            x_tracker = ValueTracker(start_x)
+            y_tracker = ValueTracker(start_y)
 
-        def gradient(beta_vec): # Could be moved to N_Tools
-            # returns [dL/db0, dL/db1]
-            return grad_log_likelihood(X, y, beta_vec, add_intercept=True)
+            def gradient(beta_vec): # Could be moved to N_Tools
+                # returns [dL/db0, dL/db1]
+                return grad_log_likelihood(X, y, beta_vec, add_intercept=True)
 
-        deriv_tex = always_redraw(lambda: VGroup(
-            MathTex(
-                r"\frac{\partial \ell}{\partial \hat{\beta}_0} = "
-                f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[0]:.3f}"
-            ),
-            MathTex(
-                r"\frac{\partial \ell}{\partial \hat{\beta}_1} = "
-                f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[1]:.3f}"
+            deriv_tex = always_redraw(lambda: VGroup(
+                MathTex(
+                    r"\frac{\partial \ell}{\partial \hat{\beta}_0} = "
+                    f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[0]:.3f}"
+                ),
+                MathTex(
+                    r"\frac{\partial \ell}{\partial \hat{\beta}_1} = "
+                    f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[1]:.3f}"
+                )
+            ).arrange(DOWN, aligned_edge=LEFT).to_corner(UL))
+            self.add_fixed_in_frame_mobjects(deriv_tex)
+            self.play(FadeIn(deriv_tex))
+            
+            dot.add_updater(lambda d: d.move_to(
+                axes.c2p(
+                    x_tracker.get_value(),
+                    y_tracker.get_value(),
+                    loglik(x_tracker.get_value(), y_tracker.get_value())
+                )
+            ))
+
+            self.play(
+                x_tracker.animate.set_value(mle_x),
+                y_tracker.animate.set_value(mle_y),
+                run_time=4,
+                rate_func=smooth
             )
-        ).arrange(DOWN, aligned_edge=LEFT).to_corner(UL))
-        self.add_fixed_in_frame_mobjects(deriv_tex)
-        self.play(FadeIn(deriv_tex))
-        
-        dot.add_updater(lambda d: d.move_to(
-            axes.c2p(
-                x_tracker.get_value(),
-                y_tracker.get_value(),
-                loglik(x_tracker.get_value(), y_tracker.get_value())
-            )
-        ))
 
-        self.play(
-            x_tracker.animate.set_value(mle_x),
-            y_tracker.animate.set_value(mle_y),
-            run_time=4,
-            rate_func=smooth
-        )
+            # --- Force a clean rebuild of the MathTex ---
+            deriv_tex.clear_updaters()
+            self.remove(deriv_tex)
 
-        # --- Force a clean rebuild of the MathTex ---
-        deriv_tex.clear_updaters()
-        self.remove(deriv_tex)
+            deriv_tex = VGroup(
+                MathTex(
+                    r"\frac{\partial \ell}{\partial \hat{\beta}_0} = "
+                    f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[0]:.3f}"
+                ),
+                MathTex(
+                    r"\frac{\partial \ell}{\partial \hat{\beta}_1} = "
+                    f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[1]:.3f}"
+                )
+            ).arrange(DOWN, aligned_edge=LEFT).to_corner(UL)
 
-        deriv_tex = VGroup(
-            MathTex(
-                r"\frac{\partial \ell}{\partial \hat{\beta}_0} = "
-                f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[0]:.3f}"
-            ),
-            MathTex(
-                r"\frac{\partial \ell}{\partial \hat{\beta}_1} = "
-                f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[1]:.3f}"
-            )
-        ).arrange(DOWN, aligned_edge=LEFT).to_corner(UL)
-
-        self.add_fixed_in_frame_mobjects(deriv_tex)
+            self.add_fixed_in_frame_mobjects(deriv_tex)
 
         # --- Define the functions for what if the log likelihood is something else ---
         def upside_down_loglik(beta_hat0, beta_hat1):
@@ -119,12 +127,13 @@ class FlawScene(ThreeDScene):
         
         # --- Play the animations for what if it's a minimum, saddle, or local non global max ---
         for z_func in upside_down_loglik, saddle_loglik, bumped_loglik:
-            _, surface2 = create_3d_graph(z_func = z_func,
-                                        x_range=x_range,
-                                        y_range = y_range,
-                                        z_range = z_range,
-                                        resolution=21,
-                                        color = BLUE_C)
-            surface.save_state()
-            self.play(Transform(surface, surface2))
-            self.play(Restore(surface))
+            with self.voiceover("What if it’s a local minimum instead? Or a saddle point? Or a local maximum, but not the global maximum?") as tracker:
+                _, surface2 = create_3d_graph(z_func = z_func,
+                                            x_range=x_range,
+                                            y_range = y_range,
+                                            z_range = z_range,
+                                            resolution=21,
+                                            color = BLUE_C)
+                surface.save_state()
+                self.play(Transform(surface, surface2))
+                self.play(Restore(surface))
