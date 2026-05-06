@@ -56,11 +56,11 @@ class FlawScene(ThreeDScene):
 
         deriv_tex = always_redraw(lambda: VGroup(
             MathTex(
-                r"\frac{\partial \ell}{\partial \beta_0} = "
+                r"\frac{\partial \ell}{\partial \hat{\beta}_0} = "
                 f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[0]:.3f}"
             ),
             MathTex(
-                r"\frac{\partial \ell}{\partial \beta_1} = "
+                r"\frac{\partial \ell}{\partial \hat{\beta}_1} = "
                 f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[1]:.3f}"
             )
         ).arrange(DOWN, aligned_edge=LEFT).to_corner(UL))
