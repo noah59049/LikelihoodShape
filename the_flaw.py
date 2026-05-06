@@ -35,47 +35,18 @@ class FlawScene(ThreeDScene):
         self.play(Create(surface))
         self.wait(1)
         self.begin_ambient_camera_rotation(rate=0.2)
-        # self.wait(6)
-
-        # --- What if it's a local minimum ---
         mle_x, mle_y = beta
         mle_z = log_likelihood(X, y, beta, add_intercept = True)
         
         mle_dot = Dot3D(axes.c2p(mle_x, mle_y, mle_z), color = RED)
         self.play(FadeIn(mle_dot))
-        self.wait(1)
 
         def upside_down_loglik(beta_hat0, beta_hat1):
             return 2 * mle_z - loglik(beta_hat0, beta_hat1)
-        
-        _, surface2 = create_3d_graph(z_func = upside_down_loglik,
-                                      x_range=x_range,
-                                      y_range = y_range,
-                                      z_range = z_range,
-                                      resolution=21,
-                                      color = BLUE_C)
-        surface.save_state()
-        self.play(Transform(surface, surface2))
-        self.play(Restore(surface))
-
-        # --- What if it's a saddle point ---
         def saddle_loglik(beta_hat0, beta_hat1):
             return loglik(beta_hat0, beta_hat1) - \
                    loglik(*rotate_90_cw(mle_x, mle_y, beta_hat0, beta_hat1, x_scale = se[0], y_scale = se[1])) + \
                    mle_z
-        
-        _, saddle_surface = create_3d_graph(z_func = saddle_loglik,
-                                            x_range=x_range,
-                                            y_range = y_range,
-                                            z_range = z_range,
-                                            resolution=21,
-                                            color = BLUE_C)
-        
-        surface.save_state()
-        self.play(Transform(surface, saddle_surface))
-        self.play(Restore(surface))
-        self.wait()
-
         def bump(beta_hat0, beta_hat1):
             x0 = mle_x + se[0] * ses / 2 # I would rather do this with eigenvectors or something
             y0 = mle_y - se[1] * ses / 2 # I would rather do this with eigenvectors or something
@@ -83,20 +54,21 @@ class FlawScene(ThreeDScene):
             y_screen = (beta_hat1 - y0) / (se[1] * ses / 6)
             z_scale = (z_range[1] - z_range[0]) / 4
             exponential = np.exp(-(x_screen**2 + y_screen**2))
-            # print(f"{exponential=}")
             return exponential * z_scale
         
         def bumped_loglik(beta_hat0, beta_hat1):
             return loglik(beta_hat0, beta_hat1) + bump(beta_hat0, beta_hat1)
-        
-        _, bumped_surface = create_3d_graph(z_func = bumped_loglik,
-                                            x_range=x_range,
-                                            y_range = y_range,
-                                            z_range = z_range,
-                                            resolution=21,
-                                            color = BLUE_C)
-        
-        surface.save_state()
-        self.play(Transform(surface, bumped_surface))
-        self.play(Restore(surface))
-        self.wait()
+        # --- What if it's a local minimum ---
+
+        for z_func in upside_down_loglik, saddle_loglik, bumped_loglik:
+
+
+            _, surface2 = create_3d_graph(z_func = z_func,
+                                        x_range=x_range,
+                                        y_range = y_range,
+                                        z_range = z_range,
+                                        resolution=21,
+                                        color = BLUE_C)
+            surface.save_state()
+            self.play(Transform(surface, surface2))
+            self.play(Restore(surface))
