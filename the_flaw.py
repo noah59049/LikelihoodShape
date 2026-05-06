@@ -50,9 +50,23 @@ class FlawScene(ThreeDScene):
         x_tracker = ValueTracker(start_x)
         y_tracker = ValueTracker(start_y)
 
-        # def get_z(x, y):
-        #     return log_likelihood(X, y, np.array([x, y]), add_intercept=True)
+        def gradient(beta_vec): # Could be moved to N_Tools
+            # returns [dL/db0, dL/db1]
+            return grad_log_likelihood(X, y, beta_vec, add_intercept=True)
 
+        deriv_tex = always_redraw(lambda: VGroup(
+            MathTex(
+                r"\frac{\partial \ell}{\partial \beta_0} = "
+                f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[0]:.3f}"
+            ),
+            MathTex(
+                r"\frac{\partial \ell}{\partial \beta_1} = "
+                f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[1]:.3f}"
+            )
+        ).arrange(DOWN, aligned_edge=LEFT).to_corner(UL))
+        self.add_fixed_in_frame_mobjects(deriv_tex)
+        self.play(FadeIn(deriv_tex))
+        
         dot.add_updater(lambda d: d.move_to(
             axes.c2p(
                 x_tracker.get_value(),
