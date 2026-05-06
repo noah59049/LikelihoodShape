@@ -40,8 +40,33 @@ class FlawScene(ThreeDScene):
         # --- Add the MLE dot ---
         mle_x, mle_y = beta
         mle_z = log_likelihood(X, y, beta, add_intercept = True)
-        mle_dot = Dot3D(axes.c2p(mle_x, mle_y, mle_z), color = RED)
-        self.play(FadeIn(mle_dot))
+        start_x = mle_x + 0.5 * ses * se[0]
+        start_y = mle_y - 0.5 * ses * se[1]
+        start_z = loglik(start_x, start_y)
+
+        dot = Dot3D(axes.c2p(start_x, start_y, start_z), color=YELLOW)
+        self.play(FadeIn(dot))
+
+        x_tracker = ValueTracker(start_x)
+        y_tracker = ValueTracker(start_y)
+
+        # def get_z(x, y):
+        #     return log_likelihood(X, y, np.array([x, y]), add_intercept=True)
+
+        dot.add_updater(lambda d: d.move_to(
+            axes.c2p(
+                x_tracker.get_value(),
+                y_tracker.get_value(),
+                loglik(x_tracker.get_value(), y_tracker.get_value())
+            )
+        ))
+
+        self.play(
+            x_tracker.animate.set_value(mle_x),
+            y_tracker.animate.set_value(mle_y),
+            run_time=4,
+            rate_func=smooth
+        )
 
         # --- Define the functions for what if the log likelihood is something else ---
         def upside_down_loglik(beta_hat0, beta_hat1):
