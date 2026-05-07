@@ -1,9 +1,15 @@
 from manim import *
 from MF_Tools import *
+from manim_voiceover import VoiceoverScene
+from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 from N_Tools import latex_vector, square_matrix_tex
 
-class LoglikSimplificationScene(Scene):
+class LoglikSimplificationScene(VoiceoverScene):
     def construct(self):
+        self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/podcasts/loglik_simplification_podcast.mp3",
+        cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+        min_silence_len=2000,
+        keep_silence=(0,0)))
         # --- Part 1: The log likelihood ---
 
         # We will probably start with loglik4, but it's nice to have these I guess
@@ -25,64 +31,79 @@ class LoglikSimplificationScene(Scene):
         loglik16 = MathTex(r"l=\sum_{i=1}^{n}y_i\hat{z}_i+\ln(\frac{1}{e^{\hat{z}_i}+1})")
         loglik17 = MathTex(r"l=\sum_{i=1}^{n}y_i\hat{z}_i-\ln(e^{\hat{z}_i}+1)")
 
-        self.play(Write(loglik4))
-        self.play(TransformByGlyphMap(loglik4, loglik5,
-                                      (range(21,30), range(15,24), {"path_arc":PI}),
-                                      (range(21,30), range(27,36)),
-                                      ([15,20], FadeOut, {"run_time":0.5}),
-                                      ([16], FadeOut),
-                                      ([17,18,19], [24,25,26])))
+        with self.voiceover("So now we want to find the Hessian and directional second derivatives of our log likelihood. So let’s take a look at our log likelihood again. We are going to simplify it.") as tracker:
+            self.play(Write(loglik4))
+
+        with self.voiceover("We expand (1 - yi)") as tracker:
+            self.play(TransformByGlyphMap(loglik4, loglik5,
+                                        (range(21,30), range(15,24), {"path_arc":PI}),
+                                        (range(21,30), range(27,36)),
+                                        ([15,20], FadeOut, {"run_time":0.5}),
+                                        ([16], FadeOut),
+                                        ([17,18,19], [24,25,26])))
         
-        self.play(TransformByGlyphMap(loglik5, loglik6,
-                                      (range(24,36), range(14,26), {"path_arc":PI}),
-                                      (range(14,24), range(26,36), {"path_arc":PI})))
+        with self.voiceover("Rearrange terms") as tracker:
+            self.play(TransformByGlyphMap(loglik5, loglik6,
+                                        (range(24,36), range(14,26), {"path_arc":PI}),
+                                        (range(14,24), range(26,36), {"path_arc":PI})))
         
-        self.play(TransformByGlyphMap(loglik6, loglik7,
-                                      ([15,16], FadeOut),
-                                      (FadeIn, [9,25])))
+        with self.voiceover("Factor out the yi") as tracker:
+            self.play(TransformByGlyphMap(loglik6, loglik7,
+                                        ([15,16], FadeOut),
+                                        (FadeIn, [9,25])))
         
-        self.play(TransformByGlyphMap(loglik7, loglik8,
-                                      ([12,13,14], [12,13,14], {"path_arc": -PI/4}),
-                                      (range(19,24), range(16,21), {"path_arc": -PI/4}),
-                                      (FadeIn, [15]),
-                                      ([15,16,17], FadeOut, {"run_time":0.5}),
-                                      ([18,24], FadeOut, {"run_time":0.5})))
+        with self.voiceover("Simplify the difference of lns into the ln of a ratio") as tracker:
+            self.play(TransformByGlyphMap(loglik7, loglik8,
+                                        ([12,13,14], [12,13,14], {"path_arc": -PI/4}),
+                                        (range(19,24), range(16,21), {"path_arc": -PI/4}),
+                                        (FadeIn, [15]),
+                                        ([15,16,17], FadeOut, {"run_time":0.5}),
+                                        ([18,24], FadeOut, {"run_time":0.5})))
         
-        self.play(TransformByGlyphMap(loglik8, loglik9,
-                                      (range(10,21),range(10,45))))
+        with self.voiceover("If you remember the original definition we gave, this part becomes the linear combination of the predictors") as tracker:
+            self.play(TransformByGlyphMap(loglik8, loglik9,
+                                        (range(10,21),range(10,45))))
         
-        self.play(TransformByGlyphMap(loglik9, loglik10,
-                                      (range(9,46), [10,11])))
+        with self.voiceover("We are going to call that zi to simplify things.") as tracker:
+            self.play(TransformByGlyphMap(loglik9, loglik10,
+                                        (range(9,46), [10,11])))
         
-        self.play(TransformByGlyphMap(loglik10, loglik11,
-                                      (FadeIn, [9])))
+        with self.voiceover("And since it’s estimated we use z hat i instead") as tracker:
+            self.play(TransformByGlyphMap(loglik10, loglik11,
+                                        (FadeIn, [9])))
         
-        self.play(TransformByGlyphMap(loglik11, loglik12,
-                                      (range(18,21), range(18,24))))
+        with self.voiceover("So that yi hat just becomes sigmoid of zi hat") as tracker:
+            self.play(TransformByGlyphMap(loglik11, loglik12,
+                                        (range(18,21), range(18,24))))
         
-        self.play(TransformByGlyphMap(loglik12, loglik13,
-                                      ([18,19,23], FadeOut, {"run_time":0.5}),
-                                      (FadeIn, [18,22,23,27,28], {"delay":0.25, "run_time":0.73}),
-                                      ([20,21,22],[19,20,21]),
-                                      ([20,21,22],[24,25,26])))
+        with self.voiceover("And we use the definition of sigmoid") as tracker:
+            self.play(TransformByGlyphMap(loglik12, loglik13,
+                                        ([18,19,23], FadeOut, {"run_time":0.5}),
+                                        (FadeIn, [18,22,23,27,28], {"delay":0.25, "run_time":0.73}),
+                                        ([20,21,22],[19,20,21]),
+                                        ([20,21,22],[24,25,26])))
         
-        self.play(TransformByGlyphMap(loglik13,loglik14,
-                                      ([16], range(16,29))))
+        with self.voiceover("Expand 1 so that we’re under a common denominator") as tracker:
+            self.play(TransformByGlyphMap(loglik13,loglik14,
+                                        ([16], range(16,29))))
         
-        self.play(TransformByGlyphMap(loglik14, loglik15,
-                                      (range(16,22), range(16,22)),
-                                      ([29],[22]),
-                                      (range(30,34), range(23,27)),
-                                      (range(23,29), range(28,34), {"path_arc":PI/2}),
-                                      (range(35,41), range(28,34), {"path_arc":-PI/2}),
-                                      ([22,34],[27])))
+        with self.voiceover("Combine both sides of the fraction") as tracker:
+            self.play(TransformByGlyphMap(loglik14, loglik15,
+                                        (range(16,22), range(16,22)),
+                                        ([29],[22]),
+                                        (range(30,34), range(23,27)),
+                                        (range(23,29), range(28,34), {"path_arc":PI/2}),
+                                        (range(35,41), range(28,34), {"path_arc":-PI/2}),
+                                        ([22,34],[27])))
         
-        self.play(TransformByGlyphMap(loglik15, loglik16,
-                                      (range(16,21), []),
-                                      (range(22,27), [])))
+        with self.voiceover("Cancel out e^zi hat on top of the fraction") as tracker:
+            self.play(TransformByGlyphMap(loglik15, loglik16,
+                                        (range(16,21), []),
+                                        (range(22,27), [])))
         
-        self.play(TransformByGlyphMap(loglik16, loglik17,
-                                      ([16,17], FadeOut)))
+        with self.voiceover("And ln of 1 over something equals negative ln of that") as tracker:
+            self.play(TransformByGlyphMap(loglik16, loglik17,
+                                        ([16,17], FadeOut)))
         
         # --- Part 2: The first derivative of the log likelihood ---
 
