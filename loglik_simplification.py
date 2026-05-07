@@ -258,24 +258,28 @@ class LoglikSimplificationScene(VoiceoverScene):
         with self.voiceover("And let’s define wi as yi hat times 1 minus yi hat") as tracker:
             self.play(TransformByGlyphMap(hess_simplified, hess_simplified2,
                                         (range(19,29),[19,20])))
-        self.play(TransformByGlyphMap(hess_simplified2, hess_simplified3,
-                                      ([18],[13], {"path_arc": -PI}),
-                                      (range(13,18), range(14,19), {"path_arc": -PI}),
-                                      ([19,20], [22,23], {"path_arc": -PI}),
-                                      ([21,22,23], [19,20,21], {"path_arc": -PI}),
-                                      show_indices=False))
+        with self.voiceover("And rearrange the sum a little bit, which will be useful later.") as tracker:
+            self.play(TransformByGlyphMap(hess_simplified2, hess_simplified3,
+                                        ([18],[13], {"path_arc": -PI}),
+                                        (range(13,18), range(14,19), {"path_arc": -PI}),
+                                        ([19,20], [22,23], {"path_arc": -PI}),
+                                        ([21,22,23], [19,20,21], {"path_arc": -PI}),
+                                        show_indices=False))
 
         matrix_hess_tex = MathTex(square_matrix_tex(4, lambda m,j: r"-\sum_{i=1}^{n} X_{immm} w_i X_{ijjj}".replace("mmm",str(m)).replace("jjj",str(j)), start_ij=0)
                                   ).scale(0.74).next_to(hess_simplified3,DOWN)
-        self.play(Write(matrix_hess_tex))
-        self.play(FadeOut(matrix_hess_tex))
+        with self.voiceover("So now if we try to construct the entire Hessian matrix from these second order partials, we get this, and it’s not clear how that’s helpful to us.") as tracker:
+            self.play(Write(matrix_hess_tex))
+        with self.voiceover("So let’s try a different approach.") as tracker:
+            self.play(FadeOut(matrix_hess_tex))
 
         hess_simplified4 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -",
                                    r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
-        self.play(TransformMatchingTex(hess_simplified3, hess_simplified4, run_time = 0.001))
+        with self.voiceover("Let’s look at this sum") as tracker:
+            self.play(TransformMatchingTex(hess_simplified3, hess_simplified4, run_time = 0.001))
 
-        self.play(LaggedStart(FadeOut(grad_parts2), 
-                              hess_simplified4.animate.to_edge(UP), lag_ratio=0.5))
+            self.play(LaggedStart(FadeOut(grad_parts2), 
+                                hess_simplified4.animate.to_edge(UP), lag_ratio=0.5))
 
         # --- Part 4: Assembling the second order partials into the Hessian ---
         sum_with_w = hess_simplified4[1].copy()
