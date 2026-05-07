@@ -125,19 +125,28 @@ class LoglikSimplificationScene(VoiceoverScene):
                                   r"-",
                                   r"\ln(e^{\hat{z}_i}+1)",
                                   )
-        self.play(TransformMatchingTex(loglik17, loglik17_broken, run_time = 0.001))
+        with self.voiceover("NOW we want to find the derivative of the likelihood with respect to beta hat j") as tracker:
+            self.play(TransformMatchingTex(loglik17, loglik17_broken, run_time = 0.001))
 
-        grads[0].next_to(loglik17, DOWN, aligned_edge=LEFT)
-        for grad in grads:
-            grad.move_to(grads[0], aligned_edge=LEFT)
+            grads[0].next_to(loglik17, DOWN, aligned_edge=LEFT)
+            for grad in grads:
+                grad.move_to(grads[0], aligned_edge=LEFT)
 
-        
-        self.play(Write(grads[0]))
+            
+            self.play(Write(grads[0]))
 
         for i in range(1,5):
-            self.play(ReplacementTransform(loglik17_broken[i].copy(), grads[i][i]))
-            self.play(TransformMatchingTex(grads[i - 1], grads[i], run_time = 0.001))
+            with self.voiceover([
+            "",
+            "It’s going to be a sum as above",
+            "The yi zi hat turns into yi Xij [WHY WHY WHY]",
+            "And then we subtract the derivative of the thing on the right, using the chain rule",
+            "The ln becomes a reciprocal"
+            ][i]) as tracker:
+                self.play(ReplacementTransform(loglik17_broken[i].copy(), grads[i][i]))
+                self.play(TransformMatchingTex(grads[i - 1], grads[i], run_time = 0.001))
 
+        
         loglik17_broken2 = MathTex(r"l=",
                                   r"\sum_{i=1}^{n}",
                                   r"y_i\hat{z}_i",
@@ -146,24 +155,30 @@ class LoglikSimplificationScene(VoiceoverScene):
                                   r"e^{\hat{z}_i}",
                                   r"+1)",
                                   )
-        self.play(TransformMatchingTex(loglik17_broken, loglik17_broken2, run_time = 0.001))
-        self.play(ReplacementTransform(loglik17_broken2[5].copy(), grads[5][5]))
-        self.play(TransformMatchingTex(grads[4], grads[5], run_time = 0.001))
+        
+        with self.voiceover("The exponential plus 1 just becomes the exponential") as tracker:
+            self.play(TransformMatchingTex(loglik17_broken, loglik17_broken2, run_time = 0.001))
+            self.play(ReplacementTransform(loglik17_broken2[5].copy(), grads[5][5]))
+            self.play(TransformMatchingTex(grads[4], grads[5], run_time = 0.001))
 
-        self.play(ReplacementTransform(loglik17_broken2[5][1:].copy(), grads[6][6]))
-        self.play(TransformMatchingTex(grads[5], grads[6], run_time = 0.001))
-        grad_together = MathTex("".join(grad_texes)).move_to(grads[0], aligned_edge=LEFT)
-        self.play(TransformMatchingTex(grads[6], grad_together, run_time = 0.001))
+        with self.voiceover("And the zi becomes Xij") as tracker:
+            self.play(ReplacementTransform(loglik17_broken2[5][1:].copy(), grads[6][6]))
+            self.play(TransformMatchingTex(grads[5], grads[6], run_time = 0.001))
+            grad_together = MathTex("".join(grad_texes)).move_to(grads[0], aligned_edge=LEFT)
+            self.play(TransformMatchingTex(grads[6], grad_together, run_time = 0.001))
 
         grad_together2 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}= \sum_{i=1}^{n} y_i X_{ij} - \frac{e^{\hat{z}_i}}{e^{\hat{z}_i}+1} X_{ij}").move_to(grads[0], aligned_edge=LEFT)
-        self.play(TransformByGlyphMap(grad_together,grad_together2,
-                                      ([27,28,29,30], [19,20,21,22]),
-                                      ([19], FadeOut),
-                                    ))
+        with self.voiceover("Now if we just put this in one fraction") as tracker:
+            self.play(TransformByGlyphMap(grad_together,grad_together2,
+                                        ([27,28,29,30], [19,20,21,22]),
+                                        ([19], FadeOut),
+                                        ))
+        
         grad_together3 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j}= \sum_{i=1}^{n} y_i X_{ij} - \sigma(\hat{z}_i) X_{ij}").move_to(grads[0], aligned_edge=LEFT)
-        self.play(TransformByGlyphMap(grad_together2,grad_together3,
-                                      (range(19,30), range(19,25))
-                                    ))
+        with self.voiceover("That fraction becomes sigmoid of zi") as tracker:
+            self.play(TransformByGlyphMap(grad_together2,grad_together3,
+                                        (range(19,30), range(19,25))
+                                        ))
         
         # --- Part 3: The second derivative of the log likelihood ---
         self.play(LaggedStart(FadeOut(loglik17_broken2), grad_together3.animate.to_edge(UP), lag_ratio=0.5))
