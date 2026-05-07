@@ -281,23 +281,26 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(LaggedStart(FadeOut(grad_parts2), 
                                 hess_simplified4.animate.to_edge(UP), lag_ratio=0.5))
 
-        # --- Part 4: Assembling the second order partials into the Hessian ---
-        sum_with_w = hess_simplified4[1].copy()
-        sum_with_w.generate_target()
-        sum_with_w.target.next_to(hess_simplified4, DOWN)
-        self.play(MoveToTarget(sum_with_w))
-        sum_with_w2 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(hess_simplified4, DOWN)
-        self.play(TransformMatchingShapes(sum_with_w,sum_with_w2, run_time = 0.001))
+            # --- Part 4: Assembling the second order partials into the Hessian ---
+            sum_with_w = hess_simplified4[1].copy()
+            sum_with_w.generate_target()
+            sum_with_w.target.next_to(hess_simplified4, DOWN)
+            self.play(MoveToTarget(sum_with_w))
+            sum_with_w2 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(hess_simplified4, DOWN)
+            self.play(TransformMatchingShapes(sum_with_w,sum_with_w2, run_time = 0.001))
 
         sum_without_w = MathTex(r"\sum_{i=1}^{n} X_{im} X_{ij}").next_to(hess_simplified4, DOWN)
-        self.play(TransformByGlyphMap(sum_with_w2,sum_without_w,
-                                      ([8,9], FadeOut)))
+        with self.voiceover("I notice that if the wi were not there,") as tracker:
+            self.play(TransformByGlyphMap(sum_with_w2,sum_without_w,
+                                        ([8,9], FadeOut)))
         easy_dot1 = MathTex(r"\sum_{i=1}^{n} X_{im} X_{ij} = X_{\cdot m}\cdot X_{\cdot j}").next_to(hess_simplified4, DOWN)
-        self.play(TransformByGlyphMap(sum_without_w, easy_dot1,
-                                      (FadeIn, range(11,19))))
+        with self.voiceover("It would be the dot product of the mth and jth columns of X.") as tracker:
+            self.play(TransformByGlyphMap(sum_without_w, easy_dot1,
+                                        (FadeIn, range(11,19))))
         easy_dot2 = MathTex(r"\sum_{i=1}^{n} X_{im} X_{ij} = X_{\cdot m}^T X_{\cdot j}").next_to(hess_simplified4, DOWN)
-        self.play(TransformByGlyphMap(easy_dot1, easy_dot2,
-                                      ([15],[13])))
+        with self.voiceover("Or the mth column transposed times the jth column.") as tracker:
+            self.play(TransformByGlyphMap(easy_dot1, easy_dot2,
+                                        ([15],[13])))
         
         # --- Proving that that sum is a dot product with a diagonal matrix in between ---
         dot0 = hess_simplified4[1].copy()
