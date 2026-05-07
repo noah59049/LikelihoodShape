@@ -198,23 +198,29 @@ class LoglikSimplificationScene(VoiceoverScene):
                              r"y_i X_{ij}",
                              r" - \sigma(\hat{z}_i)",
                              r" X_{ij}").move_to(grad_together3)
-        self.play(TransformMatchingTex(grad_together3, grad_parts), run_time = 0.001)
         
-        just_the_grad = grad_parts[0].copy()
-        just_the_grad.generate_target()
-        just_the_grad.target.next_to(grad_parts, DOWN, aligned_edge=LEFT)
-        self.play(MoveToTarget(just_the_grad))
-        just_the_grad2 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j} = ")
-        just_the_grad2.next_to(grad_parts, DOWN, aligned_edge = LEFT)
-        self.play(TransformMatchingShapes(just_the_grad,just_the_grad2, run_time = 0.001))
-
-        self.play(TransformByGlyphMap(just_the_grad2, hesses[0],
-                                      (FadeIn, [1], {"delay":0.4, "run_time":0.7}),
-                                      (FadeIn, [8,9,10,11])))
+        with self.voiceover("Now we want the second order partial with respect to beta hat j and beta hat m [I wanted to use k but we’re already using it]") as tracker:
+            self.play(TransformMatchingTex(grad_together3, grad_parts), run_time = 0.001)
+            
+            just_the_grad = grad_parts[0].copy()
+            just_the_grad.generate_target()
+            just_the_grad.target.next_to(grad_parts, DOWN, aligned_edge=LEFT)
+            self.play(MoveToTarget(just_the_grad))
+            just_the_grad2 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j} = ")
+            just_the_grad2.next_to(grad_parts, DOWN, aligned_edge = LEFT)
+            self.play(TransformMatchingShapes(just_the_grad,just_the_grad2, run_time = 0.001))
+            self.play(TransformByGlyphMap(just_the_grad2, hesses[0],
+                                        (FadeIn, [1], {"delay":0.4, "run_time":0.7}),
+                                        (FadeIn, [8,9,10,11])))
         for i in range(1,4):
-            self.play(ReplacementTransform(grad_parts[i].copy(), hesses[i][i]))
-            self.play(TransformMatchingTex(hesses[i - 1], hesses[i], run_time = 0.001))
-        
+            with self.voiceover([
+            "Again it's a sum",
+            "This yi Xij is a constant, and on the right side we use a chain rule",
+            "The derivative of the sigmoid is equal to sigmoid times 1 minus sigmoid, and I’ll leave up on screen the derivation of that, though I won’t go into it.",
+            ][i-1]) as tracker:
+                self.play(ReplacementTransform(grad_parts[i].copy(), hesses[i][i]))
+                self.play(TransformMatchingTex(hesses[i - 1], hesses[i], run_time = 0.001))
+
         grad_parts2 = MathTex(r"\frac{\partial l}{\partial \hat{\beta}_j} = ",
                               r"\sum_{i=1}^{n}",
                               r"y_i X_{ij}",
@@ -222,30 +228,36 @@ class LoglikSimplificationScene(VoiceoverScene):
                               r"\hat{z}_i",
                               r")",
                               r" X_{ij}").move_to(grad_together3)
-        self.play(TransformMatchingTex(grad_parts, grad_parts2, run_time = 0.001))
-        self.play(ReplacementTransform(grad_parts2[4].copy(), hesses[4][4]))
-        self.play(TransformMatchingTex(hesses[3], hesses[4], run_time = 0.001))
-        self.play(ReplacementTransform(grad_parts2[6].copy(), hesses[5][5]))
-        self.play(TransformMatchingTex(hesses[4], hesses[5], run_time = 0.001))
-
+        with self.voiceover("The derivative of zi hat is Xim") as tracker:
+            self.play(TransformMatchingTex(grad_parts, grad_parts2, run_time = 0.001))
+            self.play(ReplacementTransform(grad_parts2[4].copy(), hesses[4][4]))
+        
+        with self.voiceover("And then the Xij is just a constant, so we multiply by it") as tracker:
+            self.play(TransformMatchingTex(hesses[3], hesses[4], run_time = 0.001))
+            self.play(ReplacementTransform(grad_parts2[6].copy(), hesses[5][5]))
+            self.play(TransformMatchingTex(hesses[4], hesses[5], run_time = 0.001))
+    
         hess_joined = MathTex("".join(hess_texes)).next_to(grad_together3,DOWN,aligned_edge=LEFT)
         hess_joined[0][18].set_opacity(0) # That pesky dot again
-        self.play(TransformMatchingTex(hesses[5], hess_joined, run_time = 0.55))
-        hess_simplified = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}=" +
-            r"\sum_{i=1}^{n}" +
-            r"- \hat{y}_i(1-\hat{y}_i)" +
-            r"X_{im}" +
-            r"X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
-        self.play(TransformByGlyphMap(hess_joined, hess_simplified,
-                                      ([18],FadeOut),
-                                      (range(20,26), range(19,22)),
-                                      (range(29,35), range(25,28)),
-                                      ))
+        with self.voiceover("Now let’s turn those sigmoids of zi hat into yi hat") as tracker:
+            self.play(TransformMatchingTex(hesses[5], hess_joined, run_time = 0.55))
+        
+            hess_simplified = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}=" +
+                r"\sum_{i=1}^{n}" +
+                r"- \hat{y}_i(1-\hat{y}_i)" +
+                r"X_{im}" +
+                r"X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
+            self.play(TransformByGlyphMap(hess_joined, hess_simplified,
+                                        ([18],FadeOut),
+                                        (range(20,26), range(19,22)),
+                                        (range(29,35), range(25,28)),
+                                        ))
         
         hess_simplified2 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = \sum_{i=1}^{n} - w_i X_{im} X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
         hess_simplified3 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = - \sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
-        self.play(TransformByGlyphMap(hess_simplified, hess_simplified2,
-                                      (range(19,29),[19,20])))
+        with self.voiceover("And let’s define wi as yi hat times 1 minus yi hat") as tracker:
+            self.play(TransformByGlyphMap(hess_simplified, hess_simplified2,
+                                        (range(19,29),[19,20])))
         self.play(TransformByGlyphMap(hess_simplified2, hess_simplified3,
                                       ([18],[13], {"path_arc": -PI}),
                                       (range(13,18), range(14,19), {"path_arc": -PI}),
