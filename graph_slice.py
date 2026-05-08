@@ -75,6 +75,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         x0, y0 = gs.x0, gs.y0
         z0 = gs.g(0)
 
+        # Helper to compute a point on the surface along the direction v
         def point_on_surface(t):
             x, y = gs.gamma(t)
             return gs.axes.c2p(x, y, gs.g(t))
@@ -82,15 +83,19 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
         # --- Time to actually animate the scene ---
         with self.voiceover("If we have a function of multiple variables,") as tracker:
             self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
+            # Yay tex
             self.play(Create(f_explicit))
+
             self.play(Create(gs.axes), Create(gs.surface))
             self.wait()
 
         with self.voiceover("f(vector x),") as tracker:
+            # Yay tex
             self.play(TransformByGlyphMap(f_explicit, f_vector,
                                     (range(2,13), range(2,4))))
 
         with self.voiceover("f(vector x), the derivative in the direction of unit vector v is the change in the value of f divided by the distance in the direction of v,") as tracker:
+            # Yay tex
             self.play(TransformByGlyphMap(f_vector,pre_directional,
                                           (FadeIn, range(3)),
                                           ))
@@ -102,6 +107,8 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             # =========================================================
             h_tracker = ValueTracker(1.0)
 
+            # Base point
+            # Moving point
             moving_dot = always_redraw(
                 lambda: Dot3D(
                     point_on_surface(h_tracker.get_value()),
@@ -109,6 +116,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
                 )
             )
 
+            # Secant line
             secant_line = always_redraw(
                 lambda: Line3D(
                     start=point_on_surface(0),
@@ -117,6 +125,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
                 )
             )
 
+            # Δx: horizontal displacement along the slice direction
             delta_x_line = always_redraw(
                 lambda: Line3D(
                     start=gs.axes.c2p(x0, y0, z0),
@@ -129,6 +138,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
                 )
             )
 
+            # Δf: vertical displacement
             delta_f_line = always_redraw(
                 lambda: Line3D(
                     start=gs.axes.c2p(
@@ -141,6 +151,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
                 )
             )
 
+            # Labels for Δx and Δf
             delta_x_label = always_redraw(
                 lambda: MathTex(r"\Delta x")
                 .scale(0.5)
@@ -175,6 +186,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             )
 
         with self.voiceover("Geometrically it's the slope of the tangent line in the direction of v.") as tracker:
+            # --- Directional derivative arrow ---
             arrow = Arrow3D(
                 start=gs.axes.c2p(x0, y0, z0),
                 end=gs.axes.c2p(
@@ -187,6 +199,10 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
 
             self.play(Create(arrow))
             self.wait()
+
+        # =========================================================
+        # Slice plane
+        # =========================================================
 
         with self.voiceover("I like to think of it as taking a slice of the graph to get a function of 1 variable,"):
             self.play(FadeIn(gs.slice_plane))
@@ -203,8 +219,11 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             self.add_fixed_in_frame_mobjects(tangent_line)
             self.play(Create(tangent_line))
 
+        # Yay tex
         with self.voiceover("Algebraically that means you choose some initial value a, and then parameterize x as a + tv,") as tracker:
             self.play(Write(atv))
+            # TODO: Add a and v to the z=0 plane of the 3D graph
+
             self.play(FadeOut(tangent_line), FadeOut(arrow), run_time=0.7)
 
         with self.voiceover("and define g(t) as equal to f(x).") as tracker:
@@ -212,6 +231,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             self.play(TransformByGlyphMap(g_def, g_def2,
                                           (range(8,14), [8,9])))
 
+            # Add g(t) labels to the lower graph
             axis_labels = gs.axes2d.get_axis_labels(
                 MathTex("t").scale(0.7),
                 MathTex("g(t)").scale(0.7)
@@ -220,6 +240,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
             self.add_fixed_in_frame_mobjects(axis_labels)
             self.play(Write(axis_labels), run_time=0.5)
 
+            # --- Move the dots ---
             def point_on_graph(t):
                 return gs.axes2d.c2p(t, gs.g(t))
 
@@ -233,7 +254,9 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
                     color=RED
                 )
             )
+            # Ensure 2D objects remain fixed on screen
             self.add_fixed_in_frame_mobjects(parametric_dot2d)
+
             self.add(parametric_dot)
             self.add(parametric_dot2d)
             self.play(t_tracker.animate.set_value(1.0), run_time=1.2)
@@ -241,7 +264,7 @@ class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
 
         with self.voiceover("So the directional derivative is g'(t).") as tracker:
             self.play(Write(deriv_relation))
-
+            # Move the tangent lines
             tangent_line_2d = always_redraw(
                 lambda: gs.axes2d.plot(
                     lambda tau: (
