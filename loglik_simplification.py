@@ -495,8 +495,85 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(TransformByGlyphMap(quadratic5, quadratic6,
                                         ([14,15],[17], {"path_arc": -PI/3})))
             
-        with self.voiceover("It’s v transpose H v, which if we plug the definition of the Hessian in,") as tracker:
-            ...
+        with self.voiceover("This sum will always be positive. Because all the elements of wi are positive, and ui squared is always positive or 0.") as tracker:
+            quadratic7 = MathTex(r"D_{\vec{v}}^2(l) =",
+                                             r"-",
+                                             r"\sum_{i=1}^{n}", 
+                                             r"w_i",
+                                             r"u_i^2")
+            self.play(TransformMatchingTex(quadratic6,quadratic7, run_time = 0.001))
 
-        with self.voiceover("59. Because this sum is positive, the directional second derivative must be negative.") as tracker:
-            ...
+            # Boxes
+            w_box = SurroundingRectangle(quadratic7[3], buff=0.08, color = RED)
+            u_box = SurroundingRectangle(quadratic7[4], buff=0.08, color = RED)
+
+            # Labels + arrows
+            w_text = Tex("Always positive").scale(0.6)
+            w_text.next_to(quadratic7, UP + RIGHT, buff=0.6)
+
+            w_arrow = Arrow(
+                w_text.get_bottom(),
+                w_box.get_top(),
+                buff=0.1,
+                stroke_width=4,
+            )
+
+            u_text = Tex("Always nonnegative").scale(0.6)
+            u_text.next_to(quadratic7, DOWN + RIGHT, buff=0.6)
+
+            u_arrow = Arrow(
+                u_text.get_top(),
+                u_box.get_bottom(),
+                buff=0.1,
+                stroke_width=4,
+            )
+
+            self.play(
+                Create(w_box),
+                Write(w_text),
+                GrowArrow(w_arrow),
+
+                Create(u_box),
+                Write(u_text),
+                GrowArrow(u_arrow),
+            )
+
+        with self.voiceover("Because this sum is positive, the directional second derivative must be negative.") as tracker:
+            # Highlight the whole sum term
+            sum_box = SurroundingRectangle(quadratic7[2:], buff=0.12)
+
+            positive_text = Tex("Positive").scale(0.7)
+            positive_text.next_to(sum_box, UP, buff=0.35)
+
+            positive_arrow = Arrow(
+                positive_text.get_bottom(),
+                sum_box.get_top(),
+                buff=0.08,
+                stroke_width=4,
+            )
+
+            # Highlight the negative sign
+            minus_box = SurroundingRectangle(quadratic7[1:], buff=0.08)
+
+            negative_text = Tex("Therefore negative").scale(0.7)
+            negative_text.next_to(minus_box, DOWN, buff=0.35)
+
+            negative_arrow = Arrow(
+                negative_text.get_top(),
+                minus_box.get_bottom(),
+                buff=0.08,
+                stroke_width=4,
+            )
+
+            self.play(
+                FadeOut(w_box, w_text, w_arrow, u_box, u_text, u_arrow),
+                Create(sum_box),
+                Write(positive_text),
+                GrowArrow(positive_arrow),
+            )
+
+            self.play(
+                Create(minus_box),
+                Write(negative_text),
+                GrowArrow(negative_arrow),
+            )
