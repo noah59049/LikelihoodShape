@@ -383,59 +383,63 @@ class LoglikSimplificationScene(VoiceoverScene):
             dot10.scale(0.87)
             self.play(ReplacementTransform(dot9[0], dot10[0]), TransformMatchingShapes(dot9[1], dot10[1]))
         
-        self.play(FadeIn(hess_simplified4), FadeOut(dot10))
-        hess_simplified5 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -",
-                                   r"X_{\cdot m}^T W X_{\cdot j}").move_to(hess_simplified4, aligned_edge=LEFT)
-        self.play(*[ReplacementTransform(hess_simplified4[i], hess_simplified5[i]) for i in range(2)])
+        with self.voiceover("So we return to the formula and plug that in. And now we want to find the full Hessian.") as tracker:
+            self.play(FadeIn(hess_simplified4), FadeOut(dot10))
+            hess_simplified5 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -",
+                                    r"X_{\cdot m}^T W X_{\cdot j}").move_to(hess_simplified4, aligned_edge=LEFT)
+            self.play(*[ReplacementTransform(hess_simplified4[i], hess_simplified5[i]) for i in range(2)])
 
-        hess_simplified6 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -"+
-                                   r"X_{\cdot m}^T W X_{\cdot j}").move_to(hess_simplified4, aligned_edge=LEFT)
-        self.play(TransformMatchingTex(hess_simplified5, hess_simplified6, run_time = 0.001))
+            hess_simplified6 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -"+
+                                    r"X_{\cdot m}^T W X_{\cdot j}").move_to(hess_simplified4, aligned_edge=LEFT)
+            self.play(TransformMatchingTex(hess_simplified5, hess_simplified6, run_time = 0.001))
         
         # --- Gluing the partials together into the Hessian
-        big_claim = MathTex("H=-X^T W X")
-        self.play(Write(big_claim))
-        self.play(FadeOut(big_claim))
+        with self.voiceover("I claim that it is equal to -X transpose times W times X.") as tracker:
+            big_claim = MathTex("H=-X^T W X")
+            self.play(Write(big_claim))
+            self.play(FadeOut(big_claim))
 
-        hess_row_tex = latex_vector([r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)) for j in range(4)], "row")
-        glued_row = MathTex(hess_row_tex + r"= -X_{\cdot m}^T W " + latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")).scale(0.9)
-        self.play(TransformByGlyphMap(hess_simplified6.copy(), glued_row,
-                                      (range(12), range(1 ,13)),
-                                      (range(12), range(13,25)),
-                                      (range(12), range(25,37)),
-                                      (range(12), range(37,49)),
-                                      (FadeIn, [0,49]), # Brackets on the left
-                                      (range(12,19), range(50,57)), # Middle stuff with W
-                                      (FadeIn, [57,70]), # Brackets on the right
-                                      (range(19,22), range(58,61)),
-                                      (range(19,22), range(61,64)),
-                                      (range(19,22), range(64,67)),
-                                      (range(19,22), range(67,70)),
-                                      ))
+        with self.voiceover("To see that, let’s just look at the mth row of the Hessian, which is just caused by gluing all the columns of X together at the right.") as tracker:
+            hess_row_tex = latex_vector([r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)) for j in range(4)], "row")
+            glued_row = MathTex(hess_row_tex + r"= -X_{\cdot m}^T W " + latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")).scale(0.9)
+            self.play(TransformByGlyphMap(hess_simplified6.copy(), glued_row,
+                                        (range(12), range(1 ,13)),
+                                        (range(12), range(13,25)),
+                                        (range(12), range(25,37)),
+                                        (range(12), range(37,49)),
+                                        (FadeIn, [0,49]), # Brackets on the left
+                                        (range(12,19), range(50,57)), # Middle stuff with W
+                                        (FadeIn, [57,70]), # Brackets on the right
+                                        (range(19,22), range(58,61)),
+                                        (range(19,22), range(61,64)),
+                                        (range(19,22), range(64,67)),
+                                        (range(19,22), range(67,70)),
+                                        ))
         
-        entire_hess_tex = square_matrix_tex(4, 
-                                            lambda m, j: r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)).replace("m", str(m)), start_ij = 0)
-        glued_hess = MathTex(entire_hess_tex + 
-                             "=-" +
-                             latex_vector([r"X_{\cdot m}^T".replace("m",str(m)) for m in range(4)], "col") + 
-                             " W " + 
-                             latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")
-                             ).scale(0.89).next_to(glued_row, DOWN)
-        self.play(TransformByGlyphMap(glued_row.copy(),glued_hess,
-                                      ([0], range(7)), # Left bracket of hess
-                                      (range(1,49), range(7,55)),
-                                      (range(1,49), range(55,103)),
-                                      (range(1,49), range(103,151)),
-                                      (range(1,49), range(151,199)),
-                                      ([49], range(199,206)), # Right bracket of hess
-                                      ([50,51], [206,207]), # Equals sign and minus sign
-                                      (FadeIn, range(208,212)), # Left bracket of XT
-                                      (range(52,56), range(212,216)),
-                                      (range(52,56), range(216,220)),
-                                      (range(52,56), range(220,224)),
-                                      (range(52,56), range(224,228)),
-                                      (FadeIn, range(228, 232)) # Right bracket of XT
-                                      ))
+        with self.voiceover("And the entire Hessian is just gluing the rows together at the beginning.") as tracker:
+            entire_hess_tex = square_matrix_tex(4, 
+                                                lambda m, j: r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)).replace("m", str(m)), start_ij = 0)
+            glued_hess = MathTex(entire_hess_tex + 
+                                "=-" +
+                                latex_vector([r"X_{\cdot m}^T".replace("m",str(m)) for m in range(4)], "col") + 
+                                " W " + 
+                                latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")
+                                ).scale(0.89).next_to(glued_row, DOWN)
+            self.play(TransformByGlyphMap(glued_row.copy(),glued_hess,
+                                        ([0], range(7)), # Left bracket of hess
+                                        (range(1,49), range(7,55)),
+                                        (range(1,49), range(55,103)),
+                                        (range(1,49), range(103,151)),
+                                        (range(1,49), range(151,199)),
+                                        ([49], range(199,206)), # Right bracket of hess
+                                        ([50,51], [206,207]), # Equals sign and minus sign
+                                        (FadeIn, range(208,212)), # Left bracket of XT
+                                        (range(52,56), range(212,216)),
+                                        (range(52,56), range(216,220)),
+                                        (range(52,56), range(220,224)),
+                                        (range(52,56), range(224,228)),
+                                        (FadeIn, range(228, 232)) # Right bracket of XT
+                                        ))
         
         quadratic0 = MathTex("H=-X^T W X").move_to(glued_hess)
         self.play(TransformByGlyphMap(glued_hess, quadratic0,
