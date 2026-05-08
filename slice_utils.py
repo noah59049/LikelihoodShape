@@ -12,6 +12,8 @@ class GraphSlice:
     slice_plane: Surface        # red checkerboard plane cutting through (x0, y0)
     slice_curve: VMobject       # orange curve living on the 3D surface
     graph_curve: VMobject       # orange curve in the 2D axes (copy target)
+    base_dot: "Dot3D"           # 3D dot at (x0, y0, f(x0, y0))
+    dot2d: "Dot"                # 2D dot at axes2d.c2p(0, g(0))
     g: Callable                 # g(t) = f(gamma(t))
     g_prime: Callable           # g'(t) = dot(grad_f(gamma(t)), v)
     gamma: Callable             # gamma(t) -> array([x0 + t*v[0], y0 + t*v[1]])
@@ -41,11 +43,12 @@ class GraphSlice:
                             space then TransformFromCopy'd to its 2d_target
         run_time          : duration for each sub-animation
         """
+        all_copy_pairs = [(self.base_dot, self.dot2d)] + list(extra_copy_pairs or [])
+
         three_d_objects = [self.axes, self.surface, self.slice_plane, self.slice_curve]
+        three_d_objects.extend(obj3d for obj3d, _ in all_copy_pairs)
         if extra_3d_objects:
             three_d_objects.extend(extra_3d_objects)
-        if extra_copy_pairs:
-            three_d_objects.extend(obj3d for obj3d, _ in extra_copy_pairs)
         three_d_group = VGroup(*three_d_objects)
 
         scene.play(
@@ -66,7 +69,7 @@ class GraphSlice:
         )
         copy_animations = [TransformFromCopy(slice_curve_projected, self.graph_curve)]
 
-        for obj_3d, target_2d in (extra_copy_pairs or []):
+        for obj_3d, target_2d in all_copy_pairs:
             p2d = scene.camera.project_point(obj_3d.get_center())
             source_2d = Dot(p2d, color=obj_3d.get_color()).set_opacity(0)
             scene.add(source_2d)
@@ -98,6 +101,7 @@ def make_graph_slice(
     plane_resolution: Tuple = (10, 10),
     plane_fill_opacity: float = 0.6,
     plane_colors=None,
+    dot_color=RED,
 ) -> GraphSlice:
     """
     Build a directed slice of a 3D graph f(x, y) together with a matching
@@ -125,6 +129,8 @@ def make_graph_slice(
       .slice_plane — checkerboard plane through (x0, y0) in direction v
       .slice_curve — VMobject on the 3D surface (orange by default)
       .graph_curve — VMobject in the 2D axes (orange by default)
+      .base_dot    — Dot3D at (x0, y0, f(x0, y0))
+      .dot2d       — Dot at axes2d.c2p(0, g(0))
       .g           — g(t) = f(x0 + t*v[0], y0 + t*v[1])
       .g_prime     — g'(t) = dot(grad_f(gamma(t)), v)
       .gamma       — gamma(t) = array([x0 + t*v[0], y0 + t*v[1]])
@@ -183,6 +189,9 @@ def make_graph_slice(
         checkerboard_colors=plane_colors,
     )
 
+    base_dot = Dot3D(axes.c2p(x0, y0, z0), color=dot_color)
+    dot2d = Dot(axes2d.c2p(0, g(0)), color=dot_color)
+
     t_vals = np.linspace(u_range[0], u_range[1], slice_resolution)
     curve_3d_points = []
     curve_2d_points = []
@@ -205,6 +214,8 @@ def make_graph_slice(
         slice_plane=slice_plane,
         slice_curve=slice_curve,
         graph_curve=graph_curve,
+        base_dot=base_dot,
+        dot2d=dot2d,
         g=g,
         g_prime=g_prime,
         gamma=gamma,
