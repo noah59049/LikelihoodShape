@@ -156,7 +156,13 @@ class GlobalMax(ThreeDScene):
         # -------------------------------------------------------
         # Phase 4: Copy to 2D
         # -------------------------------------------------------
-        gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)])
+        three_d_objects = [gs.axes, gs.surface, gs.slice_plane, gs.slice_curve, gs.base_dot, Q_dot]
+        three_d_group = VGroup(*three_d_objects)
+        self.play(
+            three_d_group.animate.scale(0.8).to_corner(UR, buff=0.5),
+            run_time=1.35,
+        )
+        gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)], move_before_copy=False)
 
         # -------------------------------------------------------
         # Phase 5: 2D proof
