@@ -870,3 +870,27 @@ def rotate_90_cw(x0, y0, x, y, x_scale=1, y_scale=1):
 
     # Translate back
     return x0 + new_dx * x_scale, y0 + new_dy * y_scale
+
+class ReplacementTransformGroup(AnimationGroup):
+    def __init__(
+        self,
+        src_group,
+        dst_group,
+        lag_ratio=0,
+        check_length=True,
+        **kwargs
+    ):
+        if check_length and len(src_group) != len(dst_group):
+            raise ValueError(
+                f"Groups must have same length "
+                f"({len(src_group)} != {len(dst_group)})"
+            )
+
+        super().__init__(
+            *[
+                ReplacementTransform(src, dst)
+                for src, dst in zip(src_group, dst_group)
+            ],
+            lag_ratio=lag_ratio,
+            **kwargs
+        )

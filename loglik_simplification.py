@@ -2,7 +2,7 @@ from manim import *
 from MF_Tools import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
-from N_Tools import latex_vector, square_matrix_tex
+from N_Tools import latex_vector, square_matrix_tex, ReplacementTransformGroup
 
 class LoglikSimplificationScene(VoiceoverScene):
     def construct(self):
@@ -329,7 +329,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             r"X_{\cdot m}^T",
             W_tex,
             r"X_{\cdot j}").next_to(easy_dot2, DOWN)
-            self.play(*[ReplacementTransform(dot3[i], dot4[i]) for i in range(4)])
+            self.play(ReplacementTransformGroup(dot3, dot4))
         
         with self.voiceover("So let’s explicitly write out the vectors.") as tracker:
             dot5 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
@@ -338,7 +338,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             latex_vector([f"X_{{{i}j}}" for i in range(1,5)], orientation = "column")
             ).next_to(easy_dot2, DOWN)
             dot5.scale(0.87)
-            self.play(*[ReplacementTransform(dot4[i], dot5[i]) for i in range(4)])
+            self.play(ReplacementTransformGroup(dot4, dot5))
 
         with self.voiceover("The product of the matrix and the jth column is just the product of each row with that column vector.") as tracker:
             dot6 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
@@ -387,7 +387,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(FadeIn(hess_simplified4), FadeOut(dot10))
             hess_simplified5 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -",
                                     r"X_{\cdot m}^T W X_{\cdot j}").move_to(hess_simplified4, aligned_edge=LEFT)
-            self.play(*[ReplacementTransform(hess_simplified4[i], hess_simplified5[i]) for i in range(2)])
+            self.play(ReplacementTransformGroup(hess_simplified4, hess_simplified5))
 
             hess_simplified6 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -"+
                                     r"X_{\cdot m}^T W X_{\cdot j}").move_to(hess_simplified4, aligned_edge=LEFT)
