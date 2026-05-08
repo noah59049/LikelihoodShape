@@ -24,9 +24,10 @@ class SliceDemo(ThreeDScene):
         self.wait(0.5)
 
         base_dot = Dot3D(gs.axes.c2p(x0, y0, f(x0, y0)), color=RED)
+        dot2d = Dot(gs.axes2d.c2p(0, gs.g(0)), color=RED)
 
         self.play(FadeIn(gs.slice_plane), Create(gs.slice_curve), FadeIn(base_dot))
         self.wait(0.5)
 
-        gs.animate_copy(self, extra_3d_objects=[base_dot])
+        gs.animate_copy(self, extra_copy_pairs=[(base_dot, dot2d)])
         self.wait(1)

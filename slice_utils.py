@@ -23,6 +23,7 @@ class GraphSlice:
         self,
         scene,
         extra_3d_objects: Optional[List] = None,
+        extra_copy_pairs: Optional[List] = None,
         run_time: float = 1.35,
     ):
         """
@@ -32,14 +33,19 @@ class GraphSlice:
 
         Parameters
         ----------
-        scene            : ThreeDScene — the active Manim scene
-        extra_3d_objects : additional Mobjects to move with the 3D group
-                           (e.g. an arrow, a base dot)
-        run_time         : duration for each sub-animation
+        scene             : ThreeDScene — the active Manim scene
+        extra_3d_objects  : Mobjects to move with the 3D group (e.g. an arrow)
+                            that do NOT need a 2D copy
+        extra_copy_pairs  : list of (3d_obj, 2d_target) tuples — each 3d_obj
+                            moves with the group AND is projected to screen
+                            space then TransformFromCopy'd to its 2d_target
+        run_time          : duration for each sub-animation
         """
         three_d_objects = [self.axes, self.surface, self.slice_plane, self.slice_curve]
         if extra_3d_objects:
             three_d_objects.extend(extra_3d_objects)
+        if extra_copy_pairs:
+            three_d_objects.extend(obj3d for obj3d, _ in extra_copy_pairs)
         three_d_group = VGroup(*three_d_objects)
 
         scene.play(
@@ -58,11 +64,16 @@ class GraphSlice:
         slice_curve_projected.apply_function(
             lambda p: scene.camera.project_point(p)
         )
+        copy_animations = [TransformFromCopy(slice_curve_projected, self.graph_curve)]
 
-        scene.play(
-            TransformFromCopy(slice_curve_projected, self.graph_curve),
-            run_time=run_time,
-        )
+        for obj_3d, target_2d in (extra_copy_pairs or []):
+            p2d = scene.camera.project_point(obj_3d.get_center())
+            source_2d = Dot(p2d, color=obj_3d.get_color()).set_opacity(0)
+            scene.add(source_2d)
+            scene.add_fixed_in_frame_mobjects(target_2d)
+            copy_animations.append(TransformFromCopy(source_2d, target_2d))
+
+        scene.play(*copy_animations, run_time=run_time)
 
 
 def make_graph_slice(
