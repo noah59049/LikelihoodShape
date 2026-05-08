@@ -21,12 +21,14 @@ class GlobalMax(ThreeDScene):
             ])
 
         x0, y0 = 0.0, 0.0   # P
-        x_Q, y_Q = 2.0, 0.0  # Q
+        t_search_Q = np.linspace(0.5, 3.5, 1000)
+        t_Q = float(t_search_Q[np.argmax([f(t, 0.0) for t in t_search_Q])])
+        x_Q, y_Q = t_Q, 0.0  # Q at actual maximum along y=0
 
         # -------------------------------------------------------
         # GraphSlice: P toward Q, direction v = (1, 0)
         # u_range controls both the surface x-extent and the 2D axes t-range.
-        # P is at t=0, Q is at t=2 (since |Q-P|=2 and v=(1,0) normalized).
+        # P is at t=0, Q is at t=t_Q (actual max of f along y=0, near t≈1.9).
         # -------------------------------------------------------
         gs = make_graph_slice(
             f, grad_f,
@@ -49,12 +51,12 @@ class GlobalMax(ThreeDScene):
         # Extra 3D/2D objects
         # -------------------------------------------------------
         Q_dot   = Dot3D(gs.axes.c2p(x_Q, y_Q, f(x_Q, y_Q)), color=GREEN)
-        Q_dot2d = Dot(gs.axes2d.c2p(2, gs.g(2)), color=GREEN)
+        Q_dot2d = Dot(gs.axes2d.c2p(t_Q, gs.g(t_Q)), color=GREEN)
 
         # -------------------------------------------------------
-        # Find interior minimum M of g on (0, 2)
+        # Find interior minimum M of g on (0, t_Q)
         # -------------------------------------------------------
-        t_search = np.linspace(0.05, 1.95, 500)
+        t_search = np.linspace(0.05, t_Q - 0.05, 500)
         t_M = float(t_search[np.argmin([gs.g(t) for t in t_search])])
 
         eps = 1e-5
