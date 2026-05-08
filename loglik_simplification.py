@@ -303,30 +303,33 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         ([15],[13])))
         
         # --- Proving that that sum is a dot product with a diagonal matrix in between ---
-        dot0 = hess_simplified4[1].copy()
-        dot0.generate_target()
-        dot0.target.next_to(easy_dot2, DOWN)
-        self.play(MoveToTarget(dot0))
-        dot1 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(easy_dot2, DOWN)
-        self.play(TransformMatchingShapes(dot0,dot1, run_time = 0.001))
+        with self.voiceover("But we do have the wi in there.") as tracker:
+            dot0 = hess_simplified4[1].copy()
+            dot0.generate_target()
+            dot0.target.next_to(easy_dot2, DOWN)
+            self.play(MoveToTarget(dot0))
+            dot1 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(easy_dot2, DOWN)
+            self.play(TransformMatchingShapes(dot0,dot1, run_time = 0.001))
         
-        dot2 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = X_{\cdot m}^T W X_{\cdot j}").next_to(easy_dot2, DOWN)
-        self.play(TransformByGlyphMap(dot1, dot2,
-                                      (FadeIn, range(13,22))))
+        with self.voiceover("I claim that this sum, with the wi, is equal to the mth column transposed times the matrix W, times the jth column.") as tracker:
+            dot2 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = X_{\cdot m}^T W X_{\cdot j}").next_to(easy_dot2, DOWN)
+            self.play(TransformByGlyphMap(dot1, dot2,
+                                        (FadeIn, range(13,22))))
         
-        dot3 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
-        r"X_{\cdot m}^T",
-        r"W",
-        r"X_{\cdot j}").next_to(easy_dot2, DOWN)
-        self.play(TransformMatchingTex(dot2, dot3, run_time = 0.001))
-        W_generator = lambda i,j: f"w_{i}" if i == j else "0"
-        W_tex = square_matrix_tex(4, W_generator)
-        
-        dot4 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
-        r"X_{\cdot m}^T",
-        W_tex,
-        r"X_{\cdot j}").next_to(easy_dot2, DOWN)
-        self.play(*[ReplacementTransform(dot3[i], dot4[i]) for i in range(4)])
+        with self.voiceover("Where W is just a nxn diagonal matrix with the elements of wi on the diagonal.") as tracker:
+            dot3 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+            r"X_{\cdot m}^T",
+            r"W",
+            r"X_{\cdot j}").next_to(easy_dot2, DOWN)
+            self.play(TransformMatchingTex(dot2, dot3, run_time = 0.001))
+            W_generator = lambda i,j: f"w_{i}" if i == j else "0"
+            W_tex = square_matrix_tex(4, W_generator)
+            
+            dot4 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+            r"X_{\cdot m}^T",
+            W_tex,
+            r"X_{\cdot j}").next_to(easy_dot2, DOWN)
+            self.play(*[ReplacementTransform(dot3[i], dot4[i]) for i in range(4)])
         
         dot5 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
         latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
