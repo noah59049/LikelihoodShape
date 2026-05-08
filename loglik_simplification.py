@@ -397,6 +397,7 @@ class LoglikSimplificationScene(VoiceoverScene):
         with self.voiceover("I claim that it is equal to -X transpose times W times X.") as tracker:
             big_claim = MathTex("H=-X^T W X")
             self.play(Write(big_claim))
+            self.wait(tracker.duration - 2.1)
             self.play(FadeOut(big_claim))
 
         with self.voiceover("To see that, let’s just look at the mth row of the Hessian, which is just caused by gluing all the columns of X together at the right.") as tracker:
@@ -493,3 +494,9 @@ class LoglikSimplificationScene(VoiceoverScene):
             quadratic6 = MathTex(r"D_{\vec{v}}^2(l) = -\sum_{i=1}^{n} w_i u_i^2")
             self.play(TransformByGlyphMap(quadratic5, quadratic6,
                                         ([14,15],[17], {"path_arc": -PI/3})))
+            
+        with self.voiceover("It’s v transpose H v, which if we plug the definition of the Hessian in,") as tracker:
+            ...
+
+        with self.voiceover("59. Because this sum is positive, the directional second derivative must be negative.") as tracker:
+            ...
