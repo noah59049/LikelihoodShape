@@ -20,6 +20,7 @@ class GraphSlice:
     v: np.ndarray               # normalized direction vector
     x0: float
     y0: float
+    move_before_copy: bool
 
     def animate_copy(
         self,
@@ -51,10 +52,11 @@ class GraphSlice:
             three_d_objects.extend(extra_3d_objects)
         three_d_group = VGroup(*three_d_objects)
 
-        scene.play(
-            three_d_group.animate.scale(0.8).to_edge(RIGHT, buff=0.5),
-            run_time=run_time,
-        )
+        if self.move_before_copy:
+            scene.play(
+                three_d_group.animate.scale(0.8).to_edge(RIGHT, buff=0.5),
+                run_time=run_time,
+            )
 
         scene.add_fixed_in_frame_mobjects(self.axes2d)
         scene.play(FadeIn(self.axes2d))
@@ -102,6 +104,7 @@ def make_graph_slice(
     plane_fill_opacity: float = 0.6,
     plane_colors=None,
     dot_color=RED,
+    move_before_copy=True
 ) -> GraphSlice:
     """
     Build a directed slice of a 3D graph f(x, y) together with a matching
@@ -119,6 +122,7 @@ def make_graph_slice(
     axes2d_scale     : uniform scale applied to the 2D Axes object
     slice_resolution : number of sample points along the slice curve
     slice_color      : color for both the 3D and 2D slice curves
+    move_before_copy : if True, moves 3D graph to right edge and scales to size 0.8 before copying
 
     Returns
     -------
@@ -136,6 +140,7 @@ def make_graph_slice(
       .gamma       — gamma(t) = array([x0 + t*v[0], y0 + t*v[1]])
       .v           — normalised direction vector
       .x0, .y0     — starting point
+      .move_before_copy - the bool passed in
     """
     if plane_colors is None:
         plane_colors = [RED_D, RED_E]
@@ -222,4 +227,5 @@ def make_graph_slice(
         v=v,
         x0=x0,
         y0=y0,
+        move_before_copy=move_before_copy
     )
