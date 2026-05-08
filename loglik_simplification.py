@@ -331,53 +331,57 @@ class LoglikSimplificationScene(VoiceoverScene):
             r"X_{\cdot j}").next_to(easy_dot2, DOWN)
             self.play(*[ReplacementTransform(dot3[i], dot4[i]) for i in range(4)])
         
-        dot5 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
-        latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
-        W_tex,
-        latex_vector([f"X_{{{i}j}}" for i in range(1,5)], orientation = "column")
-        ).next_to(easy_dot2, DOWN)
-        dot5.scale(0.87)
-        self.play(*[ReplacementTransform(dot4[i], dot5[i]) for i in range(4)])
+        with self.voiceover("So let’s explicitly write out the vectors.") as tracker:
+            dot5 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+            latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
+            W_tex,
+            latex_vector([f"X_{{{i}j}}" for i in range(1,5)], orientation = "column")
+            ).next_to(easy_dot2, DOWN)
+            dot5.scale(0.87)
+            self.play(*[ReplacementTransform(dot4[i], dot5[i]) for i in range(4)])
 
-        dot6 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
-        latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
-        W_tex+
-        latex_vector([f"X_{{{i}j}}" for i in range(1,5)], orientation = "column")
-        ).next_to(easy_dot2, DOWN)
-        dot6.scale(0.87)
-        self.play(TransformMatchingTex(dot5, dot6, run_time = 0.001))
+        with self.voiceover("The product of the matrix and the jth column is just the product of each row with that column vector.") as tracker:
+            dot6 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+            latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
+            W_tex+
+            latex_vector([f"X_{{{i}j}}" for i in range(1,5)], orientation = "column")
+            ).next_to(easy_dot2, DOWN)
+            dot6.scale(0.87)
+            self.play(TransformMatchingTex(dot5, dot6, run_time = 0.001))
 
-        self.play(FadeOut(easy_dot2, hess_simplified4)) # We need the whole screen for this transformation
-        dot7 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
-        latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
-        latex_vector([latex_vector([W_generator(i,j) for j in range(1,5)],"row") + 
-                      latex_vector([f"X_{{{j}j}}" for j in range(1,5)], orientation = "column")
-                        for i in range(1,5)])
-        )
-        dot7.scale(0.87)
-        self.play(*[ReplacementTransform(dot6[i], dot7[i]) for i in range(2)],
-                  TransformMatchingShapes(dot6[2], dot7[2]))
+            self.play(FadeOut(easy_dot2, hess_simplified4)) # We need the whole screen for this transformation
+            dot7 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+            latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
+            latex_vector([latex_vector([W_generator(i,j) for j in range(1,5)],"row") + 
+                        latex_vector([f"X_{{{j}j}}" for j in range(1,5)], orientation = "column")
+                            for i in range(1,5)])
+            )
+            dot7.scale(0.87)
+            self.play(*[ReplacementTransform(dot6[i], dot7[i]) for i in range(2)],
+                    TransformMatchingShapes(dot6[2], dot7[2]))
         
-        dot8 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
-        latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
-        latex_vector([f"w_{j} X_{{{j}j}}" for j in range(1,5)], orientation = "column")
-        )
-        dot8.scale(0.87)
-        self.play(*[ReplacementTransform(dot7[i], dot8[i]) for i in range(2)],
-                  TransformMatchingShapes(dot7[2], dot8[2]))
+        with self.voiceover("And everything is multiplied with 0 except wi times Xij.") as tracker:
+            dot8 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+            latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
+            latex_vector([f"w_{j} X_{{{j}j}}" for j in range(1,5)], orientation = "column")
+            )
+            dot8.scale(0.87)
+            self.play(*[ReplacementTransform(dot7[i], dot8[i]) for i in range(2)],
+                    TransformMatchingShapes(dot7[2], dot8[2]))
         
-        dot9 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
-        latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row") +
-        latex_vector([f"w_{j} X_{{{j}j}}" for j in range(1,5)], orientation = "column")
-        )
-        dot9.scale(0.87)
-        self.play(TransformMatchingTex(dot8, dot9, run_time = 0.001))
+        with self.voiceover("And now you expand out the matrix vector product, and you see that my claim was correct. The sum is equal to the mth column transposed times the matrix W, times the jth column.") as tracker:
+            dot9 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+            latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row") +
+            latex_vector([f"w_{j} X_{{{j}j}}" for j in range(1,5)], orientation = "column")
+            )
+            dot9.scale(0.87)
+            self.play(TransformMatchingTex(dot8, dot9, run_time = 0.001))
 
-        dot10 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
-        r"X_{1m}w_1X_{1j}+X_{2m}w_2X_{2j}+X_{3m}w_3X_{3j}+X_{4m}w_4X_{4j}"
-        )
-        dot10.scale(0.87)
-        self.play(ReplacementTransform(dot9[0], dot10[0]), TransformMatchingShapes(dot9[1], dot10[1]))
+            dot10 = MathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
+            r"X_{1m}w_1X_{1j}+X_{2m}w_2X_{2j}+X_{3m}w_3X_{3j}+X_{4m}w_4X_{4j}"
+            )
+            dot10.scale(0.87)
+            self.play(ReplacementTransform(dot9[0], dot10[0]), TransformMatchingShapes(dot9[1], dot10[1]))
         
         self.play(FadeIn(hess_simplified4), FadeOut(dot10))
         hess_simplified5 = MathTex(r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -",
