@@ -120,7 +120,7 @@ class GlobalMax(ThreeDScene):
         # Phase 1: Small domain — paraboloid only, P looks like global max
         # -------------------------------------------------------
         surf_small = Surface(
-            lambda u, v: gs.axes.c2p(u, v, -(u**2 + v**2)),
+            lambda u, v: gs.axes.c2p(u, v, f(u,v)),
             u_range=(-1, 1),
             v_range=(-1, 1),
             resolution=(12, 12),
