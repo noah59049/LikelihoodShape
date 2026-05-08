@@ -140,6 +140,7 @@ class GlobalMax(ThreeDScene):
             FadeIn(gs.surface),
             run_time=1.5,
         )
+        self.remove(surf_small)
         self.play(FadeIn(Q_dot))
         self.wait(0.5)
 
