@@ -9,6 +9,7 @@ class GraphSlice:
     axes: ThreeDAxes
     axes2d: Axes
     surface: Surface
+    slice_plane: Surface        # red checkerboard plane cutting through (x0, y0)
     slice_curve: VMobject       # orange curve living on the 3D surface
     graph_curve: VMobject       # orange curve in the 2D axes (copy target)
     g: Callable                 # g(t) = f(gamma(t))
@@ -33,10 +34,10 @@ class GraphSlice:
         ----------
         scene            : ThreeDScene — the active Manim scene
         extra_3d_objects : additional Mobjects to move with the 3D group
-                           (e.g. a slice plane, an arrow, a base dot)
+                           (e.g. an arrow, a base dot)
         run_time         : duration for each sub-animation
         """
-        three_d_objects = [self.axes, self.surface, self.slice_curve]
+        three_d_objects = [self.axes, self.surface, self.slice_plane, self.slice_curve]
         if extra_3d_objects:
             three_d_objects.extend(extra_3d_objects)
         three_d_group = VGroup(*three_d_objects)
@@ -81,6 +82,11 @@ def make_graph_slice(
     axes2d_scale: float = 0.56,
     slice_resolution: int = 100,
     slice_color=ORANGE,
+    plane_u_range: Tuple = (-2, 2),
+    plane_v_range: Tuple = (-3, 3),
+    plane_resolution: Tuple = (10, 10),
+    plane_fill_opacity: float = 0.6,
+    plane_colors=None,
 ) -> GraphSlice:
     """
     Build a directed slice of a 3D graph f(x, y) together with a matching
@@ -105,6 +111,7 @@ def make_graph_slice(
       .axes        — ThreeDAxes
       .axes2d      — Axes (2D, scaled to DL corner)
       .surface     — Surface of f
+      .slice_plane — checkerboard plane through (x0, y0) in direction v
       .slice_curve — VMobject on the 3D surface (orange by default)
       .graph_curve — VMobject in the 2D axes (orange by default)
       .g           — g(t) = f(x0 + t*v[0], y0 + t*v[1])
@@ -113,6 +120,8 @@ def make_graph_slice(
       .v           — normalised direction vector
       .x0, .y0     — starting point
     """
+    if plane_colors is None:
+        plane_colors = [RED_D, RED_E]
     v = np.array(v, dtype=float)
     v = v / np.linalg.norm(v)
 
@@ -149,6 +158,20 @@ def make_graph_slice(
         fill_opacity=fill_opacity,
     )
 
+    z0 = f(x0, y0)
+    slice_plane = Surface(
+        lambda s, t: axes.c2p(
+            x0 + s * v[0],
+            y0 + s * v[1],
+            z0 + t,
+        ),
+        u_range=plane_u_range,
+        v_range=plane_v_range,
+        resolution=plane_resolution,
+        fill_opacity=plane_fill_opacity,
+        checkerboard_colors=plane_colors,
+    )
+
     t_vals = np.linspace(u_range[0], u_range[1], slice_resolution)
     curve_3d_points = []
     curve_2d_points = []
@@ -168,6 +191,7 @@ def make_graph_slice(
         axes=axes,
         axes2d=axes2d,
         surface=surface,
+        slice_plane=slice_plane,
         slice_curve=slice_curve,
         graph_curve=graph_curve,
         g=g,
