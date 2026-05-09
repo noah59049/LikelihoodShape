@@ -55,6 +55,9 @@ class GlobalMax(ThreeDScene):
         Q_dot   = Dot3D(gs.axes.c2p(x_Q, y_Q, f(x_Q, y_Q)), color=GREEN)
         Q_dot2d = Dot(gs.axes2d.c2p(t_Q, gs.g(t_Q)), color=GREEN)
 
+        P_label_3d = MathTex("P", color=RED,   font_size=36).next_to(gs.base_dot, UP, buff=0.1)
+        Q_label_3d = MathTex("Q", color=GREEN, font_size=36).next_to(Q_dot,       UP, buff=0.1)
+
         # -------------------------------------------------------
         # Find interior minimum M of g on (0, t_Q)
         # -------------------------------------------------------
@@ -144,7 +147,7 @@ class GlobalMax(ThreeDScene):
         self.wait(1)
 
         self.play(Create(gs.axes), Create(surf_small))
-        self.play(FadeIn(gs.base_dot))
+        self.play(FadeIn(gs.base_dot), FadeIn(P_label_3d))
         self.wait(1)
 
         # -------------------------------------------------------
@@ -161,7 +164,7 @@ class GlobalMax(ThreeDScene):
             run_time=1.5,
         )
         self.remove(surf_small)
-        self.play(FadeIn(Q_dot))
+        self.play(FadeIn(Q_dot), FadeIn(Q_label_3d))
         self.wait(0.5)
 
         # -------------------------------------------------------
@@ -174,7 +177,7 @@ class GlobalMax(ThreeDScene):
         # -------------------------------------------------------
         # Phase 4: Copy to 2D
         # -------------------------------------------------------
-        three_d_group = VGroup(gs.axes, gs.surface, gs.slice_plane, gs.slice_curve, gs.base_dot, Q_dot)
+        three_d_group = VGroup(gs.axes, gs.surface, gs.slice_plane, gs.slice_curve, gs.base_dot, Q_dot, P_label_3d, Q_label_3d)
         shift = shift_to_screen_corner(self, three_d_group, corner=UR, scale = 0.5)
         self.play(three_d_group.animate.shift(shift).scale(0.5), run_time=1.35)
         gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)], move_before_copy=False)
