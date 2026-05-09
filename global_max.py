@@ -135,6 +135,11 @@ class GlobalMax(ThreeDScene):
         surf_small.set_fill(BLUE_B, opacity=0.35)
 
         self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
+
+        self.add_fixed_in_frame_mobjects(t0_txt)
+        self.play(FadeIn(t0_txt))
+        self.wait(1)
+
         self.play(Create(gs.axes), Create(surf_small))
         self.play(FadeIn(gs.base_dot))
         self.wait(1)
@@ -142,6 +147,11 @@ class GlobalMax(ThreeDScene):
         # -------------------------------------------------------
         # Phase 2: Extend domain — gaussian bump appears, Q revealed
         # -------------------------------------------------------
+        self.add_fixed_in_frame_mobjects(t1_txt)
+        self.play(FadeOut(t0_txt), FadeIn(t1_txt))
+        # self.add(t1_txt)
+        self.wait(1)
+
         self.play(
             FadeOut(surf_small),
             FadeIn(gs.surface),
@@ -193,16 +203,6 @@ class GlobalMax(ThreeDScene):
         # -------------------------------------------------------
         self.add_fixed_in_frame_mobjects(P_label_2d, Q_label_2d)
         self.play(FadeIn(P_label_2d), FadeIn(Q_label_2d))
-
-        self.add_fixed_in_frame_mobjects(t0_txt)
-        self.play(FadeIn(t0_txt))
-        self.wait(1)
-
-        # t1_txt.set_opacity(0)
-        self.add_fixed_in_frame_mobjects(t1_txt)
-        self.play(FadeOut(t0_txt), FadeIn(t1_txt))
-        # self.add(t1_txt)
-        self.wait(1)
 
         # t2_txt.set_opacity(0)
         self.add_fixed_in_frame_mobjects(t2_txt)
