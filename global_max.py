@@ -147,9 +147,29 @@ class GlobalMax(ThreeDScene):
         self.play(FadeIn(t0_txt))
         self.wait(1)
 
-        self.play(Create(gs.axes), Create(surf_small))
+        self.play(Create(gs.axes))
         self.add_fixed_orientation_mobjects(P_label_3d)
         self.play(FadeIn(gs.base_dot), FadeIn(P_label_3d))
+
+        # Draw arcs in 8 directions from P, showing it curves down in every direction
+        arc_t_vals = np.linspace(-1.2, 1.2, 60)
+        dir_arcs = VGroup()
+        for i in range(8):
+            th = i * PI / 8
+            arc = VMobject(color=BLUE_B, stroke_width=2)
+            arc.set_points_as_corners([
+                gs.axes.c2p(t * np.cos(th), t * np.sin(th),
+                            f(t * np.cos(th), t * np.sin(th)))
+                for t in arc_t_vals
+            ])
+            dir_arcs.add(arc)
+        self.play(LaggedStart(*[Create(arc) for arc in dir_arcs],
+                              lag_ratio=0.25, run_time=2.5))
+        self.wait(0.5)
+
+        self.play(FadeIn(surf_small),
+                  *[FadeOut(arc) for arc in dir_arcs],
+                  run_time=1)
         self.wait(1)
 
         # -------------------------------------------------------
