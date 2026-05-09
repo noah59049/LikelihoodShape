@@ -168,7 +168,7 @@ class GlobalMax(ThreeDScene):
         # t1_txt.set_opacity(0)
         self.add_fixed_in_frame_mobjects(t1_txt)
         self.play(FadeOut(t0_txt), FadeIn(t1_txt))
-        self.add(t1_txt)
+        # self.add(t1_txt)
         self.wait(1)
 
         # t2_txt.set_opacity(0)
