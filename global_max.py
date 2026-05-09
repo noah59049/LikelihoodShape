@@ -156,6 +156,28 @@ class GlobalMax(ThreeDScene):
         self.play(three_d_group.animate.shift(shift).scale(0.5), run_time=1.35)
         gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)], move_before_copy=False)
 
+        # Build conclusion targets: pure negative paraboloid, created after the 3D group
+        # has been moved/scaled so gs.axes.c2p() gives the right coordinates.
+        t_vals = np.linspace(-2.3, 2.3, 100)
+        conclusion_surface = Surface(
+            lambda u, v: gs.axes.c2p(u, v, -(u**2 + v**2)),
+            u_range=(-2.3, 2.3),
+            v_range=(-2, 2),
+            resolution=(18, 18),
+            fill_opacity=0.35,
+        )
+        conclusion_surface.set_fill(BLUE_B, opacity=0.35)
+
+        conclusion_slice_3d = VMobject(color=ORANGE)
+        conclusion_slice_3d.set_points_as_corners(
+            [gs.axes.c2p(t, 0, -(t**2)) for t in t_vals]
+        )
+
+        conclusion_graph_2d = VMobject(color=ORANGE)
+        conclusion_graph_2d.set_points_as_corners(
+            [gs.axes2d.c2p(t, -(t**2)) for t in t_vals]
+        )
+
         # -------------------------------------------------------
         # Phase 5: 2D proof
         # -------------------------------------------------------
@@ -212,7 +234,11 @@ class GlobalMax(ThreeDScene):
 
         # Conclusion
         self.play(FadeOut(P_arc, M_arc, M_dot_2d, M_label_2d))
-        # t8_txt.set_opacity(0)
         self.add_fixed_in_frame_mobjects(t8_txt)
-        self.play(FadeOut(t7_txt), FadeIn(t8_txt))
+        self.play(
+            FadeOut(t7_txt), FadeIn(t8_txt),
+            Transform(gs.surface, conclusion_surface),
+            Transform(gs.slice_curve, conclusion_slice_3d),
+            Transform(gs.graph_curve, conclusion_graph_2d),
+        )
         self.wait(2)
