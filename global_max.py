@@ -183,10 +183,10 @@ class GlobalMax(ThreeDScene):
         self.wait(1)
 
         # Q is not the min
-        self.play(Indicate(Q_dot2d, scale_factor=1.5, color=GREEN))
+        # self.play(Indicate(Q_dot2d, scale_factor=1.5, color=GREEN))
         # t4_txt.set_opacity(0)
         self.add_fixed_in_frame_mobjects(t4_txt)
-        self.play(FadeOut(t3_txt), FadeIn(t4_txt))
+        self.play(FadeOut(t3_txt), FadeIn(t4_txt), Indicate(Q_dot2d, scale_factor=1.5, color=GREEN))
         self.wait(1)
 
         # Interior min M
