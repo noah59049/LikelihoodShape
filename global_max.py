@@ -68,7 +68,7 @@ class GlobalMax(ThreeDScene):
         # -------------------------------------------------------
         # 2D concavity arcs
         # -------------------------------------------------------
-        def concavity_arc_2d(t0, g_pp, width=0.16, visual_scale=3.0, color=YELLOW):
+        def concavity_arc_2d(t0, g_pp, width=0.32, visual_scale=6.0, color=RED):
             ts = np.linspace(t0 - width, t0 + width, 60)
             pts = [gs.axes2d.c2p(t, gs.g(t0) + 0.5 * g_pp * visual_scale * (t - t0)**2)
                    for t in ts]
