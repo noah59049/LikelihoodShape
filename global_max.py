@@ -165,44 +165,45 @@ class GlobalMax(ThreeDScene):
         self.play(FadeIn(t0_txt))
         self.wait(1)
 
-        t1_txt.set_opacity(0)
+        # t1_txt.set_opacity(0)
         self.add_fixed_in_frame_mobjects(t1_txt)
-        self.play(FadeTransform(t0_txt, t1_txt))
+        self.play(FadeOut(t0_txt), FadeIn(t1_txt))
+        self.add(t1_txt)
         self.wait(1)
 
-        t2_txt.set_opacity(0)
+        # t2_txt.set_opacity(0)
         self.add_fixed_in_frame_mobjects(t2_txt)
-        self.play(FadeTransform(t1_txt, t2_txt))
+        self.play(FadeOut(t1_txt), FadeIn(t2_txt))
         self.wait(1)
 
         # P is not the min — show concave-down arc
-        t3_txt.set_opacity(0)
+        # t3_txt.set_opacity(0)
         self.add_fixed_in_frame_mobjects(P_arc, t3_txt)
-        self.play(FadeIn(P_arc), FadeTransform(t2_txt, t3_txt))
+        self.play(FadeIn(P_arc), FadeOut(t2_txt), FadeIn(t3_txt))
         self.wait(1)
 
         # Q is not the min
         self.play(Indicate(Q_dot2d, scale_factor=1.5, color=GREEN))
-        t4_txt.set_opacity(0)
+        # t4_txt.set_opacity(0)
         self.add_fixed_in_frame_mobjects(t4_txt)
-        self.play(FadeTransform(t3_txt, t4_txt))
+        self.play(FadeOut(t3_txt), FadeIn(t4_txt))
         self.wait(1)
 
         # Interior min M
-        t5_txt.set_opacity(0)
+        # t5_txt.set_opacity(0)
         self.add_fixed_in_frame_mobjects(M_dot_2d, M_label_2d, t5_txt)
-        self.play(FadeIn(M_dot_2d), FadeIn(M_label_2d), FadeTransform(t4_txt, t5_txt))
+        self.play(FadeIn(M_dot_2d), FadeIn(M_label_2d), FadeOut(t4_txt), FadeIn(t5_txt))
         self.wait(0.5)
 
         # M is local min — show concave-up arc → contradiction
-        t6_txt.set_opacity(0)
+        # t6_txt.set_opacity(0)
         self.add_fixed_in_frame_mobjects(M_arc, t6_txt)
-        self.play(FadeIn(M_arc), FadeTransform(t5_txt, t6_txt))
+        self.play(FadeIn(M_arc), FadeOut(t5_txt), FadeIn(t6_txt))
         self.wait(1)
 
-        t7_txt.set_opacity(0)
+        # t7_txt.set_opacity(0)
         self.add_fixed_in_frame_mobjects(t7_txt)
-        self.play(FadeTransform(t6_txt, t7_txt))
+        self.play(FadeOut(t6_txt), FadeIn(t7_txt))
         self.play(
             Flash(gs.axes2d.c2p(t_M, gs.g(t_M)), color=RED, flash_radius=0.3),
             M_arc.animate.set_color(YELLOW),
@@ -211,7 +212,7 @@ class GlobalMax(ThreeDScene):
 
         # Conclusion
         self.play(FadeOut(P_arc, M_arc, M_dot_2d, M_label_2d))
-        t8_txt.set_opacity(0)
+        # t8_txt.set_opacity(0)
         self.add_fixed_in_frame_mobjects(t8_txt)
-        self.play(FadeTransform(t7_txt, t8_txt))
+        self.play(FadeOut(t7_txt), FadeIn(t8_txt))
         self.wait(2)
