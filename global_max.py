@@ -150,7 +150,7 @@ class GlobalMax(ThreeDScene):
         # Phase 4: Copy to 2D
         # -------------------------------------------------------
         three_d_group = VGroup(gs.axes, gs.surface, gs.slice_plane, gs.slice_curve, gs.base_dot, Q_dot)
-        three_d_group.scale(0.8)
+        three_d_group.scale(0.5)
         shift = shift_to_screen_corner(self, three_d_group, corner=UR)
         self.play(three_d_group.animate.shift(shift), run_time=1.35)
         gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)], move_before_copy=False)
