@@ -47,6 +47,7 @@ class GlobalMax(ThreeDScene):
             plane_v_range=(-5, 1.5),
             dot_color=RED,
         )
+        gs.surface.set_fill(BLUE_B, opacity=0.35)
 
         # -------------------------------------------------------
         # Extra 3D/2D objects
