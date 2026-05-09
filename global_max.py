@@ -103,7 +103,8 @@ class GlobalMax(ThreeDScene):
         def make_step(*lines, color=WHITE):
             rows = [Tex(line, font_size=40, color=color) for line in lines]
             group = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.25) \
-                                 .move_to(np.array([-3.8, 1.5, 0]))
+                                 .to_corner(UL)
+                                 # .move_to(np.array([-3.8, 1.5, 0]))
             group.set_stroke(color, width=1.5, background=False)
             return group
 
@@ -177,6 +178,21 @@ class GlobalMax(ThreeDScene):
         shift = shift_to_screen_corner(self, three_d_group, corner=UR, scale = 0.5)
         self.play(three_d_group.animate.shift(shift).scale(0.5), run_time=1.35)
         gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)], move_before_copy=False)
+
+        # Highlight [P, Q] on the 2D graph, then trim away the rest
+        t_pq = np.linspace(0, t_Q, 80)
+        pq_highlight = VMobject(color=YELLOW, stroke_width=6)
+        pq_highlight.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
+        self.add_fixed_in_frame_mobjects(pq_highlight)
+        self.play(FadeIn(pq_highlight))
+        self.wait(0.5)
+
+        pq_curve = VMobject(color=ORANGE)
+        pq_curve.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
+        self.play(
+            FadeOut(pq_highlight),
+            Transform(gs.graph_curve, pq_curve),
+        )
 
         # Build conclusion targets: pure negative paraboloid, created after the 3D group
         # has been moved/scaled so gs.axes.c2p() gives the right coordinates.
