@@ -122,6 +122,7 @@ class GlobalMax(ThreeDScene):
             resolution=(12, 12),
             fill_opacity=0.5,
         )
+        surf_small.set_fill(BLUE_B, opacity=0.35)
 
         self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
         self.play(Create(gs.axes), Create(surf_small))
