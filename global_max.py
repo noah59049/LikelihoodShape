@@ -235,10 +235,14 @@ class GlobalMax(ThreeDScene):
         # Conclusion
         self.play(FadeOut(P_arc, M_arc, M_dot_2d, M_label_2d))
         self.add_fixed_in_frame_mobjects(t8_txt)
+        new_q_2d = gs.axes2d.c2p(t_Q, -(t_Q**2))
         self.play(
             FadeOut(t7_txt), FadeIn(t8_txt),
             Transform(gs.surface, conclusion_surface),
             Transform(gs.slice_curve, conclusion_slice_3d),
             Transform(gs.graph_curve, conclusion_graph_2d),
+            Q_dot.animate.move_to(gs.axes.c2p(t_Q, 0, -(t_Q**2))),
+            Q_dot2d.animate.move_to(new_q_2d),
+            Q_label_2d.animate.next_to(new_q_2d, UR, buff=0.08),
         )
         self.wait(2)
