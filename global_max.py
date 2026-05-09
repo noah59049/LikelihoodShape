@@ -55,8 +55,9 @@ class GlobalMax(ThreeDScene):
         Q_dot   = Dot3D(gs.axes.c2p(x_Q, y_Q, f(x_Q, y_Q)), color=GREEN)
         Q_dot2d = Dot(gs.axes2d.c2p(t_Q, gs.g(t_Q)), color=GREEN)
 
-        P_label_3d = MathTex("P", color=RED,   font_size=36).next_to(gs.base_dot, UP, buff=0.1)
-        Q_label_3d = MathTex("Q", color=GREEN, font_size=36).next_to(Q_dot,       UP, buff=0.1)
+        P_label_3d = MathTex("P", color=RED,   font_size=36).next_to(gs.base_dot, OUT, buff=0.15)
+        Q_label_3d = MathTex("Q", color=GREEN, font_size=36).next_to(Q_dot,       OUT, buff=0.15)
+        # self.add_fixed_orientation_mobjects(P_label_3d, Q_label_3d)
 
         # -------------------------------------------------------
         # Find interior minimum M of g on (0, t_Q)
@@ -147,6 +148,7 @@ class GlobalMax(ThreeDScene):
         self.wait(1)
 
         self.play(Create(gs.axes), Create(surf_small))
+        self.add_fixed_orientation_mobjects(P_label_3d)
         self.play(FadeIn(gs.base_dot), FadeIn(P_label_3d))
         self.wait(1)
 
@@ -164,6 +166,7 @@ class GlobalMax(ThreeDScene):
             run_time=1.5,
         )
         self.remove(surf_small)
+        self.add_fixed_orientation_mobjects(Q_label_3d)
         self.play(FadeIn(Q_dot), FadeIn(Q_label_3d))
         self.wait(0.5)
 
