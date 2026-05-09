@@ -110,14 +110,6 @@ class GlobalMax(ThreeDScene):
         t8_txt = make_step(r"$\therefore$ $P$ is the",
                            r"global maximum", color=GREEN)
 
-        all_steps    = [t0_txt, t1_txt, t2_txt, t3_txt, t4_txt,
-                        t5_txt, t6_txt, t7_txt, t8_txt]
-        all_2d_extra = [P_arc, M_arc, M_dot_2d, M_label_2d,
-                        P_label_2d, Q_label_2d]
-
-        # Register all fixed-in-frame 2D elements upfront, then hide
-        self.add_fixed_in_frame_mobjects(*all_steps, *all_2d_extra)
-        self.remove(*all_steps, *all_2d_extra)
 
         # -------------------------------------------------------
         # Phase 1: Small domain — paraboloid only, P looks like global max
@@ -163,39 +155,53 @@ class GlobalMax(ThreeDScene):
         self.play(three_d_group.animate.shift(shift), run_time=1.35)
         gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)], move_before_copy=False)
 
-        gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)], move_before_copy=False)
-
         # -------------------------------------------------------
         # Phase 5: 2D proof
         # -------------------------------------------------------
+        self.add_fixed_in_frame_mobjects(P_label_2d, Q_label_2d)
         self.play(FadeIn(P_label_2d), FadeIn(Q_label_2d))
+
+        self.add_fixed_in_frame_mobjects(t0_txt)
         self.play(FadeIn(t0_txt))
         self.wait(1)
 
+        t1_txt.set_opacity(0)
+        self.add_fixed_in_frame_mobjects(t1_txt)
         self.play(FadeTransform(t0_txt, t1_txt))
         self.wait(1)
 
+        t2_txt.set_opacity(0)
+        self.add_fixed_in_frame_mobjects(t2_txt)
         self.play(FadeTransform(t1_txt, t2_txt))
         self.wait(1)
 
         # P is not the min — show concave-down arc
+        t3_txt.set_opacity(0)
+        self.add_fixed_in_frame_mobjects(P_arc, t3_txt)
         self.play(FadeIn(P_arc), FadeTransform(t2_txt, t3_txt))
         self.wait(1)
 
         # Q is not the min
         self.play(Indicate(Q_dot2d, scale_factor=1.5, color=GREEN))
+        t4_txt.set_opacity(0)
+        self.add_fixed_in_frame_mobjects(t4_txt)
         self.play(FadeTransform(t3_txt, t4_txt))
         self.wait(1)
 
         # Interior min M
-        self.play(FadeIn(M_dot_2d), FadeIn(M_label_2d),
-                  FadeTransform(t4_txt, t5_txt))
+        t5_txt.set_opacity(0)
+        self.add_fixed_in_frame_mobjects(M_dot_2d, M_label_2d, t5_txt)
+        self.play(FadeIn(M_dot_2d), FadeIn(M_label_2d), FadeTransform(t4_txt, t5_txt))
         self.wait(0.5)
 
         # M is local min — show concave-up arc → contradiction
+        t6_txt.set_opacity(0)
+        self.add_fixed_in_frame_mobjects(M_arc, t6_txt)
         self.play(FadeIn(M_arc), FadeTransform(t5_txt, t6_txt))
         self.wait(1)
 
+        t7_txt.set_opacity(0)
+        self.add_fixed_in_frame_mobjects(t7_txt)
         self.play(FadeTransform(t6_txt, t7_txt))
         self.play(
             Flash(gs.axes2d.c2p(t_M, gs.g(t_M)), color=RED, flash_radius=0.3),
@@ -205,5 +211,7 @@ class GlobalMax(ThreeDScene):
 
         # Conclusion
         self.play(FadeOut(P_arc, M_arc, M_dot_2d, M_label_2d))
+        t8_txt.set_opacity(0)
+        self.add_fixed_in_frame_mobjects(t8_txt)
         self.play(FadeTransform(t7_txt, t8_txt))
         self.wait(2)
