@@ -69,6 +69,7 @@ class GlobalMax(ThreeDScene):
         # 2D concavity arcs
         # -------------------------------------------------------
         def concavity_arc_2d(t0, g_pp, width=0.32, visual_scale=6.0, color=RED):
+            # g_pp stands for g prime prime, the second derivative of g
             ts = np.linspace(t0 - width, t0 + width, 60)
             pts = [gs.axes2d.c2p(t, gs.g(t0) + 0.5 * g_pp * visual_scale * (t - t0)**2)
                    for t in ts]
@@ -76,8 +77,8 @@ class GlobalMax(ThreeDScene):
             arc.set_points_as_corners(pts)
             return arc
 
-        P_arc     = concavity_arc_2d(0,   g_pp_P, color=YELLOW)
-        M_arc     = concavity_arc_2d(t_M, g_pp_M, color=RED)
+        P_arc     = concavity_arc_2d(0,   g_pp_P, color=RED, width = 0.32)
+        M_arc     = concavity_arc_2d(t_M, g_pp_M, color=RED, width = 0.23)
         M_dot_2d  = Dot(gs.axes2d.c2p(t_M, gs.g(t_M)), color=ORANGE, radius=0.07)
         M_label_2d = MathTex("M", color=ORANGE, font_size=24) \
                         .next_to(M_dot_2d, DOWN, buff=0.08)
