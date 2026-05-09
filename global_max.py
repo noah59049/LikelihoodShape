@@ -218,7 +218,7 @@ class GlobalMax(ThreeDScene):
 
         conclusion_graph_2d = VMobject(color=ORANGE)
         conclusion_graph_2d.set_points_as_corners(
-            [gs.axes2d.c2p(t, -(t**2)) for t in t_vals]
+            [gs.axes2d.c2p(t, -(t**2)) for t in np.linspace(0, t_Q, 80)]
         )
 
         # -------------------------------------------------------
