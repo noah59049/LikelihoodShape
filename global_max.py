@@ -12,7 +12,7 @@ class GlobalMax(ThreeDScene):
         #   Q = (2, 0): gaussian peak, f(Q) = 1 > f(P) ≈ 0
         # -------------------------------------------------------
         def f(x, y):
-            return -(x**2 + y**2) + 5 * np.exp(-((x - 2)**2 + y**2) / 0.5)
+            return -(x**2 + y**2) + 5 * np.exp(-(1.8 * (x - 2)**2 + 1.4 * y**2) / 0.5)
 
         def grad_f(x, y):
             ex = np.exp(-((x - 2)**2 + y**2) / 0.5)
@@ -101,9 +101,11 @@ class GlobalMax(ThreeDScene):
         # Proof text (right-center, fixed in frame)
         # -------------------------------------------------------
         def make_step(*lines, color=WHITE):
-            rows = [Tex(line, font_size=26, color=color) for line in lines]
-            return VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.2) \
-                               .move_to(np.array([-3.8, 1.5, 0]))
+            rows = [Tex(line, font_size=40, color=color) for line in lines]
+            group = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.25) \
+                                 .move_to(np.array([-3.8, 1.5, 0]))
+            group.set_stroke(color, width=1.5, background=False)
+            return group
 
         t0_txt = make_step(r"$\nabla f(P) = 0$",
                            r"$f''_{\vec{v}} < 0$ everywhere")
