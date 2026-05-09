@@ -92,7 +92,7 @@ class GlobalMax(ThreeDScene):
         def make_step(*lines, color=WHITE):
             rows = [Tex(line, font_size=26, color=color) for line in lines]
             return VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.2) \
-                               .move_to(np.array([3.8, 1.5, 0]))
+                               .move_to(np.array([-3.8, 1.5, 0]))
 
         t0_txt = make_step(r"$\nabla f(P) = 0$",
                            r"$f''_{\vec{v}} < 0$ everywhere")
