@@ -179,7 +179,9 @@ class GlobalMax(ThreeDScene):
         self.play(three_d_group.animate.shift(shift).scale(0.5), run_time=1.35)
         gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)], move_before_copy=False)
 
-        # Highlight [P, Q] on the 2D graph, then trim away the rest
+        # Highlight [P, Q] on the 2D graph, then fade out the outside portions.
+        # Strategy: fade in a PQ-only segment while fading out the full curve.
+        # Over [P,Q] the two cancel (opacity stays 1); outside just disappears.
         t_pq = np.linspace(0, t_Q, 80)
         pq_highlight = VMobject(color=YELLOW, stroke_width=6)
         pq_highlight.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
@@ -187,11 +189,14 @@ class GlobalMax(ThreeDScene):
         self.play(FadeIn(pq_highlight))
         self.wait(0.5)
 
-        pq_curve = VMobject(color=ORANGE)
-        pq_curve.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
+        pq_seg = VMobject(color=ORANGE)
+        pq_seg.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
+        # pq_seg.set_opacity(0)
+        self.add_fixed_in_frame_mobjects(pq_seg)
         self.play(
             FadeOut(pq_highlight),
-            Transform(gs.graph_curve, pq_curve),
+            FadeOut(gs.graph_curve),
+            FadeIn(pq_seg),
         )
 
         # Build conclusion targets: pure negative paraboloid, created after the 3D group
@@ -268,7 +273,7 @@ class GlobalMax(ThreeDScene):
             FadeOut(t7_txt), FadeIn(t8_txt),
             Transform(gs.surface, conclusion_surface),
             Transform(gs.slice_curve, conclusion_slice_3d),
-            Transform(gs.graph_curve, conclusion_graph_2d),
+            Transform(pq_seg, conclusion_graph_2d),
             Q_dot.animate.move_to(gs.axes.c2p(t_Q, 0, -(t_Q**2))),
             Q_dot2d.animate.move_to(new_q_2d),
             Q_label_2d.animate.next_to(new_q_2d, UR, buff=0.08),
