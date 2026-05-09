@@ -68,8 +68,17 @@ class GlobalMax(ThreeDScene):
         # -------------------------------------------------------
         # 2D concavity arcs
         # -------------------------------------------------------
-        def concavity_arc_2d(t0, g_pp, width=0.32, visual_scale=6.0, color=RED):
-            # g_pp stands for g prime prime, the second derivative of g
+        def concavity_arc_2d(t0, g_pp, width=None, height=None, visual_scale=6.0, color=RED):
+            # g_pp = g'' (second derivative). Arc draws the local Taylor parabola:
+            #   y = g(t0) + 0.5 * g_pp * visual_scale * (t - t0)^2
+            # width:  half-range of t values sampled
+            # height: if given instead of width, extends t until the arc is this far
+            #         from g(t0) in y — solved as width = sqrt(2*height / (|g_pp|*visual_scale))
+            if width is None:
+                if height is not None:
+                    width = np.sqrt(2 * height / (abs(g_pp) * visual_scale))
+                else:
+                    width = 0.32
             ts = np.linspace(t0 - width, t0 + width, 60)
             pts = [gs.axes2d.c2p(t, gs.g(t0) + 0.5 * g_pp * visual_scale * (t - t0)**2)
                    for t in ts]
@@ -77,8 +86,8 @@ class GlobalMax(ThreeDScene):
             arc.set_points_as_corners(pts)
             return arc
 
-        P_arc     = concavity_arc_2d(0,   g_pp_P, color=RED, width = 0.32)
-        M_arc     = concavity_arc_2d(t_M, g_pp_M, color=RED, width = 0.23)
+        P_arc     = concavity_arc_2d(0,   g_pp_P, color=RED, height = 0.5)
+        M_arc     = concavity_arc_2d(t_M, g_pp_M, color=RED, height = 0.5)
         M_dot_2d  = Dot(gs.axes2d.c2p(t_M, gs.g(t_M)), color=ORANGE, radius=0.07)
         M_label_2d = MathTex("M", color=ORANGE, font_size=24) \
                         .next_to(M_dot_2d, DOWN, buff=0.08)
