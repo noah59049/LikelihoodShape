@@ -895,8 +895,10 @@ class ReplacementTransformGroup(AnimationGroup):
             **kwargs
         )
 
-def shift_to_screen_corner(scene, mob, corner=UR, buff=0.5):
+def shift_to_screen_corner(scene, mob, corner=UR, buff=0.5, scale = None):
     """Return the 3D shift vector that moves mob's projected bounding box to a screen corner."""
+    if scale is not None:
+        mob = mob.copy().scale(scale)
     pts_2d = [scene.camera.project_point(p) for p in mob.get_all_points()[::5]]
     max_sx = max(p[0] for p in pts_2d)
     max_sy = max(p[1] for p in pts_2d)
