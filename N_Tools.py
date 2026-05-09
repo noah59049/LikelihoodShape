@@ -894,3 +894,24 @@ class ReplacementTransformGroup(AnimationGroup):
             lag_ratio=lag_ratio,
             **kwargs
         )
+
+def shift_to_screen_corner(scene, mob, corner=UR, buff=0.5):
+    """Return the 3D shift vector that moves mob's projected bounding box to a screen corner."""
+    pts_2d = [scene.camera.project_point(p) for p in mob.get_all_points()[::5]]
+    max_sx = max(p[0] for p in pts_2d)
+    max_sy = max(p[1] for p in pts_2d)
+
+    target_x = corner[0] * (config.frame_width  / 2 - buff)
+    target_y = corner[1] * (config.frame_height / 2 - buff)
+    dx_s = target_x - max_sx
+    dy_s = target_y - max_sy
+
+    # Jacobian: how much does each 3D basis vector move the projection?
+    origin = np.array([0., 0., 0.])
+    J = np.array([
+        scene.camera.project_point(origin + b)[:2] - scene.camera.project_point(origin)[:2]
+        for b in [RIGHT, UP, OUT]
+    ]).T  # shape (2, 3)
+
+    shift_3d = np.linalg.lstsq(J, np.array([dx_s, dy_s]), rcond=None)[0]
+    return shift_3d

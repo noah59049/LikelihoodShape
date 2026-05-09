@@ -1,6 +1,7 @@
 from manim import *
 import numpy as np
 from slice_utils import make_graph_slice
+from N_Tools import shift_to_screen_corner
 
 
 class GlobalMax(ThreeDScene):
@@ -156,12 +157,12 @@ class GlobalMax(ThreeDScene):
         # -------------------------------------------------------
         # Phase 4: Copy to 2D
         # -------------------------------------------------------
-        three_d_objects = [gs.axes, gs.surface, gs.slice_plane, gs.slice_curve, gs.base_dot, Q_dot]
-        three_d_group = VGroup(*three_d_objects)
-        self.play(
-            three_d_group.animate.scale(0.8).to_corner(UR, buff=0.5),
-            run_time=1.35,
-        )
+        three_d_group = VGroup(gs.axes, gs.surface, gs.slice_plane, gs.slice_curve, gs.base_dot, Q_dot)
+        three_d_group.scale(0.8)
+        shift = shift_to_screen_corner(self, three_d_group, corner=UR)
+        self.play(three_d_group.animate.shift(shift), run_time=1.35)
+        gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)], move_before_copy=False)
+
         gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)], move_before_copy=False)
 
         # -------------------------------------------------------
