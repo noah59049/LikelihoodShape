@@ -9,7 +9,7 @@ from N_Tools import shift_to_screen_corner
 class GlobalMax(ThreeDScene, VoiceoverScene):
     def construct(self):
         self.set_speech_service(StitcherService(
-            r"/Users/noah/Convex/LikelihoodShape/podcasts/global_max_podcast0.wav",
+            r"/Users/noah/Convex/LikelihoodShape/podcasts/global_max_podcast1.wav",
             cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
             min_silence_len=2000,
             keep_silence=(0, 0),
