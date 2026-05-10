@@ -132,18 +132,18 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             group.set_stroke(color, width=1.5, background=False)
             return group
 
-        t0_txt = make_step(r"$\nabla f(P) = 0$",
-                           r"$f''_{\vec{v}} < 0$ everywhere")
-        t1_txt = make_step(r"Suppose $g(Q) > g(P)$")
-        t2_txt = make_step(r"By EVT, $\exists$ min on $[P, Q]$")
-        t3_txt = make_step(r"Min $\neq P$", r"($P$ is a local max)")
-        t4_txt = make_step(r"Min $\neq Q$", r"($g(Q) > g(P)$)")
+        t0_txt = make_step(r"$\nabla \ell(P) = 0$",
+                           r"$D^2_{\vec{v}} \ell < 0$ everywhere")
+        t1_txt = make_step(r"Suppose $\ell(Q) > \ell(P)$")
+        t2_txt = make_step(r"By EVT, $\ell$ has a min on $[P, Q]$")
+        t3_txt = make_step(r"Min $\neq P$", r"($\ell$ has a local max at $P$)")
+        t4_txt = make_step(r"Min $\neq Q$", r"($\ell(Q) > \ell(P)$)")
         t5_txt = make_step(r"$\Rightarrow$ interior min: $M$")
         t6_txt = make_step(r"$M$ is a local min",
-                           r"$\Rightarrow g''(M) \geq 0$")
+                           r"$\Rightarrow D^2_{\vec{v}} \ell(M) \geq 0$")
         t7_txt = make_step(r"\textbf{Contradiction!}",
-                           r"$g''(M) \geq 0$",
-                           r"but $f''_{\vec{v}} < 0$ everywhere",
+                           r"$D^2_{\vec{v}} \ell(M) \geq 0$",
+                           r"but $D^2_{\vec{v}} \ell < 0$ everywhere",
                            color=RED)
         t8_txt = make_step(r"$\therefore$ $P$ is the",
                            r"global maximum", color=GREEN)
