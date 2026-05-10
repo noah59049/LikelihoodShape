@@ -237,33 +237,11 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
                 FadeIn(pq_seg),
             )
 
-        # Build conclusion targets: pure negative paraboloid, created after the 3D group
-        # has been moved/scaled so gs.axes.c2p() gives the right coordinates.
-        t_vals = np.linspace(-2.3, 2.3, 100)
-        conclusion_surface = Surface(
-            lambda u, v: gs.axes.c2p(u, v, -(u**2 + v**2)),
-            u_range=(-2.3, 2.3),
-            v_range=(-2, 2),
-            resolution=(18, 18),
-            fill_opacity=0.35,
-        )
-        conclusion_surface.set_fill(BLUE_B, opacity=0.35)
-
-        conclusion_slice_3d = VMobject(color=ORANGE)
-        conclusion_slice_3d.set_points_as_corners(
-            [gs.axes.c2p(t, 0, -(t**2)) for t in t_vals]
-        )
-
-        conclusion_graph_2d = VMobject(color=ORANGE)
-        conclusion_graph_2d.set_points_as_corners(
-            [gs.axes2d.c2p(t, -(t**2)) for t in np.linspace(0, t_Q, 80)]
-        )
-
-        # -------------------------------------------------------
-        # Phase 5: 2D proof
-        # -------------------------------------------------------
-        self.add_fixed_in_frame_mobjects(P_label_2d, Q_label_2d)
-        self.play(FadeIn(P_label_2d), FadeIn(Q_label_2d))
+            # -------------------------------------------------------
+            # Phase 5: 2D proof
+            # -------------------------------------------------------
+            self.add_fixed_in_frame_mobjects(P_label_2d, Q_label_2d)
+            self.play(FadeIn(P_label_2d), FadeIn(Q_label_2d))
 
         with self.voiceover("By the Extreme Value Theorem, the log likelihood must have a minimum somewhere on this interval.") as tracker:
             self.add_fixed_in_frame_mobjects(t2_txt)
@@ -295,7 +273,28 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
                 Flash(gs.axes2d.c2p(t_M, gs.g(t_M)), color=RED, flash_radius=0.3),
                 M_arc.animate.set_color(YELLOW),
             )
-            # self.wait(tracker.duration - tracker.time_until_bookmark())
+
+        # Build conclusion targets: pure negative paraboloid, created after the 3D group
+        # has been moved/scaled so gs.axes.c2p() gives the right coordinates.
+        t_vals = np.linspace(-2.3, 2.3, 100)
+        conclusion_surface = Surface(
+            lambda u, v: gs.axes.c2p(u, v, -(u**2 + v**2)),
+            u_range=(-2.3, 2.3),
+            v_range=(-2, 2),
+            resolution=(18, 18),
+            fill_opacity=0.35,
+        )
+        conclusion_surface.set_fill(BLUE_B, opacity=0.35)
+
+        conclusion_slice_3d = VMobject(color=ORANGE)
+        conclusion_slice_3d.set_points_as_corners(
+            [gs.axes.c2p(t, 0, -(t**2)) for t in t_vals]
+        )
+
+        conclusion_graph_2d = VMobject(color=ORANGE)
+        conclusion_graph_2d.set_points_as_corners(
+            [gs.axes2d.c2p(t, -(t**2)) for t in np.linspace(0, t_Q, 80)]
+        )
 
         with self.voiceover("Therefore, our assumption that Q is higher than P is wrong. Therefore all points are lower than P.") as tracker:
             self.play(FadeOut(P_arc, M_arc, M_dot_2d, M_label_2d))
