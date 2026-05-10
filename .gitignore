@@ -5,3 +5,6 @@ cache_dir
 breast_cancer_sklearn.csv
 *.json
 *.mp3
+*.m4a
+*.wav
+transcription/*.txt
