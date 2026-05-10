@@ -9,7 +9,7 @@ from N_Tools import shift_to_screen_corner
 class GlobalMax(ThreeDScene, VoiceoverScene):
     def construct(self):
         self.set_speech_service(StitcherService(
-            r"/Users/noah/Convex/LikelihoodShape/podcasts/global_max_podcast0.mp3",
+            r"/Users/noah/Convex/LikelihoodShape/podcasts/global_max_podcast0.wav",
             cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
             min_silence_len=2000,
             keep_silence=(0, 0),
@@ -180,7 +180,7 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             self.play(FadeIn(surf_small),
                       *[FadeOut(arc) for arc in dir_arcs],
                       run_time=1)
-            self.wait(tracker.duration - tracker.time_until_bookmark())
+            # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         # -------------------------------------------------------
         # Phase 2: Extend domain — gaussian bump appears, Q revealed
@@ -188,7 +188,7 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
         with self.voiceover("But we want to prove that it is the global maximum. We will do that by contradiction.") as tracker:
             self.add_fixed_in_frame_mobjects(t1_txt)
             self.play(FadeOut(t0_txt), FadeIn(t1_txt))
-            self.wait(tracker.duration - tracker.time_until_bookmark())
+            # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         with self.voiceover("Suppose there's some point Q with a higher log likelihood than P.") as tracker:
             self.play(
@@ -199,7 +199,7 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             self.remove(surf_small)
             self.add_fixed_orientation_mobjects(Q_label_3d)
             self.play(FadeIn(Q_dot), FadeIn(Q_label_3d))
-            self.wait(tracker.duration - tracker.time_until_bookmark())
+            # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         # -------------------------------------------------------
         # Phase 3: Slice plane and curve
@@ -207,7 +207,7 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
         with self.voiceover("We consider the log likelihood evaluated on the line segment between P and Q.") as tracker:
             self.play(FadeIn(gs.slice_plane))
             self.play(Create(gs.slice_curve))
-            self.wait(tracker.duration - tracker.time_until_bookmark())
+            # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         # -------------------------------------------------------
         # Phase 4: Copy to 2D
@@ -267,22 +267,22 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
         with self.voiceover("By the Extreme Value Theorem, the log likelihood must have a minimum somewhere on this interval.") as tracker:
             self.add_fixed_in_frame_mobjects(t2_txt)
             self.play(FadeOut(t1_txt), FadeIn(t2_txt))
-            self.wait(tracker.duration - tracker.time_until_bookmark())
+            # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         with self.voiceover("The minimum is not at P because P is a local maximum.") as tracker:
             self.add_fixed_in_frame_mobjects(P_arc, t3_txt)
             self.play(FadeIn(P_arc), FadeOut(t2_txt), FadeIn(t3_txt))
-            self.wait(tracker.duration - tracker.time_until_bookmark())
+            # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         with self.voiceover("And the minimum is not at Q because it's higher than P.") as tracker:
             self.add_fixed_in_frame_mobjects(t4_txt)
             self.play(FadeOut(t3_txt), FadeIn(t4_txt), Indicate(Q_dot2d, scale_factor=1.5, color=GREEN, run_time=2))
-            self.wait(tracker.duration - tracker.time_until_bookmark())
+            # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         with self.voiceover("So the minimum on this line segment must be somewhere in the interior. Let's call that point M.") as tracker:
             self.add_fixed_in_frame_mobjects(M_dot_2d, M_label_2d, t5_txt)
             self.play(FadeIn(M_dot_2d), FadeIn(M_label_2d), FadeOut(t4_txt), FadeIn(t5_txt))
-            self.wait(tracker.duration - tracker.time_until_bookmark())
+            # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         with self.voiceover("So, M is a local minimum! And that means the directional second derivative at M is positive. But earlier we proved that the directional second derivative is negative everywhere. So we have a contradiction.") as tracker:
             self.add_fixed_in_frame_mobjects(M_arc, t6_txt)
@@ -294,7 +294,7 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
                 Flash(gs.axes2d.c2p(t_M, gs.g(t_M)), color=RED, flash_radius=0.3),
                 M_arc.animate.set_color(YELLOW),
             )
-            self.wait(tracker.duration - tracker.time_until_bookmark())
+            # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         with self.voiceover("Therefore, our assumption that Q is higher than P is wrong. Therefore all points are lower than P.") as tracker:
             self.play(FadeOut(P_arc, M_arc, M_dot_2d, M_label_2d))
@@ -309,4 +309,4 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
                 Q_dot2d.animate.move_to(new_q_2d),
                 Q_label_2d.animate.next_to(new_q_2d, UR, buff=0.08),
             )
-            self.wait(tracker.duration - tracker.time_until_bookmark())
+            # self.wait(tracker.duration - tracker.time_until_bookmark())
