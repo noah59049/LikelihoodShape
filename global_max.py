@@ -67,6 +67,17 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
         Q_label_3d = MathTex("Q", color=GREEN, font_size=36).next_to(Q_dot,       OUT, buff=0.15)
         # self.add_fixed_orientation_mobjects(P_label_3d, Q_label_3d)
 
+        # Flat arrows at P showing ∂f/∂x = 0 and ∂f/∂y = 0
+        h_arr, p_z = 0.55, f(0, 0)
+        grad_arrow_x = Arrow3D(
+            gs.axes.c2p(-h_arr, 0, p_z), gs.axes.c2p(h_arr, 0, p_z),
+            color=YELLOW, thickness=0.02,
+        )
+        grad_arrow_y = Arrow3D(
+            gs.axes.c2p(0, -h_arr, p_z), gs.axes.c2p(0, h_arr, p_z),
+            color=YELLOW, thickness=0.02,
+        )
+
         # -------------------------------------------------------
         # Find interior minimum M of g on (0, t_Q)
         # -------------------------------------------------------
@@ -98,8 +109,9 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             arc.set_points_as_corners(pts)
             return arc
 
-        P_arc     = concavity_arc_2d(0,   g_pp_P, color=RED, height = 0.5)
-        M_arc     = concavity_arc_2d(t_M, g_pp_M, color=RED, height = 0.5)
+        P_arc     = concavity_arc_2d(0,   g_pp_P, color=RED,    height=0.5)
+        M_arc     = concavity_arc_2d(t_M, g_pp_M, color=RED,    height=0.5)
+        M_arc_down = concavity_arc_2d(t_M, g_pp_P, color=YELLOW, height=0.5)
         M_dot_2d  = Dot(gs.axes2d.c2p(t_M, gs.g(t_M)), color=ORANGE, radius=0.07)
         M_label_2d = MathTex("M", color=ORANGE, font_size=24) \
                         .next_to(M_dot_2d, DOWN, buff=0.08)
@@ -151,7 +163,7 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
         # -------------------------------------------------------
         # Phase 1: Small domain — paraboloid only, P looks like global max
         # -------------------------------------------------------
-        with self.voiceover("Let's suppose we have a point P where all the first derivatives are zero. We know that this point is a local maximum in every direction.") as tracker:
+        with self.voiceover("Let's suppose we have a point P where all the first derivatives are zero.") as tracker:
             self.play(Create(gs.axes))
             self.add_fixed_orientation_mobjects(P_label_3d)
             self.play(FadeIn(gs.base_dot), FadeIn(P_label_3d))
@@ -159,7 +171,10 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             self.add_fixed_in_frame_mobjects(t0_txt)
             self.play(FadeIn(t0_txt))
             self.wait(0.5)
+            self.play(FadeIn(grad_arrow_x), FadeIn(grad_arrow_y))
 
+        with self.voiceover("We know that this point is a local maximum in every direction. But we want to prove that it is the global maximum. We will do that by contradiction.") as tracker:
+            self.play(FadeOut(grad_arrow_x), FadeOut(grad_arrow_y))
             # Draw arcs in 8 directions from P, showing it curves down in every direction
             arc_t_vals = np.linspace(-1.2, 1.2, 60)
             dir_arcs = VGroup()
@@ -180,14 +195,10 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             self.play(FadeIn(surf_small),
                       *[FadeOut(arc) for arc in dir_arcs],
                       run_time=1)
-            # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         # -------------------------------------------------------
         # Phase 2: Extend domain — gaussian bump appears, Q revealed
         # -------------------------------------------------------
-        with self.voiceover("But we want to prove that it is the global maximum. We will do that by contradiction.") as tracker:
-            ...
-
         with self.voiceover("Suppose there's some point Q with a higher log likelihood than P.") as tracker:
             self.add_fixed_in_frame_mobjects(t1_txt)
             self.play(FadeOut(t0_txt), FadeIn(t1_txt))
@@ -222,17 +233,16 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             # Strategy: fade in a PQ-only segment while fading out the full curve.
             # Over [P,Q] the two cancel (opacity stays 1); outside just disappears.
             t_pq = np.linspace(0, t_Q, 80)
-            pq_highlight = VMobject(color=YELLOW, stroke_width=6)
-            pq_highlight.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
-            self.add_fixed_in_frame_mobjects(pq_highlight)
-            self.play(FadeIn(pq_highlight))
-            self.wait(0.5)
-
+            # pq_highlight = VMobject(color=YELLOW, stroke_width=6)
+            # pq_highlight.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
+            # self.add_fixed_in_frame_mobjects(pq_highlight)
+            # self.play(FadeIn(pq_highlight))
+            # self.wait(0.5)
             pq_seg = VMobject(color=ORANGE)
             pq_seg.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
             self.add_fixed_in_frame_mobjects(pq_seg)
             self.play(
-                FadeOut(pq_highlight),
+                # FadeOut(pq_highlight),
                 FadeOut(gs.graph_curve),
                 FadeIn(pq_seg),
             )
@@ -263,15 +273,19 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             self.play(FadeIn(M_dot_2d), FadeIn(M_label_2d), FadeOut(t4_txt), FadeIn(t5_txt))
             # self.wait(tracker.duration - tracker.time_until_bookmark())
 
-        with self.voiceover("So, M is a local minimum! And that means the directional second derivative at M is positive. But earlier we proved that the directional second derivative is negative everywhere. So we have a contradiction.") as tracker:
+        with self.voiceover("So, M is a local minimum! And that means the directional second derivative at M is positive.") as tracker:
             self.add_fixed_in_frame_mobjects(M_arc, t6_txt)
             self.play(FadeIn(M_arc), FadeOut(t5_txt), FadeIn(t6_txt))
-            self.wait(1)
-            self.add_fixed_in_frame_mobjects(t7_txt)
-            self.play(FadeOut(t6_txt), FadeIn(t7_txt))
+            # self.play(
+            #     Flash(gs.axes2d.c2p(t_M, gs.g(t_M)), color=RED, flash_radius=0.3),
+            #     M_arc.animate.set_color(YELLOW),
+            # )
+
+        with self.voiceover("But earlier we proved that the directional second derivative is negative everywhere. So we have a contradiction.") as tracker:
+            self.add_fixed_in_frame_mobjects(M_arc_down, t7_txt)
+            self.play(FadeOut(t6_txt), FadeIn(t7_txt), FadeIn(M_arc_down))
             self.play(
                 Flash(gs.axes2d.c2p(t_M, gs.g(t_M)), color=RED, flash_radius=0.3),
-                M_arc.animate.set_color(YELLOW),
             )
 
         # Build conclusion targets: pure negative paraboloid, created after the 3D group
@@ -297,16 +311,18 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
         )
 
         with self.voiceover("Therefore, our assumption that Q is higher than P is wrong. Therefore all points are lower than P.") as tracker:
-            self.play(FadeOut(P_arc, M_arc, M_dot_2d, M_label_2d))
+            self.play(FadeOut(P_arc, M_arc, M_arc_down, M_dot_2d, M_label_2d))
             self.add_fixed_in_frame_mobjects(t8_txt)
             new_q_2d = gs.axes2d.c2p(t_Q, -(t_Q**2))
+            new_q_3d = gs.axes.c2p(t_Q, 0, -(t_Q**2))
+            q_label_offset = Q_label_3d.get_center() - Q_dot.get_center()
             self.play(
                 FadeOut(t7_txt), FadeIn(t8_txt),
                 Transform(gs.surface, conclusion_surface),
                 Transform(gs.slice_curve, conclusion_slice_3d),
                 Transform(pq_seg, conclusion_graph_2d),
-                Q_dot.animate.move_to(gs.axes.c2p(t_Q, 0, -(t_Q**2))),
+                Q_dot.animate.move_to(new_q_3d),
+                Q_label_3d.animate.move_to(new_q_3d + q_label_offset),
                 Q_dot2d.animate.move_to(new_q_2d),
                 Q_label_2d.animate.next_to(new_q_2d, UR, buff=0.08),
             )
-            # self.wait(tracker.duration - tracker.time_until_bookmark())
