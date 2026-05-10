@@ -9,7 +9,7 @@ from N_Tools import shift_to_screen_corner
 class GlobalMax(ThreeDScene, VoiceoverScene):
     def construct(self):
         self.set_speech_service(StitcherService(
-            r"/Users/noah/Convex/LikelihoodShape/podcasts/global_max_podcast2.wav",
+            r"/Users/noah/Convex/LikelihoodShape/podcasts/global_max_podcast3.wav",
             cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
             min_silence_len=2000,
             keep_silence=(0, 0),
@@ -141,6 +141,7 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
         t5_txt = make_step(r"$\Rightarrow$ interior min: $M$")
         t6_txt = make_step(r"$M$ is a local min",
                            r"$\Rightarrow D^2_{\vec{v}} \ell(M) \geq 0$")
+        t6a_txt= make_step(r"but $D^2_{\vec{v}} \ell < 0$ everywhere")
         t7_txt = make_step(r"\textbf{Contradiction!}",
                            r"$D^2_{\vec{v}} \ell(M) \geq 0$",
                            r"but $D^2_{\vec{v}} \ell < 0$ everywhere",
@@ -173,7 +174,7 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             self.wait(0.5)
             self.play(FadeIn(grad_arrow_x), FadeIn(grad_arrow_y))
 
-        with self.voiceover("We know that this point is a local maximum in every direction. But we want to prove that it is the global maximum. We will do that by contradiction.") as tracker:
+        with self.voiceover("We know that this point is a local maximum in every direction.") as tracker:
             self.play(FadeOut(grad_arrow_x), FadeOut(grad_arrow_y))
             # Draw arcs in 8 directions from P, showing it curves down in every direction
             arc_t_vals = np.linspace(-1.2, 1.2, 60)
@@ -190,8 +191,9 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
                 dir_arcs.add(arc)
             self.play(LaggedStart(*[Create(arc, run_time = 2 / NUM_ARCS) for arc in dir_arcs],
                                   lag_ratio=2 / NUM_ARCS, run_time=2.5))
-            self.wait(0.5)
+            # self.wait(0.5)
 
+        with self.voiceover("But we want to prove that it is the global maximum. We will do that by contradiction. Suppose there's some point ") as tracker:
             self.play(FadeIn(surf_small),
                       *[FadeOut(arc) for arc in dir_arcs],
                       run_time=1)
@@ -199,7 +201,7 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
         # -------------------------------------------------------
         # Phase 2: Extend domain — gaussian bump appears, Q revealed
         # -------------------------------------------------------
-        with self.voiceover("Suppose there's some point Q with a higher log likelihood than P.") as tracker:
+        with self.voiceover("Q with a higher log likelihood than P.") as tracker:
             self.add_fixed_in_frame_mobjects(t1_txt)
             self.play(FadeOut(t0_txt), FadeIn(t1_txt))
 
@@ -233,47 +235,41 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             # Strategy: fade in a PQ-only segment while fading out the full curve.
             # Over [P,Q] the two cancel (opacity stays 1); outside just disappears.
             t_pq = np.linspace(0, t_Q, 80)
-            # pq_highlight = VMobject(color=YELLOW, stroke_width=6)
-            # pq_highlight.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
-            # self.add_fixed_in_frame_mobjects(pq_highlight)
-            # self.play(FadeIn(pq_highlight))
-            # self.wait(0.5)
             pq_seg = VMobject(color=ORANGE)
             pq_seg.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
             self.add_fixed_in_frame_mobjects(pq_seg)
+            self.add_fixed_in_frame_mobjects(P_label_2d, Q_label_2d)
             self.play(
-                # FadeOut(pq_highlight),
+                FadeIn(P_label_2d), 
+                FadeIn(Q_label_2d),
                 FadeOut(gs.graph_curve),
                 FadeIn(pq_seg),
             )
 
-            # -------------------------------------------------------
-            # Phase 5: 2D proof
-            # -------------------------------------------------------
-            self.add_fixed_in_frame_mobjects(P_label_2d, Q_label_2d)
-            self.play(FadeIn(P_label_2d), FadeIn(Q_label_2d))
-
-        with self.voiceover("By the Extreme Value Theorem, the log likelihood must have a minimum somewhere on this interval.") as tracker:
+        # -------------------------------------------------------
+        # Phase 5: 2D proof
+        # -------------------------------------------------------
+        with self.voiceover("By the Extreme Value Theorem, the log likelihood must have a minimum somewhere on this interval. The minimum is not at ") as tracker:
             self.add_fixed_in_frame_mobjects(t2_txt)
             self.play(FadeOut(t1_txt), FadeIn(t2_txt))
             # self.wait(tracker.duration - tracker.time_until_bookmark())
 
-        with self.voiceover("The minimum is not at P because P is a local maximum.") as tracker:
+        with self.voiceover("P because P is a local maximum. And the minimum is not at") as tracker:
             self.add_fixed_in_frame_mobjects(P_arc, t3_txt)
             self.play(FadeIn(P_arc), FadeOut(t2_txt), FadeIn(t3_txt))
             # self.wait(tracker.duration - tracker.time_until_bookmark())
 
-        with self.voiceover("And the minimum is not at Q because it's higher than P.") as tracker:
+        with self.voiceover("Q because it's higher than P.") as tracker:
             self.add_fixed_in_frame_mobjects(t4_txt)
             self.play(FadeOut(t3_txt), FadeIn(t4_txt), Indicate(Q_dot2d, scale_factor=1.5, color=GREEN, run_time=2))
             # self.wait(tracker.duration - tracker.time_until_bookmark())
 
-        with self.voiceover("So the minimum on this line segment must be somewhere in the interior. Let's call that point M.") as tracker:
+        with self.voiceover("So the minimum on this line segment must be somewhere in the interior. Let's call that point M. So, M is a local minimum!") as tracker:
             self.add_fixed_in_frame_mobjects(M_dot_2d, M_label_2d, t5_txt)
             self.play(FadeIn(M_dot_2d), FadeIn(M_label_2d), FadeOut(t4_txt), FadeIn(t5_txt))
             # self.wait(tracker.duration - tracker.time_until_bookmark())
 
-        with self.voiceover("So, M is a local minimum! And that means the directional second derivative at M is positive.") as tracker:
+        with self.voiceover("And that means the directional second derivative at M is positive.") as tracker:
             self.add_fixed_in_frame_mobjects(M_arc, t6_txt)
             self.play(FadeIn(M_arc), FadeOut(t5_txt), FadeIn(t6_txt))
             # self.play(
@@ -281,12 +277,19 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             #     M_arc.animate.set_color(YELLOW),
             # )
 
-        with self.voiceover("But earlier we proved that the directional second derivative is negative everywhere. So we have a contradiction.") as tracker:
-            self.add_fixed_in_frame_mobjects(M_arc_down, t7_txt)
-            self.play(FadeOut(t6_txt), FadeIn(t7_txt), FadeIn(M_arc_down))
+        with self.voiceover("But earlier we proved that the directional second derivative is negative everywhere.") as tracker:
+            self.add_fixed_in_frame_mobjects(M_arc_down, t6a_txt)
+            self.play(FadeOut(t6_txt), FadeIn(t6a_txt), FadeIn(M_arc_down))
+
+        with self.voiceover("So we have a contradiction. Therefore, our assumption that Q is higher than P is wrong. Therefore ") as tracker:
+            self.add_fixed_in_frame_mobjects(t7_txt)
             self.play(
-                Flash(gs.axes2d.c2p(t_M, gs.g(t_M)), color=RED, flash_radius=0.3),
+                FadeOut(t6a_txt),
+                FadeIn(t7_txt),
+                Flash(gs.axes2d.c2p(t_M, gs.g(t_M)), color=RED, flash_radius=0.3), # TODO: Make this go in the correct place
             )
+            self.wait(tracker.duration - 2.1)
+            self.play(FadeOut(P_arc, M_arc, M_arc_down, M_dot_2d, M_label_2d))
 
         # Build conclusion targets: pure negative paraboloid, created after the 3D group
         # has been moved/scaled so gs.axes.c2p() gives the right coordinates.
@@ -310,8 +313,7 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             [gs.axes2d.c2p(t, -(t**2)) for t in np.linspace(0, t_Q, 80)]
         )
 
-        with self.voiceover("Therefore, our assumption that Q is higher than P is wrong. Therefore all points are lower than P.") as tracker:
-            self.play(FadeOut(P_arc, M_arc, M_arc_down, M_dot_2d, M_label_2d))
+        with self.voiceover("all points are lower than P.") as tracker:
             self.add_fixed_in_frame_mobjects(t8_txt)
             new_q_2d = gs.axes2d.c2p(t_Q, -(t_Q**2))
             new_q_3d = gs.axes.c2p(t_Q, 0, -(t_Q**2))
