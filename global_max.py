@@ -204,16 +204,15 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
         with self.voiceover("Q with a higher log likelihood than P.") as tracker:
             self.add_fixed_in_frame_mobjects(t1_txt)
             self.play(FadeOut(t0_txt), FadeIn(t1_txt))
-
+            
+            self.add_fixed_orientation_mobjects(Q_label_3d)
             self.play(
                 FadeOut(surf_small),
                 FadeIn(gs.surface),
+                FadeIn(Q_dot), 
+                FadeIn(Q_label_3d),
                 run_time=1.5,
             )
-            self.remove(surf_small)
-            self.add_fixed_orientation_mobjects(Q_label_3d)
-            self.play(FadeIn(Q_dot), FadeIn(Q_label_3d))
-            # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         # -------------------------------------------------------
         # Phase 3: Slice plane and curve
@@ -278,11 +277,12 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             self.play(FadeOut(t6_txt), FadeIn(t6a_txt), Create(M_arc_down))
 
         with self.voiceover("So we have a contradiction. Therefore, our assumption that Q is higher than P is wrong. Therefore ") as tracker:
-            self.add_fixed_in_frame_mobjects(t7_txt)
+            flash_ring = Circle(radius=0.05, color=RED, stroke_width=4).move_to(M_dot_2d)
+            self.add_fixed_in_frame_mobjects(t7_txt, flash_ring)
             self.play(
                 FadeOut(t6a_txt),
                 FadeIn(t7_txt),
-                Flash(gs.axes2d.c2p(t_M, gs.g(t_M)), color=RED, flash_radius=0.3), # TODO: Make this go in the correct place
+                flash_ring.animate.scale(6).set_opacity(0),
             )
             self.wait(tracker.duration - 2.1)
             self.play(FadeOut(P_arc, M_arc, M_arc_down, M_dot_2d, M_label_2d))
