@@ -8,6 +8,7 @@ wants pre-baked silence "slots" in a single audio file).
 
 Usage:
     python insert_silences.py -i audio.wav -t transcript.txt -o out.wav
+    python insert_silences.py -i audio.wav -t scene.py -o out.wav   # manim script
     python insert_silences.py -i audio.mp3 -t lines.txt -o out.mp3 --silence 5.0 --model base
 
 Install:
@@ -50,15 +51,33 @@ def transcribe(audio_path: str, model_size: str = "base") -> list[dict]:
     return words
 
 
-def load_transcript(path: str) -> list[list[str]]:
-    """Read transcript file -> list of lines, each a list of normalized words."""
-    lines = []
-    for raw in Path(path).read_text(encoding="utf-8").splitlines():
+def _parse_lines(raw_lines: list[str]) -> list[list[str]]:
+    """Normalize a list of raw strings into lists of normalized words."""
+    result = []
+    for raw in raw_lines:
         words = [normalize(w) for w in raw.split()]
-        words = [w for w in words if w]  # drop pure-punctuation tokens
+        words = [w for w in words if w]
         if words:
-            lines.append(words)
-    return lines
+            result.append(words)
+    return result
+
+
+def load_transcript(path: str) -> list[list[str]]:
+    """Read transcript file or manim script -> list of lines, each a list of normalized words."""
+    if Path(path).suffix == ".py":
+        return _load_manim_transcript(path)
+    text = Path(path).read_text(encoding="utf-8")
+    return _parse_lines(text.splitlines())
+
+
+def _load_manim_transcript(path: str) -> list[list[str]]:
+    """Extract voiceover strings from a manim script in order."""
+    text = Path(path).read_text(encoding="utf-8")
+    pattern = re.compile(r"""self\.voiceover\(\s*(?:"([^"]+)"|'([^']+)')""")
+    raw_lines = [m.group(1) or m.group(2) for m in pattern.finditer(text)]
+    if not raw_lines:
+        print("Warning: no self.voiceover(...) calls found in the script.", file=sys.stderr)
+    return _parse_lines(raw_lines)
 
 
 def find_breakpoints(lines: list[list[str]], whisper_words: list[dict]) -> list[dict]:
