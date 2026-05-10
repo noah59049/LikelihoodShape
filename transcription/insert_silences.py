@@ -7,8 +7,8 @@ Useful as a preprocessing step for manim's StitcherService (or any tool that
 wants pre-baked silence "slots" in a single audio file).
 
 Usage:
-    python insert_silences.py audio.wav transcript.txt out.wav
-    python insert_silences.py audio.mp3 lines.txt out.mp3 --silence 5.0 --model base
+    python insert_silences.py -i audio.wav -t transcript.txt -o out.wav
+    python insert_silences.py -i audio.mp3 -t lines.txt -o out.mp3 --silence 5.0 --model base
 
 Install:
     pip install faster-whisper pydub
@@ -154,9 +154,9 @@ def main():
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    p.add_argument("audio", help="Input audio file (any format ffmpeg can read)")
-    p.add_argument("transcript", help="Plain-text transcript, one chunk per line")
-    p.add_argument("output", help="Output audio file (extension picks format)")
+    p.add_argument("-i", "--input", required=True, help="Input audio file (any format ffmpeg can read)")
+    p.add_argument("-t", "--transcript", required=True, help="Plain-text transcript, one chunk per line")
+    p.add_argument("-o", "--output", required=True, help="Output audio file (extension picks format)")
     p.add_argument(
         "--silence",
         type=float,
@@ -176,7 +176,7 @@ def main():
         print("Need at least 2 lines to have a break between them. Nothing to do.", file=sys.stderr)
         return 1
 
-    words = transcribe(args.audio, args.model)
+    words = transcribe(args.input, args.model)
     breakpoints = find_breakpoints(lines, words)
 
     print("\nBreakpoints:", file=sys.stderr)
@@ -189,7 +189,7 @@ def main():
             file=sys.stderr,
         )
 
-    insert_silence(args.audio, args.output, breakpoints, args.silence)
+    insert_silence(args.input, args.output, breakpoints, args.silence)
     print(f"\nWrote {args.output}", file=sys.stderr)
     return 0
 
