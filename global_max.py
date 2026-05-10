@@ -1,11 +1,19 @@
 from manim import *
+from manim_voiceover import *
+from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 import numpy as np
 from slice_utils import make_graph_slice
 from N_Tools import shift_to_screen_corner
 
 
-class GlobalMax(ThreeDScene):
+class GlobalMax(ThreeDScene, VoiceoverScene):
     def construct(self):
+        self.set_speech_service(StitcherService(
+            r"/Users/noah/Convex/LikelihoodShape/podcasts/global_max_podcast0.mp3",
+            cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+            min_silence_len=2000,
+            keep_silence=(0, 0),
+        ))
         # -------------------------------------------------------
         # Function: negative paraboloid + gaussian bump at (2, 0)
         #   P = (0, 0): dominated by the paraboloid, looks like a local max
@@ -129,9 +137,6 @@ class GlobalMax(ThreeDScene):
                            r"global maximum", color=GREEN)
 
 
-        # -------------------------------------------------------
-        # Phase 1: Small domain — paraboloid only, P looks like global max
-        # -------------------------------------------------------
         surf_small = Surface(
             lambda u, v: gs.axes.c2p(u, v, f(u,v)),
             u_range=(-1, 1),
@@ -143,60 +148,66 @@ class GlobalMax(ThreeDScene):
 
         self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
 
-        self.add_fixed_in_frame_mobjects(t0_txt)
-        self.play(FadeIn(t0_txt))
-        self.wait(1)
+        # -------------------------------------------------------
+        # Phase 1: Small domain — paraboloid only, P looks like global max
+        # -------------------------------------------------------
+        with self.voiceover("Let's suppose we have a point P where all the first derivatives are zero. We know that this point is a local maximum in every direction.") as tracker:
+            self.add_fixed_in_frame_mobjects(t0_txt)
+            self.play(FadeIn(t0_txt))
+            self.wait(0.5)
 
-        self.play(Create(gs.axes))
-        self.add_fixed_orientation_mobjects(P_label_3d)
-        self.play(FadeIn(gs.base_dot), FadeIn(P_label_3d))
+            self.play(Create(gs.axes))
+            self.add_fixed_orientation_mobjects(P_label_3d)
+            self.play(FadeIn(gs.base_dot), FadeIn(P_label_3d))
 
-        # Draw arcs in 8 directions from P, showing it curves down in every direction
-        arc_t_vals = np.linspace(-1.2, 1.2, 60)
-        dir_arcs = VGroup()
-        NUM_ARCS = 37
-        for i in range(NUM_ARCS):
-            th = i * PI / NUM_ARCS
-            arc = VMobject(color=BLUE_B, stroke_width=2)
-            arc.set_points_as_corners([
-                gs.axes.c2p(t * np.cos(th), t * np.sin(th),
-                            f(t * np.cos(th), t * np.sin(th)))
-                for t in arc_t_vals
-            ])
-            dir_arcs.add(arc)
-        self.play(LaggedStart(*[Create(arc, run_time = 2 / NUM_ARCS) for arc in dir_arcs],
-                              lag_ratio=2 / NUM_ARCS, run_time=2.5))
-        self.wait(0.5)
+            # Draw arcs in 8 directions from P, showing it curves down in every direction
+            arc_t_vals = np.linspace(-1.2, 1.2, 60)
+            dir_arcs = VGroup()
+            NUM_ARCS = 37
+            for i in range(NUM_ARCS):
+                th = i * PI / NUM_ARCS
+                arc = VMobject(color=BLUE_B, stroke_width=2)
+                arc.set_points_as_corners([
+                    gs.axes.c2p(t * np.cos(th), t * np.sin(th),
+                                f(t * np.cos(th), t * np.sin(th)))
+                    for t in arc_t_vals
+                ])
+                dir_arcs.add(arc)
+            self.play(LaggedStart(*[Create(arc, run_time = 2 / NUM_ARCS) for arc in dir_arcs],
+                                  lag_ratio=2 / NUM_ARCS, run_time=2.5))
+            self.wait(0.5)
 
-        self.play(FadeIn(surf_small),
-                  *[FadeOut(arc) for arc in dir_arcs],
-                  run_time=1)
-        self.wait(1)
+            self.play(FadeIn(surf_small),
+                      *[FadeOut(arc) for arc in dir_arcs],
+                      run_time=1)
+            self.wait(tracker.duration - tracker.time_until_bookmark())
 
         # -------------------------------------------------------
         # Phase 2: Extend domain — gaussian bump appears, Q revealed
         # -------------------------------------------------------
-        self.add_fixed_in_frame_mobjects(t1_txt)
-        self.play(FadeOut(t0_txt), FadeIn(t1_txt))
-        # self.add(t1_txt)
-        self.wait(1)
+        with self.voiceover("But we want to prove that it is the global maximum. We will do that by contradiction.") as tracker:
+            self.add_fixed_in_frame_mobjects(t1_txt)
+            self.play(FadeOut(t0_txt), FadeIn(t1_txt))
+            self.wait(tracker.duration - tracker.time_until_bookmark())
 
-        self.play(
-            FadeOut(surf_small),
-            FadeIn(gs.surface),
-            run_time=1.5,
-        )
-        self.remove(surf_small)
-        self.add_fixed_orientation_mobjects(Q_label_3d)
-        self.play(FadeIn(Q_dot), FadeIn(Q_label_3d))
-        self.wait(0.5)
+        with self.voiceover("Suppose there's some point Q with a higher log likelihood than P.") as tracker:
+            self.play(
+                FadeOut(surf_small),
+                FadeIn(gs.surface),
+                run_time=1.5,
+            )
+            self.remove(surf_small)
+            self.add_fixed_orientation_mobjects(Q_label_3d)
+            self.play(FadeIn(Q_dot), FadeIn(Q_label_3d))
+            self.wait(tracker.duration - tracker.time_until_bookmark())
 
         # -------------------------------------------------------
         # Phase 3: Slice plane and curve
         # -------------------------------------------------------
-        self.play(FadeIn(gs.slice_plane))
-        self.play(Create(gs.slice_curve))
-        self.wait(0.5)
+        with self.voiceover("We consider the log likelihood evaluated on the line segment between P and Q.") as tracker:
+            self.play(FadeIn(gs.slice_plane))
+            self.play(Create(gs.slice_curve))
+            self.wait(tracker.duration - tracker.time_until_bookmark())
 
         # -------------------------------------------------------
         # Phase 4: Copy to 2D
@@ -218,7 +229,6 @@ class GlobalMax(ThreeDScene):
 
         pq_seg = VMobject(color=ORANGE)
         pq_seg.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
-        # pq_seg.set_opacity(0)
         self.add_fixed_in_frame_mobjects(pq_seg)
         self.play(
             FadeOut(pq_highlight),
@@ -254,55 +264,49 @@ class GlobalMax(ThreeDScene):
         self.add_fixed_in_frame_mobjects(P_label_2d, Q_label_2d)
         self.play(FadeIn(P_label_2d), FadeIn(Q_label_2d))
 
-        # t2_txt.set_opacity(0)
-        self.add_fixed_in_frame_mobjects(t2_txt)
-        self.play(FadeOut(t1_txt), FadeIn(t2_txt))
-        self.wait(1)
+        with self.voiceover("By the Extreme Value Theorem, the log likelihood must have a minimum somewhere on this interval.") as tracker:
+            self.add_fixed_in_frame_mobjects(t2_txt)
+            self.play(FadeOut(t1_txt), FadeIn(t2_txt))
+            self.wait(tracker.duration - tracker.time_until_bookmark())
 
-        # P is not the min — show concave-down arc
-        # t3_txt.set_opacity(0)
-        self.add_fixed_in_frame_mobjects(P_arc, t3_txt)
-        self.play(FadeIn(P_arc), FadeOut(t2_txt), FadeIn(t3_txt))
-        self.wait(1)
+        with self.voiceover("The minimum is not at P because P is a local maximum.") as tracker:
+            self.add_fixed_in_frame_mobjects(P_arc, t3_txt)
+            self.play(FadeIn(P_arc), FadeOut(t2_txt), FadeIn(t3_txt))
+            self.wait(tracker.duration - tracker.time_until_bookmark())
 
-        # Q is not the min
-        # self.play(Indicate(Q_dot2d, scale_factor=1.5, color=GREEN))
-        # t4_txt.set_opacity(0)
-        self.add_fixed_in_frame_mobjects(t4_txt)
-        self.play(FadeOut(t3_txt), FadeIn(t4_txt), Indicate(Q_dot2d, scale_factor=1.5, color=GREEN, run_time = 2))
+        with self.voiceover("And the minimum is not at Q because it's higher than P.") as tracker:
+            self.add_fixed_in_frame_mobjects(t4_txt)
+            self.play(FadeOut(t3_txt), FadeIn(t4_txt), Indicate(Q_dot2d, scale_factor=1.5, color=GREEN, run_time=2))
+            self.wait(tracker.duration - tracker.time_until_bookmark())
 
-        # Interior min M
-        # t5_txt.set_opacity(0)
-        self.add_fixed_in_frame_mobjects(M_dot_2d, M_label_2d, t5_txt)
-        self.play(FadeIn(M_dot_2d), FadeIn(M_label_2d), FadeOut(t4_txt), FadeIn(t5_txt))
-        self.wait(0.5)
+        with self.voiceover("So the minimum on this line segment must be somewhere in the interior. Let's call that point M.") as tracker:
+            self.add_fixed_in_frame_mobjects(M_dot_2d, M_label_2d, t5_txt)
+            self.play(FadeIn(M_dot_2d), FadeIn(M_label_2d), FadeOut(t4_txt), FadeIn(t5_txt))
+            self.wait(tracker.duration - tracker.time_until_bookmark())
 
-        # M is local min — show concave-up arc → contradiction
-        # t6_txt.set_opacity(0)
-        self.add_fixed_in_frame_mobjects(M_arc, t6_txt)
-        self.play(FadeIn(M_arc), FadeOut(t5_txt), FadeIn(t6_txt))
-        self.wait(1)
+        with self.voiceover("So, M is a local minimum! And that means the directional second derivative at M is positive. But earlier we proved that the directional second derivative is negative everywhere. So we have a contradiction.") as tracker:
+            self.add_fixed_in_frame_mobjects(M_arc, t6_txt)
+            self.play(FadeIn(M_arc), FadeOut(t5_txt), FadeIn(t6_txt))
+            self.wait(1)
+            self.add_fixed_in_frame_mobjects(t7_txt)
+            self.play(FadeOut(t6_txt), FadeIn(t7_txt))
+            self.play(
+                Flash(gs.axes2d.c2p(t_M, gs.g(t_M)), color=RED, flash_radius=0.3),
+                M_arc.animate.set_color(YELLOW),
+            )
+            self.wait(tracker.duration - tracker.time_until_bookmark())
 
-        # t7_txt.set_opacity(0)
-        self.add_fixed_in_frame_mobjects(t7_txt)
-        self.play(FadeOut(t6_txt), FadeIn(t7_txt))
-        self.play(
-            Flash(gs.axes2d.c2p(t_M, gs.g(t_M)), color=RED, flash_radius=0.3),
-            M_arc.animate.set_color(YELLOW),
-        )
-        self.wait(2)
-
-        # Conclusion
-        self.play(FadeOut(P_arc, M_arc, M_dot_2d, M_label_2d))
-        self.add_fixed_in_frame_mobjects(t8_txt)
-        new_q_2d = gs.axes2d.c2p(t_Q, -(t_Q**2))
-        self.play(
-            FadeOut(t7_txt), FadeIn(t8_txt),
-            Transform(gs.surface, conclusion_surface),
-            Transform(gs.slice_curve, conclusion_slice_3d),
-            Transform(pq_seg, conclusion_graph_2d),
-            Q_dot.animate.move_to(gs.axes.c2p(t_Q, 0, -(t_Q**2))),
-            Q_dot2d.animate.move_to(new_q_2d),
-            Q_label_2d.animate.next_to(new_q_2d, UR, buff=0.08),
-        )
-        self.wait(2)
+        with self.voiceover("Therefore, our assumption that Q is higher than P is wrong. Therefore all points are lower than P.") as tracker:
+            self.play(FadeOut(P_arc, M_arc, M_dot_2d, M_label_2d))
+            self.add_fixed_in_frame_mobjects(t8_txt)
+            new_q_2d = gs.axes2d.c2p(t_Q, -(t_Q**2))
+            self.play(
+                FadeOut(t7_txt), FadeIn(t8_txt),
+                Transform(gs.surface, conclusion_surface),
+                Transform(gs.slice_curve, conclusion_slice_3d),
+                Transform(pq_seg, conclusion_graph_2d),
+                Q_dot.animate.move_to(gs.axes.c2p(t_Q, 0, -(t_Q**2))),
+                Q_dot2d.animate.move_to(new_q_2d),
+                Q_label_2d.animate.next_to(new_q_2d, UR, buff=0.08),
+            )
+            self.wait(tracker.duration - tracker.time_until_bookmark())
