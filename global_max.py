@@ -154,8 +154,9 @@ class GlobalMax(ThreeDScene):
         # Draw arcs in 8 directions from P, showing it curves down in every direction
         arc_t_vals = np.linspace(-1.2, 1.2, 60)
         dir_arcs = VGroup()
-        for i in range(8):
-            th = i * PI / 8
+        NUM_ARCS = 37
+        for i in range(NUM_ARCS):
+            th = i * PI / NUM_ARCS
             arc = VMobject(color=BLUE_B, stroke_width=2)
             arc.set_points_as_corners([
                 gs.axes.c2p(t * np.cos(th), t * np.sin(th),
@@ -163,8 +164,8 @@ class GlobalMax(ThreeDScene):
                 for t in arc_t_vals
             ])
             dir_arcs.add(arc)
-        self.play(LaggedStart(*[Create(arc) for arc in dir_arcs],
-                              lag_ratio=0.25, run_time=2.5))
+        self.play(LaggedStart(*[Create(arc, run_time = 2 / NUM_ARCS) for arc in dir_arcs],
+                              lag_ratio=2 / NUM_ARCS, run_time=2.5))
         self.wait(0.5)
 
         self.play(FadeIn(surf_small),
