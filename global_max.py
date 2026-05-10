@@ -152,13 +152,13 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
         # Phase 1: Small domain — paraboloid only, P looks like global max
         # -------------------------------------------------------
         with self.voiceover("Let's suppose we have a point P where all the first derivatives are zero. We know that this point is a local maximum in every direction.") as tracker:
-            self.add_fixed_in_frame_mobjects(t0_txt)
-            self.play(FadeIn(t0_txt))
-            self.wait(0.5)
-
             self.play(Create(gs.axes))
             self.add_fixed_orientation_mobjects(P_label_3d)
             self.play(FadeIn(gs.base_dot), FadeIn(P_label_3d))
+
+            self.add_fixed_in_frame_mobjects(t0_txt)
+            self.play(FadeIn(t0_txt))
+            self.wait(0.5)
 
             # Draw arcs in 8 directions from P, showing it curves down in every direction
             arc_t_vals = np.linspace(-1.2, 1.2, 60)
@@ -186,11 +186,12 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
         # Phase 2: Extend domain — gaussian bump appears, Q revealed
         # -------------------------------------------------------
         with self.voiceover("But we want to prove that it is the global maximum. We will do that by contradiction.") as tracker:
-            self.add_fixed_in_frame_mobjects(t1_txt)
-            self.play(FadeOut(t0_txt), FadeIn(t1_txt))
-            # self.wait(tracker.duration - tracker.time_until_bookmark())
+            ...
 
         with self.voiceover("Suppose there's some point Q with a higher log likelihood than P.") as tracker:
+            self.add_fixed_in_frame_mobjects(t1_txt)
+            self.play(FadeOut(t0_txt), FadeIn(t1_txt))
+
             self.play(
                 FadeOut(surf_small),
                 FadeIn(gs.surface),
@@ -209,32 +210,32 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
             self.play(Create(gs.slice_curve))
             # self.wait(tracker.duration - tracker.time_until_bookmark())
 
-        # -------------------------------------------------------
-        # Phase 4: Copy to 2D
-        # -------------------------------------------------------
-        three_d_group = VGroup(gs.axes, gs.surface, gs.slice_plane, gs.slice_curve, gs.base_dot, Q_dot, P_label_3d, Q_label_3d)
-        shift = shift_to_screen_corner(self, three_d_group, corner=UR, scale = 0.5)
-        self.play(three_d_group.animate.shift(shift).scale(0.5), run_time=1.35)
-        gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)], move_before_copy=False)
+            # -------------------------------------------------------
+            # Phase 4: Copy to 2D
+            # -------------------------------------------------------
+            three_d_group = VGroup(gs.axes, gs.surface, gs.slice_plane, gs.slice_curve, gs.base_dot, Q_dot, P_label_3d, Q_label_3d)
+            shift = shift_to_screen_corner(self, three_d_group, corner=UR, scale = 0.5)
+            self.play(three_d_group.animate.shift(shift).scale(0.5), run_time=1.35)
+            gs.animate_copy(self, extra_copy_pairs=[(Q_dot, Q_dot2d)], move_before_copy=False)
 
-        # Highlight [P, Q] on the 2D graph, then fade out the outside portions.
-        # Strategy: fade in a PQ-only segment while fading out the full curve.
-        # Over [P,Q] the two cancel (opacity stays 1); outside just disappears.
-        t_pq = np.linspace(0, t_Q, 80)
-        pq_highlight = VMobject(color=YELLOW, stroke_width=6)
-        pq_highlight.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
-        self.add_fixed_in_frame_mobjects(pq_highlight)
-        self.play(FadeIn(pq_highlight))
-        self.wait(0.5)
+            # Highlight [P, Q] on the 2D graph, then fade out the outside portions.
+            # Strategy: fade in a PQ-only segment while fading out the full curve.
+            # Over [P,Q] the two cancel (opacity stays 1); outside just disappears.
+            t_pq = np.linspace(0, t_Q, 80)
+            pq_highlight = VMobject(color=YELLOW, stroke_width=6)
+            pq_highlight.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
+            self.add_fixed_in_frame_mobjects(pq_highlight)
+            self.play(FadeIn(pq_highlight))
+            self.wait(0.5)
 
-        pq_seg = VMobject(color=ORANGE)
-        pq_seg.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
-        self.add_fixed_in_frame_mobjects(pq_seg)
-        self.play(
-            FadeOut(pq_highlight),
-            FadeOut(gs.graph_curve),
-            FadeIn(pq_seg),
-        )
+            pq_seg = VMobject(color=ORANGE)
+            pq_seg.set_points_as_corners([gs.axes2d.c2p(t, gs.g(t)) for t in t_pq])
+            self.add_fixed_in_frame_mobjects(pq_seg)
+            self.play(
+                FadeOut(pq_highlight),
+                FadeOut(gs.graph_curve),
+                FadeIn(pq_seg),
+            )
 
         # Build conclusion targets: pure negative paraboloid, created after the 3D group
         # has been moved/scaled so gs.axes.c2p() gives the right coordinates.
