@@ -176,7 +176,7 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
 
         with self.voiceover("We know that this point is a local maximum in every direction.") as tracker:
             self.play(FadeOut(grad_arrow_x), FadeOut(grad_arrow_y))
-            # Draw arcs in 8 directions from P, showing it curves down in every direction
+            # Draw arcs in lots of directions from P, showing it curves down in every direction
             arc_t_vals = np.linspace(-1.2, 1.2, 60)
             dir_arcs = VGroup()
             NUM_ARCS = 37
@@ -256,12 +256,12 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
 
         with self.voiceover("P because P is a local maximum. And the minimum is not at") as tracker:
             self.add_fixed_in_frame_mobjects(P_arc, t3_txt)
-            self.play(FadeIn(P_arc), FadeOut(t2_txt), FadeIn(t3_txt))
+            self.play(Create(P_arc), FadeOut(t2_txt), FadeIn(t3_txt))
             # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         with self.voiceover("Q because it's higher than P.") as tracker:
             self.add_fixed_in_frame_mobjects(t4_txt)
-            self.play(FadeOut(t3_txt), FadeIn(t4_txt), Indicate(Q_dot2d, scale_factor=1.5, color=GREEN, run_time=2))
+            self.play(FadeOut(t3_txt), FadeIn(t4_txt), Indicate(Q_dot2d, scale_factor=1.5, color=GREEN, run_time=tracker.duration - 0.2))
             # self.wait(tracker.duration - tracker.time_until_bookmark())
 
         with self.voiceover("So the minimum on this line segment must be somewhere in the interior. Let's call that point M. So, M is a local minimum!") as tracker:
@@ -271,15 +271,11 @@ class GlobalMax(ThreeDScene, VoiceoverScene):
 
         with self.voiceover("And that means the directional second derivative at M is positive.") as tracker:
             self.add_fixed_in_frame_mobjects(M_arc, t6_txt)
-            self.play(FadeIn(M_arc), FadeOut(t5_txt), FadeIn(t6_txt))
-            # self.play(
-            #     Flash(gs.axes2d.c2p(t_M, gs.g(t_M)), color=RED, flash_radius=0.3),
-            #     M_arc.animate.set_color(YELLOW),
-            # )
+            self.play(Create(M_arc), FadeOut(t5_txt), FadeIn(t6_txt))
 
         with self.voiceover("But earlier we proved that the directional second derivative is negative everywhere.") as tracker:
             self.add_fixed_in_frame_mobjects(M_arc_down, t6a_txt)
-            self.play(FadeOut(t6_txt), FadeIn(t6a_txt), FadeIn(M_arc_down))
+            self.play(FadeOut(t6_txt), FadeIn(t6a_txt), Create(M_arc_down))
 
         with self.voiceover("So we have a contradiction. Therefore, our assumption that Q is higher than P is wrong. Therefore ") as tracker:
             self.add_fixed_in_frame_mobjects(t7_txt)
