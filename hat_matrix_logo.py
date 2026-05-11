@@ -49,6 +49,7 @@ class HatMatrixLogo(VGroup):
 
         # Buckle
         buckle = RoundedRectangle(color = GRAY_A, width = triangle.width / 3.45, height = buckle_rect.height, corner_radius = buckle_rect.height / 10)
+        buckle.set_stroke(width = buckle.height * 24)
         buckle.move_to(buckle_strap)
 
         hat_hidden = VGroup(triangle, triangle2, buckle_strap, buckle).next_to(brackets, UP)
