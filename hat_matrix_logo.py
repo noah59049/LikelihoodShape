@@ -30,6 +30,18 @@ class HatMatrixScene(Scene):
         triangle2.move_to(triangle, aligned_edge=DOWN)
         self.add(triangle2)
 
+        # Brown strap with the buckle
+        buckle_rect = Rectangle(width = triangle2.width * 2, height = triangle2.height * 0.65)
+        buckle_rect.move_to(triangle, aligned_edge=DOWN)
+        buckle_rect.shift(buckle_rect.height * UP)
+        buckle_strap = Intersection(buckle_rect, triangle, color = DARK_BROWN, fill_opacity = 1)
+        self.add(buckle_strap)
+
+        # Buckle
+        buckle = Rectangle(color = WHITE, width = triangle.width / 3.45, height = buckle_rect.height)
+        buckle.move_to(buckle_strap)
+        self.add(buckle)
+
         def get_hand(start_point, length = 0.13, theta = math.pi / 6):
             line1 = Line(start = start_point, end = start_point + math.cos(theta) * length * UP + math.sin(theta) * length * RIGHT)
             line2 = Line(start = start_point, end = start_point + length * UP)
