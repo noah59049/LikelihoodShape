@@ -38,7 +38,7 @@ class HatMatrixScene(Scene):
         self.add(buckle_strap)
 
         # Buckle
-        buckle = Rectangle(color = WHITE, width = triangle.width / 3.45, height = buckle_rect.height)
+        buckle = RoundedRectangle(color = WHITE, width = triangle.width / 3.45, height = buckle_rect.height, corner_radius = buckle_rect.height / 10)
         buckle.move_to(buckle_strap)
         self.add(buckle)
 
