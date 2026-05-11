@@ -115,10 +115,10 @@ class HatMatrixLogo(VGroup):
         super().__init__(faint_elements, brackets, eye1, eye2, mouth, nose, left_arm, left_hand, right_arm, right_hand, hat)
     
     def adjust_hat(self):
-      return Succession(
-        self.arm_length.animate.set_value(0.6),
-        self.arm_length.animate.set_value(0.3),
-      )
+        return Succession(
+            ApplyMethod(self.arm_length.set_value, 0.6),
+            ApplyMethod(self.arm_length.set_value, 0.3),
+        )
 
 class HatMatrixScene(Scene):
     def construct(self):
