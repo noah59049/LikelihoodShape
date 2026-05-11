@@ -108,10 +108,11 @@ class HatMatrixLogo(VGroup):
         
         super().__init__(faint_elements, brackets, eye1, eye2, mouth, nose, left_arm, left_hand, right_arm, right_hand, hat)
     
-    def adjust_hat(self):
+    def adjust_hat(self, **kwargs):
         return Succession(
             ApplyMethod(self.arm_length.set_value, 0.6),
             ApplyMethod(self.arm_length.set_value, 0.3),
+            **kwargs
         )
     
     def get_scale(self):
@@ -121,6 +122,9 @@ class HatMatrixScene(Scene):
     def construct(self):
         my_hat_matrix = HatMatrixLogo().scale(2).shift(DOWN * 0.4)
         self.add(my_hat_matrix)
-        self.wait(3)
-        self.play(my_hat_matrix.adjust_hat())
+        self.play(my_hat_matrix.adjust_hat(), run_time = 0.001)
+        my_text = Text("The Hat Matrix").scale(2).to_edge(DOWN)
+        self.wait(0.7)
+        self.play(Write(my_text, run_time = 2))
+        self.play(my_hat_matrix.adjust_hat(run_time = 2))
         self.wait(3)
