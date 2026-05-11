@@ -12,6 +12,7 @@ class HatMatrixScene(Scene):
         ).set_stroke(color = WHITE, width = 4, background=False)
         self.add(brackets)
 
+        # Main triangle of the hat
         triangle = Triangle(color = PURPLE, 
                             fill_color = PURPLE, 
                             fill_opacity = 1,
@@ -22,14 +23,12 @@ class HatMatrixScene(Scene):
         triangle.shift(UP * 0.4)
         self.add(triangle)
 
+        # Lower triangle with the brim of the hat
         triangle2 = triangle.copy()
         triangle2.stretch_to_fit_height(0.5)
         triangle2.stretch_to_fit_width(2.5)
         triangle2.move_to(triangle, aligned_edge=DOWN)
         self.add(triangle2)
-
-        print(brackets.get_right())
-        print(brackets.get_center())
 
         def get_hand(start_point, length = 0.13, theta = math.pi / 6):
             line1 = Line(start = start_point, end = start_point + math.cos(theta) * length * UP + math.sin(theta) * length * RIGHT)
