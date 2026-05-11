@@ -60,19 +60,19 @@ class HatMatrixLogo(VGroup):
             line1 = Line(start = start_point, end = start_point + math.cos(theta) * length * UP + math.sin(theta) * length * RIGHT)
             line2 = Line(start = start_point, end = start_point + length * UP)
             line3 = Line(start = start_point, end = start_point + math.cos(theta) * length * UP + math.sin(theta) * length * LEFT)
-            return VGroup(line1, line2, line3)
+            return VGroup(line1, line2, line3).scale(self.get_scale())
         def get_left_arm():
             arc = Arc(start_angle = PI, angle = PI / 2, radius = 0.3)
             arc.stretch_to_fit_height(self.arm_length.get_value())
             arc.move_to(brackets.get_left())
             arc.shift(arc.width / 2 * LEFT + arc.height / 2 * UP)
-            return arc
+            return arc.scale(self.get_scale())
         def get_right_arm():
             arc = Arc(start_angle = 3 * PI / 2, angle = PI / 2, radius = 0.3)
             arc.stretch_to_fit_height(self.arm_length.get_value())
             arc.move_to(brackets.get_right())
             arc.shift(arc.width / 2 * RIGHT + arc.height / 2 * UP)
-            return arc
+            return arc.scale(self.get_scale())
 
         left_arm = always_redraw(get_left_arm)
         left_hand = always_redraw(lambda: get_hand(start_point = left_arm.get_corner(UL)))
@@ -103,7 +103,7 @@ class HatMatrixLogo(VGroup):
         # self.add(mouth)
 
         def get_hat():
-            hat = hat_hidden.copy().next_to(brackets)
+            hat = hat_hidden.copy().scale(self.get_scale()).next_to(brackets)
             hat_bottom = right_hand.get_top() + hat.height / 2 * UP
             hat_bottom[0] = brackets.get_top()[0]
             hat_bottom[1] = max(hat_bottom[1], brackets.get_top()[1])
@@ -120,10 +120,13 @@ class HatMatrixLogo(VGroup):
             ApplyMethod(self.arm_length.set_value, 0.6),
             ApplyMethod(self.arm_length.set_value, 0.3),
         )
+    
+    def get_scale(self):
+        return self.brackets.width / self.original_brackets_width
 
 class HatMatrixScene(Scene):
     def construct(self):
-        my_hat_matrix = HatMatrixLogo().to_corner(DL).scale(0.5)
+        my_hat_matrix = HatMatrixLogo().scale(1).to_corner(DL)
         self.add(my_hat_matrix)
         self.play(my_hat_matrix.adjust_hat())
         return
