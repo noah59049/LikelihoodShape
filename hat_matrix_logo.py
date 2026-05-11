@@ -22,6 +22,12 @@ class HatMatrixScene(Scene):
         triangle.shift(UP * 0.4)
         self.add(triangle)
 
+        triangle2 = triangle.copy()
+        triangle2.stretch_to_fit_height(0.5)
+        triangle2.stretch_to_fit_width(2.5)
+        triangle2.move_to(triangle, aligned_edge=DOWN)
+        self.add(triangle2)
+
         print(brackets.get_right())
         print(brackets.get_center())
 
