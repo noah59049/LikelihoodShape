@@ -73,6 +73,12 @@ class HatMatrixScene(Scene):
         eye2 = eye1.copy()
         eye2.shift(1.285 * eye2.width * 2 * LEFT)
         self.add(eye2)
+
+        nose = VGroup(Line(LEFT * 0.18, RIGHT * 0.18),
+                      Line(RIGHT * 0.18, UP * 0.18 * 1.732))
+        nose.scale(0.73)
+        self.add(nose)
+        nose.shift(DOWN * 0.14)
         
         # Mouth
         mouth = Line(0.27 * LEFT, 0.27 * RIGHT, path_arc = PI / 4)
