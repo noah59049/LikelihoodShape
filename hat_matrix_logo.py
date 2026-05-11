@@ -24,6 +24,12 @@ class HatMatrixScene(Scene):
         print(brackets.get_right())
         print(brackets.get_center())
 
-        arc1 = Arc(start_angle = 3 * PI / 2, angle = PI / 2, radius = 1).move_to(brackets.get_right())
+        # Right arm
+        arc1 = Arc(start_angle = 3 * PI / 2, angle = PI / 2, radius = 0.3).move_to(brackets.get_right())
         arc1.shift(arc1.width / 2 * RIGHT + arc1.height / 2 * UP)
         self.add(arc1)
+
+        # Left arm
+        arc2 = Arc(start_angle = PI, angle = PI / 2, radius = 0.3).move_to(brackets.get_left())
+        arc2.shift(arc2.width / 2 * LEFT + arc2.height / 2 * UP)
+        self.add(arc2)
