@@ -14,7 +14,6 @@ class HatMatrixLogo(VGroup):
         faint_elements.set_opacity(0.2)
         faint_elements[0][0].set_opacity(0)
         faint_elements[0][-1].set_opacity(0)
-        # self.add(faint_elements)
 
         brackets = MathTex(
             r"\begin{bmatrix}"
@@ -106,7 +105,7 @@ class HatMatrixLogo(VGroup):
             return hat
 
         hat = always_redraw(get_hat)
-
+        
         super().__init__(faint_elements, brackets, eye1, eye2, mouth, nose, left_arm, left_hand, right_arm, right_hand, hat)
     
     def adjust_hat(self):
@@ -122,6 +121,6 @@ class HatMatrixScene(Scene):
     def construct(self):
         my_hat_matrix = HatMatrixLogo().scale(2).shift(DOWN * 0.4)
         self.add(my_hat_matrix)
-        self.wait(1)
+        self.wait(3)
         self.play(my_hat_matrix.adjust_hat())
-        self.wait(1)
+        self.wait(3)
