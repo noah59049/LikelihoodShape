@@ -20,7 +20,7 @@ class HatMatrixScene(Scene):
         triangle.next_to(brackets, UP)
         triangle.stretch_to_fit_height(2)
         triangle.scale(0.9)
-        triangle.shift(UP * 0.4)
+        triangle.shift(UP * 0.0)
         self.add(triangle)
 
         # Lower triangle with the brim of the hat
