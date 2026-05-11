@@ -3,6 +3,19 @@ from manim import *
 
 class HatMatrixScene(Scene):
     def construct(self):
+        faint_elements = MathTex(
+            r"\begin{bmatrix}"
+            r"x_{11} & x_{12} \\"
+            r"x_{21} & x_{22}"
+            r"\end{bmatrix}", 
+            font_size = 40
+        ).set_stroke(color = GREEN_E, width = 4, background=False)
+        faint_elements.scale(0.8)
+        faint_elements.set_opacity(0.2)
+        faint_elements[0][0].set_opacity(0)
+        faint_elements[0][-1].set_opacity(0)
+        self.add(faint_elements)
+
         brackets = MathTex(
             r"\begin{bmatrix}"
             r"\quad & \quad \\"
