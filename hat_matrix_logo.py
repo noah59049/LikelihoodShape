@@ -23,7 +23,8 @@ class HatMatrixLogo(VGroup):
             r"\end{bmatrix}", 
             font_size = 40
         ).set_stroke(color = WHITE, width = 4, background=False)
-        # self.add(brackets)
+        self.brackets = brackets
+        self.original_brackets_width = brackets.width
 
         # Main triangle of the hat
         triangle = Triangle(color = PURPLE, 
@@ -51,7 +52,7 @@ class HatMatrixLogo(VGroup):
         buckle = RoundedRectangle(color = GRAY_A, width = triangle.width / 3.45, height = buckle_rect.height, corner_radius = buckle_rect.height / 10)
         buckle.move_to(buckle_strap)
 
-        hat_hidden = VGroup(triangle, triangle2, buckle_strap, buckle)        
+        hat_hidden = VGroup(triangle, triangle2, buckle_strap, buckle).next_to(brackets, UP)
 
         # Arms
         self.arm_length = ValueTracker(0.3)
@@ -102,11 +103,11 @@ class HatMatrixLogo(VGroup):
         # self.add(mouth)
 
         def get_hat():
-            hat = hat_hidden.copy()
+            hat = hat_hidden.copy().next_to(brackets)
             hat_bottom = right_hand.get_top() + hat.height / 2 * UP
-            hat_bottom[1] = max(hat_bottom[1], hat.get_y())
+            hat_bottom[0] = brackets.get_top()[0]
+            hat_bottom[1] = max(hat_bottom[1], brackets.get_top()[1])
             hat.move_to(hat_bottom)
-            hat.shift(LEFT * hat.get_x())
             return hat
 
         hat = always_redraw(get_hat)
@@ -122,7 +123,7 @@ class HatMatrixLogo(VGroup):
 
 class HatMatrixScene(Scene):
     def construct(self):
-        my_hat_matrix = HatMatrixLogo()
+        my_hat_matrix = HatMatrixLogo().to_corner(DL).scale(0.5)
         self.add(my_hat_matrix)
         self.play(my_hat_matrix.adjust_hat())
         return
