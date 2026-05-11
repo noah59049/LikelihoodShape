@@ -6,8 +6,9 @@ class HatMatrixScene(Scene):
             r"\begin{bmatrix}"
             r"\quad & \quad \\"
             r"\quad & \quad"
-            r"\end{bmatrix}"
-        )
+            r"\end{bmatrix}", 
+            font_size = 40
+        ).set_stroke(color = WHITE, width = 4, background=False)
         self.add(brackets)
 
         triangle = Triangle(color = PURPLE, 
