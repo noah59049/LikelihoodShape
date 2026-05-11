@@ -74,6 +74,7 @@ class HatMatrixScene(Scene):
         eye2.shift(1.285 * eye2.width * 2 * LEFT)
         self.add(eye2)
 
+        # Nose
         nose = VGroup(Line(LEFT * 0.18, RIGHT * 0.18),
                       Line(RIGHT * 0.18, UP * 0.18 * 1.732))
         nose.scale(0.73)
