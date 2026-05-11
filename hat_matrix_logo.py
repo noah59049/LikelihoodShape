@@ -63,4 +63,18 @@ class HatMatrixScene(Scene):
 
         hand2 = get_hand(start_point = arc2.get_corner(UL))
         self.add(hand2)
+
+        # Eyes
+        eye1 = Circle(radius = brackets.width / 12, color = WHITE)
+        eye1.move_to(brackets)
+        eye1.shift(1.285 * eye1.width * RIGHT + eye1.height * UP)
+        self.add(eye1)
+
+        eye2 = eye1.copy()
+        eye2.shift(1.285 * eye2.width * 2 * LEFT)
+        self.add(eye2)
         
+        # Mouth
+        mouth = Line(0.27 * LEFT, 0.27 * RIGHT, path_arc = PI / 4)
+        mouth.shift(DOWN * 0.27)
+        self.add(mouth)
