@@ -34,48 +34,54 @@ class HatMatrixScene(Scene):
         triangle.stretch_to_fit_height(2)
         triangle.scale(0.9)
         triangle.shift(UP * 0.0)
-        self.add(triangle)
+        # self.add(triangle)
 
         # Lower triangle with the brim of the hat
         triangle2 = triangle.copy()
         triangle2.stretch_to_fit_height(0.5)
         triangle2.stretch_to_fit_width(2.5)
         triangle2.move_to(triangle, aligned_edge=DOWN)
-        self.add(triangle2)
+        # self.add(triangle2)
 
         # Brown strap with the buckle
         buckle_rect = Rectangle(width = triangle2.width * 2, height = triangle2.height * 0.65)
         buckle_rect.move_to(triangle, aligned_edge=DOWN)
         buckle_rect.shift(buckle_rect.height * UP)
         buckle_strap = Intersection(buckle_rect, triangle, color = DARK_BROWN, fill_opacity = 1)
-        self.add(buckle_strap)
+        # self.add(buckle_strap)
 
         # Buckle
         buckle = RoundedRectangle(color = GRAY_A, width = triangle.width / 3.45, height = buckle_rect.height, corner_radius = buckle_rect.height / 10)
         buckle.move_to(buckle_strap)
-        self.add(buckle)
+        # self.add(buckle)
 
+        hat_hidden = VGroup(triangle, triangle2, buckle_strap, buckle)        
+
+        # Arms
+        arm_scale = ValueTracker(0.3)
         def get_hand(start_point, length = 0.13, theta = math.pi / 6):
             line1 = Line(start = start_point, end = start_point + math.cos(theta) * length * UP + math.sin(theta) * length * RIGHT)
             line2 = Line(start = start_point, end = start_point + length * UP)
             line3 = Line(start = start_point, end = start_point + math.cos(theta) * length * UP + math.sin(theta) * length * LEFT)
             return VGroup(line1, line2, line3)
+        def get_left_arm():
+            arc = Arc(start_angle = PI, angle = PI / 2, radius = 0.3)
+            arc.stretch_to_fit_height(arm_scale.get_value())
+            arc.move_to(brackets.get_left())
+            arc.shift(arc.width / 2 * LEFT + arc.height / 2 * UP)
+            return arc
+        def get_right_arm():
+            arc = Arc(start_angle = 3 * PI / 2, angle = PI / 2, radius = 0.3)
+            arc.stretch_to_fit_height(arm_scale.get_value())
+            arc.move_to(brackets.get_right())
+            arc.shift(arc.width / 2 * RIGHT + arc.height / 2 * UP)
+            return arc
 
-        # Right arm
-        arc1 = Arc(start_angle = 3 * PI / 2, angle = PI / 2, radius = 0.3).move_to(brackets.get_right())
-        arc1.shift(arc1.width / 2 * RIGHT + arc1.height / 2 * UP)
-        self.add(arc1)
-
-        hand1 = get_hand(start_point = arc1.get_corner(UR))
-        self.add(hand1)
-
-        # Left arm
-        arc2 = Arc(start_angle = PI, angle = PI / 2, radius = 0.3).move_to(brackets.get_left())
-        arc2.shift(arc2.width / 2 * LEFT + arc2.height / 2 * UP)
-        self.add(arc2)
-
-        hand2 = get_hand(start_point = arc2.get_corner(UL))
-        self.add(hand2)
+        left_arm = always_redraw(get_left_arm)
+        left_hand = always_redraw(lambda: get_hand(start_point = left_arm.get_corner(UL)))
+        right_arm = always_redraw(get_right_arm)
+        right_hand = always_redraw(lambda: get_hand(start_point = right_arm.get_corner(UR)))
+        self.add(left_arm, left_hand, right_arm, right_hand)
 
         # Eyes
         eye1 = Circle(radius = brackets.width / 12, color = WHITE)
@@ -98,3 +104,16 @@ class HatMatrixScene(Scene):
         mouth = Line(0.27 * LEFT, 0.27 * RIGHT, path_arc = PI / 4)
         mouth.shift(DOWN * 0.27)
         self.add(mouth)
+
+        def get_hat():
+            hat = hat_hidden.copy()
+            hat_bottom = right_hand.get_top() + hat.height / 2 * UP
+            hat_bottom[1] = max(hat_bottom[1], hat.get_y())
+            hat.move_to(hat_bottom)
+            hat.shift(LEFT * hat.get_x())
+            return hat
+
+        hat = always_redraw(get_hat)
+        self.add(hat)
+        self.play(arm_scale.animate.set_value(0.6), run_time = 1.3)
+        self.play(arm_scale.animate.set_value(0.3), run_time = 1.3)
