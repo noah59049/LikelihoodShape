@@ -62,45 +62,40 @@ class HatMatrixLogo(VGroup):
             line3 = Line(start = start_point, end = start_point + math.cos(theta) * length * UP + math.sin(theta) * length * LEFT)
             return VGroup(line1, line2, line3).scale(self.get_scale())
         def get_left_arm():
-            arc = Arc(start_angle = PI, angle = PI / 2, radius = 0.3)
-            arc.stretch_to_fit_height(self.arm_length.get_value())
+            arc = Arc(start_angle = PI, angle = PI / 2, radius = 0.3).scale(self.get_scale())
+            arc.stretch_to_fit_height(self.arm_length.get_value() * self.get_scale())
             arc.move_to(brackets.get_left())
             arc.shift(arc.width / 2 * LEFT + arc.height / 2 * UP)
-            return arc.scale(self.get_scale())
+            return arc
         def get_right_arm():
-            arc = Arc(start_angle = 3 * PI / 2, angle = PI / 2, radius = 0.3)
-            arc.stretch_to_fit_height(self.arm_length.get_value())
+            arc = Arc(start_angle = 3 * PI / 2, angle = PI / 2, radius = 0.3).scale(self.get_scale())
+            arc.stretch_to_fit_height(self.arm_length.get_value()* self.get_scale())
             arc.move_to(brackets.get_right())
             arc.shift(arc.width / 2 * RIGHT + arc.height / 2 * UP)
-            return arc.scale(self.get_scale())
+            return arc
 
         left_arm = always_redraw(get_left_arm)
         left_hand = always_redraw(lambda: get_hand(start_point = left_arm.get_corner(UL)))
         right_arm = always_redraw(get_right_arm)
         right_hand = always_redraw(lambda: get_hand(start_point = right_arm.get_corner(UR)))
-        # self.add(left_arm, left_hand, right_arm, right_hand)
 
         # Eyes
         eye1 = Circle(radius = brackets.width / 12, color = WHITE)
         eye1.move_to(brackets)
         eye1.shift(1.285 * eye1.width * RIGHT + eye1.height * UP)
-        # self.add(eye1)
 
         eye2 = eye1.copy()
         eye2.shift(1.285 * eye2.width * 2 * LEFT)
-        # self.add(eye2)
 
         # Nose
         nose = VGroup(Line(LEFT * 0.18, RIGHT * 0.18),
                       Line(RIGHT * 0.18, UP * 0.18 * 1.732))
         nose.scale(0.73)
-        # self.add(nose)
         nose.shift(DOWN * 0.14)
         
         # Mouth
         mouth = Line(0.27 * LEFT, 0.27 * RIGHT, path_arc = PI / 4)
         mouth.shift(DOWN * 0.27)
-        # self.add(mouth)
 
         def get_hat():
             hat = hat_hidden.copy().scale(self.get_scale()).next_to(brackets)
@@ -111,7 +106,6 @@ class HatMatrixLogo(VGroup):
             return hat
 
         hat = always_redraw(get_hat)
-        # self.add(hat)
 
         super().__init__(faint_elements, brackets, eye1, eye2, mouth, nose, left_arm, left_hand, right_arm, right_hand, hat)
     
@@ -126,9 +120,11 @@ class HatMatrixLogo(VGroup):
 
 class HatMatrixScene(Scene):
     def construct(self):
-        my_hat_matrix = HatMatrixLogo().scale(1).to_corner(DL)
+        my_hat_matrix = HatMatrixLogo().scale(2).shift(DOWN * 0.4)
         self.add(my_hat_matrix)
+        self.wait(1)
         self.play(my_hat_matrix.adjust_hat())
+        self.wait(1)
         return
 
         faint_elements = MathTex(
