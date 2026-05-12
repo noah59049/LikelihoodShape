@@ -26,8 +26,8 @@ class HatMatrixLogo(VGroup):
         self.original_brackets_width = brackets.width
 
         # Main triangle of the hat
-        triangle = Triangle(color = PURPLE, 
-                            fill_color = PURPLE, 
+        triangle = Triangle(color = PURPLE_E, 
+                            fill_color = PURPLE_E, 
                             fill_opacity = 1,
                             )
         triangle.next_to(brackets, UP)
