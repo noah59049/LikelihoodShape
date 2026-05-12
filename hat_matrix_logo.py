@@ -118,14 +118,28 @@ class HatMatrixLogo(VGroup):
     
     def get_scale(self):
         return self.brackets.width / self.original_brackets_width
+    
+class HMDialogBox(VGroup):
+    def __init__(self, text):
+        hat_matrix = HatMatrixLogo()
+        text = Tex(
+            r"\begin{minipage}{6cm}This is a long sentence that will automatically "
+            r"wrap itself inside a six centimeter wide text box.\end{minipage}",
+        )
+        super().__init__(hat_matrix, text)
+        self.arrange(RIGHT)
 
-class HatMatrixScene(Scene):
+# class HatMatrixScene(Scene):
+#     def construct(self):
+#         my_hat_matrix = HatMatrixLogo().scale(2).shift(DOWN * 0.4)
+#         self.add(my_hat_matrix)
+#         self.play(my_hat_matrix.adjust_hat(), run_time = 0.001)
+#         my_text = Text("The Hat Matrix").scale(2).to_edge(DOWN)
+#         self.wait(0.7)
+#         self.play(Write(my_text, run_time = 2))
+#         self.play(my_hat_matrix.adjust_hat(run_time = 2))
+#         self.wait(3)
+
+class DialogBoxTest(Scene):
     def construct(self):
-        my_hat_matrix = HatMatrixLogo().scale(2).shift(DOWN * 0.4)
-        self.add(my_hat_matrix)
-        self.play(my_hat_matrix.adjust_hat(), run_time = 0.001)
-        my_text = Text("The Hat Matrix").scale(2).to_edge(DOWN)
-        self.wait(0.7)
-        self.play(Write(my_text, run_time = 2))
-        self.play(my_hat_matrix.adjust_hat(run_time = 2))
-        self.wait(3)
+        self.add(HMDialogBox("the quick brown fox jumped over the lazy dog and then climbed up a tree and jumped out of the tree with a grape"))
