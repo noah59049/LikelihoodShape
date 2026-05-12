@@ -120,13 +120,21 @@ class HatMatrixLogo(VGroup):
         return self.brackets.width / self.original_brackets_width
     
 class HMDialogBox(VGroup):
-    def __init__(self, text):
-        hat_matrix = HatMatrixLogo()
+    def __init__(self, 
+                 text,
+                 arrange = RIGHT,
+                 hm_scale = 0.5,
+                 text_width = 6,
+                 text_scale = None):
+        hat_matrix = HatMatrixLogo().scale(hm_scale)
         text_obj = Tex(
-            r"\begin{minipage}{6cm}" + text + r"\end{minipage}",
+            f"\\begin{{minipage}}{{{text_width}cm}}" + text + r"\end{minipage}",
         )
-        text_obj.scale(hat_matrix.height / text_obj.height)
-        wrapper = VGroup(hat_matrix, text_obj).scale(0.5).arrange(RIGHT)
+        if text_scale is None:
+            text_obj.scale(hat_matrix.height / text_obj.height)
+        else:
+            text_obj.scale(text_scale)
+        wrapper = VGroup(hat_matrix, text_obj).arrange(arrange)
         box = RoundedRectangle(width = wrapper.width, 
                                height = wrapper.height, 
                                fill_color = RED_A, 
