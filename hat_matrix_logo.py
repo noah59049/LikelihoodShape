@@ -122,13 +122,16 @@ class HatMatrixLogo(VGroup):
 class HMDialogBox(VGroup):
     def __init__(self, text):
         hat_matrix = HatMatrixLogo()
-        text = Tex(
-            r"\begin{minipage}{6cm}This is a long sentence that will automatically "
-            r"wrap itself inside a six centimeter wide text box.\end{minipage}",
+        text_obj = Tex(
+            r"\begin{minipage}{6cm}" + text + r"\end{minipage}",
         )
-        text.scale(hat_matrix.height / text.height)
-        wrapper = VGroup(hat_matrix, text).scale(0.5).arrange(RIGHT)
-        box = RoundedRectangle(width = wrapper.width, height = wrapper.height, fill_color = RED_A, fill_opacity = 0.33, color = RED_C)
+        text_obj.scale(hat_matrix.height / text_obj.height)
+        wrapper = VGroup(hat_matrix, text_obj).scale(0.5).arrange(RIGHT)
+        box = RoundedRectangle(width = wrapper.width, 
+                               height = wrapper.height, 
+                               fill_color = RED_A, 
+                               fill_opacity = 0.33, 
+                               color = RED_C)
         box.scale(1.2)
         super().__init__(box, wrapper)
 
