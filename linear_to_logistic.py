@@ -4,7 +4,7 @@ from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 import numpy as np
 import pandas as pd
-from N_Tools import simple_linear_regression, create_graph
+from N_Tools import simple_linear_regression, create_graph, TransformWithBoxes
 
 df = pd.read_csv("breast_cancer_sklearn.csv")
 X = np.array(df[df.columns[0]])
@@ -270,7 +270,8 @@ class LinearLogisticScene(VoiceoverScene):
         sigma_label[1].add_updater(lambda m: m.set_value(sigmoid(z_tracker.get_value())))
 
         with self.voiceover("To see why, if you plug in a small value of z, the denominator becomes very large, and your function approaches 0 very fast.") as tracker:
-            self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line), FadeIn(sigma_label), TransformMatchingTex(sigmoid_defn, formula))
+            self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line), FadeIn(sigma_label), TransformWithBoxes(sigmoid_defn, formula,
+                                                                                                                   ([10,11], [10,11,12])))
         with self.voiceover("If z is large, then the exponential term becomes near zero, and the fraction evaluates to almost 1.") as tracker:
             self.play(z_tracker.animate.set_value(5), run_time=5, rate_func=linear)
             self.play(FadeOut(sliding_dot), FadeOut(v_line), FadeOut(h_line), FadeOut(sigma_label), TransformMatchingTex(formula, sigmoid_defn))
