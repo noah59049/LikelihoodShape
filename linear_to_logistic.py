@@ -270,10 +270,14 @@ class LinearLogisticScene(VoiceoverScene):
             DecimalNumber(sigmoid(z_tracker.get_value()), num_decimal_places=3, color=YELLOW),
         ).arrange(RIGHT, buff=0.15).next_to(z_label, UP)
         sigma_label[1].add_updater(lambda m: m.set_value(sigmoid(z_tracker.get_value())))
+        formula = always_redraw(lambda: MathTex(
+            r"\frac{1}{1+e^{" + f"{-z_tracker.get_value():.1f}" + r"}}",
+            color=YELLOW,
+        ).to_corner(UR))
 
-        self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line), FadeIn(z_label), FadeIn(sigma_label))
+        self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line), FadeIn(z_label), FadeIn(sigma_label), FadeIn(formula))
         self.play(z_tracker.animate.set_value(5), run_time=5, rate_func=linear)
-        self.play(FadeOut(sliding_dot), FadeOut(v_line), FadeOut(h_line), FadeOut(z_label), FadeOut(sigma_label))
+        self.play(FadeOut(sliding_dot), FadeOut(v_line), FadeOut(h_line), FadeOut(z_label), FadeOut(sigma_label), FadeOut(formula))
 
         with self.voiceover("If you multiply the top and bottom of the fraction by e to the z, ") as tracker:
             self.play(TransformByGlyphMap(sigmoid_defn, sigmoid_defn2,
