@@ -13,7 +13,7 @@ Y = np.array(df["target"])
 
 class LinearLogisticScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_993.wav",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_994.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -143,6 +143,7 @@ class LinearLogisticScene(VoiceoverScene):
                                         (range(4), range(7))))
             
         sigmoid1 = MathTex(r"\frac{p}{1-p}=e^{\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1}}")
+        sigmoid1a= MathTex(r"\frac{1-p}{p}=\frac{1}{e^{\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1}}}")
         sigmoid2 = MathTex(r"\frac{1-p}{p}=e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
         sigmoid3 = MathTex(r"\frac{1}{p}-\frac{p}{p}=e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
         sigmoid4 = MathTex(r"\frac{1}{p}-1=e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
@@ -181,14 +182,20 @@ class LinearLogisticScene(VoiceoverScene):
                 ]
             )
 
-        with self.voiceover("Take the reciprocal, and on the right hand side this negates the exponent,") as tracker:
-            self.play(TransformByGlyphMap(sigmoid1, sigmoid2,
+        with self.voiceover("Take the reciprocal, and on the right hand side") as tracker:
+            self.play(TransformByGlyphMap(sigmoid1, sigmoid1a,
                                 ([0],[4], {"path_arc": PI * 0.5}),
                                 ([2,3,4],[0,1,2], {"path_arc": PI * 0.5}),
-                                (FadeIn, [7,8]),
-                                (FadeIn,[34])
+                                (FadeIn, [6,7])
                                 ))
-        
+            
+        with self.voiceover("this negates the exponent,") as tracker:
+            self.play(TransformByGlyphMap(sigmoid1a, sigmoid2,
+                                          ([6,7], FadeOut),
+                                          (FadeIn, [7,8]),
+                                          (FadeIn, [34]),
+                                          ))
+
         with self.voiceover("Expand the fraction,") as tracker:
             self.play(TransformByGlyphMap(sigmoid2, sigmoid3,
                                         ([0,3,4],[0,1,2]),
