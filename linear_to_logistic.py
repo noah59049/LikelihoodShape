@@ -241,6 +241,40 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(DrawBorderThenFill(axes), Write(axis_labels), run_time = 0.5)
             self.play(Create(func))
 
+        z_tracker = ValueTracker(-5)
+
+        sliding_dot = always_redraw(lambda: Dot(
+            axes.c2p(z_tracker.get_value(), sigmoid(z_tracker.get_value())),
+            color=YELLOW,
+            radius=0.1,
+        ))
+        v_line = always_redraw(lambda: DashedLine(
+            axes.c2p(z_tracker.get_value(), 0),
+            axes.c2p(z_tracker.get_value(), sigmoid(z_tracker.get_value())),
+            color=YELLOW,
+            stroke_width=2,
+        ))
+        h_line = always_redraw(lambda: DashedLine(
+            axes.c2p(0, sigmoid(z_tracker.get_value())),
+            axes.c2p(z_tracker.get_value(), sigmoid(z_tracker.get_value())),
+            color=YELLOW,
+            stroke_width=2,
+        ))
+        z_label = VGroup(
+            MathTex("z =", color=YELLOW),
+            DecimalNumber(z_tracker.get_value(), num_decimal_places=1, color=YELLOW),
+        ).arrange(RIGHT, buff=0.15).to_corner(DR)
+        z_label[1].add_updater(lambda m: m.set_value(z_tracker.get_value()))
+        sigma_label = VGroup(
+            MathTex(r"\sigma(z) =", color=YELLOW),
+            DecimalNumber(sigmoid(z_tracker.get_value()), num_decimal_places=3, color=YELLOW),
+        ).arrange(RIGHT, buff=0.15).next_to(z_label, UP)
+        sigma_label[1].add_updater(lambda m: m.set_value(sigmoid(z_tracker.get_value())))
+
+        self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line), FadeIn(z_label), FadeIn(sigma_label))
+        self.play(z_tracker.animate.set_value(5), run_time=5, rate_func=linear)
+        self.play(FadeOut(sliding_dot), FadeOut(v_line), FadeOut(h_line), FadeOut(z_label), FadeOut(sigma_label))
+
         with self.voiceover("If you multiply the top and bottom of the fraction by e to the z, ") as tracker:
             self.play(TransformByGlyphMap(sigmoid_defn, sigmoid_defn2,
                                         (FadeIn, [5,7,8,9]),
@@ -257,6 +291,7 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(TransformByGlyphMap(sigmoid_defn3, sigmoid_defn4,
                                         ([11,12,13,14,15], [11], {"run_time": 0.75})))
         
+        # End of interlude, back to the original equation
         with self.voiceover("So going back to our original equation, this formula just becomes") as tracker:
             self.play(FadeOut(axes), FadeOut(axis_labels), FadeOut(func), FadeOut(sigmoid_defn4))
             self.play(FadeIn(sigmoid6))
