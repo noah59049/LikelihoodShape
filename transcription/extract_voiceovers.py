@@ -48,12 +48,10 @@ def write_pdf(lines: list[str], path: str) -> None:
     pdf.cell(0, 10, _asciify(stem), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.ln(4)
 
-    for i, line in enumerate(lines, 1):
-        pdf.set_font("Helvetica", "B", 11)
-        pdf.cell(0, 6, f"{i}.", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.set_font("Helvetica", size=11)
+    pdf.set_font("Helvetica", size=11)
+    for line in lines:
         pdf.multi_cell(0, 6, _asciify(line))
-        pdf.ln(3)
+        pdf.ln(1)
 
     pdf.output(path)
 
