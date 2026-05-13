@@ -6,6 +6,10 @@ one per line, in order of appearance.
 Usage:
     python extract_voiceovers.py -i scene.py              # prints to stdout
     python extract_voiceovers.py -i scene.py -o lines.txt # writes to file
+    python extract_voiceovers.py -i scene.py -o lines.pdf # writes to PDF
+
+Install:
+    pip install fpdf2   # only needed for PDF output
 """
 
 import argparse
@@ -20,13 +24,47 @@ def extract_voiceovers(path: str) -> list[str]:
     return [m.group(1) or m.group(2) for m in pattern.finditer(text)]
 
 
+_UNICODE_TO_ASCII = str.maketrans({
+    "‘": "'", "’": "'",   # curly single quotes
+    "“": '"', "”": '"',   # curly double quotes
+    "—": "--", "–": "-",  # em dash, en dash
+    "…": "...",                # ellipsis
+})
+
+
+def _asciify(text: str) -> str:
+    return text.translate(_UNICODE_TO_ASCII)
+
+
+def write_pdf(lines: list[str], path: str) -> None:
+    from fpdf import FPDF  # type: ignore
+
+    stem = Path(path).stem
+    pdf = FPDF()
+    pdf.set_margins(20, 20, 20)
+    pdf.add_page()
+
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.cell(0, 10, _asciify(stem), ln=True)
+    pdf.ln(4)
+
+    for i, line in enumerate(lines, 1):
+        pdf.set_font("Helvetica", "B", 11)
+        pdf.cell(0, 6, f"{i}.", ln=True)
+        pdf.set_font("Helvetica", size=11)
+        pdf.multi_cell(0, 6, _asciify(line))
+        pdf.ln(3)
+
+    pdf.output(path)
+
+
 def main():
     p = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     p.add_argument("-i", "--input", required=True, help="Manim Python script")
-    p.add_argument("-o", "--output", help="Output text file (default: stdout)")
+    p.add_argument("-o", "--output", help="Output file: .txt, .pdf, or omit for stdout")
     args = p.parse_args()
 
     lines = extract_voiceovers(args.input)
@@ -34,12 +72,14 @@ def main():
         print("No self.voiceover() calls found.", file=sys.stderr)
         return 1
 
-    text = "\n".join(lines)
     if args.output:
-        Path(args.output).write_text(text + "\n", encoding="utf-8")
+        if Path(args.output).suffix.lower() == ".pdf":
+            write_pdf(lines, args.output)
+        else:
+            Path(args.output).write_text("\n".join(lines) + "\n", encoding="utf-8")
         print(f"Wrote {len(lines)} lines to {args.output}", file=sys.stderr)
     else:
-        print(text)
+        print("\n".join(lines))
     return 0
 
 
