@@ -18,12 +18,32 @@ Install:
 
 import argparse
 import re
+import subprocess
 import sys
 from difflib import SequenceMatcher
 from pathlib import Path
 
 from faster_whisper import WhisperModel # type: ignore
 from pydub import AudioSegment
+
+
+def ensure_wav(audio_path: str) -> str:
+    """If the file is .m4a or .mp3, convert to .wav via ffmpeg and return the new path."""
+    p = Path(audio_path)
+    if p.suffix.lower() not in (".m4a", ".mp3"):
+        return audio_path
+    wav_path = p.with_suffix(".wav")
+    if wav_path.exists():
+        print(f"Using existing {wav_path.name}", file=sys.stderr)
+        return str(wav_path)
+    print(f"Converting {p.name} → {wav_path.name} ...", file=sys.stderr)
+    subprocess.run(
+        ["ffmpeg", "-i", str(p), str(wav_path)],
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    return str(wav_path)
 
 
 def normalize(word: str) -> str:
@@ -189,13 +209,15 @@ def main():
     )
     args = p.parse_args()
 
+    audio_input = ensure_wav(args.input)
+
     lines = load_transcript(args.transcript)
     print(f"Transcript: {len(lines)} lines", file=sys.stderr)
     if len(lines) < 2:
         print("Need at least 2 lines to have a break between them. Nothing to do.", file=sys.stderr)
         return 1
 
-    words = transcribe(args.input, args.model)
+    words = transcribe(audio_input, args.model)
     breakpoints = find_breakpoints(lines, words)
 
     print("\nBreakpoints:", file=sys.stderr)
@@ -208,7 +230,7 @@ def main():
             file=sys.stderr,
         )
 
-    insert_silence(args.input, args.output, breakpoints, args.silence)
+    insert_silence(audio_input, args.output, breakpoints, args.silence)
     print(f"\nWrote {args.output}", file=sys.stderr)
     return 0
 
