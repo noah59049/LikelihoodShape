@@ -7,5 +7,6 @@ breast_cancer_sklearn.csv
 *.mp3
 *.m4a
 *.wav
+*.pdf
 transcription/*.txt
 transcription/transcripts/*.txt
