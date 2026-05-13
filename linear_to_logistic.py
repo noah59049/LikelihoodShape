@@ -13,7 +13,7 @@ Y = np.array(df["target"])
 
 class LinearLogisticScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_992.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_993.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -28,16 +28,6 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(Write(axis_labels))
             self.play(LaggedStart(*[Write(dot) for dot in dots], lag_ratio=0.005))
 
-            # Regression coefficients
-            beta0, beta1 = simple_linear_regression(X, Y)
-            regression_line = axes.plot(lambda x : beta0 + beta1 * x,
-                                        x_range = [(1.2 - beta0) / beta1, (-0.2 - beta0) / beta1],
-                                        color = RED)
-            self.play(Create(regression_line))
-            scatterplot = VGroup(axes, axis_labels, dots, regression_line)
-            self.wait(tracker.duration - 6.1 - 0.005 * len(dots)) # Why this timing? IDK but it works.
-            self.play(FadeOut(scatterplot))
-
         tex0 = MathTex(r"P(Y=1) = \beta_0+\beta_1 X")
         tex1 = MathTex(r"p = \beta_0+\beta_1 X")
         tex2 = MathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
@@ -45,13 +35,22 @@ class LinearLogisticScene(VoiceoverScene):
         tex4 = MathTex(r"p = f^{-1}(\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1})")
         tex5 = MathTex(r"\ln\frac{p}{1-p} = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
 
-        with self.voiceover("So for just 1 predictor variable, we’d just assume that P(Y=1),") as tracker:
+        with self.voiceover("One model we could use is linear regression. So for 1 predictor variable, we’d assume that the probability that y is 1,") as tracker:
+                        # Regression coefficients
+            beta0, beta1 = simple_linear_regression(X, Y)
+            regression_line = axes.plot(lambda x : beta0 + beta1 * x,
+                                        x_range = [(1.2 - beta0) / beta1, (-0.2 - beta0) / beta1],
+                                        color = RED)
+            self.play(Create(regression_line))
+            scatterplot = VGroup(axes, axis_labels, dots, regression_line)
+            # self.wait(tracker.duration - 6.1 - 0.005 * len(dots)) # Why this timing? IDK but it works.
+            self.play(FadeOut(scatterplot))
             self.play(Write(tex0))
 
         with self.voiceover("notated p, is a linear function of X with an unknown intercept and slope. And with more predictors,") as tracker:
             self.play(TransformByGlyphMap(tex0, tex1,
                                           (range(6), [0])))
-        with self.voiceover("we’d just have a separate slope for each predictor. These are the coefficients and they’re notated with B0 for the intercept and B1 and so on for the slopes.") as tracker:
+        with self.voiceover("we’d just have a separate slope for each predictor. These are the coefficients and they’re notated with beta 0 for the intercept and beta 1 and so on for the slopes.") as tracker:
             self.play(TransformByGlyphMap(tex1, tex2,
                                           (FadeIn, range(8,27))))
         
@@ -87,7 +86,7 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(TransformByGlyphMap(tex2, tex3,
                                         (FadeIn, [0,1,3])))
             
-        with self.voiceover("-∞ to ∞ as p ranges from 0 to 1. Or, sort of the INVERSE way to put it is that") as tracker:
+        with self.voiceover("negative infinity to infinity as p ranges from 0 to 1. Or, sort of the INVERSE way to put it is that") as tracker:
             graph_group = create_graph(
                 lambda p: np.log(p / (1 - p)),
                 x_range=[0, 1.75, 1],
@@ -114,7 +113,7 @@ class LinearLogisticScene(VoiceoverScene):
                                         ([3],[31],{"path_arc":-PI/6}),
                                         (FadeIn, [3,4])))
         
-        with self.voiceover("every number from -∞ to ∞ to a legal probability between 0 and 1.") as tracker:
+        with self.voiceover("every number from negative infinity to infinity to a legal probability between 0 and 1.") as tracker:
             graph_group = create_graph(
                 lambda p: 1 / (1 + np.exp(-p)),
                 x_range=[-6, 6, 2],
@@ -139,7 +138,7 @@ class LinearLogisticScene(VoiceoverScene):
                 ([3,4], FadeOut)
             ))
         
-        with self.voiceover("logit, ln p over 1-p. If we want to put p in terms of the predictors, we just do a little algebra. We") as tracker:
+        with self.voiceover("logit, ln p over 1 minus p. If we want to put p in terms of the predictors, we just do a little algebra. We") as tracker:
             self.play(TransformByGlyphMap(tex3_original, tex5,
                                         (range(4), range(7))))
             
@@ -182,7 +181,7 @@ class LinearLogisticScene(VoiceoverScene):
                 ]
             )
 
-        with self.voiceover("Take the reciprocal, on the right hand side this negates the exponent,") as tracker:
+        with self.voiceover("Take the reciprocal, and on the right hand side this negates the exponent,") as tracker:
             self.play(TransformByGlyphMap(sigmoid1, sigmoid2,
                                 ([0],[4], {"path_arc": PI * 0.5}),
                                 ([2,3,4],[0,1,2], {"path_arc": PI * 0.5}),
