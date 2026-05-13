@@ -13,7 +13,7 @@ Y = np.array(df["target"])
 
 class LinearLogisticScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_995.wav",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_996.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -241,36 +241,37 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(DrawBorderThenFill(axes), Write(axis_labels), run_time = 0.5)
             self.play(Create(func))
 
-        with self.voiceover("To see why, if you plug in a small value of z, the denominator becomes very large, and your function approaches 0 very fast. If z is large, then the exponential term becomes near zero, and the fraction evaluates to almost 1.") as tracker:
-            z_tracker = ValueTracker(-5)
+        z_tracker = ValueTracker(-5)
 
-            sliding_dot = always_redraw(lambda: Dot(
-                axes.c2p(z_tracker.get_value(), sigmoid(z_tracker.get_value())),
-                color=YELLOW,
-                radius=0.1,
-            ))
-            v_line = always_redraw(lambda: DashedLine(
-                axes.c2p(z_tracker.get_value(), 0),
-                axes.c2p(z_tracker.get_value(), sigmoid(z_tracker.get_value())),
-                color=YELLOW,
-                stroke_width=2,
-            ))
-            h_line = always_redraw(lambda: DashedLine(
-                axes.c2p(0, sigmoid(z_tracker.get_value())),
-                axes.c2p(z_tracker.get_value(), sigmoid(z_tracker.get_value())),
-                color=YELLOW,
-                stroke_width=2,
-            ))
-            formula = always_redraw(lambda: MathTex(
-                r"\sigma(z)=\frac{1}{1+e^{" + f"{-z_tracker.get_value():.1f}" + r"}}",
-            ).to_corner(UL))
-            sigma_label = VGroup(
-                MathTex(r"\sigma(z) ="),
-                DecimalNumber(sigmoid(z_tracker.get_value()), num_decimal_places=3, color=YELLOW),
-            ).arrange(RIGHT, buff=0.15).next_to(formula, DOWN)
-            sigma_label[1].add_updater(lambda m: m.set_value(sigmoid(z_tracker.get_value())))
+        sliding_dot = always_redraw(lambda: Dot(
+            axes.c2p(z_tracker.get_value(), sigmoid(z_tracker.get_value())),
+            color=YELLOW,
+            radius=0.1,
+        ))
+        v_line = always_redraw(lambda: DashedLine(
+            axes.c2p(z_tracker.get_value(), 0),
+            axes.c2p(z_tracker.get_value(), sigmoid(z_tracker.get_value())),
+            color=YELLOW,
+            stroke_width=2,
+        ))
+        h_line = always_redraw(lambda: DashedLine(
+            axes.c2p(0, sigmoid(z_tracker.get_value())),
+            axes.c2p(z_tracker.get_value(), sigmoid(z_tracker.get_value())),
+            color=YELLOW,
+            stroke_width=2,
+        ))
+        formula = always_redraw(lambda: MathTex(
+            r"\sigma(z)=\frac{1}{1+e^{" + f"{-z_tracker.get_value():.1f}" + r"}}",
+        ).to_corner(UL))
+        sigma_label = VGroup(
+            MathTex(r"\sigma(z) ="),
+            DecimalNumber(sigmoid(z_tracker.get_value()), num_decimal_places=3, color=YELLOW),
+        ).arrange(RIGHT, buff=0.15).next_to(formula, DOWN)
+        sigma_label[1].add_updater(lambda m: m.set_value(sigmoid(z_tracker.get_value())))
 
+        with self.voiceover("To see why, if you plug in a small value of z, the denominator becomes very large, and your function approaches 0 very fast.") as tracker:
             self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line), FadeIn(sigma_label), TransformMatchingTex(sigmoid_defn, formula))
+        with self.voiceover("If z is large, then the exponential term becomes near zero, and the fraction evaluates to almost 1.") as tracker:
             self.play(z_tracker.animate.set_value(5), run_time=5, rate_func=linear)
             self.play(FadeOut(sliding_dot), FadeOut(v_line), FadeOut(h_line), FadeOut(sigma_label), TransformMatchingTex(formula, sigmoid_defn))
 
