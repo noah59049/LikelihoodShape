@@ -8,3 +8,4 @@ breast_cancer_sklearn.csv
 *.m4a
 *.wav
 transcription/*.txt
+transcription/transcripts/*.txt
