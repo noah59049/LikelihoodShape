@@ -262,10 +262,9 @@ class LinearLogisticScene(VoiceoverScene):
         ))
         formula = always_redraw(lambda: MathTex(
             r"\sigma(z)=\frac{1}{1+e^{" + f"{-z_tracker.get_value():.1f}" + r"}}",
-            color=YELLOW,
         ).to_corner(UL))
         sigma_label = VGroup(
-            MathTex(r"\sigma(z) =", color=YELLOW),
+            MathTex(r"\sigma(z) ="),
             DecimalNumber(sigmoid(z_tracker.get_value()), num_decimal_places=3, color=YELLOW),
         ).arrange(RIGHT, buff=0.15).next_to(formula, DOWN)
         sigma_label[1].add_updater(lambda m: m.set_value(sigmoid(z_tracker.get_value())))
