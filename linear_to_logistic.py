@@ -28,9 +28,9 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(Write(axis_labels))
             self.play(LaggedStart(*[Write(dot) for dot in dots], lag_ratio=0.005))
 
-        tex0 = MathTex(r"P(Y=1) = \beta_0+\beta_1 X")
-        tex1 = MathTex(r"p = \beta_0+\beta_1 X")
-        tex2 = MathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
+        tex0 = MathTex(r"P(Y=1) = \beta_0+\beta_1 X").to_edge(UP)
+        tex1 = MathTex(r"p = \beta_0+\beta_1 X").to_edge(UP)
+        tex2 = MathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}").to_edge(UP)
         tex3 = MathTex(r"f(p) = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         tex4 = MathTex(r"p = f^{-1}(\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1})")
         tex5 = MathTex(r"\ln\frac{p}{1-p} = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
@@ -44,7 +44,7 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(Create(regression_line))
             scatterplot = VGroup(axes, axis_labels, dots, regression_line)
             # self.wait(tracker.duration - 6.1 - 0.005 * len(dots)) # Why this timing? IDK but it works.
-            self.play(FadeOut(scatterplot))
+            # self.play(FadeOut(scatterplot))
             self.play(Write(tex0))
 
         with self.voiceover("notated p, is a linear function of X with an unknown intercept and slope. And with more predictors,") as tracker:
