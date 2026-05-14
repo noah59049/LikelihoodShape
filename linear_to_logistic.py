@@ -263,37 +263,37 @@ class LinearLogisticScene(VoiceoverScene):
 
         # Compute fixed layout positions for all 4 formulas in a row at UL
         _layout = VGroup(
-            MathTex(r"\frac{1}{1+e^{-(-5.0)}}", color=YELLOW),
-            MathTex(r"\frac{1}{1+148.41}", color=YELLOW),
-            MathTex(r"\frac{1}{149.41}", color=YELLOW),
-            MathTex(r"0.0067", color=YELLOW),
+            MathTex(r"\sigma(z)=\frac{1}{1+e^{-(-5.0)}}", color=YELLOW),
+            MathTex(r"=\frac{1}{1+148.41}", color=YELLOW),
+            MathTex(r"=\frac{1}{149.41}", color=YELLOW),
+            MathTex(r"=0.0067", color=YELLOW),
         ).arrange(RIGHT, buff=0.4).to_corner(UL)
         f_centers = [m.get_center().copy() for m in _layout]
 
         # Static versions for the TransformFromCopy introduction (at z = -5)
-        f1_static = MathTex(r"\frac{1}{1+e^{-(-5.0)}}", color=YELLOW).move_to(f_centers[0])
-        f2_static = MathTex(r"\frac{1}{1+" + f"{np.exp(5):.2f}" + r"}", color=YELLOW).move_to(f_centers[1])
-        f3_static = MathTex(r"\frac{1}{" + f"{1+np.exp(5):.2f}" + r"}", color=YELLOW).move_to(f_centers[2])
-        f4_static = MathTex(f"{sigmoid(-5):.4f}", color=YELLOW).move_to(f_centers[3])
+        f1_static = MathTex(r"\sigma(z)=\frac{1}{1+e^{-(-5.0)}}", color=YELLOW).move_to(f_centers[0])
+        f2_static = MathTex(r"=\frac{1}{1+" + f"{np.exp(5):.2f}" + r"}", color=YELLOW).move_to(f_centers[1])
+        f3_static = MathTex(r"=\frac{1}{" + f"{1+np.exp(5):.2f}" + r"}", color=YELLOW).move_to(f_centers[2])
+        f4_static = MathTex(f"={sigmoid(-5):.4f}", color=YELLOW).move_to(f_centers[3])
 
         # Dynamic always_redraw versions (active during z animation)
         def _exp_str(z):
             return f"-({z:.1f})" if z < 0 else f"{-z:.1f}"
 
         formula = always_redraw(lambda: MathTex(
-            r"\frac{1}{1+e^{" + _exp_str(z_tracker.get_value()) + r"}}",
+            r"\sigma(z)=\frac{1}{1+e^{" + _exp_str(z_tracker.get_value()) + r"}}",
             color=YELLOW,
         ).move_to(f_centers[0]))
         f2_dyn = always_redraw(lambda: MathTex(
-            r"\frac{1}{1+" + f"{np.exp(-z_tracker.get_value()):.2f}" + r"}",
+            r"=\frac{1}{1+" + f"{np.exp(-z_tracker.get_value()):.2f}" + r"}",
             color=YELLOW,
         ).move_to(f_centers[1]))
         f3_dyn = always_redraw(lambda: MathTex(
-            r"\frac{1}{" + f"{1+np.exp(-z_tracker.get_value()):.2f}" + r"}",
+            r"=\frac{1}{" + f"{1+np.exp(-z_tracker.get_value()):.2f}" + r"}",
             color=YELLOW,
         ).move_to(f_centers[2]))
         f4_dyn = always_redraw(lambda: MathTex(
-            f"{sigmoid(z_tracker.get_value()):.4f}",
+            f"={sigmoid(z_tracker.get_value()):.4f}",
             color=YELLOW,
         ).move_to(f_centers[3]))
 
@@ -305,7 +305,7 @@ class LinearLogisticScene(VoiceoverScene):
 
         with self.voiceover("To see why, if you plug in a small value of z, the denominator becomes very large, and your function approaches 0 very fast.") as tracker:
             self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line), FadeIn(sigma_label),
-                      TransformWithBoxes(sigmoid_defn, f1_static, ([10], [4,5,6,7,8,9,10])))  # indices may need adjustment
+                      TransformWithBoxes(sigmoid_defn, f1_static, ([11], [11,12,13,14,15,16])))
             self.play(TransformFromCopy(f1_static, f2_static))
             self.play(TransformFromCopy(f2_static, f3_static))
             self.play(TransformFromCopy(f3_static, f4_static))
