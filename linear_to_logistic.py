@@ -30,7 +30,7 @@ class LinearLogisticScene(VoiceoverScene):
 
         tex0 = MathTex(r"P(Y=1) = \beta_0+\beta_1 X").to_edge(UP)
         tex1 = MathTex(r"p = \beta_0+\beta_1 X").to_edge(UP)
-        tex2 = MathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
+        tex2 = MathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}").to_edge(UP)
         tex3 = MathTex(r"f(p) = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         tex4 = MathTex(r"p = f^{-1}(\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1})")
         tex5 = MathTex(r"\ln\frac{p}{1-p} = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
@@ -80,6 +80,7 @@ class LinearLogisticScene(VoiceoverScene):
             self.wait(tracker.duration - 3.1) # BRITTLE but what else should I do
             scatterplot.remove(dots) # Otherwise the dots will come back at the beginning of FadeOut(scatterplot)
             self.play(FadeOut(scatterplot))
+            tex2.move_to(ORIGIN)
             self.play(FadeIn(tex2))
 
         with self.voiceover("function of p is equal to that linear combination of the predictors. And we want this function to give values that range from") as tracker:
