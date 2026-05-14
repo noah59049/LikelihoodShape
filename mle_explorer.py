@@ -339,25 +339,37 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             all_bhats.append(arbitrarily_choose_bhat())
         with self.voiceover("In this way, you can think of the likelihood as a function of the beta hats. ") as tracker:
             dims = (1,3),(3,3),(5,5),(7,7)
+            max_cols = max(cols for _, cols in dims)
 
-            # Transition from likelihood_grid to the initial 1x3 l_function_tex grid
-            displayed = [l_function_tex(all_bhats[i]) for i in range(3)]
-            VGroup(*displayed).arrange_in_grid(rows=1, cols=3).scale_to_fit_width(config.frame_width).to_corner(UL)
-            self.play(FadeOut(likelihood_grid), FadeIn(VGroup(*displayed)), run_time=0.8)
+            # Transition from likelihood_grid to initial 1x3 l_function_tex grid.
+            # Index bhats by (r * max_cols + c) so each cell's (row, col) is stable across grid sizes.
+            rows, cols = dims[0]
+            flat = [l_function_tex(all_bhats[r * max_cols + c]) for r in range(rows) for c in range(cols)]
+            VGroup(*flat).arrange_in_grid(rows=rows, cols=cols).scale_to_fit_width(config.frame_width).to_corner(UL)
+            cell_grid = {(r, c): flat[r * cols + c] for r in range(rows) for c in range(cols)}
+            self.play(FadeOut(likelihood_grid), FadeIn(VGroup(*flat)), run_time=0.8)
 
-            # Grow the grid: animate existing cells to new positions, fade in new cells
+            # Grow the grid: existing cells animate to new size at same (row, col), new cells fade in.
             for rows, cols in dims[1:]:
-                n_new = rows * cols
-                n_old = len(displayed)
-                target_texes = [l_function_tex(all_bhats[i]) for i in range(n_new)]
-                VGroup(*target_texes).arrange_in_grid(rows=rows, cols=cols).scale_to_fit_width(config.frame_width).to_corner(UL)
-                anims = [Transform(displayed[i], target_texes[i]) for i in range(n_old)]
-                anims += [FadeIn(target_texes[i]) for i in range(n_old, n_new)]
+                target_texes = {}
+                new_flat = []
+                for r in range(rows):
+                    for c in range(cols):
+                        tex = l_function_tex(all_bhats[r * max_cols + c])
+                        target_texes[(r, c)] = tex
+                        new_flat.append(tex)
+                VGroup(*new_flat).arrange_in_grid(rows=rows, cols=cols).scale_to_fit_width(config.frame_width).to_corner(UL)
+                anims = []
+                for (r, c), target_tex in target_texes.items():
+                    if (r, c) in cell_grid:
+                        anims.append(Transform(cell_grid[(r, c)], target_tex))
+                    else:
+                        anims.append(FadeIn(target_tex))
                 self.play(*anims, run_time=0.8)
-                displayed = [displayed[i] for i in range(n_old)] + target_texes[n_old:]
+                cell_grid = {(r, c): cell_grid.get((r, c), target_texes[(r, c)]) for r, c in target_texes}
 
             self.wait(max(tracker.duration - len(dims) * 0.8 - 1.1, 0))
-            self.play(FadeOut(VGroup(*displayed)))
+            self.play(FadeOut(VGroup(*list(cell_grid.values()))))
 
         # --- Graph the likelihood ---
         with self.voiceover("Somewhere this function has a maximum, and the beta hats at the maximum are the beta hats that our model uses.") as tracker:
