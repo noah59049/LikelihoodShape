@@ -7,6 +7,7 @@ from manim_voiceover.services.stitcher import _StitcherService as StitcherServic
 from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid, log_likelihood, FadeInRHS, FlashAround, latex_vector
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
+from hat_matrix_logo import HMDialogBox
 
 yXyhat_tex = yX_tex_numbered.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("X4\n &", r"X4 & $\hat{y}$")
 array_from_latex = latex_table_to_array(yX_tex_numbered)
@@ -49,8 +50,12 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                                         (FadeIn, [15]),
                                         (FadeIn, [25]),
                                         ))
+            hat_dialog = HMDialogBox("In most of statistics, having a hat over something means it's estimated from data")
+            hat_dialog.to_corner(UR)
+            self.play(FadeIn(hat_dialog))
 
         with self.voiceover("Let's look at our data table") as tracker:
+            self.remove(hat_dialog)
             self.play(FadeIn(yX_table))
 
         with self.voiceover("In this case we have 4 predictors. So let’s show that in our formula.") as tracker:
