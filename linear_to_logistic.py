@@ -13,7 +13,7 @@ Y = np.array(df["target"])
 
 class LinearLogisticScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_997.wav",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_998.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -309,13 +309,22 @@ class LinearLogisticScene(VoiceoverScene):
             self.remove(f1_static, f2_static, f3_static, f4_static)
             self.add(formula, f2_dyn, f3_dyn, f4_dyn)
 
-        with self.voiceover("If z is large, then the exponential term becomes near zero, and the fraction evaluates to almost 1.") as tracker:
-            self.play(z_tracker.animate.set_value(5), run_time=5, rate_func=linear)
+        with self.voiceover("If z is large, then the exponential term becomes") as tracker:
+            self.play(z_tracker.animate.set_value(5), run_time=tracker.duration, rate_func=linear)
+        with self.voiceover("near zero, and the fraction evaluates to almost 1.") as tracker:
+            near_zero_rect = SurroundingRectangle(f2_dyn[0][-4:], color = RED)
+            self.play(Create(near_zero_rect))
+            self.play(FadeOut(near_zero_rect))
+        with self.voiceover("evaluates to almost 1.") as tracker:
+            almost_1_rect = SurroundingRectangle(f4_dyn, color = RED)
+            self.play(FadeIn(almost_1_rect))
+            self.play(FadeOut(almost_1_rect))
+        with self.voiceover("If you multiply the top and bottom of the fraction by") as tracker:
             self.play(FadeOut(sliding_dot), FadeOut(v_line), FadeOut(h_line),
                       FadeOut(f2_dyn), FadeOut(f3_dyn), FadeOut(f4_dyn),
                       TransformMatchingTex(formula, sigmoid_defn))
 
-        with self.voiceover("If you multiply the top and bottom of the fraction by e to the z, ") as tracker:
+        with self.voiceover("e to the z, ") as tracker:
             self.play(TransformByGlyphMap(sigmoid_defn, sigmoid_defn2,
                                         (FadeIn, [5,7,8,9]),
                                         (FadeIn, [11,17,18,19])))
