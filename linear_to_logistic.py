@@ -13,7 +13,7 @@ Y = np.array(df["target"])
 
 class LinearLogisticScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_996.wav",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_997.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -297,11 +297,14 @@ class LinearLogisticScene(VoiceoverScene):
             color=YELLOW,
         ).move_to(f_centers[3]))
 
-        with self.voiceover("To see why, if you plug in a small value of z, the denominator becomes very large, and your function approaches 0 very fast.") as tracker:
-            self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line),
-                      TransformWithBoxes(sigmoid_defn, f1_static, ([11], [11,12,13,14,15,16])))
+        with self.voiceover("To see why, if you plug in ") as tracker:
+            self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line))
+        with self.voiceover("a small value of z, ") as tracker:
+            self.play(TransformWithBoxes(sigmoid_defn, f1_static, ([11], [11,12,13,14,15,16])))
+        with self.voiceover("the denominator becomes very large,") as tracker:
             self.play(TransformFromCopy(f1_static, f2_static))
             self.play(TransformFromCopy(f2_static, f3_static))
+        with self.voiceover("and your function approaches 0 very fast.") as tracker:
             self.play(TransformFromCopy(f3_static, f4_static))
             self.remove(f1_static, f2_static, f3_static, f4_static)
             self.add(formula, f2_dyn, f3_dyn, f4_dyn)
