@@ -17,13 +17,13 @@ TableTransform = TransformMatchingCells # TransformMatchingCells for production,
 
 class MLEScene(VoiceoverScene, ThreeDScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast15.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast16.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
         yX_table = Tex(yX_tex_numbered).scale(0.66).to_corner(UL)
         formula = MathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})").to_edge(DOWN)
-        with self.voiceover("If our assumptions are correct, these betas are unknown facts about the population our data is drawn from. So we need to estimate them, but how? The answer is") as tracker:
+        with self.voiceover("These betas are unknown facts about our population that we need to estimate, and we use") as tracker:
             self.play(Write(formula))
         
         mle_words = Text("Maximum Likelihood Estimation")
@@ -35,12 +35,12 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             self.play(FadeIn(mle_words), FlashAround(mle_words))
         with self.voiceover("likelihood, indicated L, of that estimate is the") as tracker:
             self.play(FadeIn(tex1))
-        with self.voiceover("probability that it would produce the observed values of Y.") as tracker:
+        with self.voiceover("probability that it would produce the observed values of Y. In order to indicate that they're estimated, we put a") as tracker:
             self.play(FadeInRHS(tex1, tex2))
             self.wait(max(0, tracker.duration - 1.7))
             self.play(FadeOut(mle_words, tex2, run_time = 0.6))
 
-        with self.voiceover("In order to indicate that they're estimated, we put a hat over the betas, and we use y hat to mean our estimate of p. In general a hat over something means an estimate from data.") as tracker:
+        with self.voiceover("hat over the betas, and we use y hat to mean our estimate of p.") as tracker:
             formula2 = MathTex(r"\hat{y}=\sigma(\hat{\beta_0}+\hat{\beta_1} X_{1}+\hat{\beta_2} X_{2}+\ldots+\hat{\beta}_{k-1} X_{k-1})").to_edge(DOWN)
             self.play(TransformByGlyphMap(formula, formula2,
                                         (FadeIn, [1]),
@@ -50,7 +50,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                                         (FadeIn, [25]),
                                         ))
 
-        with self.voiceover("Let's take a look at our data table") as tracker:
+        with self.voiceover("Let's look at our data table") as tracker:
             self.play(FadeIn(yX_table))
 
         with self.voiceover("In this case we have 4 predictors. So let’s show that in our formula.") as tracker:
@@ -79,7 +79,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             all_bhats.append(bhat.copy())
 
             # --- Add the beta hats to the corner ---
-            with self.voiceover("Let’s look at a mostly arbitrarily chosen estimate of the betas.") as tracker:
+            with self.voiceover("Let’s look at an estimate of the betas.") as tracker:
                 bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat)]).set_color(BLUE).arrange(DOWN).to_corner(UR)
                 all_bhat_texes.append(bhats_tex.copy().arrange(DOWN, aligned_edge = LEFT))
                 self.play(FadeIn(bhats_tex))
@@ -118,7 +118,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 else:
                     self.play(FadeIn(substituted_formula))
 
-            with self.voiceover("For each individual, we get an estimate of the probability of y being 1, which we call y hat.") as tracker:
+            with self.voiceover("For each individual, we get a y hat.") as tracker:
                 yXyhat_table = Tex(yXyhat_tex).scale(0.66).to_corner(UL)
                 self.play(FadeIn(yXyhat_table, run_time = min(1, tracker.duration)))
                 self.remove(yX_table)
@@ -315,16 +315,48 @@ class MLEScene(VoiceoverScene, ThreeDScene):
 
             likelihood_final = MathTex(likelihood_str).next_to(substituted_formula_new, UP)
             all_likelihood_texes.append(likelihood_final.copy())
-            with self.voiceover("And we get 3.394 times 10^-47. This might seem bad, but since we’re multiplying 569 things together, it’s not that bad.") as tracker:
+            with self.voiceover("And we get 3.394 times 10^-47. Let’s see how this compares to other beta hats.") as tracker:
                 self.play(TransformByGlyphMap(likelihood_together, likelihood_final,
                                             (range(2, eq_idx), range(2, len(likelihood_str)))))
                 self.wait(tracker.duration - 2.5)
                 self.play(FadeOut(likelihood_final, bhats_tex, substituted_formula_old))
+        
+        if False:
+            # IMPORTANT: DO NOT DELETE THESE!
+            # We need them for insert_silences.py to correctly insert the silences.
+            with self.voiceover("Here’s another estimate of the betas.") as tracker:
+                pass
+            with self.voiceover("So") as tracker:
+                pass
+            with self.voiceover("we get these y hats") as tracker:
+                pass
+            with self.voiceover("And") as tracker:
+                pass
+            with self.voiceover("these probabilities assigned to the actual outcome") as tracker:
+                pass
+            with self.voiceover("And we multiply them together to get the likelihood for that estimate.") as tracker:
+                pass
+            with self.voiceover("That’s 1.663 times 10^-63, a bit worse. ") as tracker:
+                pass
 
+            with self.voiceover("Now let’s choose a third estimate for the betas.") as tracker:
+                pass
+            with self.voiceover("We") as tracker:
+                pass
+            with self.voiceover("find the y hats,") as tracker:
+                pass
+            with self.voiceover("and") as tracker:
+                pass
+            with self.voiceover("the probabilities assigned to the actual outcome, and") as tracker:
+                pass
+            with self.voiceover("multiply them together to get the likelihood") as tracker:
+                pass
+            with self.voiceover("That’s 1.454 times 10^-47, so better but not as good as the first estimate") as tracker:
+                pass
 
         # --- Show that we have a likelihood for every point and there's one MLE ---
         likelihood_grid = VGroup(*[VGroup(bhat_tex, likelihood_tex).arrange(DOWN) for bhat_tex, likelihood_tex in zip(all_bhat_texes, all_likelihood_texes)]).arrange(RIGHT)
-        with self.voiceover("So for every set of beta hats, you get a likelihood for those betas.") as tracker:
+        with self.voiceover("So for every set of beta hats, you get a likelihood.") as tracker:
             self.play(FadeIn(likelihood_grid))
 
         def l_function_tex(bhat):
@@ -372,7 +404,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             self.play(FadeOut(VGroup(*list(cell_grid.values()))))
 
         # --- Graph the likelihood ---
-        with self.voiceover("Somewhere this function has a maximum, and the beta hats at the maximum are the beta hats that our model uses.") as tracker:
+        with self.voiceover("Somewhere this function has a maximum, and our model uses the beta hats at the maximum.") as tracker:
             self.move_camera(
                 phi=60 * DEGREES,
                 theta=-45 * DEGREES,
