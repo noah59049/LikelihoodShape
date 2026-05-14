@@ -93,7 +93,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                     arbitrary_dialog = HMDialogBox("There's nothing special about these betas; they are chosen mostly arbitrarily.", 
                                                    text_width = 3,
                                                    text_scale=0.5)
-                    arbitrary_dialog.to_corner(DR).shift(arbitrary_dialog.height * UP)
+                    arbitrary_dialog.to_corner(DR).shift(arbitrary_dialog.height * 0.8 * UP)
                     self.play(FadeIn(arbitrary_dialog))
                     self.play(FadeOut(arbitrary_dialog))
 
@@ -226,7 +226,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                     Li_dialog = HMDialogBox("This column is Li because it's the contribution of the ith row to the likelihood. It will make more sense in a few seconds. But the notation for this column isn't important.",
                                             text_width = 5)
                     Li_dialog.to_corner(DR)
-                    Li_dialog.shift(Li_dialog.height * UP)
+                    Li_dialog.shift(Li_dialog.height * 0.8 * UP)
                     self.play(FadeIn(Li_dialog))
                     self.play(FadeOut(Li_dialog))
             with self.voiceover("So in the first row, y is 1, the predicted probability of y being 1 is y hat ,which is 0.9051. In the second row, y is 0, and the predicted probability of y being 0 is 1 - y hat, which is 0.9998. So now we continue that process for all of the rows.") as tracker:
