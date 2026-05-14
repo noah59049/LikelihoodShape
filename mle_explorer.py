@@ -338,16 +338,26 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         for m in range(100):
             all_bhats.append(arbitrarily_choose_bhat())
         with self.voiceover("In this way, you can think of the likelihood as a function of the beta hats. ") as tracker:
-            l_vectors_old = likelihood_grid
             dims = (1,3),(3,3),(5,5),(7,7)
-            for rows, cols in dims:
-                l_vector_texes = [l_function_tex(bhat) for bhat in all_bhats[0:rows * cols]]
-                l_vectors_new = VGroup(*l_vector_texes).arrange_in_grid(rows=rows, cols=cols).scale_to_fit_width(config.frame_width)
-                self.play(TransformMatchingShapes(l_vectors_old, l_vectors_new), run_time = 0.8)
-                l_vectors_old = l_vectors_new
+
+            # Transition from likelihood_grid to the initial 1x3 l_function_tex grid
+            displayed = [l_function_tex(all_bhats[i]) for i in range(3)]
+            VGroup(*displayed).arrange_in_grid(rows=1, cols=3).scale_to_fit_width(config.frame_width).to_corner(UL)
+            self.play(FadeOut(likelihood_grid), FadeIn(VGroup(*displayed)), run_time=0.8)
+
+            # Grow the grid: animate existing cells to new positions, fade in new cells
+            for rows, cols in dims[1:]:
+                n_new = rows * cols
+                n_old = len(displayed)
+                target_texes = [l_function_tex(all_bhats[i]) for i in range(n_new)]
+                VGroup(*target_texes).arrange_in_grid(rows=rows, cols=cols).scale_to_fit_width(config.frame_width).to_corner(UL)
+                anims = [Transform(displayed[i], target_texes[i]) for i in range(n_old)]
+                anims += [FadeIn(target_texes[i]) for i in range(n_old, n_new)]
+                self.play(*anims, run_time=0.8)
+                displayed = [displayed[i] for i in range(n_old)] + target_texes[n_old:]
 
             self.wait(max(tracker.duration - len(dims) * 0.8 - 1.1, 0))
-            self.play(FadeOut(l_vectors_new))
+            self.play(FadeOut(VGroup(*displayed)))
 
         # --- Graph the likelihood ---
         with self.voiceover("Somewhere this function has a maximum, and the beta hats at the maximum are the beta hats that our model uses.") as tracker:
