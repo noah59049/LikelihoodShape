@@ -89,6 +89,14 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 all_bhat_texes.append(bhats_tex.copy().arrange(DOWN, aligned_edge = LEFT))
                 self.play(FadeIn(bhats_tex))
 
+                if m == 0:
+                    arbitrary_dialog = HMDialogBox("There's nothing special about these betas; they are chosen mostly arbitrarily.", 
+                                                   text_width = 3,
+                                                   text_scale=0.5)
+                    arbitrary_dialog.to_corner(DR).shift(arbitrary_dialog.height * UP)
+                    self.play(FadeIn(arbitrary_dialog))
+                    self.play(FadeOut(arbitrary_dialog))
+
                 formula4_parts = [r"\hat{y}=\sigma(",r"\hat{\beta_0}"]
                 for j in range(1, 1 + COLS_TO_KEEP):
                     formula4_parts.append("+")
@@ -214,6 +222,11 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 self.play(FadeOut(highlight_rect), FadeIn(partial_likelihoods_table_old), run_time = min(1, tracker.duration))
                 self.remove(new_table)
                 partial_likelihoods = []
+                if m == 0:
+                    Li_dialog = HMDialogBox("This column is Li because it's the contribution of the ith row to the likelihood. It will make more sense in a few seconds. But the notation for this column isn't important.")
+                    Li_dialog.to_corner(DR)
+                    self.play(FadeIn(Li_dialog))
+                    self.play(FadeOut(Li_dialog))
             with self.voiceover("So in the first row, y is 1, the predicted probability of y being 1 is y hat ,which is 0.9051. In the second row, y is 0, and the predicted probability of y being 0 is 1 - y hat, which is 0.9998. So now we continue that process for all of the rows.") as tracker:
                 total_transforms = array_from_latex.shape[0] + np.sum(y_latex == 0)
                 # This loop happens for every row
@@ -312,6 +325,10 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 self.play(TransformByGlyphMap(partial_likelihoods_table_old, likelihood_together,
                                             *glyph_map,
                                             run_time = 2.2))
+                if m == 0:
+                    independence_dialog = HMDialogBox("An assumption of logistic regression is that each individual (each row) is independent, so it's fine to simply multiply the probabilities from each row.")
+                    self.play(FadeIn(independence_dialog))
+                    self.play(FadeOut(independence_dialog))
             
             # Actually calculate the likelihood
             likelihood = np.exp(log_likelihood(X, y, bhat, add_intercept=True))
