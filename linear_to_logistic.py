@@ -260,21 +260,63 @@ class LinearLogisticScene(VoiceoverScene):
             color=YELLOW,
             stroke_width=2,
         ))
+
+        # Compute fixed layout positions for all 4 formulas in a row at UL
+        _layout = VGroup(
+            MathTex(r"\frac{1}{1+e^{-(-5.0)}}", color=YELLOW),
+            MathTex(r"\frac{1}{1+148.41}", color=YELLOW),
+            MathTex(r"\frac{1}{149.41}", color=YELLOW),
+            MathTex(r"0.0067", color=YELLOW),
+        ).arrange(RIGHT, buff=0.4).to_corner(UL)
+        f_centers = [m.get_center().copy() for m in _layout]
+
+        # Static versions for the TransformFromCopy introduction (at z = -5)
+        f1_static = MathTex(r"\frac{1}{1+e^{-(-5.0)}}", color=YELLOW).move_to(f_centers[0])
+        f2_static = MathTex(r"\frac{1}{1+" + f"{np.exp(5):.2f}" + r"}", color=YELLOW).move_to(f_centers[1])
+        f3_static = MathTex(r"\frac{1}{" + f"{1+np.exp(5):.2f}" + r"}", color=YELLOW).move_to(f_centers[2])
+        f4_static = MathTex(f"{sigmoid(-5):.4f}", color=YELLOW).move_to(f_centers[3])
+
+        # Dynamic always_redraw versions (active during z animation)
+        def _exp_str(z):
+            return f"-({z:.1f})" if z < 0 else f"{-z:.1f}"
+
         formula = always_redraw(lambda: MathTex(
-            r"\sigma(z)=\frac{1}{1+e^{" + f"{-z_tracker.get_value():.1f}" + r"}}",
-        ).to_corner(UL))
+            r"\frac{1}{1+e^{" + _exp_str(z_tracker.get_value()) + r"}}",
+            color=YELLOW,
+        ).move_to(f_centers[0]))
+        f2_dyn = always_redraw(lambda: MathTex(
+            r"\frac{1}{1+" + f"{np.exp(-z_tracker.get_value()):.2f}" + r"}",
+            color=YELLOW,
+        ).move_to(f_centers[1]))
+        f3_dyn = always_redraw(lambda: MathTex(
+            r"\frac{1}{" + f"{1+np.exp(-z_tracker.get_value()):.2f}" + r"}",
+            color=YELLOW,
+        ).move_to(f_centers[2]))
+        f4_dyn = always_redraw(lambda: MathTex(
+            f"{sigmoid(z_tracker.get_value()):.4f}",
+            color=YELLOW,
+        ).move_to(f_centers[3]))
+
         sigma_label = VGroup(
             MathTex(r"\sigma(z) ="),
             DecimalNumber(sigmoid(z_tracker.get_value()), num_decimal_places=3, color=YELLOW),
-        ).arrange(RIGHT, buff=0.15).next_to(formula, DOWN)
+        ).arrange(RIGHT, buff=0.15).move_to(f_centers[0] + DOWN * 0.9)
         sigma_label[1].add_updater(lambda m: m.set_value(sigmoid(z_tracker.get_value())))
 
         with self.voiceover("To see why, if you plug in a small value of z, the denominator becomes very large, and your function approaches 0 very fast.") as tracker:
-            self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line), FadeIn(sigma_label), TransformWithBoxes(sigmoid_defn, formula,
-                                                                                                                   ([10,11], [10,11,12])))
+            self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line), FadeIn(sigma_label),
+                      TransformWithBoxes(sigmoid_defn, f1_static, ([10], [4,5,6,7,8,9,10])))  # indices may need adjustment
+            self.play(TransformFromCopy(f1_static, f2_static))
+            self.play(TransformFromCopy(f2_static, f3_static))
+            self.play(TransformFromCopy(f3_static, f4_static))
+            self.remove(f1_static, f2_static, f3_static, f4_static)
+            self.add(formula, f2_dyn, f3_dyn, f4_dyn)
+
         with self.voiceover("If z is large, then the exponential term becomes near zero, and the fraction evaluates to almost 1.") as tracker:
             self.play(z_tracker.animate.set_value(5), run_time=5, rate_func=linear)
-            self.play(FadeOut(sliding_dot), FadeOut(v_line), FadeOut(h_line), FadeOut(sigma_label), TransformMatchingTex(formula, sigmoid_defn))
+            self.play(FadeOut(sliding_dot), FadeOut(v_line), FadeOut(h_line), FadeOut(sigma_label),
+                      FadeOut(f2_dyn), FadeOut(f3_dyn), FadeOut(f4_dyn),
+                      TransformMatchingTex(formula, sigmoid_defn))
 
         with self.voiceover("If you multiply the top and bottom of the fraction by e to the z, ") as tracker:
             self.play(TransformByGlyphMap(sigmoid_defn, sigmoid_defn2,
