@@ -223,8 +223,10 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 self.remove(new_table)
                 partial_likelihoods = []
                 if m == 0:
-                    Li_dialog = HMDialogBox("This column is Li because it's the contribution of the ith row to the likelihood. It will make more sense in a few seconds. But the notation for this column isn't important.")
+                    Li_dialog = HMDialogBox("This column is Li because it's the contribution of the ith row to the likelihood. It will make more sense in a few seconds. But the notation for this column isn't important.",
+                                            text_width = 5)
                     Li_dialog.to_corner(DR)
+                    Li_dialog.shift(Li_dialog.height * UP)
                     self.play(FadeIn(Li_dialog))
                     self.play(FadeOut(Li_dialog))
             with self.voiceover("So in the first row, y is 1, the predicted probability of y being 1 is y hat ,which is 0.9051. In the second row, y is 0, and the predicted probability of y being 0 is 1 - y hat, which is 0.9998. So now we continue that process for all of the rows.") as tracker:
@@ -327,6 +329,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                                             run_time = 2.2))
                 if m == 0:
                     independence_dialog = HMDialogBox("An assumption of logistic regression is that each individual (each row) is independent, so it's fine to simply multiply the probabilities from each row.")
+                    independence_dialog.to_corner(UL)
                     self.play(FadeIn(independence_dialog))
                     self.play(FadeOut(independence_dialog))
             
