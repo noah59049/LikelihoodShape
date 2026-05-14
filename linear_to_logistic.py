@@ -267,7 +267,7 @@ class LinearLogisticScene(VoiceoverScene):
             MathTex(r"=\frac{1}{1+148.41}", color=YELLOW),
             MathTex(r"=\frac{1}{149.41}", color=YELLOW),
             MathTex(r"=0.0067", color=YELLOW),
-        ).arrange(RIGHT, buff=0.4).to_corner(UL)
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.4).to_corner(UL)
         f_centers = [m.get_center().copy() for m in _layout]
 
         # Static versions for the TransformFromCopy introduction (at z = -5)
