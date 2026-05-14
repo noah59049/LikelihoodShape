@@ -297,14 +297,8 @@ class LinearLogisticScene(VoiceoverScene):
             color=YELLOW,
         ).move_to(f_centers[3]))
 
-        sigma_label = VGroup(
-            MathTex(r"\sigma(z) ="),
-            DecimalNumber(sigmoid(z_tracker.get_value()), num_decimal_places=3, color=YELLOW),
-        ).arrange(RIGHT, buff=0.15).move_to(f_centers[0] + DOWN * 0.9)
-        sigma_label[1].add_updater(lambda m: m.set_value(sigmoid(z_tracker.get_value())))
-
         with self.voiceover("To see why, if you plug in a small value of z, the denominator becomes very large, and your function approaches 0 very fast.") as tracker:
-            self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line), FadeIn(sigma_label),
+            self.play(FadeIn(sliding_dot), FadeIn(v_line), FadeIn(h_line),
                       TransformWithBoxes(sigmoid_defn, f1_static, ([11], [11,12,13,14,15,16])))
             self.play(TransformFromCopy(f1_static, f2_static))
             self.play(TransformFromCopy(f2_static, f3_static))
@@ -314,7 +308,7 @@ class LinearLogisticScene(VoiceoverScene):
 
         with self.voiceover("If z is large, then the exponential term becomes near zero, and the fraction evaluates to almost 1.") as tracker:
             self.play(z_tracker.animate.set_value(5), run_time=5, rate_func=linear)
-            self.play(FadeOut(sliding_dot), FadeOut(v_line), FadeOut(h_line), FadeOut(sigma_label),
+            self.play(FadeOut(sliding_dot), FadeOut(v_line), FadeOut(h_line),
                       FadeOut(f2_dyn), FadeOut(f3_dyn), FadeOut(f4_dyn),
                       TransformMatchingTex(formula, sigmoid_defn))
 
