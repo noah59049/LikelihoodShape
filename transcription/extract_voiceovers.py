@@ -41,7 +41,7 @@ def write_pdf(lines: list[str], path: str) -> None:
 
     stem = Path(path).stem
     pdf = FPDF()
-    pdf.set_margins(20, 20, 20)
+    pdf.set_margins(5,5,5)
     pdf.add_page()
 
     pdf.set_font("Helvetica", "B", 14)
