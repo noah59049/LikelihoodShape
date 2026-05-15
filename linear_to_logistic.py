@@ -315,12 +315,23 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(z_tracker.animate.set_value(5), run_time=tracker.duration, rate_func=linear)
         with self.voiceover("near zero, and the fraction evaluates to almost 1.") as tracker:
             near_zero_rect = SurroundingRectangle(f2_dyn[0][-4:], color = RED)
-            self.play(Create(near_zero_rect))
-            self.play(FadeOut(near_zero_rect))
+            if tracker.duration > 2:
+                self.play(Create(near_zero_rect))
+                self.wait(tracker.duration - 2)
+                self.play(FadeOut(near_zero_rect))
+            else:
+                self.play(Create(near_zero_rect, run_time = tracker.duration / 2))
+                self.play(FadeOut(near_zero_rect, run_time = tracker.duration / 2))
         with self.voiceover("evaluates to almost 1.") as tracker:
             almost_1_rect = SurroundingRectangle(f4_dyn, color = RED)
-            self.play(FadeIn(almost_1_rect))
-            self.play(FadeOut(almost_1_rect))
+            if tracker.duration > 2:
+                self.play(Create(almost_1_rect))
+                self.wait(tracker.duration - 2)
+                self.play(FadeOut(almost_1_rect))
+            else:
+                self.play(Create(almost_1_rect, run_time = tracker.duration / 2))
+                self.play(FadeOut(almost_1_rect, run_time = tracker.duration / 2))
+
         with self.voiceover("If you multiply the top and bottom of the fraction by") as tracker:
             self.play(FadeOut(sliding_dot), FadeOut(v_line), FadeOut(h_line),
                       FadeOut(f2_dyn), FadeOut(f3_dyn), FadeOut(f4_dyn),
