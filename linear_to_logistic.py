@@ -247,36 +247,36 @@ class LinearLogisticScene(VoiceoverScene):
 
         sliding_dot = always_redraw(lambda: Dot(
             axes.c2p(z_tracker.get_value(), sigmoid(z_tracker.get_value())),
-            color=YELLOW,
+            # color=YELLOW,
             radius=0.1,
         ))
         v_line = always_redraw(lambda: DashedLine(
             axes.c2p(z_tracker.get_value(), 0),
             axes.c2p(z_tracker.get_value(), sigmoid(z_tracker.get_value())),
-            color=YELLOW,
+            # color=YELLOW,
             stroke_width=2,
         ))
         h_line = always_redraw(lambda: DashedLine(
             axes.c2p(0, sigmoid(z_tracker.get_value())),
             axes.c2p(z_tracker.get_value(), sigmoid(z_tracker.get_value())),
-            color=YELLOW,
+            # color=YELLOW,
             stroke_width=2,
         ))
 
         # Compute fixed layout positions for all 4 formulas in a row at UL
         _layout = VGroup(
-            ColoredMathTex(r"\sigma(z)=\frac{1}{1+e^{-(-5.0)}}", color=YELLOW),
-            ColoredMathTex(r"=\frac{1}{1+148.41}", color=YELLOW),
-            ColoredMathTex(r"=\frac{1}{149.41}", color=YELLOW),
-            ColoredMathTex(r"=0.0067", color=YELLOW),
+            ColoredMathTex(r"\sigma(z)=\frac{1}{1+e^{-(-5.0)}}"),
+            ColoredMathTex(r"=\frac{1}{1+148.41}"),
+            ColoredMathTex(r"=\frac{1}{149.41}"),
+            ColoredMathTex(r"=0.0067"),
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.4).to_corner(UL)
         f_centers = [m.get_center().copy() for m in _layout]
 
         # Static versions for the TransformFromCopy introduction (at z = -5)
-        f1_static = ColoredMathTex(r"\sigma(z)=\frac{1}{1+e^{-(-5.0)}}", color=YELLOW).move_to(f_centers[0])
-        f2_static = ColoredMathTex(r"=\frac{1}{1+" + f"{np.exp(5):.2f}" + r"}", color=YELLOW).move_to(f_centers[1])
-        f3_static = ColoredMathTex(r"=\frac{1}{" + f"{1+np.exp(5):.2f}" + r"}", color=YELLOW).move_to(f_centers[2])
-        f4_static = ColoredMathTex(f"={sigmoid(-5):.4f}", color=YELLOW).move_to(f_centers[3])
+        f1_static = ColoredMathTex(r"\sigma(z)=\frac{1}{1+e^{-(-5.0)}}").move_to(f_centers[0])
+        f2_static = ColoredMathTex(r"=\frac{1}{1+" + f"{np.exp(5):.2f}" + r"}").move_to(f_centers[1])
+        f3_static = ColoredMathTex(r"=\frac{1}{" + f"{1+np.exp(5):.2f}" + r"}").move_to(f_centers[2])
+        f4_static = ColoredMathTex(f"={sigmoid(-5):.4f}").move_to(f_centers[3])
 
         # Dynamic always_redraw versions (active during z animation)
         def _exp_str(z):
@@ -284,19 +284,19 @@ class LinearLogisticScene(VoiceoverScene):
 
         formula = always_redraw(lambda: ColoredMathTex(
             r"\sigma(z)=\frac{1}{1+e^{" + _exp_str(z_tracker.get_value()) + r"}}",
-            color=YELLOW,
+            # color=YELLOW,
         ).move_to(f_centers[0]))
         f2_dyn = always_redraw(lambda: ColoredMathTex(
             r"=\frac{1}{1+" + f"{np.exp(-z_tracker.get_value()):.2f}" + r"}",
-            color=YELLOW,
+            # color=YELLOW,
         ).move_to(f_centers[1]))
         f3_dyn = always_redraw(lambda: ColoredMathTex(
             r"=\frac{1}{" + f"{1+np.exp(-z_tracker.get_value()):.2f}" + r"}",
-            color=YELLOW,
+            # color=YELLOW,
         ).move_to(f_centers[2]))
         f4_dyn = always_redraw(lambda: ColoredMathTex(
             f"={sigmoid(z_tracker.get_value()):.4f}",
-            color=YELLOW,
+            # color=YELLOW,
         ).move_to(f_centers[3]))
 
         with self.voiceover("To see why, if you plug in ") as tracker:
