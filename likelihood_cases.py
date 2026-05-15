@@ -49,7 +49,7 @@ class LikelihoodCasesScene(VoiceoverScene):
 
         box1 = SurroundingRectangle(row1, color = RED)
         with self.voiceover("if we look at the case where yi=1, the right hand term becomes 1-yi hat raised") as tracker:
-            self.play(row1.animate.set_color(RED), Create(box1, run_time = 0.5))
+            self.play(Create(box1, run_time = 0.5))
             self.play(TransformWithBoxes(success1, success2,
                 ([9,10], [9]),
                 ([21,22], [20])))
@@ -69,7 +69,7 @@ class LikelihoodCasesScene(VoiceoverScene):
                 (range(9,10), FadeOut)))
 
             self.wait(tracker.duration - 2.1)        
-            self.play(FadeOut(success4), row1.animate.set_color(WHITE), FadeOut(box1))
+            self.play(FadeOut(success4), FadeOut(box1))
         
             # Step 3: Likelihood simplification for case y_i=0
             failure1 = ColoredMathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
@@ -82,7 +82,7 @@ class LikelihoodCasesScene(VoiceoverScene):
         
         with self.voiceover("If you look at the case where yi=0,") as tracker:
             box2 = SurroundingRectangle(row2, color = RED)
-            self.play(row2.animate.set_color(RED), Create(box2))
+            self.play(Create(box2))
             self.play(
                 TransformWithBoxes(
                     failure1, failure2,
@@ -104,7 +104,7 @@ class LikelihoodCasesScene(VoiceoverScene):
                 ([13,14,15,16], FadeOut)))
 
             self.wait(tracker.duration - 3.1)
-            self.play(FadeOut(failure4), row2.animate.set_color(WHITE), FadeOut(box2))
+            self.play(FadeOut(failure4), FadeOut(box2))
             self.play(FadeIn(failure1))
         
         # Step 4: Add log likelihood
