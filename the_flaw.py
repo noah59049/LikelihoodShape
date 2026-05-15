@@ -4,6 +4,7 @@ from manim import *
 from manim_voiceover import *
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 from N_Tools import *
+from tex_colors import *
 
 class FlawScene(ThreeDScene, VoiceoverScene):
     def construct(self):
@@ -63,11 +64,11 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                 return grad_log_likelihood(X, y, beta_vec, add_intercept=True)
 
             deriv_tex = always_redraw(lambda: VGroup(
-                MathTex(
+                ColoredMathTex(
                     r"\frac{\partial \ell}{\partial \hat{\beta}_0} = "
                     f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[0]:.3f}"
                 ),
-                MathTex(
+                ColoredMathTex(
                     r"\frac{\partial \ell}{\partial \hat{\beta}_1} = "
                     f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[1]:.3f}"
                 )
@@ -95,11 +96,11 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             self.remove(deriv_tex)
 
             deriv_tex = VGroup(
-                MathTex(
+                ColoredMathTex(
                     r"\frac{\partial \ell}{\partial \hat{\beta}_0} = "
                     f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[0]:.3f}"
                 ),
-                MathTex(
+                ColoredMathTex(
                     r"\frac{\partial \ell}{\partial \hat{\beta}_1} = "
                     f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[1]:.3f}"
                 )
