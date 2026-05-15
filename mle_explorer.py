@@ -8,6 +8,7 @@ from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 from hat_matrix_logo import HMDialogBox
+from tex_colors import *
 
 yXyhat_tex = yX_tex_numbered.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("X4\n &", r"X4 & $\hat{y}$")
 array_from_latex = latex_table_to_array(yX_tex_numbered)
@@ -23,13 +24,13 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 min_silence_len=2000,
                 keep_silence=(0,0)))
         yX_table = Tex(yX_tex_numbered).scale(0.66).to_corner(UL)
-        formula = MathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})").to_edge(DOWN)
+        formula = ColoredMathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})").to_edge(DOWN)
         with self.voiceover("These betas are unknown facts about our population that we need to estimate, and we use") as tracker:
             self.play(Write(formula))
         
         mle_words = Text("Maximum Likelihood Estimation")
-        tex1 = MathTex(r"L(\hat{\beta})")
-        tex2 = MathTex(r"L(\hat{\beta})=P(Y|\hat{\beta})")
+        tex1 = ColoredMathTex(r"L(\hat{\beta})")
+        tex2 = ColoredMathTex(r"L(\hat{\beta})=P(Y|\hat{\beta})")
         mle_words.next_to(tex1, UP)
 
         with self.voiceover("maximum likelihood estimation. If we have an estimate of our betas, the") as tracker:
@@ -42,7 +43,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             self.play(FadeOut(mle_words, tex2, run_time = 0.6))
 
         with self.voiceover("hat over the betas, and we use y hat to mean our estimate of p.") as tracker:
-            formula2 = MathTex(r"\hat{y}=\sigma(\hat{\beta_0}+\hat{\beta_1} X_{1}+\hat{\beta_2} X_{2}+\ldots+\hat{\beta}_{k-1} X_{k-1})").to_edge(DOWN)
+            formula2 = ColoredMathTex(r"\hat{y}=\sigma(\hat{\beta_0}+\hat{\beta_1} X_{1}+\hat{\beta_2} X_{2}+\ldots+\hat{\beta}_{k-1} X_{k-1})").to_edge(DOWN)
             self.play(TransformByGlyphMap(formula, formula2,
                                         (FadeIn, [1]),
                                         (FadeIn, [5]),
@@ -60,7 +61,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
 
         with self.voiceover("In this case we have 4 predictors. So let’s show that in our formula.") as tracker:
             formula3_tex = r"\hat{y}=\sigma(\hat{\beta_0}+" + "+".join(r"\hat{\beta_j} X_{j}".replace("j",str(j)) for j in range(1, 1 + COLS_TO_KEEP)) + ")"
-            formula3 = MathTex(formula3_tex).to_edge(DOWN)
+            formula3 = ColoredMathTex(formula3_tex).to_edge(DOWN)
             self.play(TransformMatchingShapes(formula2, formula3))
 
         result = logistic_regression(X, y, add_intercept=True, return_stats=True)
@@ -85,7 +86,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
 
             # --- Add the beta hats to the corner ---
             with self.voiceover("Let’s look at an estimate of the betas.") as tracker:
-                bhats_tex = VGroup(*[MathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat)]).set_color(BLUE).arrange(DOWN).to_corner(UR)
+                bhats_tex = VGroup(*[ColoredMathTex(r"\hat{\beta}_" + str(i) + f"={e}") for i,e in enumerate(bhat)]).set_color(beta_color).arrange(DOWN).to_corner(UR)
                 all_bhat_texes.append(bhats_tex.copy().arrange(DOWN, aligned_edge = LEFT))
                 self.play(FadeIn(bhats_tex))
 
@@ -103,7 +104,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                     formula4_parts.append(rf"\hat{{\beta_{j}}}")
                     formula4_parts.append(rf"X_{{{j}}}")
                 formula4_parts.append(")")
-                formula4 = MathTex(*formula4_parts).to_edge(DOWN)
+                formula4 = ColoredMathTex(*formula4_parts).to_edge(DOWN)
                 def formula4_beta_index(j):
                     if j == 0: return 1
                     else: return 3 * j
@@ -119,13 +120,13 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                     else: # For negative beta hats, we change the sign to a minus
                         substituted_formula_parts[idx] = f"{-bhat[j]}"
                         substituted_formula_parts[idx - 1] = "-"
-                substituted_formula = MathTex(*substituted_formula_parts).to_edge(DOWN)
+                substituted_formula = ColoredMathTex(*substituted_formula_parts).to_edge(DOWN)
                 for j in range(COLS_TO_KEEP + 1):
-                    substituted_formula[formula4_beta_index(j)].set_color(BLUE)
+                    substituted_formula[formula4_beta_index(j)].set_color(beta_color)
 
                 if m == 0:
                     self.play(TransformMatchingTex(formula3, formula4, run_time = 0.001))
-                    self.play(*[formula4[formula4_beta_index(j)].animate.set_color(BLUE) for j in range(COLS_TO_KEEP + 1)])
+                    self.play(*[formula4[formula4_beta_index(j)].animate.set_color(beta_color) for j in range(COLS_TO_KEEP + 1)])
                     self.play(*[ReplacementTransform(formula4[i], substituted_formula[i])
                                 for i in range(len(formula4_parts))])
                 else:
@@ -172,11 +173,11 @@ class MLEScene(VoiceoverScene, ThreeDScene):
 
                     for j, Xij in enumerate(row_np.reshape(-1)):
                         substituted_formula_parts2[formula4_x_index(j + 1)] = r"(\ldots)" if np.isnan(Xij) else f"({Xij})"
-                    substituted_formula_new = MathTex(*substituted_formula_parts2).scale(0.83).to_edge(DOWN)
+                    substituted_formula_new = ColoredMathTex(*substituted_formula_parts2).scale(0.83).to_edge(DOWN)
                     for j in range(COLS_TO_KEEP + 1):
-                        substituted_formula_new[formula4_beta_index(j)].set_color(BLUE)
-                        if j != 0: 
-                            substituted_formula_new[formula4_x_index(j)].set_color(RED)
+                        substituted_formula_new[formula4_beta_index(j)].set_color(beta_color)
+                        if j != 0:
+                            substituted_formula_new[formula4_x_index(j)].set_color(X_color)
                     substituted_formula_transforms = [
                         ReplacementTransform(substituted_formula_old[i], 
                                             substituted_formula_new[i])
@@ -297,7 +298,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
 
             # --- Show the product of the partial likelihoods
             likelihood_together_tex = "L = " + "*".join(partial_likelihoods).replace(r"\vdots", r"\ldots")
-            likelihood_together = MathTex(likelihood_together_tex).scale_to_fit_width(config.frame_width).next_to(substituted_formula_new, UP)
+            likelihood_together = ColoredMathTex(likelihood_together_tex).scale_to_fit_width(config.frame_width).next_to(substituted_formula_new, UP)
 
             # Transform the matching numbers
             table_grid = extract_table_grid(partial_likelihoods_table_old)
@@ -338,7 +339,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             likelihood_str = f"L={likelihood:.4g}"
             all_likelihood_strs.append(likelihood_str[2:]) # We don't want the "L="
 
-            likelihood_final = MathTex(likelihood_str).next_to(substituted_formula_new, UP)
+            likelihood_final = ColoredMathTex(likelihood_str).next_to(substituted_formula_new, UP)
             all_likelihood_texes.append(likelihood_final.copy())
             with self.voiceover("And we get 3.394 times 10^-47. Let’s see how this compares to other beta hats.") as tracker:
                 self.play(TransformByGlyphMap(likelihood_together, likelihood_final,
@@ -388,8 +389,8 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             likelihood = np.exp(log_likelihood(X, y, bhat, add_intercept=True))
             likelihood_str = f"{likelihood:.4g}"
             likelihood_vector = numpy_to_latex(as_col(bhat))
-            new_likelihood_tex = MathTex("L(",likelihood_vector, ")=", likelihood_str)
-            new_likelihood_tex[1].set_color(BLUE)
+            new_likelihood_tex = ColoredMathTex("L(",likelihood_vector, ")=", likelihood_str)
+            new_likelihood_tex[1].set_color(beta_color)
             return new_likelihood_tex
 
         for m in range(100):
@@ -446,9 +447,9 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 z_range=[-3, 3],
             )
 
-            x_label = MathTex(r"\hat{\beta}_0").next_to(axes.x_axis.get_end(), RIGHT)
-            y_label = MathTex(r"\hat{\beta}_1").next_to(axes.y_axis.get_end(), UP)
-            z_label = MathTex("L").next_to(axes.z_axis.get_end(), OUT)
+            x_label = ColoredMathTex(r"\hat{\beta}_0").next_to(axes.x_axis.get_end(), RIGHT)
+            y_label = ColoredMathTex(r"\hat{\beta}_1").next_to(axes.y_axis.get_end(), UP)
+            z_label = ColoredMathTex("L").next_to(axes.z_axis.get_end(), OUT)
             axis_labels = VGroup(x_label, y_label, z_label)
             self.add_fixed_orientation_mobjects(x_label, y_label, z_label)
 
