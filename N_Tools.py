@@ -902,8 +902,8 @@ class ReplacementTransformGroupWithBoxes(Succession):
         dst_group,
         box_indices,
         box_kwargs=None,
-        create_boxes_anim=Create,
-        remove_boxes_anim=FadeOut,
+        CreateBoxesAnim=Create,
+        RemoveBoxesAnim=FadeOut,
         run_time=1.0,
         lag_ratio=0,
         check_length=True,
@@ -922,21 +922,23 @@ class ReplacementTransformGroupWithBoxes(Succession):
 
         box_kwargs = box_kwargs or {"color": RED, "buff": 0.1}
 
-        boxes = VGroup(*[
+        boxes = [
             SurroundingRectangle(src_group[i], **box_kwargs)
             for i in box_indices
-        ])
+        ]
 
+        create = AnimationGroup(*[CreateBoxesAnim(box, run_time = time1) for box in boxes])
         transform = AnimationGroup(
             *[ReplacementTransform(src, dst) for src, dst in zip(src_group, dst_group)],
             lag_ratio=lag_ratio,
             run_time=time2,
         )
+        remove = AnimationGroup(*[RemoveBoxesAnim(box, run_time = time3) for box in boxes])
 
         super().__init__(
-            create_boxes_anim(boxes, run_time=time1),
+            create,
             transform,
-            remove_boxes_anim(boxes, run_time=time3),
+            remove,
             **kwargs
         )
 
