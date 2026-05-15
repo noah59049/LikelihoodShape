@@ -3,6 +3,7 @@ from MF_Tools import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 from N_Tools import TransformWithBoxes
+from tex_colors import *
         
 class LikelihoodCasesScene(VoiceoverScene):
     def construct(self):
@@ -12,15 +13,15 @@ class LikelihoodCasesScene(VoiceoverScene):
         keep_silence=(0,0)))
 
         # Step 1: Write the piecewise expression for the likelihood
-        base = MathTex(r"L=\prod_{i=1}^{n}")
-        brace = MathTex(r"\left\{").scale(1.6).next_to(base, RIGHT)
-        row1 = MathTex(r"\hat{y}_i \quad \quad \quad (y_i=1)")
-        row2 = MathTex(r"1-\hat{y}_i \quad \thinspace \thinspace (y_i=0)") # This leads to the conditions being aligned somehow, probably not the best fix but it works
+        base = ColoredMathTex(r"L=\prod_{i=1}^{n}")
+        brace = ColoredMathTex(r"\left\{").scale(1.6).next_to(base, RIGHT)
+        row1 = ColoredMathTex(r"\hat{y}_i \quad \quad \quad (y_i=1)")
+        row2 = ColoredMathTex(r"1-\hat{y}_i \quad \thinspace \thinspace (y_i=0)") # This leads to the conditions being aligned somehow, probably not the best fix but it works
         rows = VGroup(row1, row2).arrange(DOWN, aligned_edge=LEFT, buff=0.15).next_to(brace, RIGHT, aligned_edge = UP)
         cases = VGroup(base, brace, rows).to_edge(UP)
 
-        row1_basic = MathTex(r"\hat{y} \quad \quad \quad (y=1)")
-        row2_basic = MathTex(r"1-\hat{y} \quad \thinspace \thinspace (y=0)") # This leads to the conditions being aligned somehow, probably not the best fix but it works
+        row1_basic = ColoredMathTex(r"\hat{y} \quad \quad \quad (y=1)")
+        row2_basic = ColoredMathTex(r"1-\hat{y} \quad \thinspace \thinspace (y=0)") # This leads to the conditions being aligned somehow, probably not the best fix but it works
         rows_basic = VGroup(row1_basic, row2_basic).arrange(DOWN, aligned_edge=LEFT, buff=0.15).next_to(brace, RIGHT, aligned_edge = UP)
         
         with self.voiceover("Now let’s write a formula for the likelihood. We’ll be taking a product, a product of the predicted probabilities of the observed outcomes.") as tracker:
@@ -37,11 +38,11 @@ class LikelihoodCasesScene(VoiceoverScene):
 
         # Step 2: Likelihood simplification for case y_i=1
 
-        success1 = MathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
-        success2 = MathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{1}(1-\hat{y}_i)^{1-{1}}")
-        success2a= MathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{1}(1-\hat{y}_i)^{0}")
-        success3 = MathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{1}")
-        success4 = MathTex(r"L=\prod_{i=1}^{n}\hat{y}_i")
+        success1 = ColoredMathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
+        success2 = ColoredMathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{1}(1-\hat{y}_i)^{1-{1}}")
+        success2a= ColoredMathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{1}(1-\hat{y}_i)^{0}")
+        success3 = ColoredMathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{1}")
+        success4 = ColoredMathTex(r"L=\prod_{i=1}^{n}\hat{y}_i")
 
         with self.voiceover("So this formula is correct, but the likelihood is instead usually written as the product of yi hat to the yi times 1 minus yi hat to the 1 minus yi. And this is equivalent. ") as tracker:
             self.play(FadeIn(success1))
@@ -71,10 +72,10 @@ class LikelihoodCasesScene(VoiceoverScene):
             self.play(FadeOut(success4), row1.animate.set_color(WHITE), FadeOut(box1))
         
             # Step 3: Likelihood simplification for case y_i=0
-            failure1 = MathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
-            failure2 = MathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{0}(1-\hat{y}_i)^{1-{0}}")
-            failure3 = MathTex(r"L=\prod_{i=1}^{n}(1-\hat{y}_i)^{1-{0}}")
-            failure4 = MathTex(r"L=\prod_{i=1}^{n}1-\hat{y}_i")
+            failure1 = ColoredMathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
+            failure2 = ColoredMathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{0}(1-\hat{y}_i)^{1-{0}}")
+            failure3 = ColoredMathTex(r"L=\prod_{i=1}^{n}(1-\hat{y}_i)^{1-{0}}")
+            failure4 = ColoredMathTex(r"L=\prod_{i=1}^{n}1-\hat{y}_i")
 
             
             self.play(FadeIn(failure1))
@@ -107,10 +108,10 @@ class LikelihoodCasesScene(VoiceoverScene):
             self.play(FadeIn(failure1))
         
         # Step 4: Add log likelihood
-        loglik1 = MathTex(r"l=ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
-        loglik2 = MathTex(r"l=\sum_{i=1}^{n}ln[\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}]")
-        loglik3 = MathTex(r"l=\sum_{i=1}^{n}ln\hat{y}_i^{y_i}+ln(1-\hat{y}_i)^{1-{y_i}}")
-        loglik4 = MathTex(r"l=\sum_{i=1}^{n}y_iln\hat{y}_i+({1-{y_i}})ln(1-\hat{y}_i)")
+        loglik1 = ColoredMathTex(r"l=ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
+        loglik2 = ColoredMathTex(r"l=\sum_{i=1}^{n}ln[\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}]")
+        loglik3 = ColoredMathTex(r"l=\sum_{i=1}^{n}ln\hat{y}_i^{y_i}+ln(1-\hat{y}_i)^{1-{y_i}}")
+        loglik4 = ColoredMathTex(r"l=\sum_{i=1}^{n}y_iln\hat{y}_i+({1-{y_i}})ln(1-\hat{y}_i)")
 
         with self.voiceover(" ln of the likelihood. If we simplify a bit, ") as tracker:
             self.play(TransformByGlyphMap(failure1, loglik1,
