@@ -895,6 +895,52 @@ class ReplacementTransformGroup(AnimationGroup):
             **kwargs
         )
 
+class ReplacementTransformGroupWithBoxes(Succession):
+    def __init__(
+        self,
+        src_group,
+        dst_group,
+        box_indices,
+        box_kwargs=None,
+        create_boxes_anim=Create,
+        remove_boxes_anim=FadeOut,
+        run_time=1.0,
+        lag_ratio=0,
+        check_length=True,
+        **kwargs
+    ):
+        if check_length and len(src_group) != len(dst_group):
+            raise ValueError(
+                f"Groups must have same length "
+                f"({len(src_group)} != {len(dst_group)})"
+            )
+
+        if isinstance(run_time, (list, tuple)):
+            time1, time2, time3 = run_time
+        else:
+            time1, time2, time3 = run_time, run_time, run_time
+
+        box_kwargs = box_kwargs or {"color": RED, "buff": 0.1}
+
+        boxes = VGroup(*[
+            SurroundingRectangle(src_group[i], **box_kwargs)
+            for i in box_indices
+        ])
+
+        transform = AnimationGroup(
+            *[ReplacementTransform(src, dst) for src, dst in zip(src_group, dst_group)],
+            lag_ratio=lag_ratio,
+            run_time=time2,
+        )
+
+        super().__init__(
+            create_boxes_anim(boxes, run_time=time1),
+            transform,
+            remove_boxes_anim(boxes, run_time=time3),
+            **kwargs
+        )
+
+
 def shift_to_screen_corner(scene, mob, corner=UR, buff=0.5, scale = None):
     """Return the 3D shift vector that moves mob's projected bounding box to a screen corner."""
     if scale is not None:
