@@ -1,3 +1,4 @@
+import re
 from manim import *
 
 X_color = RED
@@ -21,8 +22,13 @@ def color_math(tex: MathTex) -> MathTex:
     return tex
 
 
+_BASE_ISOLATE = [r"\beta", r"\ell", "X", "Y", "L", "y", "z"]
+
+
 class ColoredMathTex(MathTex):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('substrings_to_isolate', [r"\beta", r"\ell", "X", "Y", "L", "y", "z"])
+        full_tex = "".join(str(a) for a in args)
+        isolate = _BASE_ISOLATE + ([] if re.search(r'\\[a-z]*p', full_tex) else ["p"])
+        kwargs.setdefault('substrings_to_isolate', isolate)
         super().__init__(*args, **kwargs)
         color_math(self)
