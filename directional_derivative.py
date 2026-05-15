@@ -3,7 +3,7 @@ from manim_voiceover import *
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 import numpy as np
 from MF_Tools import *
-from N_Tools import latex_vector
+from N_Tools import latex_vector, ReplacementTransformGroupWithBoxes
 
 def create_v(num_elements,
              orientation = "row",
@@ -100,8 +100,12 @@ class DirectionalDerivativeScene(VoiceoverScene):
 
         with self.voiceover("become the components of v. ") as tracker:
             self.play(
-                *[ReplacementTransform(chain_rule[i], simplified[i]) for i in range(12)],
-                run_time=1
+                ReplacementTransformGroupWithBoxes(
+                    chain_rule,
+                    simplified,
+                    box_indices=[2, 5, 8, 11],
+                    run_time=1,
+                )
             )
 
             # --- Step 9: Clear out the rest of the scene except for simplified ---
