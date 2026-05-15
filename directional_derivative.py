@@ -177,7 +177,8 @@ class DirectionalDerivativeScene(VoiceoverScene):
 
         with self.voiceover("directional second derivative, we take the derivative of this sum with respect to t. The components of v are just constants,") as tracker:
             self.play(
-                *[ReplacementTransform(simplified[i], giga_hess0[i]) for i in range(12)]
+                ReplacementTransformGroupWithBoxes(simplified, giga_hess0, [0])
+                # *[ReplacementTransform(simplified[i], giga_hess0[i]) for i in range(12)]
             )
 
         with self.voiceover("but those partials of f become full vector products. We get this messy thing.") as tracker:
