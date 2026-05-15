@@ -5,6 +5,7 @@ from manim_voiceover.services.stitcher import _StitcherService as StitcherServic
 import numpy as np
 import pandas as pd
 from N_Tools import simple_linear_regression, create_graph, TransformWithBoxes
+from tex_colors import *
 
 df = pd.read_csv("breast_cancer_sklearn.csv")
 X = np.array(df[df.columns[0]])
@@ -28,12 +29,12 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(Write(axis_labels))
             self.play(LaggedStart(*[Write(dot) for dot in dots], lag_ratio=0.005))
 
-        tex0 = MathTex(r"P(Y=1) = \beta_0+\beta_1 X").to_edge(UP)
-        tex1 = MathTex(r"p = \beta_0+\beta_1 X").to_edge(UP)
-        tex2 = MathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}").to_edge(UP)
-        tex3 = MathTex(r"f(p) = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
-        tex4 = MathTex(r"p = f^{-1}(\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1})")
-        tex5 = MathTex(r"\ln\frac{p}{1-p} = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
+        tex0 = ColoredMathTex(r"P(Y=1) = \beta_0+\beta_1 X").to_edge(UP)
+        tex1 = ColoredMathTex(r"p = \beta_0+\beta_1 X").to_edge(UP)
+        tex2 = ColoredMathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}").to_edge(UP)
+        tex3 = ColoredMathTex(r"f(p) = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
+        tex4 = ColoredMathTex(r"p = f^{-1}(\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1})")
+        tex5 = ColoredMathTex(r"\ln\frac{p}{1-p} = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
 
         with self.voiceover("One model we could use is linear regression. So for 1 predictor variable, we’d assume that the probability that y is 1,") as tracker:
                         # Regression coefficients
@@ -143,14 +144,14 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(TransformByGlyphMap(tex3_original, tex5,
                                         (range(4), range(7))))
             
-        sigmoid1 = MathTex(r"\frac{p}{1-p}=e^{\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1}}")
-        sigmoid1a= MathTex(r"\frac{1-p}{p}=\frac{1}{e^{\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1}}}")
-        sigmoid2 = MathTex(r"\frac{1-p}{p}=e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
-        sigmoid3 = MathTex(r"\frac{1}{p}-\frac{p}{p}=e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
-        sigmoid4 = MathTex(r"\frac{1}{p}-1=e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
-        sigmoid5 = MathTex(r"\frac{1}{p}=1+e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
-        sigmoid6 = MathTex(r"p=\frac{1}{1+e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}}")
-        sigmoid7 = MathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
+        sigmoid1 = ColoredMathTex(r"\frac{p}{1-p}=e^{\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1}}")
+        sigmoid1a= ColoredMathTex(r"\frac{1-p}{p}=\frac{1}{e^{\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1}}}")
+        sigmoid2 = ColoredMathTex(r"\frac{1-p}{p}=e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
+        sigmoid3 = ColoredMathTex(r"\frac{1}{p}-\frac{p}{p}=e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
+        sigmoid4 = ColoredMathTex(r"\frac{1}{p}-1=e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
+        sigmoid5 = ColoredMathTex(r"\frac{1}{p}=1+e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
+        sigmoid6 = ColoredMathTex(r"p=\frac{1}{1+e^{-(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}}")
+        sigmoid7 = ColoredMathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})}")
 
 
         with self.voiceover("exponentiate both sides") as tracker:
@@ -219,10 +220,10 @@ class LinearLogisticScene(VoiceoverScene):
                                             ([0,1], [2,3])))
             
         # Interlude, Part 1: Sigmoid definitions
-        sigmoid_defn  = MathTex(r"\sigma(z)=\frac{1}{1+e^{-z}}").to_corner(UL)
-        sigmoid_defn2 = MathTex(r"\sigma(z)=\frac{(1)e^z}{(1+e^{-z})e^z}").to_corner(UL)
-        sigmoid_defn3 = MathTex(r"\sigma(z)=\frac{e^z}{e^z+e^ze^{-z}}").to_corner(UL)
-        sigmoid_defn4 = MathTex(r"\sigma(z)=\frac{e^z}{e^z+1}").to_corner(UL)
+        sigmoid_defn  = ColoredMathTex(r"\sigma(z)=\frac{1}{1+e^{-z}}").to_corner(UL)
+        sigmoid_defn2 = ColoredMathTex(r"\sigma(z)=\frac{(1)e^{z}}{(1+e^{-z})e^{z}}").to_corner(UL)
+        sigmoid_defn3 = ColoredMathTex(r"\sigma(z)=\frac{e^{z}}{e^{z}+e^{z}e^{-z}}").to_corner(UL)
+        sigmoid_defn4 = ColoredMathTex(r"\sigma(z)=\frac{e^{z}}{e^{z}+1}").to_corner(UL)
 
         # Interlude, Part 2: Graph
         axes = Axes(x_range = [-5,5,1], 
@@ -264,36 +265,36 @@ class LinearLogisticScene(VoiceoverScene):
 
         # Compute fixed layout positions for all 4 formulas in a row at UL
         _layout = VGroup(
-            MathTex(r"\sigma(z)=\frac{1}{1+e^{-(-5.0)}}", color=YELLOW),
-            MathTex(r"=\frac{1}{1+148.41}", color=YELLOW),
-            MathTex(r"=\frac{1}{149.41}", color=YELLOW),
-            MathTex(r"=0.0067", color=YELLOW),
+            ColoredMathTex(r"\sigma(z)=\frac{1}{1+e^{-(-5.0)}}", color=YELLOW),
+            ColoredMathTex(r"=\frac{1}{1+148.41}", color=YELLOW),
+            ColoredMathTex(r"=\frac{1}{149.41}", color=YELLOW),
+            ColoredMathTex(r"=0.0067", color=YELLOW),
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.4).to_corner(UL)
         f_centers = [m.get_center().copy() for m in _layout]
 
         # Static versions for the TransformFromCopy introduction (at z = -5)
-        f1_static = MathTex(r"\sigma(z)=\frac{1}{1+e^{-(-5.0)}}", color=YELLOW).move_to(f_centers[0])
-        f2_static = MathTex(r"=\frac{1}{1+" + f"{np.exp(5):.2f}" + r"}", color=YELLOW).move_to(f_centers[1])
-        f3_static = MathTex(r"=\frac{1}{" + f"{1+np.exp(5):.2f}" + r"}", color=YELLOW).move_to(f_centers[2])
-        f4_static = MathTex(f"={sigmoid(-5):.4f}", color=YELLOW).move_to(f_centers[3])
+        f1_static = ColoredMathTex(r"\sigma(z)=\frac{1}{1+e^{-(-5.0)}}", color=YELLOW).move_to(f_centers[0])
+        f2_static = ColoredMathTex(r"=\frac{1}{1+" + f"{np.exp(5):.2f}" + r"}", color=YELLOW).move_to(f_centers[1])
+        f3_static = ColoredMathTex(r"=\frac{1}{" + f"{1+np.exp(5):.2f}" + r"}", color=YELLOW).move_to(f_centers[2])
+        f4_static = ColoredMathTex(f"={sigmoid(-5):.4f}", color=YELLOW).move_to(f_centers[3])
 
         # Dynamic always_redraw versions (active during z animation)
         def _exp_str(z):
             return f"-({z:.1f})" if z < 0 else f"{-z:.1f}"
 
-        formula = always_redraw(lambda: MathTex(
+        formula = always_redraw(lambda: ColoredMathTex(
             r"\sigma(z)=\frac{1}{1+e^{" + _exp_str(z_tracker.get_value()) + r"}}",
             color=YELLOW,
         ).move_to(f_centers[0]))
-        f2_dyn = always_redraw(lambda: MathTex(
+        f2_dyn = always_redraw(lambda: ColoredMathTex(
             r"=\frac{1}{1+" + f"{np.exp(-z_tracker.get_value()):.2f}" + r"}",
             color=YELLOW,
         ).move_to(f_centers[1]))
-        f3_dyn = always_redraw(lambda: MathTex(
+        f3_dyn = always_redraw(lambda: ColoredMathTex(
             r"=\frac{1}{" + f"{1+np.exp(-z_tracker.get_value()):.2f}" + r"}",
             color=YELLOW,
         ).move_to(f_centers[2]))
-        f4_dyn = always_redraw(lambda: MathTex(
+        f4_dyn = always_redraw(lambda: ColoredMathTex(
             f"={sigmoid(z_tracker.get_value()):.4f}",
             color=YELLOW,
         ).move_to(f_centers[3]))
