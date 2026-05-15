@@ -905,14 +905,13 @@ class ReplacementTransformGroupWithBoxes(Succession):
         CreateBoxesAnim=Create,
         RemoveBoxesAnim=FadeOut,
         run_time=1.0,
-        lag_ratio=0,
         check_length=True,
         **kwargs
     ):
         if check_length and len(src_group) != len(dst_group):
             raise ValueError(
                 f"Groups must have same length "
-                f"({len(src_group)} != {len(dst_group)})"
+                f"({len(src_group)=} != {len(dst_group)=})"
             )
 
         if isinstance(run_time, (list, tuple)):
@@ -922,18 +921,22 @@ class ReplacementTransformGroupWithBoxes(Succession):
 
         box_kwargs = box_kwargs or {"color": RED, "buff": 0.1}
 
-        boxes = [
+        src_boxes = VGroup(*[
             SurroundingRectangle(src_group[i], **box_kwargs)
             for i in box_indices
-        ]
+        ])
+        dst_boxes = VGroup(*[
+            SurroundingRectangle(dst_group[i], **box_kwargs)
+            for i in box_indices
+        ])
 
-        create = AnimationGroup(*[CreateBoxesAnim(box, run_time = time1) for box in boxes])
+        create = CreateBoxesAnim(src_boxes, run_time = time1)
         transform = AnimationGroup(
             *[ReplacementTransform(src, dst) for src, dst in zip(src_group, dst_group)],
-            lag_ratio=lag_ratio,
+            Transform(src_boxes, dst_boxes),
             run_time=time2,
         )
-        remove = AnimationGroup(*[RemoveBoxesAnim(box, run_time = time3) for box in boxes])
+        remove = RemoveBoxesAnim(src_boxes, run_time = time3)
 
         super().__init__(
             create,
