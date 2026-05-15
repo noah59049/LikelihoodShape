@@ -108,10 +108,10 @@ class LikelihoodCasesScene(VoiceoverScene):
             self.play(FadeIn(failure1))
         
         # Step 4: Add log likelihood
-        loglik1 = ColoredMathTex(r"l=ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
-        loglik2 = ColoredMathTex(r"l=\sum_{i=1}^{n}ln[\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}]")
-        loglik3 = ColoredMathTex(r"l=\sum_{i=1}^{n}ln\hat{y}_i^{y_i}+ln(1-\hat{y}_i)^{1-{y_i}}")
-        loglik4 = ColoredMathTex(r"l=\sum_{i=1}^{n}y_iln\hat{y}_i+({1-{y_i}})ln(1-\hat{y}_i)")
+        loglik1 = ColoredMathTex(r"\ell=\ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
+        loglik2 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}\ln[\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}]")
+        loglik3 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}\ln\hat{y}_i^{y_i}+ln(1-\hat{y}_i)^{1-{y_i}}")
+        loglik4 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}y_i\ln\hat{y}_i+({1-{y_i}})ln(1-\hat{y}_i)")
 
         with self.voiceover(" ln of the likelihood. If we simplify a bit, ") as tracker:
             self.play(TransformByGlyphMap(failure1, loglik1,
