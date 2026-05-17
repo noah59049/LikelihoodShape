@@ -9,16 +9,19 @@ from tex_colors import *
 
 df = pd.read_csv("breast_cancer_sklearn.csv")
 X = np.array(df[df.columns[0]])
+X2 = np.array(df[df.columns[1]])
+X3 = np.array(df[df.columns[2]])
 Y = np.array(df["target"])
 # Here we don't need to use data.py because we don't care about order, and we want different Xs
 
-class LinearLogisticScene(VoiceoverScene):
+class LinearLogisticScene(ThreeDScene, VoiceoverScene):
     def construct(self):
         self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_998.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
-        
+        self.set_camera_orientation(phi=0 * DEGREES, theta=-90 * DEGREES)
+
         with self.voiceover("It’s always a good idea to graph your data, so here I’ve just graphed Y versus X1.") as tracker:
             x_range = max(X) - min(X)
             axes = Axes(x_range = [min(X) - 0.1 * x_range, max(X) + 0.1 * x_range], y_range = [-0.2, 1.2])
@@ -28,6 +31,60 @@ class LinearLogisticScene(VoiceoverScene):
             self.play(DrawBorderThenFill(axes))
             self.play(Write(axis_labels))
             self.play(LaggedStart(*[Write(dot) for dot in dots], lag_ratio=0.005))
+
+        self.play(FadeOut(axes), FadeOut(axis_labels), FadeOut(dots))
+
+        x1_norm = (X - X.min()) / (X.max() - X.min())
+        x2_norm = (X2 - X2.min()) / (X2.max() - X2.min())
+        x3_norm = (X3 - X3.min()) / (X3.max() - X3.min())
+
+        # 1) Y vs X1 and X2, 3D scatter
+        axes3d_1 = ThreeDAxes(
+            x_range=[0, 1, 0.5], y_range=[0, 1, 0.5], z_range=[-0.2, 1.2, 0.5],
+            x_length=4, y_length=4, z_length=3,
+        )
+        labels3d_1 = axes3d_1.get_axis_labels(x_label=r"X_1", y_label=r"X_2", z_label=r"Y")
+        dots3d_1 = VGroup(*[
+            Dot3D(axes3d_1.c2p(x1, x2, y), color=DARK_BLUE, radius=0.05)
+            for x1, x2, y in zip(x1_norm, x2_norm, Y)
+        ])
+        self.move_camera(phi=75 * DEGREES, theta=-60 * DEGREES, run_time=1.5)
+        self.play(DrawBorderThenFill(axes3d_1), Write(labels3d_1))
+        self.play(LaggedStart(*[FadeIn(dot) for dot in dots3d_1], lag_ratio=0.005))
+        self.wait(2)
+        self.play(FadeOut(axes3d_1), FadeOut(labels3d_1), FadeOut(dots3d_1))
+        self.move_camera(phi=0 * DEGREES, theta=-90 * DEGREES, run_time=1)
+
+        # 2) Y vs X1 and X2, 2D scatter (Y as color: blue=1, red=0)
+        axes2d_c = Axes(x_range=[0, 1, 0.5], y_range=[0, 1, 0.5])
+        labels2d_c = axes2d_c.get_axis_labels(x_label=r"X_1", y_label=r"X_2")
+        dots2d_c = VGroup(*[
+            Dot(axes2d_c.c2p(x1, x2), color=BLUE if y == 1 else RED, radius=0.05)
+            for x1, x2, y in zip(x1_norm, x2_norm, Y)
+        ])
+        self.play(DrawBorderThenFill(axes2d_c), Write(labels2d_c))
+        self.play(LaggedStart(*[Write(dot) for dot in dots2d_c], lag_ratio=0.005))
+        self.wait(2)
+        self.play(FadeOut(axes2d_c), FadeOut(labels2d_c), FadeOut(dots2d_c))
+
+        # 3) Y vs X1, X2, X3, 3D scatter (Y as color: blue=1, red=0)
+        axes3d_3 = ThreeDAxes(
+            x_range=[0, 1, 0.5], y_range=[0, 1, 0.5], z_range=[0, 1, 0.5],
+            x_length=4, y_length=4, z_length=4,
+        )
+        labels3d_3 = axes3d_3.get_axis_labels(x_label=r"X_1", y_label=r"X_2", z_label=r"X_3")
+        dots3d_3 = VGroup(*[
+            Dot3D(axes3d_3.c2p(x1, x2, x3), color=BLUE if y == 1 else RED, radius=0.05)
+            for x1, x2, x3, y in zip(x1_norm, x2_norm, x3_norm, Y)
+        ])
+        self.move_camera(phi=75 * DEGREES, theta=-60 * DEGREES, run_time=1.5)
+        self.play(DrawBorderThenFill(axes3d_3), Write(labels3d_3))
+        self.play(LaggedStart(*[FadeIn(dot) for dot in dots3d_3], lag_ratio=0.005))
+        self.wait(2)
+        self.play(FadeOut(axes3d_3), FadeOut(labels3d_3), FadeOut(dots3d_3))
+        self.move_camera(phi=0 * DEGREES, theta=-90 * DEGREES, run_time=1)
+
+        self.play(FadeIn(axes), FadeIn(axis_labels), FadeIn(dots))
 
         tex0 = ColoredMathTex(r"P(Y=1) = \beta_0+\beta_1 X").to_edge(UP)
         tex1 = ColoredMathTex(r"p = \beta_0+\beta_1 X").to_edge(UP)
