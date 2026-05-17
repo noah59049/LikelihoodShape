@@ -35,7 +35,7 @@ from manim_voiceover.services.stitcher import _StitcherService as StitcherServic
 
 class DefinitionsScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/podcasts/intro_with_tables_podcast4.mp3",
+        self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/podcasts/intro_with_tables_podcast5.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -109,6 +109,6 @@ class DefinitionsScene(VoiceoverScene):
                 Create(rect)
             )
 
-        with self.voiceover("We notate them X1, X2, etc.") as tracker:
+        with self.voiceover("We notate them X1, X2, etcetera.") as tracker:
             self.remove(x_names_tex, rect)
             self.play(TransformMatchingCells(yX_table, yX_table_numbered))
