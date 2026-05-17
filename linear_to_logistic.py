@@ -26,13 +26,19 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         x2_norm = (X2 - X2.min()) / (X2.max() - X2.min())
         x3_norm = (X3 - X3.min()) / (X3.max() - X3.min())
 
-        def make_3d_panel(ax, labels, dots):
-            panel = VGroup(ax, labels, dots)
-            # Rotate to simulate a ~phi=75, theta=-60 camera view without moving the camera:
-            # first spread x/y axes in the screen plane, then tilt z upward
+        def make_3d_panel(ax, dots, x_lbl, y_lbl, z_lbl):
+            # Rotate only axes + dots; labels are placed fresh after rotation so they stay upright.
+            # add_fixed_orientation_mobjects can't fix this because the tilt is from VGroup rotation,
+            # not camera rotation — labels must be created after the transform to stay readable.
+            panel = VGroup(ax, dots)
             panel.rotate(-PI / 4, axis=Z_AXIS)
             panel.rotate(-PI / 3, axis=X_AXIS)
-            return panel
+            # After rotation, ax.c2p() returns world coords in the rotated space.
+            # x-axis tip goes lower-right, y-axis tip upper-right, z-axis tip upward.
+            lx = MathTex(x_lbl).scale(1.5).next_to(ax.c2p(1, 0, 0), RIGHT + DOWN * 0.3, buff=0.05)
+            ly = MathTex(y_lbl).scale(1.5).next_to(ax.c2p(0, 1, 0), UR, buff=0.05)
+            lz = MathTex(z_lbl).scale(1.5).next_to(ax.c2p(0, 0, 1), UP, buff=0.05)
+            return VGroup(panel, lx, ly, lz)
         
         # Panel A: Y vs X1, 2D (top-left)
         pA_ax = Axes(x_range=[0, 1, 0.5], y_range=[-0.2, 1.2, 0.5], x_length=5, y_length=3)
@@ -42,12 +48,17 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
 
         # Panel B: Y vs X1 and X2, 3D (top-right)
         pB_ax = ThreeDAxes(x_range=[0,1,0.5], y_range=[0,1,0.5], z_range=[-0.2,1.2,0.5], x_length=4, y_length=4, z_length=3)
-        pB_labels = pB_ax.get_axis_labels(x_label=r"X_1", y_label=r"X_2", z_label=r"Y")
         pB_dots = VGroup(*[
             Sphere(radius=0.05, resolution=(4, 4)).move_to(pB_ax.c2p(x1, x2, y)).set_color(DARK_BLUE)
             for x1, x2, y in zip(x1_norm, x2_norm, Y)
         ])
-        panelB = make_3d_panel(pB_ax, pB_labels, pB_dots).scale(0.5).move_to([3.5, 2.0, 0])
+        panelB = make_3d_panel(pB_ax, pB_dots, r"X_1", r"X_2", r"Y").scale(0.5).move_to([3.5, 2.0, 0])
+
+        # Legend for panels C and D (blue = Y=1, red = Y=0)
+        legend = VGroup(
+            VGroup(Dot(color=BLUE, radius=0.12), MathTex(r"Y=1").scale(0.9)).arrange(RIGHT, buff=0.15),
+            VGroup(Dot(color=RED,  radius=0.12), MathTex(r"Y=0").scale(0.9)).arrange(RIGHT, buff=0.15),
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.15).move_to([0, -3.5, 0])
 
         # Panel C: X1 vs X2 colored by Y, 2D (bottom-left)
         pC_ax = Axes(x_range=[0, 1, 0.5], y_range=[0, 1, 0.5], x_length=5, y_length=3)
@@ -60,28 +71,22 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
 
         # Panel D: X1, X2, X3 colored by Y, 3D (bottom-right)
         pD_ax = ThreeDAxes(x_range=[0,1,0.5], y_range=[0,1,0.5], z_range=[0,1,0.5], x_length=4, y_length=4, z_length=4)
-        pD_labels = pD_ax.get_axis_labels(x_label=r"X_1", y_label=r"X_2", z_label=r"X_3")
         pD_dots = VGroup(*[
             Sphere(radius=0.05, resolution=(4, 4)).move_to(pD_ax.c2p(x1, x2, x3)).set_color(BLUE if y == 1 else RED)
             for x1, x2, x3, y in zip(x1_norm, x2_norm, x3_norm, Y)
         ])
-        panelD = make_3d_panel(pD_ax, pD_labels, pD_dots).scale(0.5).move_to([3.5, -2.0, 0])
+        panelD = make_3d_panel(pD_ax, pD_dots, r"X_1", r"X_2", r"X_3").scale(0.5).move_to([3.5, -2.0, 0])
 
         with self.voiceover("It’s always a good idea to graph your data, so here's a graph of Y versus X1.") as tracker:
             self.play(FadeIn(panelA))
         with self.voiceover("And here's a 3D graph of Y vs X1 and X2") as tracker:
             self.play(FadeIn(panelB))
         with self.voiceover("And here's a graph of Y vs X1 and X2, with color representing Y") as tracker:
-            self.play(FadeIn(panelC))
+            self.play(FadeIn(panelC), FadeIn(legend))
         with self.voiceover("And here's a graph of Y vs X1, X2, and X3, with color representing Y") as tracker:
             self.play(FadeIn(panelD))
         with self.voiceover("Now we need to make some kind of model, which will make some kind of assumption about the distribution of Y, and maybe X. I could just state the assumptions of logistic regression right here, but I think it's more helpful to try to derive it somewhat from scratch, so here goes.") as tracker:
-            self.play(
-                # panelA.animate.scale(0.65).to_corner(UL, buff=0.15),
-                # panelB.animate.scale(0.65).to_corner(UR, buff=0.15),
-                FadeOut(panelC), FadeOut(panelD),
-            )
-
+            self.play(FadeOut(panelC), FadeOut(panelD), FadeOut(legend))
 
         tex0 = ColoredMathTex(r"P(Y=1) = \beta_0+\beta_1 X")
         tex1 = ColoredMathTex(r"p = \beta_0+\beta_1 X")
