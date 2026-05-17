@@ -16,23 +16,11 @@ Y = np.array(df["target"])
 
 class LinearLogisticScene(ThreeDScene, VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_998.wav",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_999.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
         self.set_camera_orientation(phi=0 * DEGREES, theta=-90 * DEGREES)
-
-        with self.voiceover("It’s always a good idea to graph your data, so here I’ve just graphed Y versus X1.") as tracker:
-            x_range = max(X) - min(X)
-            axes = Axes(x_range = [min(X) - 0.1 * x_range, max(X) + 0.1 * x_range], y_range = [-0.2, 1.2])
-            axis_labels = axes.get_axis_labels(x_label = "X1", y_label = "Y")
-            dots = VGroup(*[Dot(axes.c2p(x, y), color = DARK_BLUE) for x, y in zip(X, Y)])
-            
-            self.play(DrawBorderThenFill(axes))
-            self.play(Write(axis_labels))
-            self.play(LaggedStart(*[Write(dot) for dot in dots], lag_ratio=0.005))
-
-        self.play(FadeOut(axes), FadeOut(axis_labels), FadeOut(dots))
 
         x1_norm = (X - X.min()) / (X.max() - X.min())
         x2_norm = (X2 - X2.min()) / (X2.max() - X2.min())
@@ -45,7 +33,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
             panel.rotate(-PI / 4, axis=Z_AXIS)
             panel.rotate(-PI / 3, axis=X_AXIS)
             return panel
-
+        
         # Panel A: Y vs X1, 2D (top-left)
         pA_ax = Axes(x_range=[0, 1, 0.5], y_range=[-0.2, 1.2, 0.5], x_length=5, y_length=3)
         pA_labels = pA_ax.get_axis_labels(x_label=r"X_1", y_label=r"Y")
@@ -79,14 +67,23 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         ])
         panelD = make_3d_panel(pD_ax, pD_labels, pD_dots).scale(0.5).move_to([3.5, -2.0, 0])
 
-        self.play(FadeIn(panelA))
-        self.play(FadeIn(panelB))
-        self.play(FadeIn(panelC))
-        self.play(FadeIn(panelD))
-        self.wait(2)
-        self.play(FadeOut(panelA), FadeOut(panelB), FadeOut(panelC), FadeOut(panelD))
+        with self.voiceover("It’s always a good idea to graph your data, so here's a graph of Y versus X1.") as tracker:
+            self.play(FadeIn(panelA))
+        with self.voiceover("And here's a 3D graph of Y vs X1 and X2") as tracker:
+            self.play(FadeIn(panelB))
+        with self.voiceover("And here's a graph of Y vs X1 and X2, with color representing Y") as tracker:
+            self.play(FadeIn(panelC))
+        with self.voiceover("And here's a graph of Y vs X1, X2, and X3, with color representing Y") as tracker:
+            self.play(FadeIn(panelD))
+        with self.voiceover("Now we need to make some kind of model, which will make some kind of assumption about the distribution of Y, and maybe X. I could just state the assumptions of logistic regression right here, but I think it's more helpful to try to derive it somewhat from scratch, so here goes.") as tracker:
+            self.play(
+                panelA.animate.scale(0.65).to_corner(UL, buff=0.15),
+                panelB.animate.scale(0.65).to_corner(UR, buff=0.15),
+                FadeOut(panelC), FadeOut(panelD),
+            )
+            # self.play(FadeIn(axes), FadeIn(axis_labels), FadeIn(dots))
 
-        self.play(FadeIn(axes), FadeIn(axis_labels), FadeIn(dots))
+
 
         tex0 = ColoredMathTex(r"P(Y=1) = \beta_0+\beta_1 X").to_edge(UP)
         tex1 = ColoredMathTex(r"p = \beta_0+\beta_1 X").to_edge(UP)
@@ -96,15 +93,25 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         tex5 = ColoredMathTex(r"\ln\frac{p}{1-p} = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
 
         with self.voiceover("One model we could use is linear regression. So for 1 predictor variable, we’d assume that the probability that y is 1,") as tracker:
-                        # Regression coefficients
             beta0, beta1 = simple_linear_regression(X, Y)
-            regression_line = axes.plot(lambda x : beta0 + beta1 * x,
-                                        x_range = [(1.2 - beta0) / beta1, (-0.2 - beta0) / beta1],
-                                        color = RED)
-            self.play(Create(regression_line))
-            scatterplot = VGroup(axes, axis_labels, dots, regression_line)
-            # self.wait(tracker.duration - 6.1 - 0.005 * len(dots)) # Why this timing? IDK but it works.
-            # self.play(FadeOut(scatterplot))
+            # regression_line = axes.plot(lambda x : beta0 + beta1 * x,
+            #                             x_range = [(1.2 - beta0) / beta1, (-0.2 - beta0) / beta1],
+            #                             color = RED)
+            # Regression line on panelA (x1_norm ∈ [0,1] scale)
+            beta0_norm = beta0 + beta1 * X.min()
+            beta1_norm = beta1 * (X.max() - X.min())
+            reg_line_A = pA_ax.plot(lambda x: beta0_norm + beta1_norm * x, x_range=[0, 1], color=RED)
+            # Regression plane on panelB (multiple linear regression Y ~ X1_norm + X2_norm)
+            A_mat = np.column_stack([np.ones(len(x1_norm)), x1_norm, x2_norm])
+            b0_p, b1_p, b2_p = np.linalg.lstsq(A_mat, Y, rcond=None)[0]
+            reg_plane_B = Surface(
+                lambda u, v: pB_ax.c2p(u, v, b0_p + b1_p * u + b2_p * v),
+                u_range=[0, 1], v_range=[0, 1],
+                resolution=(8, 8),
+                fill_color=RED, fill_opacity=0.5, stroke_width=0,
+            )
+            self.play(Create(reg_line_A), FadeIn(reg_plane_B))
+            # scatterplot = VGroup(axes, axis_labels, dots, regression_line)
             self.play(Write(tex0))
 
         with self.voiceover("notated p, is a linear function of X with an unknown intercept and slope. And with more predictors,") as tracker:
@@ -116,30 +123,66 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         
         with self.voiceover("The reason that’s bad is that for some values of X, you’ll get probabilities ") as tracker:
             self.play(FadeOut(tex2))
-            self.play(FadeIn(scatterplot)) # TODO: Use p instead here?
-            self.wait(tracker.duration - 3.1)
-            self.play(FadeOut(dots))
+            # self.play(FadeIn(scatterplot)) # TODO: Use p instead here?
+            # self.wait(tracker.duration - 3.1)
+            # self.play(FadeOut(dots), FadeOut(pA_dots), FadeOut(pB_dots))
 
         with self.voiceover("greater than 1 or less than 0, which is impossible. So what we want instead is to assume that some") as tracker:
-            hlines = {}
-            areas = {}
-            for y in 0,1:
-                hlines[y] = axes.plot((lambda x : y), color = WHITE)
-                self.add(hlines[y])
-                scatterplot.add(hlines[y])
-                areas[y] = axes.get_area(
-                    hlines[y],
-                    x_range=[min(X) - 0.1 * x_range, max(X) + 0.1 * x_range],
-                    bounded_graph=axes.plot(lambda x: (y - 0.5) * 6),  # goes up to y=3 for 1 and down to -3 for 0 TODO: Maybe make a smaller range
+            # hlines = {}
+            # areas = {}
+            # for y in 0, 1:
+            #     hlines[y] = axes.plot((lambda x: y), color=WHITE)
+            #     self.add(hlines[y])
+            #     scatterplot.add(hlines[y])
+            #     areas[y] = axes.get_area(
+            #         hlines[y],
+            #         x_range=[min(X) - 0.1 * x_range, max(X) + 0.1 * x_range],
+            #         bounded_graph=axes.plot(lambda x: (y - 0.5) * 6),
+            #         color=RED,
+            #         opacity=0.2
+            #     )
+            # panelA: matching horizontal lines and red shaded areas
+            pA_hlines = {}
+            pA_areas = {}
+            for y_val in 0, 1:
+                pA_hlines[y_val] = pA_ax.plot(lambda x, y=y_val: y, color=WHITE)
+                self.add(pA_hlines[y_val])
+                pA_areas[y_val] = pA_ax.get_area(
+                    pA_hlines[y_val],
+                    x_range=[0, 1],
+                    bounded_graph=pA_ax.plot(lambda x, y=y_val: (y - 0.5) * 6),
                     color=RED,
                     opacity=0.2
                 )
-
-            self.play(FadeIn(areas[0]), FadeIn(areas[1])) # TODO: Fade in the hlines too maybe?
-            scatterplot.add(areas[0], areas[1])
-            self.wait(tracker.duration - 3.1) # BRITTLE but what else should I do
-            scatterplot.remove(dots) # Otherwise the dots will come back at the beginning of FadeOut(scatterplot)
-            self.play(FadeOut(scatterplot))
+            # panelB: red planes at z=1 (above valid range) and z=0 (below valid range)
+            pB_plane_top = Surface(
+                lambda u, v: pB_ax.c2p(u, v, 1.2),
+                u_range=[0, 1], v_range=[0, 1], resolution=(2, 2),
+                fill_color=RED, fill_opacity=0.25, stroke_width=0,
+            )
+            pB_plane_bot = Surface(
+                lambda u, v: pB_ax.c2p(u, v, -0.2),
+                u_range=[0, 1], v_range=[0, 1], resolution=(2, 2),
+                fill_color=RED, fill_opacity=0.25, stroke_width=0,
+            )
+            self.play(
+                # FadeIn(areas[0]), FadeIn(areas[1]),
+                FadeIn(pA_areas[0]), FadeIn(pA_areas[1]),
+                FadeIn(pB_plane_top), FadeIn(pB_plane_bot),
+            )
+            # scatterplot.add(areas[0], areas[1])
+            # self.wait(tracker.duration - 3.1)
+            # scatterplot.remove(dots)
+            panelA.remove(pA_dots)
+            panelB.remove(pB_dots)
+            self.play(
+                # FadeOut(scatterplot),
+                FadeOut(panelA), FadeOut(panelB),
+                FadeOut(reg_line_A), FadeOut(reg_plane_B),
+                FadeOut(pA_hlines[0]), FadeOut(pA_hlines[1]),
+                FadeOut(pA_areas[0]), FadeOut(pA_areas[1]),
+                FadeOut(pB_plane_top), FadeOut(pB_plane_bot),
+            )
             tex2.move_to(ORIGIN)
             self.play(FadeIn(tex2))
 
@@ -372,7 +415,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
 
         with self.voiceover("If z is large, then the exponential term becomes") as tracker:
             self.play(z_tracker.animate.set_value(5), run_time=tracker.duration, rate_func=linear)
-        with self.voiceover("near zero, and the fraction evaluates to almost 1.") as tracker:
+        with self.voiceover("near zero, and the fraction") as tracker:
             near_zero_rect = SurroundingRectangle(f2_dyn[0][-4:], color = RED)
             if tracker.duration > 2:
                 self.play(Create(near_zero_rect))
