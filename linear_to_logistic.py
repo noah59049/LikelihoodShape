@@ -8,7 +8,7 @@ from N_Tools import simple_linear_regression, create_graph, TransformWithBoxes
 from tex_colors import *
 
 df = pd.read_csv("breast_cancer_sklearn.csv")
-X = np.array(df[df.columns[0]])
+X1 = np.array(df[df.columns[0]])
 X2 = np.array(df[df.columns[1]])
 X3 = np.array(df[df.columns[2]])
 Y = np.array(df["target"])
@@ -22,7 +22,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 keep_silence=(0,0)))
         self.set_camera_orientation(phi=0 * DEGREES, theta=-90 * DEGREES)
 
-        x1_norm = (X - X.min()) / (X.max() - X.min())
+        x1_norm = (X1 - X1.min()) / (X1.max() - X1.min())
         x2_norm = (X2 - X2.min()) / (X2.max() - X2.min())
         x3_norm = (X3 - X3.min()) / (X3.max() - X3.min())
 
@@ -96,10 +96,10 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         tex5 = ColoredMathTex(r"\ln\frac{p}{1-p} = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
 
         with self.voiceover("One model we could use is linear regression. So for 1 predictor variable, we’d assume that the probability that y is 1,") as tracker:
-            beta0, beta1 = simple_linear_regression(X, Y)
+            beta0, beta1 = simple_linear_regression(X1, Y)
             # Regression line on panelA (x1_norm ∈ [0,1] scale)
-            beta0_norm = beta0 + beta1 * X.min()
-            beta1_norm = beta1 * (X.max() - X.min())
+            beta0_norm = beta0 + beta1 * X1.min()
+            beta1_norm = beta1 * (X1.max() - X1.min())
             reg_line_A = pA_ax.plot(lambda x: beta0_norm + beta1_norm * x, x_range=[0, 1], color=RED)
             # Regression plane on panelB (multiple linear regression Y ~ X1_norm + X2_norm)
             A_mat = np.column_stack([np.ones(len(x1_norm)), x1_norm, x2_norm])
