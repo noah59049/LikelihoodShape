@@ -38,51 +38,53 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         x2_norm = (X2 - X2.min()) / (X2.max() - X2.min())
         x3_norm = (X3 - X3.min()) / (X3.max() - X3.min())
 
-        # 1) Y vs X1 and X2, 3D scatter
-        axes3d_1 = ThreeDAxes(
-            x_range=[0, 1, 0.5], y_range=[0, 1, 0.5], z_range=[-0.2, 1.2, 0.5],
-            x_length=4, y_length=4, z_length=3,
-        )
-        labels3d_1 = axes3d_1.get_axis_labels(x_label=r"X_1", y_label=r"X_2", z_label=r"Y")
-        dots3d_1 = VGroup(*[
-            Sphere(radius=0.05, resolution=(4, 4)).move_to(axes3d_1.c2p(x1, x2, y)).set_color(DARK_BLUE)
+        def make_3d_panel(ax, labels, dots):
+            panel = VGroup(ax, labels, dots)
+            # Rotate to simulate a ~phi=75, theta=-60 camera view without moving the camera:
+            # first spread x/y axes in the screen plane, then tilt z upward
+            panel.rotate(-PI / 4, axis=Z_AXIS)
+            panel.rotate(-PI / 3, axis=X_AXIS)
+            return panel
+
+        # Panel A: Y vs X1, 2D (top-left)
+        pA_ax = Axes(x_range=[0, 1, 0.5], y_range=[-0.2, 1.2, 0.5], x_length=5, y_length=3)
+        pA_labels = pA_ax.get_axis_labels(x_label=r"X_1", y_label=r"Y")
+        pA_dots = VGroup(*[Dot(pA_ax.c2p(x, y), color=DARK_BLUE, radius=0.05) for x, y in zip(x1_norm, Y)])
+        panelA = VGroup(pA_ax, pA_labels, pA_dots).scale(0.6).move_to([-3.5, 2.0, 0])
+
+        # Panel B: Y vs X1 and X2, 3D (top-right)
+        pB_ax = ThreeDAxes(x_range=[0,1,0.5], y_range=[0,1,0.5], z_range=[-0.2,1.2,0.5], x_length=4, y_length=4, z_length=3)
+        pB_labels = pB_ax.get_axis_labels(x_label=r"X_1", y_label=r"X_2", z_label=r"Y")
+        pB_dots = VGroup(*[
+            Sphere(radius=0.05, resolution=(4, 4)).move_to(pB_ax.c2p(x1, x2, y)).set_color(DARK_BLUE)
             for x1, x2, y in zip(x1_norm, x2_norm, Y)
         ])
-        self.move_camera(phi=75 * DEGREES, theta=-60 * DEGREES, run_time=1.5)
-        self.play(DrawBorderThenFill(axes3d_1), Write(labels3d_1))
-        self.play(FadeIn(dots3d_1))
-        self.wait(2)
-        self.play(FadeOut(axes3d_1), FadeOut(labels3d_1), FadeOut(dots3d_1))
-        self.move_camera(phi=0 * DEGREES, theta=-90 * DEGREES, run_time=1)
+        panelB = make_3d_panel(pB_ax, pB_labels, pB_dots).scale(0.5).move_to([3.5, 2.0, 0])
 
-        # 2) Y vs X1 and X2, 2D scatter (Y as color: blue=1, red=0)
-        axes2d_c = Axes(x_range=[0, 1, 0.5], y_range=[0, 1, 0.5])
-        labels2d_c = axes2d_c.get_axis_labels(x_label=r"X_1", y_label=r"X_2")
-        dots2d_c = VGroup(*[
-            Dot(axes2d_c.c2p(x1, x2), color=BLUE if y == 1 else RED, radius=0.05)
+        # Panel C: X1 vs X2 colored by Y, 2D (bottom-left)
+        pC_ax = Axes(x_range=[0, 1, 0.5], y_range=[0, 1, 0.5], x_length=5, y_length=3)
+        pC_labels = pC_ax.get_axis_labels(x_label=r"X_1", y_label=r"X_2")
+        pC_dots = VGroup(*[
+            Dot(pC_ax.c2p(x1, x2), color=BLUE if y == 1 else RED, radius=0.05)
             for x1, x2, y in zip(x1_norm, x2_norm, Y)
         ])
-        self.play(DrawBorderThenFill(axes2d_c), Write(labels2d_c))
-        self.play(FadeIn(dots2d_c))
-        self.wait(2)
-        self.play(FadeOut(axes2d_c), FadeOut(labels2d_c), FadeOut(dots2d_c))
+        panelC = VGroup(pC_ax, pC_labels, pC_dots).scale(0.6).move_to([-3.5, -2.0, 0])
 
-        # 3) Y vs X1, X2, X3, 3D scatter (Y as color: blue=1, red=0)
-        axes3d_3 = ThreeDAxes(
-            x_range=[0, 1, 0.5], y_range=[0, 1, 0.5], z_range=[0, 1, 0.5],
-            x_length=4, y_length=4, z_length=4,
-        )
-        labels3d_3 = axes3d_3.get_axis_labels(x_label=r"X_1", y_label=r"X_2", z_label=r"X_3")
-        dots3d_3 = VGroup(*[
-            Sphere(radius=0.05, resolution=(4, 4)).move_to(axes3d_3.c2p(x1, x2, x3)).set_color(BLUE if y == 1 else RED)
+        # Panel D: X1, X2, X3 colored by Y, 3D (bottom-right)
+        pD_ax = ThreeDAxes(x_range=[0,1,0.5], y_range=[0,1,0.5], z_range=[0,1,0.5], x_length=4, y_length=4, z_length=4)
+        pD_labels = pD_ax.get_axis_labels(x_label=r"X_1", y_label=r"X_2", z_label=r"X_3")
+        pD_dots = VGroup(*[
+            Sphere(radius=0.05, resolution=(4, 4)).move_to(pD_ax.c2p(x1, x2, x3)).set_color(BLUE if y == 1 else RED)
             for x1, x2, x3, y in zip(x1_norm, x2_norm, x3_norm, Y)
         ])
-        self.move_camera(phi=75 * DEGREES, theta=-60 * DEGREES, run_time=1.5)
-        self.play(DrawBorderThenFill(axes3d_3), Write(labels3d_3))
-        self.play(FadeIn(dots3d_3))
+        panelD = make_3d_panel(pD_ax, pD_labels, pD_dots).scale(0.5).move_to([3.5, -2.0, 0])
+
+        self.play(FadeIn(panelA))
+        self.play(FadeIn(panelB))
+        self.play(FadeIn(panelC))
+        self.play(FadeIn(panelD))
         self.wait(2)
-        self.play(FadeOut(axes3d_3), FadeOut(labels3d_3), FadeOut(dots3d_3))
-        self.move_camera(phi=0 * DEGREES, theta=-90 * DEGREES, run_time=1)
+        self.play(FadeOut(panelA), FadeOut(panelB), FadeOut(panelC), FadeOut(panelD))
 
         self.play(FadeIn(axes), FadeIn(axis_labels), FadeIn(dots))
 
