@@ -57,8 +57,8 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
 
         # Legend for panels C and D (blue = Y=1, red = Y=0)
         legend = VGroup(
-            VGroup(Dot(color=BLUE, radius=0.12), ColoredMathTex(r"Y=1 Benign").scale(0.9)).arrange(RIGHT, buff=0.15),
-            VGroup(Dot(color=RED,  radius=0.12), ColoredMathTex(r"Y=0 Malignant").scale(0.9)).arrange(RIGHT, buff=0.15),
+            VGroup(Dot(color=BLUE, radius=0.12), ColoredMathTex(r"Y=1").scale(0.9), Tex("Benign").scale(0.9)).arrange(RIGHT, buff=0.15),
+            VGroup(Dot(color=RED,  radius=0.12), ColoredMathTex(r"Y=0").scale(0.9), Tex("Malignant").scale(0.9)).arrange(RIGHT, buff=0.15),
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.15).move_to([0, -3.5, 0])
 
         # Panel C: X1 vs X2 colored by Y, 2D (bottom-left)
