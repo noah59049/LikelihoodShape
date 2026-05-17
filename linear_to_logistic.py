@@ -77,26 +77,21 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
             self.play(FadeIn(panelD))
         with self.voiceover("Now we need to make some kind of model, which will make some kind of assumption about the distribution of Y, and maybe X. I could just state the assumptions of logistic regression right here, but I think it's more helpful to try to derive it somewhat from scratch, so here goes.") as tracker:
             self.play(
-                panelA.animate.scale(0.65).to_corner(UL, buff=0.15),
-                panelB.animate.scale(0.65).to_corner(UR, buff=0.15),
+                # panelA.animate.scale(0.65).to_corner(UL, buff=0.15),
+                # panelB.animate.scale(0.65).to_corner(UR, buff=0.15),
                 FadeOut(panelC), FadeOut(panelD),
             )
-            # self.play(FadeIn(axes), FadeIn(axis_labels), FadeIn(dots))
 
 
-
-        tex0 = ColoredMathTex(r"P(Y=1) = \beta_0+\beta_1 X").to_edge(UP)
-        tex1 = ColoredMathTex(r"p = \beta_0+\beta_1 X").to_edge(UP)
-        tex2 = ColoredMathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}").to_edge(UP)
+        tex0 = ColoredMathTex(r"P(Y=1) = \beta_0+\beta_1 X")
+        tex1 = ColoredMathTex(r"p = \beta_0+\beta_1 X")
+        tex2 = ColoredMathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         tex3 = ColoredMathTex(r"f(p) = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         tex4 = ColoredMathTex(r"p = f^{-1}(\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1})")
         tex5 = ColoredMathTex(r"\ln\frac{p}{1-p} = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
 
         with self.voiceover("One model we could use is linear regression. So for 1 predictor variable, we’d assume that the probability that y is 1,") as tracker:
             beta0, beta1 = simple_linear_regression(X, Y)
-            # regression_line = axes.plot(lambda x : beta0 + beta1 * x,
-            #                             x_range = [(1.2 - beta0) / beta1, (-0.2 - beta0) / beta1],
-            #                             color = RED)
             # Regression line on panelA (x1_norm ∈ [0,1] scale)
             beta0_norm = beta0 + beta1 * X.min()
             beta1_norm = beta1 * (X.max() - X.min())
@@ -111,7 +106,6 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 fill_color=RED, fill_opacity=0.5, stroke_width=0,
             )
             self.play(Create(reg_line_A), FadeIn(reg_plane_B))
-            # scatterplot = VGroup(axes, axis_labels, dots, regression_line)
             self.play(Write(tex0))
 
         with self.voiceover("notated p, is a linear function of X with an unknown intercept and slope. And with more predictors,") as tracker:
@@ -123,25 +117,8 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         
         with self.voiceover("The reason that’s bad is that for some values of X, you’ll get probabilities ") as tracker:
             self.play(FadeOut(tex2))
-            # self.play(FadeIn(scatterplot)) # TODO: Use p instead here?
-            # self.wait(tracker.duration - 3.1)
-            # self.play(FadeOut(dots), FadeOut(pA_dots), FadeOut(pB_dots))
 
         with self.voiceover("greater than 1 or less than 0, which is impossible. So what we want instead is to assume that some") as tracker:
-            # hlines = {}
-            # areas = {}
-            # for y in 0, 1:
-            #     hlines[y] = axes.plot((lambda x: y), color=WHITE)
-            #     self.add(hlines[y])
-            #     scatterplot.add(hlines[y])
-            #     areas[y] = axes.get_area(
-            #         hlines[y],
-            #         x_range=[min(X) - 0.1 * x_range, max(X) + 0.1 * x_range],
-            #         bounded_graph=axes.plot(lambda x: (y - 0.5) * 6),
-            #         color=RED,
-            #         opacity=0.2
-            #     )
-            # panelA: matching horizontal lines and red shaded areas
             pA_hlines = {}
             pA_areas = {}
             for y_val in 0, 1:
@@ -170,9 +147,6 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 FadeIn(pA_areas[0]), FadeIn(pA_areas[1]),
                 FadeIn(pB_plane_top), FadeIn(pB_plane_bot),
             )
-            # scatterplot.add(areas[0], areas[1])
-            # self.wait(tracker.duration - 3.1)
-            # scatterplot.remove(dots)
             panelA.remove(pA_dots)
             panelB.remove(pB_dots)
             self.play(
@@ -183,7 +157,6 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 FadeOut(pA_areas[0]), FadeOut(pA_areas[1]),
                 FadeOut(pB_plane_top), FadeOut(pB_plane_bot),
             )
-            tex2.move_to(ORIGIN)
             self.play(FadeIn(tex2))
 
         with self.voiceover("function of p is equal to that linear combination of the predictors. And we want this function to give values that range from") as tracker:
