@@ -5,6 +5,7 @@ from manim_voiceover.services.stitcher import _StitcherService as StitcherServic
 import numpy as np
 import pandas as pd
 from N_Tools import simple_linear_regression, create_graph, TransformWithBoxes
+from hat_matrix_logo import HMDialogBox
 from tex_colors import *
 
 df = pd.read_csv("breast_cancer_sklearn.csv")
@@ -35,16 +36,16 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
             panel.rotate(-PI / 3, axis=X_AXIS)
             # After rotation, ax.c2p() returns world coords in the rotated space.
             # x-axis tip goes lower-right, y-axis tip upper-right, z-axis tip upward.
-            lx = MathTex(x_lbl).scale(1.5).next_to(ax.c2p(1, 0, 0), RIGHT + DOWN * 0.3, buff=0.05)
-            ly = MathTex(y_lbl).scale(1.5).next_to(ax.c2p(0, 1, 0), UR, buff=0.05)
-            lz = MathTex(z_lbl).scale(1.5).next_to(ax.c2p(0, 0, 1), UP, buff=0.05)
+            lx = ColoredMathTex(x_lbl).scale(1.5).next_to(ax.c2p(1, 0, 0), RIGHT + DOWN * 0.3, buff=0.05)
+            ly = ColoredMathTex(y_lbl).scale(1.5).next_to(ax.c2p(0, 1, 0), UR, buff=0.05)
+            lz = ColoredMathTex(z_lbl).scale(1.5).next_to(ax.c2p(0, 0, 1), UP, buff=0.05)
             return VGroup(panel, lx, ly, lz)
         
         # Panel A: Y vs X1, 2D (top-left)
         pA_ax = Axes(x_range=[0, 1, 0.5], y_range=[-0.2, 1.2, 0.5], x_length=5, y_length=3)
         pA_labels = pA_ax.get_axis_labels(x_label=r"X_1", y_label=r"Y")
         pA_dots = VGroup(*[Dot(pA_ax.c2p(x, y), color=DARK_BLUE, radius=0.05) for x, y in zip(x1_norm, Y)])
-        panelA = VGroup(pA_ax, pA_labels, pA_dots).scale(0.6).move_to([-3.5, 2.0, 0])
+        panelA = VGroup(pA_ax, pA_labels, pA_dots)
 
         # Panel B: Y vs X1 and X2, 3D (top-right)
         pB_ax = ThreeDAxes(x_range=[0,1,0.5], y_range=[0,1,0.5], z_range=[-0.2,1.2,0.5], x_length=4, y_length=4, z_length=3)
@@ -56,8 +57,8 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
 
         # Legend for panels C and D (blue = Y=1, red = Y=0)
         legend = VGroup(
-            VGroup(Dot(color=BLUE, radius=0.12), MathTex(r"Y=1").scale(0.9)).arrange(RIGHT, buff=0.15),
-            VGroup(Dot(color=RED,  radius=0.12), MathTex(r"Y=0").scale(0.9)).arrange(RIGHT, buff=0.15),
+            VGroup(Dot(color=BLUE, radius=0.12), ColoredMathTex(r"Y=1 Benign").scale(0.9)).arrange(RIGHT, buff=0.15),
+            VGroup(Dot(color=RED,  radius=0.12), ColoredMathTex(r"Y=0 Malignant").scale(0.9)).arrange(RIGHT, buff=0.15),
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.15).move_to([0, -3.5, 0])
 
         # Panel C: X1 vs X2 colored by Y, 2D (bottom-left)
@@ -79,13 +80,35 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
 
         with self.voiceover("It’s always a good idea to graph your data, so here's a graph of Y versus X1.") as tracker:
             self.play(FadeIn(panelA))
+            self.wait(tracker.duration - 2.1)
+            self.play(panelA.animate.scale(0.6).move_to([-3.5, 2.0, 0]))
         with self.voiceover("And here's a 3D graph of Y vs X1 and X2") as tracker:
             self.play(FadeIn(panelB))
         with self.voiceover("And here's a graph of Y vs X1 and X2, with color representing Y") as tracker:
             self.play(FadeIn(panelC), FadeIn(legend))
-        with self.voiceover("And here's a graph of Y vs X1, X2, and X3, with color representing Y") as tracker:
+        with self.voiceover("And here's a graph of Y vs X1, X2, and X3, with color representing Y. Now we need to make some kind of model, which will make some kind of assumption") as tracker:
             self.play(FadeIn(panelD))
-        with self.voiceover("Now we need to make some kind of model, which will make some kind of assumption about the distribution of Y, and maybe X. I could just state the assumptions of logistic regression right here, but I think it's more helpful to try to derive it somewhat from scratch, so here goes.") as tracker:
+        with self.voiceover(" about the distribution of Y. ") as tracker:
+            lda_note = HMDialogBox(
+                "Some models, like LDA, also make assumptions about the distribution of X.",
+                text_width=5,
+            ).to_edge(DOWN, buff=0.3)
+            self.play(FadeIn(lda_note))
+            self.wait(max(0, tracker.duration - 1.5))
+            self.play(FadeOut(lda_note))
+        with self.voiceover("I could just state the assumptions of logistic regression right here, but I think it's more helpful to try to derive it somewhat from scratch, so here goes.") as tracker:
+            assumptions = VGroup(
+                Tex(r"\textbf{Assumptions of logistic regression:}"),
+                Tex(r"1.\ $Y_i \sim \text{Bernoulli}(p_i)$"),
+                Tex(r"2.\ Observations are independent"),
+                Tex(r"3.\ $\ln\dfrac{p}{1-p} = \beta_0 + \beta_1 X_1 + \cdots + \beta_{k-1} X_{k-1}$"),
+            ).arrange(DOWN, aligned_edge=LEFT, buff=0.2).scale(0.85).to_edge(DOWN, buff=0.4)
+            self.play(FadeIn(assumptions))
+            # tracker.duration - X is the standard timing idiom in this codebase; no cleaner
+            # alternative exists with StitcherService. Constant = FadeOut(assumptions) +
+            # FadeOut(panels) + small buffer = 0.5 + 0.5 + 0.5 = 1.5
+            self.wait(max(0, tracker.duration - 1.5 - 1.5))
+            self.play(FadeOut(assumptions))
             self.play(FadeOut(panelC), FadeOut(panelD), FadeOut(legend))
 
         tex0 = ColoredMathTex(r"P(Y=1) = \beta_0+\beta_1 X")
