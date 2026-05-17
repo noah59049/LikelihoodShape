@@ -7,7 +7,7 @@ from tex_colors import *
         
 class LikelihoodCasesScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/likelihood_cases_podcast2.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/likelihood_cases_podcast3.wav",
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
