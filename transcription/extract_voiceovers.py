@@ -63,12 +63,24 @@ def main():
     )
     p.add_argument("-i", "--input", required=True, help="Manim Python script")
     p.add_argument("-o", "--output", help="Output file: .txt, .pdf, or omit for stdout")
+    p.add_argument("-l", "--linebreaks", help="If true (default), inserts a line break between each voiceover call. If false, does not")
     args = p.parse_args()
 
     lines = extract_voiceovers(args.input)
     if not lines:
         print("No self.voiceover() calls found.", file=sys.stderr)
         return 1
+    
+
+    if args.linebreaks:
+        if args.linebreaks.lower() == "false":
+            lines = [" ".join(lines)]
+        elif args.linebreaks.lower() == "true":
+            pass
+        else:
+            print(f"Invalid value {args.linebreaks} for linebreaks", file=sys.stderr)
+            return 1
+    
 
     if args.output:
         if Path(args.output).suffix.lower() == ".pdf":
