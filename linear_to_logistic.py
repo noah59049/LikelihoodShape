@@ -168,6 +168,34 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         )
         self.play(TransformByGlyphMap(tex1, tex_2pred, (FadeIn, range(8, 14))))
 
+        # 3D intercept/slope visualization on panelB
+        intercept_line_3d = Line(
+            pB_ax.c2p(0, 0, 0), pB_ax.c2p(0, 0, b0_p),
+            color=YELLOW, stroke_width=4,
+        )
+        # β₁: Δx₁ and Δz₁ right triangle along X₁ axis of the regression plane
+        dx1_line = Line(pB_ax.c2p(0, 0, b0_p), pB_ax.c2p(0.5, 0, b0_p), color=GREEN, stroke_width=3)
+        dz1_line = Line(pB_ax.c2p(0.5, 0, b0_p), pB_ax.c2p(0.5, 0, b0_p + b1_p * 0.5), color=GREEN, stroke_width=3)
+        slope_vis_1 = VGroup(dx1_line, dz1_line)
+        # β₂: Δx₂ and Δz₂ right triangle along X₂ axis of the regression plane
+        dx2_line = Line(pB_ax.c2p(0, 0, b0_p), pB_ax.c2p(0, 0.5, b0_p), color=BLUE, stroke_width=3)
+        dz2_line = Line(pB_ax.c2p(0, 0.5, b0_p), pB_ax.c2p(0, 0.5, b0_p + b2_p * 0.5), color=BLUE, stroke_width=3)
+        slope_vis_2 = VGroup(dx2_line, dz2_line)
+        self.play(FadeIn(intercept_line_3d), FadeIn(slope_vis_1), FadeIn(slope_vis_2))
+        b0_highlight_3d = VGroup(tex_2pred[0][2], tex_2pred[0][3]).copy()
+        b1_highlight_3d = VGroup(tex_2pred[0][5], tex_2pred[0][6]).copy()
+        b2_highlight_3d = VGroup(tex_2pred[0][10], tex_2pred[0][11]).copy()
+        self.play(
+            TransformFromCopy(intercept_line_3d, b0_highlight_3d),
+            TransformFromCopy(slope_vis_1, b1_highlight_3d),
+            TransformFromCopy(slope_vis_2, b2_highlight_3d),
+        )
+        self.wait(0.5)
+        self.play(
+            FadeOut(b0_highlight_3d), FadeOut(b1_highlight_3d), FadeOut(b2_highlight_3d),
+            FadeOut(intercept_line_3d), FadeOut(slope_vis_1), FadeOut(slope_vis_2),
+        )
+
         with self.voiceover("we’d just have a separate slope for each predictor. These are the coefficients and they’re notated with beta 0 for the intercept and beta 1 and so on for the slopes.") as tracker:
             self.play(TransformByGlyphMap(tex_2pred, tex2,
                                           (FadeIn, range(14, 27))))
