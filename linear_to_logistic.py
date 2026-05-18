@@ -162,9 +162,10 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 FadeOut(b0_highlight), FadeOut(b1_highlight),
                 FadeOut(intercept_line), FadeOut(slope_vis),
             )
-            self.play(TransformByGlyphMap(tex1, tex_2pred, (FadeIn, range(8, 14))))
 
         with self.voiceover("With 2 predictors, we'd have an intercept and 2 slopes. With even more predictors,"):
+            self.play(TransformByGlyphMap(tex1, tex_2pred, (FadeIn, range(8, 14))))
+            
             # 3D intercept/slope visualization on panelB
             intercept_line_3d = Line(
                 pB_ax.c2p(0, 0, 0), pB_ax.c2p(0, 0, b0_p),
