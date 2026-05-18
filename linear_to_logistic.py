@@ -113,10 +113,12 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
 
         tex0 = ColoredMathTex(r"P(Y=1) = \beta_0+\beta_1 X")
         tex1 = ColoredMathTex(r"p = \beta_0+\beta_1 X")
+        tex_2pred = ColoredMathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2")
         tex2 = ColoredMathTex(r"p = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         tex3 = ColoredMathTex(r"f(p) = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
         tex4 = ColoredMathTex(r"p = f^{-1}(\beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1})")
         tex5 = ColoredMathTex(r"\ln\frac{p}{1-p} = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
+
 
         with self.voiceover("One model we could use is linear regression. So for 1 predictor variable, we’d assume that the probability that y is 1,") as tracker:
             beta0, beta1 = simple_linear_regression(X1, Y)
@@ -139,9 +141,36 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         with self.voiceover("notated p, is a linear function of X with an unknown intercept and slope. And with more predictors,") as tracker:
             self.play(TransformByGlyphMap(tex0, tex1,
                                           (range(6), [0])))
+            
+        # Intercept: vertical segment from x-axis up to y-intercept (β₀ = height)
+        intercept_line = Line(
+            pA_ax.c2p(0, 0), pA_ax.c2p(0, beta0_norm),
+            color=YELLOW, stroke_width=4,
+        )
+        # Slope: Δx and Δy lines forming a right triangle on the regression line
+        _xlo, _xhi = 0.35, 0.65
+        _ylo = beta0_norm + beta1_norm * _xlo
+        _yhi = beta0_norm + beta1_norm * _xhi
+        dx_line = Line(pA_ax.c2p(_xlo, _ylo), pA_ax.c2p(_xhi, _ylo), color=GREEN, stroke_width=3)
+        dy_line = Line(pA_ax.c2p(_xhi, _ylo), pA_ax.c2p(_xhi, _yhi), color=GREEN, stroke_width=3)
+        slope_vis = VGroup(dx_line, dy_line)
+        self.play(FadeIn(intercept_line), FadeIn(slope_vis))
+        b0_highlight = VGroup(tex1[0][2], tex1[0][3]).copy()
+        b1_highlight = VGroup(tex1[0][5], tex1[0][6]).copy()
+        self.play(
+            TransformFromCopy(intercept_line, b0_highlight),
+            TransformFromCopy(slope_vis, b1_highlight),
+        )
+        self.wait(0.5)
+        self.play(
+            FadeOut(b0_highlight), FadeOut(b1_highlight),
+            FadeOut(intercept_line), FadeOut(slope_vis),
+        )
+        self.play(TransformByGlyphMap(tex1, tex_2pred, (FadeIn, range(8, 14))))
+
         with self.voiceover("we’d just have a separate slope for each predictor. These are the coefficients and they’re notated with beta 0 for the intercept and beta 1 and so on for the slopes.") as tracker:
-            self.play(TransformByGlyphMap(tex1, tex2,
-                                          (FadeIn, range(8,27))))
+            self.play(TransformByGlyphMap(tex_2pred, tex2,
+                                          (FadeIn, range(14, 27))))
         
         with self.voiceover("The reason that’s bad is that for some values of X, you’ll get probabilities ") as tracker:
             self.play(FadeOut(tex2))
