@@ -17,7 +17,7 @@ Y = np.array(df["target"])
 
 class LinearLogisticScene(ThreeDScene, VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_999.wav",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_1000.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -92,24 +92,19 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
             lda_note = HMDialogBox(
                 "Some models, like LDA, also make assumptions about the distribution of X.",
                 text_width=5,
-            ).to_edge(DOWN, buff=0.3)
+            )#.to_edge(DOWN, buff=0.3)
             self.play(FadeIn(lda_note))
             self.wait(max(0, tracker.duration - 1.5))
             self.play(FadeOut(lda_note))
-        with self.voiceover("I could just state the assumptions of logistic regression right here, but I think it's more helpful to try to derive it somewhat from scratch, so here goes.") as tracker:
-            assumptions = VGroup(
-                Tex(r"\textbf{Assumptions of logistic regression:}"),
-                Tex(r"1.\ $Y_i \sim \text{Bernoulli}(p_i)$"),
-                Tex(r"2.\ Observations are independent"),
-                Tex(r"3.\ $\ln\dfrac{p}{1-p} = \beta_0 + \beta_1 X_1 + \cdots + \beta_{k-1} X_{k-1}$"),
-            ).arrange(DOWN, aligned_edge=LEFT, buff=0.2).scale(0.85).to_edge(DOWN, buff=0.4)
+
+        with self.voiceover("I could just state ") as tracker:
+            ...
+
+        with self.voiceover("the assumptions of logistic regression right here, but I think it's more helpful to try to derive it somewhat from scratch, so here goes.") as tracker:
+            assumptions = ColoredMathTex(r"\ln\dfrac{p}{1-p} = \beta_0 + \beta_1 X_1 + \cdots + \beta_{k-1} X_{k-1}")
             self.play(FadeIn(assumptions))
-            # tracker.duration - X is the standard timing idiom in this codebase; no cleaner
-            # alternative exists with StitcherService. Constant = FadeOut(assumptions) +
-            # FadeOut(panels) + small buffer = 0.5 + 0.5 + 0.5 = 1.5
-            self.wait(max(0, tracker.duration - 1.5 - 1.5))
-            self.play(FadeOut(assumptions))
-            self.play(FadeOut(panelC), FadeOut(panelD), FadeOut(legend))
+            self.wait(max(0, tracker.duration - 2.1))
+            self.play(FadeOut(assumptions), FadeOut(panelC), FadeOut(panelD), FadeOut(legend))
 
         tex0 = ColoredMathTex(r"P(Y=1) = \beta_0+\beta_1 X")
         tex1 = ColoredMathTex(r"p = \beta_0+\beta_1 X")
@@ -138,69 +133,71 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
             self.play(Create(reg_line_A), FadeIn(reg_plane_B))
             self.play(Write(tex0))
 
-        with self.voiceover("notated p, is a linear function of X with an unknown intercept and slope. And with more predictors,") as tracker:
+        with self.voiceover("notated p, is ") as tracker:
             self.play(TransformByGlyphMap(tex0, tex1,
                                           (range(6), [0])))
-            
-        # Intercept: vertical segment from x-axis up to y-intercept (β₀ = height)
-        intercept_line = Line(
-            pA_ax.c2p(0, 0), pA_ax.c2p(0, beta0_norm),
-            color=YELLOW, stroke_width=4,
-        )
-        # Slope: Δx and Δy lines forming a right triangle on the regression line
-        _xlo, _xhi = 0.35, 0.65
-        _ylo = beta0_norm + beta1_norm * _xlo
-        _yhi = beta0_norm + beta1_norm * _xhi
-        dx_line = Line(pA_ax.c2p(_xlo, _ylo), pA_ax.c2p(_xhi, _ylo), color=GREEN, stroke_width=3)
-        dy_line = Line(pA_ax.c2p(_xhi, _ylo), pA_ax.c2p(_xhi, _yhi), color=GREEN, stroke_width=3)
-        slope_vis = VGroup(dx_line, dy_line)
-        self.play(FadeIn(intercept_line), FadeIn(slope_vis))
-        b0_highlight = VGroup(tex1[0][2], tex1[0][3]).copy()
-        b1_highlight = VGroup(tex1[0][5], tex1[0][6]).copy()
-        self.play(
-            TransformFromCopy(intercept_line, b0_highlight),
-            TransformFromCopy(slope_vis, b1_highlight),
-        )
-        self.wait(0.5)
-        self.play(
-            FadeOut(b0_highlight), FadeOut(b1_highlight),
-            FadeOut(intercept_line), FadeOut(slope_vis),
-        )
-        self.play(TransformByGlyphMap(tex1, tex_2pred, (FadeIn, range(8, 14))))
+        
+        with self.voiceover("a linear function of X with an unknown intercept and slope.") as tracker:
+            # Intercept: vertical segment from x-axis up to y-intercept (β₀ = height)
+            intercept_line = Line(
+                pA_ax.c2p(0, 0), pA_ax.c2p(0, beta0_norm),
+                color=YELLOW, stroke_width=4,
+            )
+            # Slope: Δx and Δy lines forming a right triangle on the regression line
+            _xlo, _xhi = 0.35, 0.65
+            _ylo = beta0_norm + beta1_norm * _xlo
+            _yhi = beta0_norm + beta1_norm * _xhi
+            dx_line = Line(pA_ax.c2p(_xlo, _ylo), pA_ax.c2p(_xhi, _ylo), color=GREEN, stroke_width=3)
+            dy_line = Line(pA_ax.c2p(_xhi, _ylo), pA_ax.c2p(_xhi, _yhi), color=GREEN, stroke_width=3)
+            slope_vis = VGroup(dx_line, dy_line)
+            self.play(FadeIn(intercept_line), FadeIn(slope_vis))
+            b0_highlight = VGroup(tex1[0][2], tex1[0][3]).copy()
+            b1_highlight = VGroup(tex1[0][5], tex1[0][6]).copy()
+            self.play(
+                TransformFromCopy(intercept_line, b0_highlight),
+                TransformFromCopy(slope_vis, b1_highlight),
+            )
+            self.wait(0.5)
+            self.play(
+                FadeOut(b0_highlight), FadeOut(b1_highlight),
+                FadeOut(intercept_line), FadeOut(slope_vis),
+            )
+            self.play(TransformByGlyphMap(tex1, tex_2pred, (FadeIn, range(8, 14))))
 
-        # 3D intercept/slope visualization on panelB
-        intercept_line_3d = Line(
-            pB_ax.c2p(0, 0, 0), pB_ax.c2p(0, 0, b0_p),
-            color=YELLOW, stroke_width=4,
-        )
-        # β₁: Δx₁ and Δz₁ right triangle along X₁ axis of the regression plane
-        dx1_line = Line(pB_ax.c2p(0, 0, b0_p), pB_ax.c2p(0.5, 0, b0_p), color=GREEN, stroke_width=3)
-        dz1_line = Line(pB_ax.c2p(0.5, 0, b0_p), pB_ax.c2p(0.5, 0, b0_p + b1_p * 0.5), color=GREEN, stroke_width=3)
-        slope_vis_1 = VGroup(dx1_line, dz1_line)
-        # β₂: Δx₂ and Δz₂ right triangle along X₂ axis of the regression plane
-        dx2_line = Line(pB_ax.c2p(0, 0, b0_p), pB_ax.c2p(0, 0.5, b0_p), color=BLUE, stroke_width=3)
-        dz2_line = Line(pB_ax.c2p(0, 0.5, b0_p), pB_ax.c2p(0, 0.5, b0_p + b2_p * 0.5), color=BLUE, stroke_width=3)
-        slope_vis_2 = VGroup(dx2_line, dz2_line)
-        self.play(FadeIn(intercept_line_3d), FadeIn(slope_vis_1), FadeIn(slope_vis_2))
-        b0_highlight_3d = VGroup(tex_2pred[0][2], tex_2pred[0][3]).copy()
-        b1_highlight_3d = VGroup(tex_2pred[0][5], tex_2pred[0][6]).copy()
-        b2_highlight_3d = VGroup(tex_2pred[0][10], tex_2pred[0][11]).copy()
-        self.play(
-            TransformFromCopy(intercept_line_3d, b0_highlight_3d),
-            TransformFromCopy(slope_vis_1, b1_highlight_3d),
-            TransformFromCopy(slope_vis_2, b2_highlight_3d),
-        )
-        self.wait(0.5)
-        self.play(
-            FadeOut(b0_highlight_3d), FadeOut(b1_highlight_3d), FadeOut(b2_highlight_3d),
-            FadeOut(intercept_line_3d), FadeOut(slope_vis_1), FadeOut(slope_vis_2),
-        )
+        with self.voiceover("With 2 predictors, we'd have an intercept and 2 slopes. With even more predictors,"):
+            # 3D intercept/slope visualization on panelB
+            intercept_line_3d = Line(
+                pB_ax.c2p(0, 0, 0), pB_ax.c2p(0, 0, b0_p),
+                color=YELLOW, stroke_width=4,
+            )
+            # β₁: Δx₁ and Δz₁ right triangle along X₁ axis of the regression plane
+            dx1_line = Line(pB_ax.c2p(0, 0, b0_p), pB_ax.c2p(0.5, 0, b0_p), color=GREEN, stroke_width=3)
+            dz1_line = Line(pB_ax.c2p(0.5, 0, b0_p), pB_ax.c2p(0.5, 0, b0_p + b1_p * 0.5), color=GREEN, stroke_width=3)
+            slope_vis_1 = VGroup(dx1_line, dz1_line)
+            # β₂: Δx₂ and Δz₂ right triangle along X₂ axis of the regression plane
+            dx2_line = Line(pB_ax.c2p(0, 0, b0_p), pB_ax.c2p(0, 0.5, b0_p), color=BLUE, stroke_width=3)
+            dz2_line = Line(pB_ax.c2p(0, 0.5, b0_p), pB_ax.c2p(0, 0.5, b0_p + b2_p * 0.5), color=BLUE, stroke_width=3)
+            slope_vis_2 = VGroup(dx2_line, dz2_line)
+            self.play(FadeIn(intercept_line_3d), FadeIn(slope_vis_1), FadeIn(slope_vis_2))
+            b0_highlight_3d = VGroup(tex_2pred[0][2], tex_2pred[0][3]).copy()
+            b1_highlight_3d = VGroup(tex_2pred[0][5], tex_2pred[0][6]).copy()
+            b2_highlight_3d = VGroup(tex_2pred[0][10], tex_2pred[0][11]).copy()
+            self.play(
+                TransformFromCopy(intercept_line_3d, b0_highlight_3d),
+                TransformFromCopy(slope_vis_1, b1_highlight_3d),
+                TransformFromCopy(slope_vis_2, b2_highlight_3d),
+            )
+            self.wait(0.5)
+            self.play(
+                FadeOut(b0_highlight_3d), FadeOut(b1_highlight_3d), FadeOut(b2_highlight_3d),
+                FadeOut(intercept_line_3d), FadeOut(slope_vis_1), FadeOut(slope_vis_2),
+            )
 
         with self.voiceover("we’d just have a separate slope for each predictor. These are the coefficients and they’re notated with beta 0 for the intercept and beta 1 and so on for the slopes.") as tracker:
             self.play(TransformByGlyphMap(tex_2pred, tex2,
                                           (FadeIn, range(14, 27))))
         
-        with self.voiceover("The reason that’s bad is that for some values of X, you’ll get probabilities ") as tracker:
+        with self.voiceover("This is not a good model. For some values of X, you’ll get probabilities ") as tracker:
             self.play(FadeOut(tex2))
 
         with self.voiceover("greater than 1 or less than 0, which is impossible. So what we want instead is to assume that some") as tracker:
