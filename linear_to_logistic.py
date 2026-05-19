@@ -373,7 +373,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                                             ([3],[5], {"path_arc": -PI}),
                                             ([5],[3], {"path_arc":-PI})))
 
-        with self.voiceover("Take the reciprocal again, and if you’re familiar with machine learning, you may recognize a sigmoid here.") as tracker:
+        with self.voiceover("Take the reciprocal again, and you may recognize a sigmoid here.") as tracker:
             self.play(TransformByGlyphMap(sigmoid5, sigmoid6,
                                             ([0,1], [2,3])))
             
