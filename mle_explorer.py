@@ -19,20 +19,22 @@ TableTransform = TransformMatchingCells # TransformMatchingCells for production,
 
 class MLEScene(VoiceoverScene, ThreeDScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast16.wav",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast17.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
         yX_table = Tex(yX_tex_numbered).scale(0.66).to_corner(UL)
-        formula = ColoredMathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})").to_edge(DOWN)
-        with self.voiceover("These betas are unknown facts about our population that we need to estimate, and we use") as tracker:
-            self.play(Write(formula))
-        
         mle_words = Text("Maximum Likelihood Estimation")
         tex1 = ColoredMathTex(r"L(\hat{\beta})")
         tex2 = ColoredMathTex(r"L(\hat{\beta})=P(Y|\hat{\beta})")
         mle_words.next_to(tex1, UP)
-
+        formula = ColoredMathTex(r"p=\sigma(\beta_0+\beta_1 X_{1}+\beta_2 X_{2}+\ldots+\beta_{k-1} X_{k-1})")
+        
+        self.add(formula)
+        with self.voiceover("We still have a burning question though: how do we know what the betas are?") as tracker:
+            pass
+        with self.voiceover("We don't. We estimate them using a technique called") as tracker:
+            self.play(formula.animate.to_edge(DOWN))
         with self.voiceover("maximum likelihood estimation. If we have an estimate of our betas, the") as tracker:
             self.play(FadeIn(mle_words), FlashAround(mle_words))
         with self.voiceover("likelihood, indicated L, of that estimate is the") as tracker:
