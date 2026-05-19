@@ -78,7 +78,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         ])
         panelD = make_3d_panel(pD_ax, pD_dots, r"X_1", r"X_2", r"X_3").scale(0.5).move_to([3.5, -2.0, 0])
 
-        with self.voiceover("It’s always a good idea to graph your data, so here's a graph of Y versus X1.") as tracker:
+        with self.voiceover("It's always a good idea to graph your data, so here's a graph of Y versus X1.") as tracker:
             self.play(FadeIn(panelA))
             self.wait(tracker.duration - 2.1)
             self.play(panelA.animate.scale(0.6).move_to([-3.5, 2.0, 0]))
@@ -115,7 +115,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         tex5 = ColoredMathTex(r"\ln\frac{p}{1-p} = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
 
 
-        with self.voiceover("We could just use linear regression. So for 1 predictor variable, we’d assume that the probability that y is 1,") as tracker:
+        with self.voiceover("We could just use linear regression. So for 1 predictor variable, we'd assume that the probability that y is 1,") as tracker:
             beta0, beta1 = simple_linear_regression(X1, Y)
             # Regression line on panelA (x1_norm ∈ [0,1] scale)
             beta0_norm = beta0 + beta1 * X1.min()
@@ -194,14 +194,15 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 FadeOut(intercept_line_3d), FadeOut(slope_vis_1), FadeOut(slope_vis_2),
             )
 
-        with self.voiceover("we’d have 1 slope for each predictor. These are called the coefficients and they’re notated with beta 0 for the intercept and beta 1 and so on for the slopes.") as tracker:
+        with self.voiceover("we'd have 1 slope for each predictor. These are called the coefficients and they're notated with beta 0 for the intercept and beta 1 and so on for the slopes.") as tracker:
             self.play(TransformByGlyphMap(tex_2pred, tex2,
                                           (FadeIn, range(14, 27))))
+            # MAYBE TODO: add boxes around the betas labeling them coefficients, intercept, slopes
         
-        with self.voiceover("However, this is not a good model. For some values of X, you’ll get probabilities ") as tracker:
+        with self.voiceover("However, this is not a good model. For some values of X, you'll get probabilities ") as tracker:
             self.play(FadeOut(tex2))
 
-        with self.voiceover("greater than 1 or less than 0, which is impossible. So what we want instead is to assume that some") as tracker:
+        with self.voiceover("greater than 1 or less than 0, which is impossible. Instead we want to assume that some") as tracker:
             pA_hlines = {}
             pA_areas = {}
             for y_val in 0, 1:
@@ -230,11 +231,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 FadeIn(pB_plane_top), FadeIn(pB_plane_bot),
             )
             self.wait(tracker.duration - 2.1)
-            # panelA.remove(pA_dots)
-            # panelB.remove(pB_dots)
             self.play(
-                # FadeOut(pA_dots), FadeOut(pB_dots),
-                # FadeOut(panelA), FadeOut(panelB),
                 FadeOut(reg_line_A), FadeOut(reg_plane_B),
                 FadeOut(pA_hlines[0]), FadeOut(pA_hlines[1]),
                 FadeOut(pA_areas[0]), FadeOut(pA_areas[1]),
@@ -542,3 +539,4 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
             )
 
             self.play(FadeIn(sig_curve_A), FadeIn(sig_surface_B))
+            # TODO: Add a note saying that this is the model with only those predictors
