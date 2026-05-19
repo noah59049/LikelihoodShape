@@ -36,9 +36,9 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
             panel.rotate(-PI / 3, axis=X_AXIS)
             # After rotation, ax.c2p() returns world coords in the rotated space.
             # x-axis tip goes lower-right, y-axis tip upper-right, z-axis tip upward.
-            lx = ColoredMathTex(x_lbl).scale(1.5).next_to(ax.c2p(1, 0, 0), RIGHT + DOWN * 0.3, buff=0.05)
-            ly = ColoredMathTex(y_lbl).scale(1.5).next_to(ax.c2p(0, 1, 0), UR, buff=0.05)
-            lz = ColoredMathTex(z_lbl).scale(1.5).next_to(ax.c2p(0, 0, 1), UP, buff=0.05)
+            lx = ColoredMathTex(x_lbl).next_to(ax.c2p(1, 0, 0), RIGHT + DOWN * 0.3, buff=0.05)
+            ly = ColoredMathTex(y_lbl).next_to(ax.c2p(0, 1, 0), UR, buff=0.05)
+            lz = ColoredMathTex(z_lbl).next_to(ax.c2p(0, 0, 1), UP, buff=0.05)
             return VGroup(panel, lx, ly, lz)
         
         # Panel A: Y vs X1, 2D (top-left)
@@ -46,6 +46,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         pA_labels = pA_ax.get_axis_labels(x_label=r"X_1", y_label=r"Y")
         pA_dots = VGroup(*[Dot(pA_ax.c2p(x, y), color=DARK_BLUE, radius=0.05) for x, y in zip(x1_norm, Y)])
         panelA = VGroup(pA_ax, pA_labels, pA_dots)
+        # TODO: Labels should have color, in the same style as ColoredMathTex
 
         # Panel B: Y vs X1 and X2, 3D (top-right)
         pB_ax = ThreeDAxes(x_range=[0,1,0.5], y_range=[0,1,0.5], z_range=[-0.2,1.2,0.5], x_length=4, y_length=4, z_length=3)
@@ -92,17 +93,17 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
             lda_note = HMDialogBox(
                 "Some models, like LDA, also make assumptions about the distribution of X.",
                 text_width=5,
-            )#.to_edge(DOWN, buff=0.3)
+                hm_scale = 0.3,
+            )
             self.play(FadeIn(lda_note))
-            self.wait(max(0, tracker.duration - 1.5))
-            self.play(FadeOut(lda_note))
 
         with self.voiceover("I could just state ") as tracker:
-            ...
+            self.play(FadeOut(lda_note, run_time = min(1, tracker.duration - 0.1)))
 
         with self.voiceover("the assumptions of logistic regression right here, but I think it's more helpful to try to derive it somewhat from scratch, so here goes.") as tracker:
             assumptions = ColoredMathTex(r"\ln\dfrac{p}{1-p} = \beta_0 + \beta_1 X_1 + \cdots + \beta_{k-1} X_{k-1}")
-            self.play(FadeIn(assumptions))
+            self.play(Write(assumptions))
+            # MAYBE TODO: draw a box around the assumptions
             self.wait(max(0, tracker.duration - 2.1))
             self.play(FadeOut(assumptions), FadeOut(panelC), FadeOut(panelD), FadeOut(legend))
 
@@ -463,11 +464,12 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         with self.voiceover("the denominator becomes very large,") as tracker:
             self.play(TransformFromCopy(f1_static, f2_static))
             self.play(TransformFromCopy(f2_static, f3_static))
-        with self.voiceover("and your function approaches 0 very fast.") as tracker:
+        with self.voiceover("and the sigmoid is almost 0") as tracker:
             self.play(TransformFromCopy(f3_static, f4_static))
             self.remove(f1_static, f2_static, f3_static, f4_static)
             self.add(formula, f2_dyn, f3_dyn, f4_dyn)
 
+        # MAYBE TODO: Add some part of the voiceover about just the exponential increasing
         with self.voiceover("If z is large, then the exponential term becomes") as tracker:
             self.play(z_tracker.animate.set_value(5), run_time=tracker.duration, rate_func=linear)
         with self.voiceover("near zero, and the fraction") as tracker:
@@ -537,6 +539,12 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 resolution=(12, 12),
                 fill_color=GREEN, fill_opacity=0.5, stroke_width=0,
             )
+            sig_surface_B.set_fill(color = GREEN, opacity = 0.5)
 
             self.play(FadeIn(sig_curve_A), FadeIn(sig_surface_B))
             # TODO: Add a note saying that this is the model with only those predictors
+
+        # MAYBE TODO: Something here about how our model is the simplest that includes all of the predictors,
+        # is flexible (betas),
+        # doesn't assume probability of 0 at Y = 0, (intercept)
+        # and doesn't give impossible probabilities (the sigmoid)
