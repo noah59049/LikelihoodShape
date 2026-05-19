@@ -233,11 +233,9 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                     self.play(FadeIn(Li_dialog))
                     self.play(FadeOut(Li_dialog))
             with self.voiceover("So in the first row, y is 1, the predicted probability of y being 1 is y hat ,which is 0.9051. In the second row, y is 0, and the predicted probability of y being 0 is 1 - y hat, which is 0.9998. So now we continue that process for all of the rows.") as tracker:
-                total_transforms = array_from_latex.shape[0] + np.sum(y_latex == 0)
-                # This loop happens for every row
-                for i in range(array_from_latex.shape[0]):
-                    # --- Determine the run time ---
-                    if m == 0:
+                if m == 0:
+                    for i in range(array_from_latex.shape[0]):
+                        # --- Determine the run time ---
                         if i == 0:
                             run_time = 10 # Determined from the audio
                             squish_time = None # We shouldn't need to use this
@@ -246,55 +244,108 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                             squish_time = 4 # Determined from the audio
                         else:
                             run_time = squish_time = 0.8
-                    else:
-                        run_time = squish_time = tracker.duration / total_transforms
 
-                    # --- Get the new latex table ---
-                    row_np = array_from_latex[i, 1:]
-                    zi = np.sum(bhat * np.hstack([np.array([1.0]), row_np]))
-                    yhat_i = sigmoid(zi)
-                    yi = y_latex[i]
-                    if np.isnan(yhat_i):
-                        Li_str1 = r"\vdots"
-                    elif yi == 0:
-                        Li_str1 = f"1-{yhat_i:.4g}"
-                    else:
-                        Li_str1 = f"{yhat_i:.4g}" 
-                    Li = yhat_i ** yi * (1 - yhat_i) ** (1 - yi)
-                    Li_str2 = r"\vdots" if np.isnan(Li) else f"{Li:.4g}"
-                    partial_likelihoods.append(Li_str2)
-                    partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str1} \\\\", count = 1)
-                    partial_likelihoods_table_new = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
-                    
-                    # --- Get the cell map for the transform ---
-                    cell_map = get_matching_cell_map(partial_likelihoods_table_old, partial_likelihoods_table_new)
-                    yhati_glyphs = extract_table_grid(partial_likelihoods_table_old)[(i + 1, COLS_TO_KEEP + 1)]
-                    Li_glyphs    = extract_table_grid(partial_likelihoods_table_new)[(i + 1, COLS_TO_KEEP + 2)]
-                    for start, end in cell_map.copy():
-                        if end == Li_glyphs:
-                            cell_map.remove((start, end))
-                    if yi == 1 or np.isnan(Li):
-                        cell_map.append((yhati_glyphs, Li_glyphs, {"path_arc": -PI / 5}))
-                    else:
-                        cell_map.append((yhati_glyphs, Li_glyphs[2:], {"path_arc": -PI / 5}))
-                        cell_map.append(([], Li_glyphs[0:2], {"delay":0.35, "run_time": 0.6}))
-                    if run_time > 1:
-                        self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map), run_time = 1)
-                        self.wait(run_time - 1)
-                    else:
-                        self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map), run_time = run_time)
-                    if Li_str1 != Li_str2:
-                        partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str2} \\\\", count = 1)
-                        partial_likelihoods_table_new_simplified = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
-                        if squish_time > 1:
-                            self.play(TableTransform(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified), run_time = 1)
-                            self.wait(squish_time - 1)
+                        # --- Get the new latex table ---
+                        row_np = array_from_latex[i, 1:]
+                        zi = np.sum(bhat * np.hstack([np.array([1.0]), row_np]))
+                        yhat_i = sigmoid(zi)
+                        yi = y_latex[i]
+                        if np.isnan(yhat_i):
+                            Li_str1 = r"\vdots"
+                        elif yi == 0:
+                            Li_str1 = f"1-{yhat_i:.4g}"
                         else:
-                            self.play(TableTransform(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified), run_time = squish_time)
-                        partial_likelihoods_table_old = partial_likelihoods_table_new_simplified
+                            Li_str1 = f"{yhat_i:.4g}"
+                        Li = yhat_i ** yi * (1 - yhat_i) ** (1 - yi)
+                        Li_str2 = r"\vdots" if np.isnan(Li) else f"{Li:.4g}"
+                        partial_likelihoods.append(Li_str2)
+                        partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str1} \\\\", count = 1)
+                        partial_likelihoods_table_new = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
+                    
+                        # --- Get the cell map for the transform ---
+                        cell_map = get_matching_cell_map(partial_likelihoods_table_old, partial_likelihoods_table_new)
+                        yhati_glyphs = extract_table_grid(partial_likelihoods_table_old)[(i + 1, COLS_TO_KEEP + 1)]
+                        Li_glyphs    = extract_table_grid(partial_likelihoods_table_new)[(i + 1, COLS_TO_KEEP + 2)]
+                        for start, end in cell_map.copy():
+                            if end == Li_glyphs:
+                                cell_map.remove((start, end))
+                        if yi == 1 or np.isnan(Li):
+                            cell_map.append((yhati_glyphs, Li_glyphs, {"path_arc": -PI / 5}))
+                        else:
+                            cell_map.append((yhati_glyphs, Li_glyphs[2:], {"path_arc": -PI / 5}))
+                            cell_map.append(([], Li_glyphs[0:2], {"delay":0.35, "run_time": 0.6}))
+                        if run_time > 1:
+                            self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map), run_time = 1)
+                            self.wait(run_time - 1)
+                        else:
+                            self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_new, *cell_map), run_time = run_time)
+                        if Li_str1 != Li_str2:
+                            partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str2} \\\\", count = 1)
+                            partial_likelihoods_table_new_simplified = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
+                            if squish_time > 1:
+                                self.play(TableTransform(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified), run_time = 1)
+                                self.wait(squish_time - 1)
+                            else:
+                                self.play(TableTransform(partial_likelihoods_table_new, partial_likelihoods_table_new_simplified), run_time = squish_time)
+                            partial_likelihoods_table_old = partial_likelihoods_table_new_simplified
+                        else:
+                            partial_likelihoods_table_old = partial_likelihoods_table_new
+                        partial_likelihoods_tex_old = partial_likelihoods_tex_new
+                else:
+                    # Build intermediate table with all Li_str1 values; animate all arcs simultaneously
+                    all_Li_str1 = []
+                    all_Li_str2 = []
+                    all_yi = []
+                    all_Li = []
+                    partial_likelihoods_tex_intermediate = partial_likelihoods_tex_old
+                    for i in range(array_from_latex.shape[0]):
+                        row_np = array_from_latex[i, 1:]
+                        zi = np.sum(bhat * np.hstack([np.array([1.0]), row_np]))
+                        yhat_i = sigmoid(zi)
+                        yi = y_latex[i]
+                        if np.isnan(yhat_i):
+                            Li_str1 = r"\vdots"
+                        elif yi == 0:
+                            Li_str1 = f"1-{yhat_i:.4g}"
+                        else:
+                            Li_str1 = f"{yhat_i:.4g}"
+                        Li = yhat_i ** yi * (1 - yhat_i) ** (1 - yi)
+                        Li_str2 = r"\vdots" if np.isnan(Li) else f"{Li:.4g}"
+                        all_Li_str1.append(Li_str1)
+                        all_Li_str2.append(Li_str2)
+                        all_yi.append(yi)
+                        all_Li.append(Li)
+                        partial_likelihoods.append(Li_str2)
+                        partial_likelihoods_tex_intermediate = partial_likelihoods_tex_intermediate.replace(r"& \\", f"& {Li_str1} \\\\", count=1)
+                    partial_likelihoods_table_intermediate = Tex(partial_likelihoods_tex_intermediate).scale(0.66).to_corner(UL)
+
+                    # Build combined cell map with arcs for all rows at once
+                    cell_map = get_matching_cell_map(partial_likelihoods_table_old, partial_likelihoods_table_intermediate)
+                    for i in range(array_from_latex.shape[0]):
+                        yhati_glyphs = extract_table_grid(partial_likelihoods_table_old)[(i + 1, COLS_TO_KEEP + 1)]
+                        Li_glyphs    = extract_table_grid(partial_likelihoods_table_intermediate)[(i + 1, COLS_TO_KEEP + 2)]
+                        for entry in cell_map.copy():
+                            if entry[1] == Li_glyphs:
+                                cell_map.remove(entry)
+                        if all_yi[i] == 1 or np.isnan(all_Li[i]):
+                            cell_map.append((yhati_glyphs, Li_glyphs, {"path_arc": -PI / 5}))
+                        else:
+                            cell_map.append((yhati_glyphs, Li_glyphs[2:], {"path_arc": -PI / 5}))
+                            cell_map.append(([], Li_glyphs[0:2], {"delay": 0.35, "run_time": 0.6}))
+                    self.play(TransformByGlyphMap(partial_likelihoods_table_old, partial_likelihoods_table_intermediate, *cell_map), run_time=1)
+
+                    # Squish all rows where Li_str1 != Li_str2 simultaneously
+                    if any(s1 != s2 for s1, s2 in zip(all_Li_str1, all_Li_str2)):
+                        partial_likelihoods_tex_final = partial_likelihoods_tex_old
+                        for Li_str2 in all_Li_str2:
+                            partial_likelihoods_tex_final = partial_likelihoods_tex_final.replace(r"& \\", f"& {Li_str2} \\\\", count=1)
+                        partial_likelihoods_table_final = Tex(partial_likelihoods_tex_final).scale(0.66).to_corner(UL)
+                        self.play(TableTransform(partial_likelihoods_table_intermediate, partial_likelihoods_table_final), run_time=1)
+                        partial_likelihoods_table_old = partial_likelihoods_table_final
+                        partial_likelihoods_tex_old = partial_likelihoods_tex_final
                     else:
-                        partial_likelihoods_table_old = partial_likelihoods_table_new
-                    partial_likelihoods_tex_old = partial_likelihoods_tex_new
+                        partial_likelihoods_table_old = partial_likelihoods_table_intermediate
+                        partial_likelihoods_tex_old = partial_likelihoods_tex_intermediate
 
             if m == 0:
                 with self.voiceover("And then to get the overall likelihood,"):
