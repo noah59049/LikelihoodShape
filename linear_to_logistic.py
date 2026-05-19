@@ -4,7 +4,7 @@ from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 import numpy as np
 import pandas as pd
-from N_Tools import simple_linear_regression, create_graph, TransformWithBoxes
+from N_Tools import simple_linear_regression, logistic_regression, create_graph, TransformWithBoxes
 from hat_matrix_logo import HMDialogBox
 from tex_colors import *
 
@@ -17,7 +17,7 @@ Y = np.array(df["target"])
 
 class LinearLogisticScene(ThreeDScene, VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_1001.wav",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_1002.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -115,7 +115,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         tex5 = ColoredMathTex(r"\ln\frac{p}{1-p} = \beta_0+\beta_1 X_1+\beta_2 X_2+\ldots+\beta_{k-1} X_{k-1}")
 
 
-        with self.voiceover("One model we could use is linear regression. So for 1 predictor variable, we’d assume that the probability that y is 1,") as tracker:
+        with self.voiceover("We could just use linear regression. So for 1 predictor variable, we’d assume that the probability that y is 1,") as tracker:
             beta0, beta1 = simple_linear_regression(X1, Y)
             # Regression line on panelA (x1_norm ∈ [0,1] scale)
             beta0_norm = beta0 + beta1 * X1.min()
@@ -522,3 +522,23 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
             self.play(TransformByGlyphMap(sigmoid6, sigmoid7,
                                         ([2,3], FadeOut),
                                         (range(4,8), [2])))
+            
+        with self.voiceover("So that makes our model, instead of having a regression line or a plane, look like this") as tracker:
+            _b0_lr1, _b1_lr1 = logistic_regression(x1_norm.reshape(-1, 1), Y, add_intercept=True)
+            _b0_lr2, _b1_lr2, _b2_lr2 = logistic_regression(
+                np.column_stack([x1_norm, x2_norm]), Y, add_intercept=True
+            )
+            sig_curve_A = pA_ax.plot(
+                lambda x, b0=_b0_lr1, b1=_b1_lr1: 1 / (1 + np.exp(-(b0 + b1 * x))),
+                x_range=[0, 1], color=GREEN,
+            )
+            sig_surface_B = Surface(
+                lambda u, v, b0=_b0_lr2, b1=_b1_lr2, b2=_b2_lr2: pB_ax.c2p(
+                    u, v, 1 / (1 + np.exp(-(b0 + b1 * u + b2 * v)))
+                ),
+                u_range=[0, 1], v_range=[0, 1],
+                resolution=(12, 12),
+                fill_color=GREEN, fill_opacity=0.5, stroke_width=0,
+            )
+
+            self.play(FadeIn(sig_curve_A), FadeIn(sig_surface_B))
