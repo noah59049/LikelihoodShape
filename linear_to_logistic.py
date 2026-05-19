@@ -165,7 +165,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
 
         with self.voiceover("With 2 predictors, we'd have an intercept and 2 slopes. With even more predictors,"):
             self.play(TransformByGlyphMap(tex1, tex_2pred, (FadeIn, range(8, 14))))
-            
+
             # 3D intercept/slope visualization on panelB
             intercept_line_3d = Line(
                 pB_ax.c2p(0, 0, 0), pB_ax.c2p(0, 0, b0_p),
@@ -194,11 +194,11 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 FadeOut(intercept_line_3d), FadeOut(slope_vis_1), FadeOut(slope_vis_2),
             )
 
-        with self.voiceover("we’d just have a separate slope for each predictor. These are the coefficients and they’re notated with beta 0 for the intercept and beta 1 and so on for the slopes.") as tracker:
+        with self.voiceover("we’d have 1 slope for each predictor. These are called the coefficients and they’re notated with beta 0 for the intercept and beta 1 and so on for the slopes.") as tracker:
             self.play(TransformByGlyphMap(tex_2pred, tex2,
                                           (FadeIn, range(14, 27))))
         
-        with self.voiceover("This is not a good model. For some values of X, you’ll get probabilities ") as tracker:
+        with self.voiceover("However, this is not a good model. For some values of X, you’ll get probabilities ") as tracker:
             self.play(FadeOut(tex2))
 
         with self.voiceover("greater than 1 or less than 0, which is impossible. So what we want instead is to assume that some") as tracker:
@@ -226,23 +226,23 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 fill_color=RED, fill_opacity=0.25, stroke_width=0,
             )
             self.play(
-                # FadeIn(areas[0]), FadeIn(areas[1]),
                 FadeIn(pA_areas[0]), FadeIn(pA_areas[1]),
                 FadeIn(pB_plane_top), FadeIn(pB_plane_bot),
             )
-            panelA.remove(pA_dots)
-            panelB.remove(pB_dots)
+            self.wait(tracker.duration - 2.1)
+            # panelA.remove(pA_dots)
+            # panelB.remove(pB_dots)
             self.play(
-                # FadeOut(scatterplot),
-                FadeOut(panelA), FadeOut(panelB),
+                # FadeOut(pA_dots), FadeOut(pB_dots),
+                # FadeOut(panelA), FadeOut(panelB),
                 FadeOut(reg_line_A), FadeOut(reg_plane_B),
                 FadeOut(pA_hlines[0]), FadeOut(pA_hlines[1]),
                 FadeOut(pA_areas[0]), FadeOut(pA_areas[1]),
                 FadeOut(pB_plane_top), FadeOut(pB_plane_bot),
+                FadeIn(tex2)
             )
-            self.play(FadeIn(tex2))
 
-        with self.voiceover("function of p is equal to that linear combination of the predictors. And we want this function to give values that range from") as tracker:
+        with self.voiceover("function of p is equal to that linear combination of the predictors. And we want this function to range from") as tracker:
             self.play(TransformByGlyphMap(tex2, tex3,
                                         (FadeIn, [0,1,3])))
             
@@ -273,7 +273,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                                         ([3],[31],{"path_arc":-PI/6}),
                                         (FadeIn, [3,4])))
         
-        with self.voiceover("every number from negative infinity to infinity to a legal probability between 0 and 1.") as tracker:
+        with self.voiceover("every real number to a legal probability between 0 and 1.") as tracker:
             graph_group = create_graph(
                 lambda p: 1 / (1 + np.exp(-p)),
                 x_range=[-6, 6, 2],
@@ -289,7 +289,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
             self.add(graph_group[0],graph_group[1])
             self.play(Create(graph_group[2]))
          
-        with self.voiceover("Either way, no matter what the predictors are, we never get an impossible probability. The function we use is the ") as tracker:
+        with self.voiceover("Either way, no matter what the predictors are, we never get an impossible probability. We use the") as tracker:
             self.remove(graph_group[0], graph_group[1], graph_group[2])
             self.play(TransformByGlyphMap(tex4, tex3_original,
                 ([2],[0], {"path_arc": PI}),
@@ -298,7 +298,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 ([3,4], FadeOut)
             ))
         
-        with self.voiceover("logit, ln p over 1 minus p. If we want to put p in terms of the predictors, we just do a little algebra. We") as tracker:
+        with self.voiceover("logit function, ln p over 1 minus p. To isolate p, we do some algebra. We") as tracker:
             self.play(TransformByGlyphMap(tex3_original, tex5,
                                         (range(4), range(7))))
             
