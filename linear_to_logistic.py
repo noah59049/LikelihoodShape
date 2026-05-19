@@ -376,6 +376,8 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         with self.voiceover("Take the reciprocal again, and you may recognize a sigmoid here.") as tracker:
             self.play(TransformByGlyphMap(sigmoid5, sigmoid6,
                                             ([0,1], [2,3])))
+            self.wait(tracker.duration - 2.1)
+            self.play(FadeOut(panelA), FadeOut(panelB))
             
         # Interlude, Part 1: Sigmoid definitions
         sigmoid_defn  = ColoredMathTex(r"\sigma(z)=\frac{1}{1+e^{-z}}").to_corner(UL)
@@ -513,7 +515,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         
         # End of interlude, back to the original equation
         with self.voiceover("So going back to our original equation, this formula just becomes") as tracker:
-            self.play(FadeOut(axes), FadeOut(axis_labels), FadeOut(func), FadeOut(sigmoid_defn4))
+            self.play(FadeOut(axes), FadeOut(axis_labels), FadeOut(func), FadeOut(sigmoid_defn4), FadeIn(panelA, panelB))
             self.play(FadeIn(sigmoid6))
         
         with self.voiceover("p = sigmoid of the linear combination.") as tracker:
