@@ -236,7 +236,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 total_transforms = array_from_latex.shape[0] + np.sum(y_latex == 0)
                 # This loop happens for every row
                 for i in range(array_from_latex.shape[0]):
-                    # --- Determine the run time
+                    # --- Determine the run time ---
                     if m == 0:
                         if i == 0:
                             run_time = 10 # Determined from the audio
@@ -249,6 +249,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                     else:
                         run_time = squish_time = tracker.duration / total_transforms
 
+                    # --- Get the new latex table ---
                     row_np = array_from_latex[i, 1:]
                     zi = np.sum(bhat * np.hstack([np.array([1.0]), row_np]))
                     yhat_i = sigmoid(zi)
@@ -262,9 +263,10 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                     Li = yhat_i ** yi * (1 - yhat_i) ** (1 - yi)
                     Li_str2 = r"\vdots" if np.isnan(Li) else f"{Li:.4g}"
                     partial_likelihoods.append(Li_str2)
-
                     partial_likelihoods_tex_new = partial_likelihoods_tex_old.replace(r"& \\", f"& {Li_str1} \\\\", count = 1)
                     partial_likelihoods_table_new = Tex(partial_likelihoods_tex_new).scale(0.66).to_corner(UL)
+                    
+                    # --- Get the cell map for the transform ---
                     cell_map = get_matching_cell_map(partial_likelihoods_table_old, partial_likelihoods_table_new)
                     yhati_glyphs = extract_table_grid(partial_likelihoods_table_old)[(i + 1, COLS_TO_KEEP + 1)]
                     Li_glyphs    = extract_table_grid(partial_likelihoods_table_new)[(i + 1, COLS_TO_KEEP + 2)]
