@@ -26,6 +26,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         x1_norm = (X1 - X1.min()) / (X1.max() - X1.min())
         x2_norm = (X2 - X2.min()) / (X2.max() - X2.min())
         x3_norm = (X3 - X3.min()) / (X3.max() - X3.min())
+        # TODO: I'm not sure about using these normalized things, is it lying?
 
         def make_3d_panel(ax, dots, x_lbl, y_lbl, z_lbl):
             # Rotate only axes + dots; labels are placed fresh after rotation so they stay upright.
@@ -131,6 +132,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 resolution=(8, 8),
                 fill_color=RED, fill_opacity=0.5, stroke_width=0,
             )
+            # TODO: The line is red and the plane is blue, they should both be green
             self.play(Create(reg_line_A), FadeIn(reg_plane_B))
             self.play(Write(tex0))
 
