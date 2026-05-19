@@ -193,9 +193,9 @@ def main():
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    p.add_argument("-i", "--input", required=True, help="Input audio file (any format ffmpeg can read)")
-    p.add_argument("-t", "--transcript", required=True, help="Plain-text transcript, one chunk per line")
-    p.add_argument("-o", "--output", required=True, help="Output audio file (extension picks format)")
+    p.add_argument("-i", "--input", help="Input audio file (any format ffmpeg can read)")
+    p.add_argument("-t", "--transcript", help="Plain-text transcript (one chunk per line) or manim .py script")
+    p.add_argument("-o", "--output", help="Output audio file (extension picks format)")
     p.add_argument(
         "--silence",
         type=float,
@@ -208,6 +208,13 @@ def main():
         help="faster-whisper model size: tiny | base | small | medium | large-v3 (default base)",
     )
     args = p.parse_args()
+
+    if not args.input:
+        args.input = input("Input audio file: ").strip()
+    if not args.transcript:
+        args.transcript = input("Transcript file: ").strip()
+    if not args.output:
+        args.output = input("Output audio file: ").strip()
 
     audio_input = ensure_wav(args.input)
 
