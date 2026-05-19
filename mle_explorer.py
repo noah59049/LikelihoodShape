@@ -4,11 +4,12 @@ from manim import *
 from MF_Tools import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid, log_likelihood, FadeInRHS, FlashAround, latex_vector
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid, log_likelihood, FadeInRHS, FlashAround, latex_vector, create_likelihood_graph
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 from hat_matrix_logo import HMDialogBox
 from tex_colors import *
+
 
 yXyhat_tex = yX_tex_numbered.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("X4\n &", r"X4 & $\hat{y}$")
 array_from_latex = latex_table_to_array(yX_tex_numbered)
@@ -489,39 +490,29 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             self.move_camera(
                 phi=60 * DEGREES,
                 theta=-45 * DEGREES,
+                zoom = 0.4,
                 run_time=1
             )
-            # Function 
-            def f(x, y):
-                return np.exp(-0.5 * (x - 0.54)**2 - (y + 0.82)**2 - 0.2) # I just made this up because it's nice
-
-            # Axes
-            axes = ThreeDAxes(
-                x_range=[-3, 3],
-                y_range=[-3, 3],
-                z_range=[-3, 3],
-            )
+            axes, surface = create_likelihood_graph(X[:,0], 
+                                            y,
+                                            x_ses = 0.6,
+                                            y_ses = 0.6,
+                                            use_loglik=False,
+                                            resolution=21)
 
             x_label = ColoredMathTex(r"\hat{\beta}_0").next_to(axes.x_axis.get_end(), RIGHT)
             y_label = ColoredMathTex(r"\hat{\beta}_1").next_to(axes.y_axis.get_end(), UP)
             z_label = ColoredMathTex("L").next_to(axes.z_axis.get_end(), OUT)
             axis_labels = VGroup(x_label, y_label, z_label)
             self.add_fixed_orientation_mobjects(x_label, y_label, z_label)
-
-            # Surface 
-            surface = Surface(
-                lambda u, v_: axes.c2p(u, v_, f(u, v_)),
-                u_range=[-2, 2],
-                v_range=[-2, 2],
-                resolution=(12, 12), # TODO: Make this bigger again during production
-                fill_opacity=0.35,
-            )
+            
+            self.play(Create(axes), Create(surface), Write(axis_labels))
+            self.begin_ambient_camera_rotation(rate=0.2)
 
             # point at the max
-            max_coords = 0.54, -0.82, f(0.54, -0.82)
-            max_point = Dot3D(axes.c2p(*max_coords))
-            self.play(Create(axes), Create(surface), Write(axis_labels))
-            self.play(FadeIn(max_point))
+            # max_coords = 0.54, -0.82, f(0.54, -0.82)
+            # max_point = Dot3D(axes.c2p(*max_coords))
+            # self.play(FadeIn(max_point))
 
 
 
