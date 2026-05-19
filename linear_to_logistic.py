@@ -285,7 +285,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
                 height = 1,
                 color=GREEN,
             )
-            graph_group.to_edge(UP)
+            graph_group.to_edge(DOWN)
             self.add(graph_group[0],graph_group[1])
             self.play(Create(graph_group[2]))
          
