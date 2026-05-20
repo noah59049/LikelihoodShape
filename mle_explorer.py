@@ -20,7 +20,7 @@ TableTransform = TransformMatchingCells # TransformMatchingCells for production,
 
 class MLEScene(VoiceoverScene, ThreeDScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast17.wav",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast18.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -530,12 +530,26 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         
         with self.voiceover("By now, you can probably guess what the formula for the likelihood is going to be. We're multiplying all the rows together, so it's a product.") as tracker:
             self.clear()
-            self.play(Write(base, run_time = 0.5))
+            self.set_camera_orientation(
+                phi=0,
+                theta=-90 * DEGREES,
+                gamma=0,
+                zoom=1
+            )
+            self.add(partial_likelihoods_table_old)
+            self.play(Write(base, run_time = 1),
+                      TransformByGlyphMap(partial_likelihoods_table_old, likelihood_together, *glyph_map, run_time=2.2))
             self.add(brace)
         with self.voiceover("So if y is 1, the predicted probability of y being 1 is y hat, ") as tracker:
-            self.play(Write(row1_basic, run_time = 0.5))
+            self.remove(likelihood_together)
+            self.add(partial_likelihoods_table_old)
+            y1_highlights = VGroup(*[highlight_row(partial_likelihoods_table_old, row_idx=i+1) for i in range(array_from_latex.shape[0]) if y_latex[i] == 1])
+            self.play(Write(row1_basic, run_time = 0.5),
+                      FadeIn(y1_highlights))
         with self.voiceover("and if y is 0, the predicted probability of y being 0 is 1 - y hat. We should subscript all our ys with  ") as tracker:
-            self.play(Write(row2_basic, run_time = 0.5))
+            y0_highlights = VGroup(*[highlight_row(partial_likelihoods_table_old, row_idx=i+1) for i in range(array_from_latex.shape[0]) if y_latex[i] == 0])
+            self.play(Write(row2_basic, run_time = 0.5), FadeOut(y1_highlights), FadeIn(y0_highlights))
+            self.remove(y0_highlights, partial_likelihoods_table_old)
 
         with self.voiceover("i because each element of this product is referring to the ith individual.") as tracker:
             self.play(TransformMatchingShapes(row1_basic, row1), TransformMatchingShapes(row2_basic, row2))
@@ -641,7 +655,3 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                                         ([11,12],[7,8],{"path_arc": PI * 0.7}),
                                         (range(24,28),range(16,20), {"path_arc": PI * 0.7}),
                                         (FadeIn, [15,21])))
-        
-
-
-
