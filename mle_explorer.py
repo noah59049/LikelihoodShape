@@ -528,28 +528,35 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         row2_basic = ColoredMathTex(r"1-\hat{y} \quad \thinspace \thinspace (y=0)") # This leads to the conditions being aligned somehow, probably not the best fix but it works
         rows_basic = VGroup(row1_basic, row2_basic).arrange(DOWN, aligned_edge=LEFT, buff=0.15).next_to(brace, RIGHT, aligned_edge = UP)
         
-        with self.voiceover("By now, you can probably guess what the formula for the likelihood is going to be. We're multiplying all the rows together, so it's a product.") as tracker:
-            self.clear()
+        with self.voiceover("By now, you can probably guess what the formula for the likelihood is going to be. We're") as tracker:
+            self.play(*[FadeOut(mob) for mob in list(self.mobjects)])
             self.set_camera_orientation(
                 phi=0,
                 theta=-90 * DEGREES,
                 gamma=0,
                 zoom=1
             )
-            self.add(partial_likelihoods_table_old)
-            self.play(Write(base, run_time = 1),
-                      TransformByGlyphMap(partial_likelihoods_table_old, likelihood_together, *glyph_map, run_time=2.2))
+            self.wait(1)
+            self.play(FadeIn(partial_likelihoods_table_old))
+        with self.voiceover("multiplying all the rows together, ") as tracker:
+            self.play(TransformByGlyphMap(partial_likelihoods_table_old, likelihood_together, *glyph_map, run_time=2.2))
+        with self.voiceover("so it's a product.") as tracker:
+            self.play(Write(base, run_time = 1))
             self.add(brace)
-        with self.voiceover("So if y is 1, the predicted probability of y being 1 is y hat, ") as tracker:
+        with self.voiceover("So if y is 1, the predicted probability of y being 1 ") as tracker:
             self.remove(likelihood_together)
             self.add(partial_likelihoods_table_old)
             y1_highlights = VGroup(*[highlight_row(partial_likelihoods_table_old, row_idx=i+1) for i in range(array_from_latex.shape[0]) if y_latex[i] == 1])
-            self.play(Write(row1_basic, run_time = 0.5),
-                      FadeIn(y1_highlights))
-        with self.voiceover("and if y is 0, the predicted probability of y being 0 is 1 - y hat. We should subscript all our ys with  ") as tracker:
+            self.play(FadeIn(y1_highlights))
+        with self.voiceover("is y hat, "):
+            self.play(Write(row1_basic, run_time = 0.5))
+        with self.voiceover("and if y is 0, the predicted probability of y being 0 ") as tracker:
             y0_highlights = VGroup(*[highlight_row(partial_likelihoods_table_old, row_idx=i+1) for i in range(array_from_latex.shape[0]) if y_latex[i] == 0])
-            self.play(Write(row2_basic, run_time = 0.5), FadeOut(y1_highlights), FadeIn(y0_highlights))
-            self.remove(y0_highlights, partial_likelihoods_table_old)
+            self.play(FadeOut(y1_highlights), FadeIn(y0_highlights))
+        with self.voiceover("is 1 - y hat. We should subscript all our ys with") as tracker:
+            self.play(Write(row2_basic, run_time = 0.5))
+            self.wait(tracker.duration - 1.1)
+            self.play(FadeOut(y0_highlights, partial_likelihoods_table_old), run_time = 0.5)
 
         with self.voiceover("i because each element of this product is referring to the ith individual.") as tracker:
             self.play(TransformMatchingShapes(row1_basic, row1), TransformMatchingShapes(row2_basic, row2))
