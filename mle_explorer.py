@@ -495,8 +495,8 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             )
             axes, surface = create_likelihood_graph(X[:,0], 
                                             y,
-                                            x_ses = 0.6,
-                                            y_ses = 0.6,
+                                            x_ses = 1.4,
+                                            y_ses = 1.4,
                                             use_loglik=False,
                                             resolution=21)
 
