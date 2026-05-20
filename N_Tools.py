@@ -553,11 +553,15 @@ def FadeInRHS(tex1, tex2):
 def highlight_row(tex, row_idx, color=RED, opacity=0.3):
     glyphs = tex[0]  # important fix
 
+    table_width = max(g.get_right()[0] for g in glyphs) - min(g.get_left()[0] for g in glyphs)
+
     # --- classify horizontal lines ---
+    # Require w > 5*h (matching extract_table_grid) AND width > 30% of table
+    # to exclude minus signs in cell content (e.g. "1-0.9051" in Li column)
     horizontal_lines = []
     for g in glyphs:
         w, h = g.width, g.height
-        if w > 3 * h:  # horizontal line
+        if w > 5 * h and w > 0.3 * table_width:
             horizontal_lines.append(g)
 
     # --- extract and deduplicate y positions ---
