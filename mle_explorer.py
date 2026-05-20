@@ -522,13 +522,14 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         row1 = ColoredMathTex(r"\hat{y}_i \quad \quad \quad (y_i=1)")
         row2 = ColoredMathTex(r"1-\hat{y}_i \quad \thinspace \thinspace (y_i=0)") # This leads to the conditions being aligned somehow, probably not the best fix but it works
         rows = VGroup(row1, row2).arrange(DOWN, aligned_edge=LEFT, buff=0.15).next_to(brace, RIGHT, aligned_edge = UP)
-        cases = VGroup(base, brace, rows).to_edge(UP)
+        cases = VGroup(base, brace, rows).to_corner(UR)
 
         row1_basic = ColoredMathTex(r"\hat{y} \quad \quad \quad (y=1)")
         row2_basic = ColoredMathTex(r"1-\hat{y} \quad \thinspace \thinspace (y=0)") # This leads to the conditions being aligned somehow, probably not the best fix but it works
         rows_basic = VGroup(row1_basic, row2_basic).arrange(DOWN, aligned_edge=LEFT, buff=0.15).next_to(brace, RIGHT, aligned_edge = UP)
         
-        with self.voiceover("Now let’s write a formula for the likelihood. We’ll be taking a product, a product of the predicted probabilities of the observed outcomes.") as tracker:
+        with self.voiceover("By now, you can probably guess what the formula for the likelihood is going to be. We're multiplying all the rows together, so it's a product.") as tracker:
+            self.clear()
             self.play(Write(base, run_time = 0.5))
             self.add(brace)
         with self.voiceover("So if y is 1, the predicted probability of y being 1 is y hat, ") as tracker:
