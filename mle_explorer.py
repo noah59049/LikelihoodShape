@@ -4,7 +4,7 @@ from manim import *
 from MF_Tools import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, extract_table_grid, log_likelihood, FadeInRHS, FlashAround, latex_vector, create_likelihood_graph, TransformWithBoxes
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, highlight_cell, extract_table_grid, log_likelihood, FadeInRHS, FlashAround, latex_vector, create_likelihood_graph, TransformWithBoxes
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 from hat_matrix_logo import HMDialogBox

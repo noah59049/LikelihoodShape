@@ -600,6 +600,47 @@ def highlight_row(tex, row_idx, color=RED, opacity=0.3):
 
     return rect
 
+def highlight_cell(tex, row_idx, col_idx, color=RED, opacity=0.3):
+    glyphs = tex[0]
+
+    table_width = max(g.get_right()[0] for g in glyphs) - min(g.get_left()[0] for g in glyphs)
+
+    horizontal_lines = []
+    vertical_lines = []
+    for g in glyphs:
+        w, h = g.width, g.height
+        if w > 5 * h and w > 0.3 * table_width:
+            horizontal_lines.append(g)
+        elif h > 5 * w:
+            vertical_lines.append(g)
+
+    def dedup(vals, tol=1e-2):
+        out = []
+        for v in vals:
+            if not any(abs(v - o) < tol for o in out):
+                out.append(v)
+        return out
+
+    y_lines = dedup(sorted([g.get_center()[1] for g in horizontal_lines], reverse=True))
+    x_lines = dedup(sorted([g.get_center()[0] for g in vertical_lines]))
+
+    if row_idx >= len(y_lines) - 1:
+        raise ValueError(f"row_idx {row_idx} out of range (have {len(y_lines) - 1} rows)")
+    if col_idx >= len(x_lines) - 1:
+        raise ValueError(f"col_idx {col_idx} out of range (have {len(x_lines) - 1} cols)")
+
+    y_top    = y_lines[row_idx]
+    y_bottom = y_lines[row_idx + 1]
+    x_left   = x_lines[col_idx]
+    x_right  = x_lines[col_idx + 1]
+
+    rect = Rectangle(width=x_right - x_left, height=y_top - y_bottom)
+    rect.move_to([(x_left + x_right) / 2, (y_top + y_bottom) / 2, 0])
+    rect.set_fill(color, opacity=opacity)
+    rect.set_stroke(width=0)
+    return rect
+
+
 def FlashAround(
     mobject,
     color=YELLOW,
