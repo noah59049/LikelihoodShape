@@ -635,31 +635,31 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             self.play(t.animate.set_value(1), run_time=min(2, tracker.duration - 0.1))
 
         # Step 4: Add log likelihood
-        loglik1 = ColoredMathTex(r"\ell=\ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}").to_corner(UL)
-        loglik2 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}\ln[\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}]").to_corner(UL)
-        loglik3 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}\ln\hat{y}_i^{y_i}+ln(1-\hat{y}_i)^{1-{y_i}}").to_corner(UL)
-        loglik4 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}y_i\ln\hat{y}_i+({1-{y_i}})ln(1-\hat{y}_i)").to_corner(UL)
+        loglik1 = ColoredMathTex(r"\ell(\hat{\beta})=\ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}").to_corner(UL)
+        loglik2 = ColoredMathTex(r"\ell(\hat{\beta})=\sum_{i=1}^{n}\ln[\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}]").to_corner(UL)
+        loglik3 = ColoredMathTex(r"\ell(\hat{\beta})=\sum_{i=1}^{n}\ln\hat{y}_i^{y_i}+ln(1-\hat{y}_i)^{1-{y_i}}").to_corner(UL)
+        loglik4 = ColoredMathTex(r"\ell(\hat{\beta})=\sum_{i=1}^{n}y_i\ln\hat{y}_i+({1-{y_i}})ln(1-\hat{y}_i)").to_corner(UL)
 
         with self.voiceover("The log likelihood, denoted little l, is the ln of the likelihood. If we simplify a bit, ") as tracker:
             self.play(TransformByGlyphMap(L_as_function, loglik1,
                                         ([0], [0]),
-                                        ([], [2,3])))
+                                        ([], [6,7])))
 
         with self.voiceover("the ln of a product is the sum of the lns,") as tracker:
             self.play(TransformByGlyphMap(loglik1, loglik2,
-                                        ([5], [3]),
-                                        ([2,3], [7,8]),
-                                        (FadeIn, [9,26])))
+                                        ([9], [7]),
+                                        ([6,7], [11,12]),
+                                        (FadeIn, [13,30])))
 
         with self.voiceover("do it again ") as tracker:
             self.play(TransformByGlyphMap(loglik2, loglik3,
-                                        ([9,26], FadeOut),
-                                        (FadeIn, [14]),
-                                        ([7,8], [7,8]),
-                                        ([7,8],[15,16], {"path_arc": PI * -0.7})))
+                                        ([13,30], FadeOut),
+                                        (FadeIn, [18]),
+                                        ([11,12], [11,12]),
+                                        ([11,12],[19,20], {"path_arc": PI * -0.7})))
 
         with self.voiceover("and then move the exponents. Maximizing the likelihood is equivalent to maximizing the log likelihood. But using the log likelihood makes the math easier.") as tracker:
             self.play(TransformByGlyphMap(loglik3, loglik4,
-                                        ([11,12],[7,8],{"path_arc": PI * 0.7}),
-                                        (range(24,28),range(16,20), {"path_arc": PI * 0.7}),
-                                        (FadeIn, [15,21])))
+                                        ([15,16],[11,12],{"path_arc": PI * 0.7}),
+                                        (range(28,32),range(20,24), {"path_arc": PI * 0.7}),
+                                        (FadeIn, [19,25])))
