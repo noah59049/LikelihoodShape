@@ -546,30 +546,49 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         # Reconstruct initial Li table (Li column header present but all values empty)
         partial_likelihoods_tex_initial = old_table_tex.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("& \\\\\n", "& $L_i$ \\\\\n", count=1)
         partial_likelihoods_table_initial = Tex(partial_likelihoods_tex_initial).scale(0.66).to_corner(UL)
-        # Rebuild cell_map for initial → intermediate (same arc logic as m=2 else branch)
-        li_cell_map = get_matching_cell_map(partial_likelihoods_table_initial, partial_likelihoods_table_intermediate)
+
+        # Build y1-done table: Li filled for y=1 rows (and dots row), empty for y=0 rows
+        parts, remaining = [], partial_likelihoods_tex_initial
         for _i in range(array_from_latex.shape[0]):
-            yhati_glyphs = extract_table_grid(partial_likelihoods_table_initial)[(_i + 1, COLS_TO_KEEP + 1)]
-            Li_glyphs    = extract_table_grid(partial_likelihoods_table_intermediate)[(_i + 1, COLS_TO_KEEP + 2)]
-            for entry in li_cell_map.copy():
-                if entry[1] == Li_glyphs:
-                    li_cell_map.remove(entry)
+            before, _, remaining = remaining.partition(r"& \\")
+            parts.append(before)
+            parts.append(f"& {all_Li_str1[_i]} \\\\" if (all_yi[_i] == 1 or np.isnan(all_Li[_i])) else r"& \\")
+        parts.append(remaining)
+        partial_likelihoods_table_y1_done = Tex("".join(parts)).scale(0.66).to_corner(UL)
+
+        # cell_map: initial → y1_done  (arcs for y=1 / dots rows only)
+        y1_cell_map = get_matching_cell_map(partial_likelihoods_table_initial, partial_likelihoods_table_y1_done)
+        for _i in range(array_from_latex.shape[0]):
             if all_yi[_i] == 1 or np.isnan(all_Li[_i]):
-                li_cell_map.append((yhati_glyphs, Li_glyphs, {"path_arc": -PI / 5}))
-            else:
-                li_cell_map.append((yhati_glyphs, Li_glyphs[2:], {"path_arc": -PI / 5}))
-                li_cell_map.append(([], Li_glyphs[0:2], {"delay": 0.35, "run_time": 0.6}))
+                yhati_glyphs = extract_table_grid(partial_likelihoods_table_initial)[(_i + 1, COLS_TO_KEEP + 1)]
+                Li_glyphs    = extract_table_grid(partial_likelihoods_table_y1_done)[(_i + 1, COLS_TO_KEEP + 2)]
+                for entry in y1_cell_map.copy():
+                    if entry[1] == Li_glyphs:
+                        y1_cell_map.remove(entry)
+                y1_cell_map.append((yhati_glyphs, Li_glyphs, {"path_arc": -PI / 5}))
+
+        # cell_map: y1_done → intermediate  (arcs for y=0 rows only)
+        y0_cell_map = get_matching_cell_map(partial_likelihoods_table_y1_done, partial_likelihoods_table_intermediate)
+        for _i in range(array_from_latex.shape[0]):
+            if all_yi[_i] == 0 and not np.isnan(all_Li[_i]):
+                yhati_glyphs = extract_table_grid(partial_likelihoods_table_y1_done)[(_i + 1, COLS_TO_KEEP + 1)]
+                Li_glyphs    = extract_table_grid(partial_likelihoods_table_intermediate)[(_i + 1, COLS_TO_KEEP + 2)]
+                for entry in y0_cell_map.copy():
+                    if entry[1] == Li_glyphs:
+                        y0_cell_map.remove(entry)
+                y0_cell_map.append((yhati_glyphs, Li_glyphs[2:], {"path_arc": -PI / 5}))
+                y0_cell_map.append(([], Li_glyphs[0:2], {"delay": 0.35, "run_time": 0.6}))
 
         with self.voiceover("So if y is 1, the predicted probability of y being 1 ") as tracker:
             self.remove(likelihood_together)
             self.add(partial_likelihoods_table_initial)
-            y1_highlights = VGroup(*[highlight_cell(partial_likelihoods_table_intermediate, row_idx=i+1, col_idx=j) for i in range(array_from_latex.shape[0]) if y_latex[i] == 1 for j in (0, COLS_TO_KEEP + 1, COLS_TO_KEEP + 2)])
-            self.play(TransformByGlyphMap(partial_likelihoods_table_initial, partial_likelihoods_table_intermediate, *li_cell_map), FadeIn(y1_highlights))
+            y1_highlights = VGroup(*[highlight_cell(partial_likelihoods_table_y1_done, row_idx=i+1, col_idx=j) for i in range(array_from_latex.shape[0]) if y_latex[i] == 1 for j in (0, COLS_TO_KEEP + 1, COLS_TO_KEEP + 2)])
+            self.play(TransformByGlyphMap(partial_likelihoods_table_initial, partial_likelihoods_table_y1_done, *y1_cell_map), FadeIn(y1_highlights))
         with self.voiceover("is y hat, "):
             self.play(Write(row1_basic, run_time = 0.5))
         with self.voiceover("and if y is 0, the predicted probability of y being 0 ") as tracker:
             y0_highlights = VGroup(*[highlight_cell(partial_likelihoods_table_intermediate, row_idx=i+1, col_idx=j) for i in range(array_from_latex.shape[0]) if y_latex[i] == 0 for j in (0, COLS_TO_KEEP + 1, COLS_TO_KEEP + 2)])
-            self.play(FadeOut(y1_highlights), FadeIn(y0_highlights))
+            self.play(TransformByGlyphMap(partial_likelihoods_table_y1_done, partial_likelihoods_table_intermediate, *y0_cell_map), FadeOut(y1_highlights), FadeIn(y0_highlights))
         with self.voiceover("is 1 - y hat. We should subscript all our ys with") as tracker:
             self.play(Write(row2_basic, run_time = 0.5))
             self.wait(tracker.duration - 1.1)
