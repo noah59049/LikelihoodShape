@@ -436,83 +436,6 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             with self.voiceover("That’s 1.454 times 10^-47, so better but not as good as the first estimate") as tracker:
                 pass
 
-        # --- Show that we have a likelihood for every point and there's one MLE ---
-        likelihood_grid = VGroup(*[VGroup(bhat_tex, likelihood_tex).arrange(DOWN) for bhat_tex, likelihood_tex in zip(all_bhat_texes, all_likelihood_texes)]).arrange(RIGHT)
-        with self.voiceover("So for every set of beta hats, you get a likelihood.") as tracker:
-            self.play(FadeIn(likelihood_grid))
-
-        def l_function_tex(bhat):
-            likelihood = np.exp(log_likelihood(X, y, bhat, add_intercept=True))
-            likelihood_str = f"{likelihood:.4g}"
-            likelihood_vector = numpy_to_latex(as_col(bhat))
-            new_likelihood_tex = ColoredMathTex("L(",likelihood_vector, ")=", likelihood_str)
-            new_likelihood_tex[1].set_color(beta_color)
-            return new_likelihood_tex
-
-        for m in range(100):
-            all_bhats.append(arbitrarily_choose_bhat())
-        with self.voiceover("In this way, you can think of the likelihood as a function of the beta hats. ") as tracker:
-            dims = (1,3),(3,3),(5,5),(7,7)
-            max_cols = max(cols for _, cols in dims)
-
-            # Transition from likelihood_grid to initial 1x3 l_function_tex grid.
-            # Index bhats by (r * max_cols + c) so each cell's (row, col) is stable across grid sizes.
-            rows, cols = dims[0]
-            flat = [l_function_tex(all_bhats[r * max_cols + c]) for r in range(rows) for c in range(cols)]
-            VGroup(*flat).arrange_in_grid(rows=rows, cols=cols).scale_to_fit_width(config.frame_width).to_corner(UL)
-            cell_grid = {(r, c): flat[r * cols + c] for r in range(rows) for c in range(cols)}
-            self.play(FadeOut(likelihood_grid), FadeIn(VGroup(*flat)), run_time=0.8)
-
-            # Grow the grid: existing cells animate to new size at same (row, col), new cells fade in.
-            for rows, cols in dims[1:]:
-                target_texes = {}
-                new_flat = []
-                for r in range(rows):
-                    for c in range(cols):
-                        tex = l_function_tex(all_bhats[r * max_cols + c])
-                        target_texes[(r, c)] = tex
-                        new_flat.append(tex)
-                VGroup(*new_flat).arrange_in_grid(rows=rows, cols=cols).scale_to_fit_width(config.frame_width).to_corner(UL)
-                anims = []
-                for (r, c), target_tex in target_texes.items():
-                    if (r, c) in cell_grid:
-                        anims.append(Transform(cell_grid[(r, c)], target_tex))
-                    else:
-                        anims.append(FadeIn(target_tex))
-                self.play(*anims, run_time=0.8)
-                cell_grid = {(r, c): cell_grid.get((r, c), target_texes[(r, c)]) for r, c in target_texes}
-
-            self.wait(max(tracker.duration - len(dims) * 0.8 - 1.1, 0))
-            self.play(FadeOut(VGroup(*list(cell_grid.values()))))
-
-        # --- Graph the likelihood ---
-        with self.voiceover("Somewhere this function has a maximum, and our model uses the beta hats at the maximum.") as tracker:
-            self.move_camera(
-                phi=60 * DEGREES,
-                theta=-45 * DEGREES,
-                zoom = 0.4,
-                run_time=1
-            )
-            axes, surface = create_likelihood_graph(X[:,0], 
-                                            y,
-                                            x_ses = 1.4,
-                                            y_ses = 1.4,
-                                            use_loglik=False,
-                                            resolution=21)
-
-            x_label = ColoredMathTex(r"\hat{\beta}_0").next_to(axes.x_axis.get_end(), RIGHT)
-            y_label = ColoredMathTex(r"\hat{\beta}_1").next_to(axes.y_axis.get_end(), UP)
-            z_label = ColoredMathTex("L").next_to(axes.z_axis.get_end(), OUT)
-            axis_labels = VGroup(x_label, y_label, z_label)
-            self.add_fixed_orientation_mobjects(x_label, y_label, z_label)
-            
-            self.play(Create(axes), Create(surface), Write(axis_labels))
-            self.begin_ambient_camera_rotation(rate=0.2)
-
-            # point at the max
-            # max_coords = 0.54, -0.82, f(0.54, -0.82)
-            # max_point = Dot3D(axes.c2p(*max_coords))
-            # self.play(FadeIn(max_point))
 
         # --- This part used to be likelihood_cases.py ---
 
@@ -610,7 +533,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             self.play(FadeIn(success1))
 
         box1 = SurroundingRectangle(row1, color = RED)
-        with self.voiceover("if we look at the case where yi=1, the right hand term becomes 1-yi hat raised") as tracker:
+        with self.voiceover("if yi=1, the right term is raised") as tracker:
             self.play(Create(box1, run_time = 0.5))
             self.play(TransformWithBoxes(success1, success2,
                 ([9,10], [9]),
@@ -633,16 +556,16 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             self.wait(tracker.duration - 2.1)        
             self.play(FadeOut(success4), FadeOut(box1))
         
-            # Step 3: Likelihood simplification for case y_i=0
+        # --- Step 3: Likelihood simplification for case y_i=0 ---
+
             failure1 = ColoredMathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
             failure2 = ColoredMathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{0}(1-\hat{y}_i)^{1-{0}}")
             failure3 = ColoredMathTex(r"L=\prod_{i=1}^{n}(1-\hat{y}_i)^{1-{0}}")
             failure4 = ColoredMathTex(r"L=\prod_{i=1}^{n}1-\hat{y}_i")
-
             
             self.play(FadeIn(failure1))
         
-        with self.voiceover("If you look at the case where yi=0,") as tracker:
+        with self.voiceover("If yi=0,") as tracker:
             box2 = SurroundingRectangle(row2, color = RED)
             self.play(Create(box2))
             self.play(
@@ -653,21 +576,54 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 )
             )
 
-        with self.voiceover("the left hand term becomes yi hat raised to the 0,") as tracker:
+        with self.voiceover("the left term is raised to the 0,") as tracker:
             pass
 
         with self.voiceover("so it goes away, ") as tracker:
             self.play(TransformByGlyphMap(failure2, failure3,
                 ([7,8,9,10], FadeOut)))
 
-        with self.voiceover("and the right hand term becomes 1 - yi hat, again, same as above. The log-likelihood, written lowercase l, is just the") as tracker:
+        with self.voiceover("and we're left with 1 - yi hat, again, same as above. ") as tracker:
             self.play(TransformByGlyphMap(failure3, failure4,
                 ([7],FadeOut),
                 ([13,14,15,16], FadeOut)))
 
             self.wait(tracker.duration - 3.1)
             self.play(FadeOut(failure4), FadeOut(box2))
+
+        # --- Graph the likelihood ---
+        with self.voiceover("It's hopefully clear now that you can think of the likelihood as a ") as tracker:
             self.play(FadeIn(failure1))
+        with self.voiceover("function of the beta hats.") as tracker:
+            L_as_function = ColoredMathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
+            self.play(TransformByGlyphMap(failure1, L_as_function, (FadeIn, [2,3])))
+            self.add_fixed_in_frame_mobjects(L_as_function)
+            self.play(L_as_function.animate.to_corner(UL))
+        with self.voiceover("Here's a graph of the likelihood vs the betas for one predictor.") as tracker:
+            self.set_camera_orientation(
+                phi=60 * DEGREES,
+                theta=-45 * DEGREES,
+                zoom = 0.4,
+                # run_time=1
+            )
+            axes, surface = create_likelihood_graph(X[:,0], 
+                                            y,
+                                            x_ses = 1,
+                                            y_ses = 1,
+                                            use_loglik=False,
+                                            resolution=21)
+
+            x_label = ColoredMathTex(r"\hat{\beta}_0").next_to(axes.x_axis.get_end(), RIGHT)
+            y_label = ColoredMathTex(r"\hat{\beta}_1").next_to(axes.y_axis.get_end(), UP)
+            z_label = ColoredMathTex("L").next_to(axes.z_axis.get_end(), OUT)
+            axis_labels = VGroup(x_label, y_label, z_label)
+            self.add_fixed_orientation_mobjects(x_label, y_label, z_label)
+            
+            self.play(Create(axes), Create(surface), Write(axis_labels))
+            self.begin_ambient_camera_rotation(rate=0.2)
+
+        with self.voiceover("At the maximum of the liklihood function, that's the MLE, that's the beta hats we use."):
+            pass
         
         # Step 4: Add log likelihood
         loglik1 = ColoredMathTex(r"\ell=\ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
