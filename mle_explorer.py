@@ -585,7 +585,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 ([7],FadeOut),
                 ([13,14,15,16], FadeOut)))
 
-            self.wait(tracker.duration - 2.1)
+            # self.wait(tracker.duration - 2.1) # TODO: Figure out why this line is giving errors
             self.play(FadeOut(failure4), FadeOut(box2))
 
         # --- Graph the likelihood ---
@@ -594,18 +594,12 @@ class MLEScene(VoiceoverScene, ThreeDScene):
 
         with self.voiceover("function of the beta hats.") as tracker:
             L_as_function = ColoredMathTex(r"L(\hat{\beta})=\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
-            self.play(TransformByGlyphMap(failure1, L_as_function, (FadeIn, [2,3,4])))
+            self.play(TransformByGlyphMap(failure1, L_as_function, (FadeIn, [1,2,3,4])))
             self.add_fixed_in_frame_mobjects(L_as_function)
             self.play(L_as_function.animate.to_corner(UL))
 
         with self.voiceover("Here's a graph of the likelihood vs the betas for one predictor.") as tracker:
-            self.set_camera_orientation(
-                phi=60 * DEGREES,
-                theta=-45 * DEGREES,
-                zoom = 0.4,
-                # run_time=1
-            )
-            axes, surface = create_likelihood_graph(X[:,0], 
+            axes, surface = create_likelihood_graph(X[:,0],
                                             y,
                                             x_ses = 1,
                                             y_ses = 1,
@@ -617,6 +611,11 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             z_label = ColoredMathTex("L").next_to(axes.z_axis.get_end(), OUT)
             axis_labels = VGroup(x_label, y_label, z_label)
             graph_group = VGroup(axes, surface, axis_labels)
+            # Replicate zoom=0.4 and phi=60° without moving the camera.
+            # scale(0.4) compensates for zoom; rotate(PI/3, RIGHT) tilts the L-axis
+            # 60° from the camera direction so the surface is visible from the side.
+            graph_group.scale(0.4, about_point=ORIGIN)
+            graph_group.rotate(PI / 3, axis=RIGHT, about_point=ORIGIN)
 
             self.play(Create(axes), Create(surface), Write(axis_labels))
             graph_group.add_updater(lambda g, dt: g.rotate(0.2 * dt, axis=OUT, about_point=ORIGIN))
@@ -634,7 +633,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             mle_dot.add_updater(lambda d: d.move_to(_dot_pos(t.get_value())))
             self.add(mle_dot)
             self.play(t.animate.set_value(1), run_time=min(2, tracker.duration - 0.1))
-        
+
         # Step 4: Add log likelihood
         loglik1 = ColoredMathTex(r"\ell=\ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}").to_corner(UL)
         loglik2 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}\ln[\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}]").to_corner(UL)
