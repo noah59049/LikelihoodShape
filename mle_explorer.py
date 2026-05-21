@@ -546,12 +546,12 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         with self.voiceover("So if y is 1, the predicted probability of y being 1 ") as tracker:
             self.remove(likelihood_together)
             self.add(partial_likelihoods_table_old)
-            y1_highlights = VGroup(*[highlight_row(partial_likelihoods_table_old, row_idx=i+1) for i in range(array_from_latex.shape[0]) if y_latex[i] == 1])
+            y1_highlights = VGroup(*[highlight_cell(partial_likelihoods_table_old, row_idx=i+1, col_idx=j) for i in range(array_from_latex.shape[0]) if y_latex[i] == 1 for j in (0, COLS_TO_KEEP + 1, COLS_TO_KEEP + 2)])
             self.play(FadeIn(y1_highlights))
         with self.voiceover("is y hat, "):
             self.play(Write(row1_basic, run_time = 0.5))
         with self.voiceover("and if y is 0, the predicted probability of y being 0 ") as tracker:
-            y0_highlights = VGroup(*[highlight_row(partial_likelihoods_table_old, row_idx=i+1) for i in range(array_from_latex.shape[0]) if y_latex[i] == 0])
+            y0_highlights = VGroup(*[highlight_cell(partial_likelihoods_table_old, row_idx=i+1, col_idx=j) for i in range(array_from_latex.shape[0]) if y_latex[i] == 0 for j in (0, COLS_TO_KEEP + 1, COLS_TO_KEEP + 2)])
             self.play(FadeOut(y1_highlights), FadeIn(y0_highlights))
         with self.voiceover("is 1 - y hat. We should subscript all our ys with") as tracker:
             self.play(Write(row2_basic, run_time = 0.5))
