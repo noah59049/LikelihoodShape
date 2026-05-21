@@ -4,7 +4,7 @@ from manim import *
 from MF_Tools import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, highlight_cell, extract_table_grid, log_likelihood, FadeInRHS, FlashAround, latex_vector, create_likelihood_graph, TransformWithBoxes
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, highlight_cell, extract_table_grid, log_likelihood, FadeInRHS, FlashAround, latex_vector, create_likelihood_graph, get_graph_mle, TransformWithBoxes
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 from hat_matrix_logo import HMDialogBox
@@ -20,7 +20,7 @@ TableTransform = TransformMatchingCells # TransformMatchingCells for production,
 
 class MLEScene(VoiceoverScene, ThreeDScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast18.wav",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast19.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -34,7 +34,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         self.add(formula)
         with self.voiceover("We still have a burning question though: how do we know what the betas are?") as tracker:
             pass
-        with self.voiceover("We don't. We estimate them using a technique called") as tracker:
+        with self.voiceover("Well, we don't. We estimate them using a technique called") as tracker:
             self.play(formula.animate.to_edge(DOWN))
         with self.voiceover("maximum likelihood estimation. If we have an estimate of our betas, the") as tracker:
             self.play(FadeIn(mle_words), FlashAround(mle_words))
@@ -565,7 +565,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             
             self.play(FadeIn(failure1))
         
-        with self.voiceover("If yi=0,") as tracker:
+        with self.voiceover("If yi=0, the left term is raised to the 0,") as tracker:
             box2 = SurroundingRectangle(row2, color = RED)
             self.play(Create(box2))
             self.play(
@@ -576,9 +576,6 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 )
             )
 
-        with self.voiceover("the left term is raised to the 0,") as tracker:
-            pass
-
         with self.voiceover("so it goes away, ") as tracker:
             self.play(TransformByGlyphMap(failure2, failure3,
                 ([7,8,9,10], FadeOut)))
@@ -588,17 +585,19 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                 ([7],FadeOut),
                 ([13,14,15,16], FadeOut)))
 
-            self.wait(tracker.duration - 3.1)
+            self.wait(tracker.duration - 2.1)
             self.play(FadeOut(failure4), FadeOut(box2))
 
         # --- Graph the likelihood ---
         with self.voiceover("It's hopefully clear now that you can think of the likelihood as a ") as tracker:
             self.play(FadeIn(failure1))
+
         with self.voiceover("function of the beta hats.") as tracker:
-            L_as_function = ColoredMathTex(r"L=\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
-            self.play(TransformByGlyphMap(failure1, L_as_function, (FadeIn, [2,3])))
+            L_as_function = ColoredMathTex(r"L(\hat{\beta})=\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
+            self.play(TransformByGlyphMap(failure1, L_as_function, (FadeIn, [2,3,4])))
             self.add_fixed_in_frame_mobjects(L_as_function)
             self.play(L_as_function.animate.to_corner(UL))
+
         with self.voiceover("Here's a graph of the likelihood vs the betas for one predictor.") as tracker:
             self.set_camera_orientation(
                 phi=60 * DEGREES,
@@ -622,17 +621,28 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             self.play(Create(axes), Create(surface), Write(axis_labels))
             self.begin_ambient_camera_rotation(rate=0.2)
 
-        with self.voiceover("At the maximum of the liklihood function, that's the MLE, that's the beta hats we use."):
-            pass
+        with self.voiceover("At the maximum of the liklihood function, that's the MLE, that's the beta hats we use.") as tracker:
+            beta_2d, se_2d, z_func_2d = get_graph_mle(axes, X[:,0], y)
+            start_x = beta_2d[0] - se_2d[0]
+            start_y = beta_2d[1] - se_2d[1]
+            t = ValueTracker(0)
+            def _dot_pos(tv):
+                x  = start_x + tv * (beta_2d[0] - start_x)
+                yc = start_y + tv * (beta_2d[1] - start_y)
+                return axes.c2p(x, yc, z_func_2d(x, yc))
+            mle_dot = Dot3D(_dot_pos(0), color=YELLOW, radius=0.08)
+            mle_dot.add_updater(lambda d: d.move_to(_dot_pos(t.get_value())))
+            self.add(mle_dot)
+            self.play(t.animate.set_value(1), run_time=min(2, tracker.duration - 0.1))
         
         # Step 4: Add log likelihood
-        loglik1 = ColoredMathTex(r"\ell=\ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}")
-        loglik2 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}\ln[\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}]")
-        loglik3 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}\ln\hat{y}_i^{y_i}+ln(1-\hat{y}_i)^{1-{y_i}}")
-        loglik4 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}y_i\ln\hat{y}_i+({1-{y_i}})ln(1-\hat{y}_i)")
+        loglik1 = ColoredMathTex(r"\ell=\ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}").to_corner(UL)
+        loglik2 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}\ln[\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}]").to_corner(UL)
+        loglik3 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}\ln\hat{y}_i^{y_i}+ln(1-\hat{y}_i)^{1-{y_i}}").to_corner(UL)
+        loglik4 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}y_i\ln\hat{y}_i+({1-{y_i}})ln(1-\hat{y}_i)").to_corner(UL)
 
-        with self.voiceover(" ln of the likelihood. If we simplify a bit, ") as tracker:
-            self.play(TransformByGlyphMap(failure1, loglik1,
+        with self.voiceover("The log likelihood, denoted little l, is the ln of the likelihood. If we simplify a bit, ") as tracker:
+            self.play(TransformByGlyphMap(L_as_function, loglik1,
                                         ([0], [0]),
                                         ([], [2,3])))
 

@@ -900,6 +900,18 @@ def create_likelihood_graph(X,
                            resolution=resolution,
                            color = color)
 
+def get_graph_mle(axes, X, y, columnify=True, add_intercept=True):
+    """Return (beta, se, z_func) matching create_likelihood_graph's coordinate system.
+
+    Place objects at the MLE with: axes.c2p(beta[0], beta[1], z_func(beta[0], beta[1]))
+    z_func(beta[0], beta[1]) == 1.0 because lik_scaled normalizes to 1 at the MLE.
+    """
+    if columnify:
+        X = as_col(X)
+    beta, _, se = logistic_regression(X, y, add_intercept=add_intercept, return_stats=True)
+    z_func = lik_scaled_generator(X, y, add_intercept=add_intercept)
+    return beta, se, z_func
+
 def rotate_90_cw(x0, y0, x, y, x_scale=1, y_scale=1):
     # Translate point relative to pivot
     dx = x - x0
