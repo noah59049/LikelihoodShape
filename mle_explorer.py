@@ -616,10 +616,10 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             y_label = ColoredMathTex(r"\hat{\beta}_1").next_to(axes.y_axis.get_end(), UP)
             z_label = ColoredMathTex("L").next_to(axes.z_axis.get_end(), OUT)
             axis_labels = VGroup(x_label, y_label, z_label)
-            self.add_fixed_orientation_mobjects(x_label, y_label, z_label)
-            
+            graph_group = VGroup(axes, surface, axis_labels)
+
             self.play(Create(axes), Create(surface), Write(axis_labels))
-            self.begin_ambient_camera_rotation(rate=0.2)
+            graph_group.add_updater(lambda g, dt: g.rotate(0.2 * dt, axis=OUT, about_point=ORIGIN))
 
         with self.voiceover("At the maximum of the liklihood function, that's the MLE, that's the beta hats we use.") as tracker:
             beta_2d, se_2d, z_func_2d = get_graph_mle(axes, X[:,0], y)
