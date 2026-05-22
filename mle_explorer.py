@@ -670,9 +670,6 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                                         (FadeIn, [19,25])))
 
         with self.voiceover("So here's the graph of the log likelihood. The maximum is in the same place, but the graph is slightly nicer, and more importantly, it's easier to take the derivative of, which ties into our next idea.") as tracker:
-            # Stop spinning so the surface transform isn't fighting the rotation updater.
-            graph_group.clear_updaters()
-
             # Normalize the log-likelihood to [0, 1] so the peak stays at z=1
             # and the shape change is visible with the same axes.
             x_range_plot = (beta_2d[0] - se_2d[0], beta_2d[0] + se_2d[0])
@@ -686,7 +683,21 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             def loglik_norm(x, yc):
                 return (loglik_func(x, yc) - loglik_min) / (loglik_max - loglik_min)
 
-            loglik_surface = surface_from_function(
-                loglik_norm, axes, x_range_plot, y_range_plot, resolution=21, color=TEAL_C
-            )
-            self.play(Transform(surface, loglik_surface), run_time=min(3, tracker.duration - 0.1))
+            # Morph surface in-place while it keeps spinning.  The updater rebuilds
+            # surface each frame via axes.c2p(), which always reflects the current
+            # rotation — so the spin updater (which runs first on graph_group) and
+            # this morph updater (which runs next on the submobject) compose cleanly.
+            morph = ValueTracker(0)
+
+            def _morph_surface(mob):
+                a = morph.get_value()
+                new_surf = surface_from_function(
+                    lambda x, yc: (1 - a) * z_func_2d(x, yc) + a * loglik_norm(x, yc),
+                    axes, x_range_plot, y_range_plot, resolution=21,
+                    color=interpolate_color(BLUE_C, TEAL_C, a),
+                )
+                mob.become(new_surf)
+
+            surface.add_updater(_morph_surface)
+            self.play(morph.animate.set_value(1), run_time=min(3, tracker.duration - 0.1))
+            surface.remove_updater(_morph_surface)
