@@ -4,7 +4,7 @@ from manim import *
 from MF_Tools import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
-from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, highlight_cell, extract_table_grid, log_likelihood, FadeInRHS, FlashAround, latex_vector, create_likelihood_graph, get_graph_mle, TransformWithBoxes
+from N_Tools import as_row, as_col, numpy_to_latex, sigmoid, logistic_regression, round_sig, get_matching_cell_map, TransformMatchingCells, latex_table_to_array, highlight_row, highlight_cell, extract_table_grid, log_likelihood, FadeInRHS, FlashAround, latex_vector, create_likelihood_graph, get_graph_mle, surface_from_function, loglik_generator, TransformWithBoxes
 from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data file
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 from hat_matrix_logo import HMDialogBox
@@ -20,7 +20,7 @@ TableTransform = TransformMatchingCells # TransformMatchingCells for production,
 
 class MLEScene(VoiceoverScene, ThreeDScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast20.wav",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast21.wav",
                 cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
                 min_silence_len=2000,
                 keep_silence=(0,0)))
@@ -668,3 +668,25 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                                         ([15,16],[11,12],{"path_arc": PI * 0.7}),
                                         (range(28,32),range(20,24), {"path_arc": PI * 0.7}),
                                         (FadeIn, [19,25])))
+
+        with self.voiceover("So here's the graph of the log likelihood. The maximum is in the same place, but the graph is slightly nicer, and more importantly, it's easier to take the derivative of, which ties into our next idea.") as tracker:
+            # Stop spinning so the surface transform isn't fighting the rotation updater.
+            graph_group.clear_updaters()
+
+            # Normalize the log-likelihood to [0, 1] so the peak stays at z=1
+            # and the shape change is visible with the same axes.
+            x_range_plot = (beta_2d[0] - se_2d[0], beta_2d[0] + se_2d[0])
+            y_range_plot = (beta_2d[1] - se_2d[1], beta_2d[1] + se_2d[1])
+            xs = np.linspace(*x_range_plot, 20)
+            ys = np.linspace(*y_range_plot, 20)
+            loglik_func = loglik_generator(as_col(X[:, 0]), y)
+            loglik_max = loglik_func(beta_2d[0], beta_2d[1])  # == MLE log-likelihood
+            loglik_min = min(loglik_func(x, yc) for x in xs for yc in ys)
+
+            def loglik_norm(x, yc):
+                return (loglik_func(x, yc) - loglik_min) / (loglik_max - loglik_min)
+
+            loglik_surface = surface_from_function(
+                loglik_norm, axes, x_range_plot, y_range_plot, resolution=21, color=TEAL_C
+            )
+            self.play(Transform(surface, loglik_surface), run_time=min(3, tracker.duration - 0.1))
