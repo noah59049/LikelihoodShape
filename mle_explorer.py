@@ -618,6 +618,10 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             graph_group.rotate(-PI / 3, axis=RIGHT, about_point=ORIGIN)
 
             self.play(Create(axes), Create(surface), Write(axis_labels))
+            # Remove individual mobs and re-add as a group so that graph_group
+            # is in self.mobjects and its updater gets called each frame.
+            self.remove(axes, surface, axis_labels)
+            self.add(graph_group)
             spin_axis = np.array([0, np.sin(PI / 3), np.cos(PI / 3)])
             graph_group.add_updater(lambda g, dt: g.rotate(0.2 * dt, axis=spin_axis, about_point=ORIGIN))
 
