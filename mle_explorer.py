@@ -445,7 +445,9 @@ class MLEScene(VoiceoverScene, ThreeDScene):
         row1 = ColoredMathTex(r"\hat{y}_i \quad \quad \quad (y_i=1)")
         row2 = ColoredMathTex(r"1-\hat{y}_i \quad \thinspace \thinspace (y_i=0)") # This leads to the conditions being aligned somehow, probably not the best fix but it works
         rows = VGroup(row1, row2).arrange(DOWN, aligned_edge=LEFT, buff=0.15).next_to(brace, RIGHT, aligned_edge = UP)
-        cases = VGroup(base, brace, rows).to_corner(UR)
+        cases = VGroup(base, brace, rows)
+        cases.scale(0.8)
+        cases.to_corner(UR)
 
         row1_basic = ColoredMathTex(r"\hat{y} \quad \quad \quad (y=1)")
         row2_basic = ColoredMathTex(r"1-\hat{y} \quad \thinspace \thinspace (y=0)") # This leads to the conditions being aligned somehow, probably not the best fix but it works
