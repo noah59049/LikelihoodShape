@@ -618,6 +618,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             # 60° from the camera direction so the surface is visible from the side.
             graph_group.scale(0.4, about_point=ORIGIN)
             graph_group.rotate(-PI / 3, axis=RIGHT, about_point=ORIGIN)
+            graph_group.shift(DOWN * 1.5)
 
             self.play(Create(axes), Create(surface), Write(axis_labels))
             # Remove individual mobs and re-add as a group so that graph_group
@@ -625,7 +626,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
             self.remove(axes, surface, axis_labels)
             self.add(graph_group)
             spin_axis = np.array([0, np.sin(PI / 3), np.cos(PI / 3)])
-            graph_group.add_updater(lambda g, dt: g.rotate(0.2 * dt, axis=spin_axis, about_point=ORIGIN))
+            graph_group.add_updater(lambda g, dt: g.rotate(0.2 * dt, axis=spin_axis, about_point=DOWN * 1.5))
 
         with self.voiceover("At the maximum of the liklihood function, that's the MLE, that's the beta hats we use.") as tracker:
             beta_2d, se_2d, z_func_2d = get_graph_mle(axes, X[:,0], y)
