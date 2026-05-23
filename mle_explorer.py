@@ -666,7 +666,7 @@ class MLEScene(VoiceoverScene, ThreeDScene):
                                         ([11,12], [11,12]),
                                         ([11,12],[19,20], {"path_arc": PI * -0.7})))
 
-        with self.voiceover("and then move the exponents. Maximizing the likelihood is equivalent to maximizing the log likelihood. But using the log likelihood makes the math easier.") as tracker:
+        with self.voiceover("and then move the exponents.") as tracker:
             self.play(TransformByGlyphMap(loglik3, loglik4,
                                         ([15,16],[11,12],{"path_arc": PI * 0.7}),
                                         (range(28,32),range(20,24), {"path_arc": PI * 0.7}),
