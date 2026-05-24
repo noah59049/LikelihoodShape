@@ -31,7 +31,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                                         y_range = y_range,
                                         z_range = z_range,
                                         resolution=21,
-                                        color = BLUE_C)
+                                        color = TEAL_C)
         
         # --- Make the surface ---
         self.set_camera_orientation(
