@@ -17,18 +17,22 @@ class FlawScene(ThreeDScene, VoiceoverScene):
         y = data.y
         ses = 0.03
         beta, cov, se = logistic_regression(X, y, add_intercept = True, return_stats = True)
-        x_range = (beta[0] - se[0] * ses, beta[0] + se[0] * ses)
-        y_range = (beta[1] - se[1] * ses, beta[1] + se[1] * ses)
-        loglik = loglik_generator(X, y, add_intercept=True)
+        _loglik = loglik_generator(X, y, add_intercept=True)
+
+        def z_scores_to_betas(u, v):
+            return (beta[0] + se[0] * ses * u, beta[1] + se[1] * ses * v)
+        def loglik_centered(u, v):
+            return _loglik(*z_scores_to_betas(u, v))
+        
         z_range = compute_z_range(
-            z_func=loglik,
-            x_range=x_range,
-            y_range=y_range,
+            z_func=loglik_centered,
+            x_range=[-1,1],
+            y_range=[-1,1],
             samples=21
         )
-        axes, surface = create_3d_graph(z_func = loglik,
-                                        x_range=x_range,
-                                        y_range = y_range,
+        axes, surface = create_3d_graph(z_func = loglik_centered,
+                                        x_range=[-1,1],
+                                        y_range = [-1,1],
                                         z_range = z_range,
                                         resolution=21,
                                         color = TEAL_C)
@@ -46,31 +50,42 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             self.begin_ambient_camera_rotation(rate=0.2)
 
         # --- Add the MLE dot ---
-        mle_x, mle_y = beta
-        mle_z = log_likelihood(X, y, beta, add_intercept = True)
-        start_x = mle_x + 0.5 * ses * se[0]
-        start_y = mle_y - 1 * ses * se[1]
-        start_z = loglik(start_x, start_y)
+        mle_z = loglik_centered(0,0)
+        start_x = 0.5
+        start_y = -0.5
+        start_z = loglik_centered(start_x, start_y)
 
         with self.voiceover("The standard explanation goes, you set all the derivatives to 0, the logic being, at the max, the derivative must be 0. But this explanation is incomplete. What if it's") as tracker:
             dot = Dot3D(axes.c2p(start_x, start_y, start_z), color=YELLOW)
             self.play(FadeIn(dot))
 
-            x_tracker = ValueTracker(start_x)
-            y_tracker = ValueTracker(start_y)
+            u_tracker = ValueTracker(start_x)
+            v_tracker = ValueTracker(start_y)
 
             def gradient(beta_vec): # Could be moved to N_Tools
-                # returns [dL/db0, dL/db1]
+                # returns [dl/db0, dl/db1] 
                 return grad_log_likelihood(X, y, beta_vec, add_intercept=True)
-
+            def gradient_centered(u,v):
+                return gradient(np.array(z_scores_to_betas(u,v)))
+            """
+            def z_scores_to_betas(u, v):
+                return (beta[0] + se[0] * ses * u, beta[1] + se[1] * ses * v)
+            def loglik_centered(u, v):
+                return _loglik(*z_scores_to_betas(u, v))
+            """
+            # d/du loglik_centered(u,v) = se[0] * ses * dl/dbhat0
+            # d/dv loglik_centered(u,v) = se[1] * ses * dl/dbhat1
+            def visual_gradient(u,v):
+                return gradient_centered(u,v) * se * ses
+            
             deriv_tex = always_redraw(lambda: VGroup(
                 ColoredMathTex(
                     r"\frac{\partial \ell}{\partial \hat{\beta}_0} = "
-                    f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[0]:.3f}"
+                    f"{gradient_centered(u_tracker.get_value(), v_tracker.get_value())[0]:.3f}"
                 ),
                 ColoredMathTex(
                     r"\frac{\partial \ell}{\partial \hat{\beta}_1} = "
-                    f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[1]:.3f}"
+                    f"{gradient_centered(u_tracker.get_value(), v_tracker.get_value())[1]:.3f}"
                 )
             ).arrange(DOWN, aligned_edge=LEFT).to_corner(UL))
             self.add_fixed_in_frame_mobjects(deriv_tex)
@@ -78,25 +93,24 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             
             dot.add_updater(lambda d: d.move_to(
                 axes.c2p(
-                    x_tracker.get_value(),
-                    y_tracker.get_value(),
-                    loglik(x_tracker.get_value(), y_tracker.get_value())
+                    u_tracker.get_value(),
+                    v_tracker.get_value(),
+                    loglik_centered(u_tracker.get_value(), v_tracker.get_value())
                 )
             ))
 
-            initial_g = gradient(np.array([start_x, start_y]))
-            initial_vis_g_norm = np.linalg.norm(initial_g * se)
-            arrow_visual_size = ses * 0.3  # fraction of axis half-range
+            initial_g = visual_gradient(start_x, start_y)
+            initial_vis_g_norm = np.linalg.norm(initial_g)
+            arrow_scale = 0.1 / initial_vis_g_norm
 
             def make_gradient_arrow():
-                x = x_tracker.get_value()
-                y = y_tracker.get_value()
-                g = gradient(np.array([x, y]))
-                start_pt = np.array(axes.c2p(x, y, loglik(x, y)))
-                delta = (arrow_visual_size / initial_vis_g_norm) * g * se**2
-                end_x = x + delta[0]
-                end_y = y + delta[1]
-                end_pt = np.array(axes.c2p(end_x, end_y, loglik(end_x, end_y)))
+                u = u_tracker.get_value()
+                v = v_tracker.get_value()
+                g = visual_gradient(u,v)
+                start_pt = np.array(axes.c2p(u, v, loglik_centered(u, v)))
+                end_u = u + g[0] * arrow_scale
+                end_v = v + g[1] * arrow_scale
+                end_pt = np.array(axes.c2p(end_u, end_v, loglik_centered(end_u, end_v)))
                 if np.linalg.norm(end_pt - start_pt) < 1e-6:
                     end_pt = start_pt + np.array([1e-6, 0, 0])
                 return Arrow3D(start=start_pt, end=end_pt, color=ORANGE)
@@ -105,8 +119,8 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             self.add(gradient_arrow)
 
             self.play(
-                x_tracker.animate.set_value(mle_x),
-                y_tracker.animate.set_value(mle_y),
+                u_tracker.animate.set_value(0),
+                v_tracker.animate.set_value(0),
                 run_time=4,
                 rate_func=smooth
             )
@@ -120,20 +134,21 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             deriv_tex = VGroup(
                 ColoredMathTex(
                     r"\frac{\partial \ell}{\partial \hat{\beta}_0} = "
-                    f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[0]:.3f}"
+                    f"{gradient_centered(u_tracker.get_value(), v_tracker.get_value())[0]:.3f}"
                 ),
                 ColoredMathTex(
                     r"\frac{\partial \ell}{\partial \hat{\beta}_1} = "
-                    f"{gradient(np.array([x_tracker.get_value(), y_tracker.get_value()]))[1]:.3f}"
+                    f"{gradient_centered(u_tracker.get_value(), v_tracker.get_value())[1]:.3f}"
                 )
             ).arrange(DOWN, aligned_edge=LEFT).to_corner(UL)
 
             self.add_fixed_in_frame_mobjects(deriv_tex)
 
+        return
         # --- Define the functions for what if the log likelihood is something else ---
         def upside_down_loglik(beta_hat0, beta_hat1):
             return 2 * mle_z - loglik(beta_hat0, beta_hat1)
-        def saddle_loglik(beta_hat0, beta_hat1):
+        def saddle_loglik_centered(beta_hat0, beta_hat1):
             return loglik(beta_hat0, beta_hat1) - \
                    loglik(*rotate_90_cw(mle_x, mle_y, beta_hat0, beta_hat1, x_scale = se[0], y_scale = se[1])) + \
                    mle_z
