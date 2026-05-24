@@ -51,16 +51,16 @@ class FlawScene(ThreeDScene, VoiceoverScene):
 
         # --- Add the MLE dot ---
         mle_z = loglik_centered(0,0)
-        start_x = 0.5
-        start_y = -0.5
-        start_z = loglik_centered(start_x, start_y)
+        start_u = 0.5
+        start_v = 1
+        start_z = loglik_centered(start_u, start_v)
 
         with self.voiceover("The standard explanation goes, you set all the derivatives to 0, the logic being, at the max, the derivative must be 0. But this explanation is incomplete. What if it's") as tracker:
-            dot = Dot3D(axes.c2p(start_x, start_y, start_z), color=YELLOW)
+            dot = Dot3D(axes.c2p(start_u, start_v, start_z), color=YELLOW)
             self.play(FadeIn(dot))
 
-            u_tracker = ValueTracker(start_x)
-            v_tracker = ValueTracker(start_y)
+            u_tracker = ValueTracker(start_u)
+            v_tracker = ValueTracker(start_v)
 
             def gradient(beta_vec): # Could be moved to N_Tools
                 # returns [dl/db0, dl/db1] 
@@ -99,7 +99,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                 )
             ))
 
-            initial_g = visual_gradient(start_x, start_y)
+            initial_g = visual_gradient(start_u, start_v)
             initial_vis_g_norm = np.linalg.norm(initial_g)
             arrow_scale = 0.1 / initial_vis_g_norm
 
@@ -118,12 +118,29 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             gradient_arrow = always_redraw(make_gradient_arrow)
             self.add(gradient_arrow)
 
+            # Do gradient descent
+            NUM_GRAD_STEPS = 300
+            LR = 0.01
+            curr = np.array((start_u, start_v))
+            grad_steps = [curr]
+            for _ in range(NUM_GRAD_STEPS):
+                curr = curr + LR * visual_gradient(*curr)
+                grad_steps.append(curr)
+            grad_steps = np.vstack(grad_steps)
+            
+
+            path_alphas = np.linspace(0, 1, len(grad_steps))
+
+            def update_trackers(mob, alpha):
+                u_tracker.set_value(float(np.interp(alpha, path_alphas, grad_steps[:, 0])))
+                v_tracker.set_value(float(np.interp(alpha, path_alphas, grad_steps[:, 1])))
+
             self.play(
-                u_tracker.animate.set_value(0),
-                v_tracker.animate.set_value(0),
+                UpdateFromAlphaFunc(VMobject(), update_trackers),
                 run_time=4,
-                rate_func=smooth
+                rate_func=linear
             )
+            
 
             # --- Force a clean rebuild of the MathTex ---
             gradient_arrow.clear_updaters()
