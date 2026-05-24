@@ -52,7 +52,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
         start_y = mle_y - 0.5 * ses * se[1]
         start_z = loglik(start_x, start_y)
 
-        with self.voiceover("The standard explanation goes, you set all the derivatives to 0, the logic being, at a local min or max, the derivative must be 0. But this explanation is incomplete.") as tracker:
+        with self.voiceover("The standard explanation goes, you set all the derivatives to 0, the logic being, at a local min or max, the derivative must be 0. But this explanation is incomplete. What if it's") as tracker:
             dot = Dot3D(axes.c2p(start_x, start_y, start_z), color=YELLOW)
             self.play(FadeIn(dot))
 
@@ -128,7 +128,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
         
         # --- Play the animations for what if it's a minimum, saddle, or local non global max ---
         for z_func in upside_down_loglik, saddle_loglik, bumped_loglik:
-            with self.voiceover("What if it's a local minimum instead? Or a saddle point? Or a local maximum, but not the global maximum?") as tracker:
+            with self.voiceover("a local minimum instead? Or") as tracker:
                 _, surface2 = create_3d_graph(z_func = z_func,
                                             x_range=x_range,
                                             y_range = y_range,
@@ -139,3 +139,9 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                 self.play(Transform(surface, surface2))
                 self.wait(tracker.duration - 2.1)
                 self.play(Restore(surface))
+
+        if False:
+            with self.voiceover("a saddle point? Or ") as tracker:
+                pass
+            with self.voiceover("a local maximum, but not the global maximum?") as tracker:
+                pass
