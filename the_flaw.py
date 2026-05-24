@@ -128,8 +128,11 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                 step = LR * visual_gradient(*curr)
 
                 # Gradient clipping, or something like it
-                if np.linalg.norm(step) < 0.03:
-                    step = step * np.sqrt(0.03 / np.linalg.norm(step))
+                clip = 0.01
+                if np.linalg.norm(step) < clip:
+                    step = step * (clip / np.linalg.norm(step)) ** 0.7
+                else:
+                    step = step * (clip / np.linalg.norm(step)) ** 1
 
                 # Momentum
                 momentum = step + momentum * 0.9
@@ -154,7 +157,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                 run_time=4,
                 rate_func=linear
             )
-            
+            return
 
             # --- Force a clean rebuild of the MathTex ---
             gradient_arrow.clear_updaters()
