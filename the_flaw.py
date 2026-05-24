@@ -8,7 +8,7 @@ from tex_colors import *
 
 class FlawScene(ThreeDScene, VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/the_flaw_podcast.mp3",
+        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/the_flaw_podcast2.wav",
         cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
         min_silence_len=2000,
         keep_silence=(0,0)))
@@ -39,7 +39,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             theta=-45 * DEGREES,
             zoom=0.55
         )
-        with self.voiceover("which is, how do you find the maximum of the likelihood?") as tracker:
+        with self.voiceover("which is, how do you find the maximum of the log likelihood?") as tracker:
             self.add(axes)
             self.play(Create(surface))
             self.wait(1)
@@ -52,7 +52,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
         start_y = mle_y - 0.5 * ses * se[1]
         start_z = loglik(start_x, start_y)
 
-        with self.voiceover("The standard explanation goes, you set all the derivatives to 0, the logic being, at a local min or max, the derivative must be 0. But this explanation is incomplete. What if it's") as tracker:
+        with self.voiceover("The standard explanation goes, you set all the derivatives to 0, the logic being, at the max, the derivative must be 0. But this explanation is incomplete. What if it's") as tracker:
             dot = Dot3D(axes.c2p(start_x, start_y, start_z), color=YELLOW)
             self.play(FadeIn(dot))
 
@@ -136,9 +136,14 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                                             resolution=21,
                                             color = BLUE_C)
                 surface.save_state()
-                self.play(Transform(surface, surface2))
-                self.wait(tracker.duration - 2.1)
-                self.play(Restore(surface))
+                usable_time = tracker.duration - 0.1
+                if usable_time > 2:
+                    self.play(Transform(surface, surface2))
+                    self.wait(usable_time - 2)
+                    self.play(Restore(surface))
+                else:
+                    self.play(Transform(surface, surface2, run_time = usable_time / 2))
+                    self.play(Restore(surface, run_time = usable_time / 2))
 
         if False:
             with self.voiceover("a saddle point? Or ") as tracker:
