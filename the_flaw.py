@@ -49,7 +49,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
         mle_x, mle_y = beta
         mle_z = log_likelihood(X, y, beta, add_intercept = True)
         start_x = mle_x + 0.5 * ses * se[0]
-        start_y = mle_y - 0.5 * ses * se[1]
+        start_y = mle_y - 1 * ses * se[1]
         start_z = loglik(start_x, start_y)
 
         with self.voiceover("The standard explanation goes, you set all the derivatives to 0, the logic being, at the max, the derivative must be 0. But this explanation is incomplete. What if it's") as tracker:
@@ -84,6 +84,26 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                 )
             ))
 
+            initial_g = gradient(np.array([start_x, start_y]))
+            initial_vis_g_norm = np.linalg.norm(initial_g * se)
+            arrow_visual_size = ses * 0.3  # fraction of axis half-range
+
+            def make_gradient_arrow():
+                x = x_tracker.get_value()
+                y = y_tracker.get_value()
+                g = gradient(np.array([x, y]))
+                start_pt = np.array(axes.c2p(x, y, loglik(x, y)))
+                delta = (arrow_visual_size / initial_vis_g_norm) * g * se**2
+                end_x = x + delta[0]
+                end_y = y + delta[1]
+                end_pt = np.array(axes.c2p(end_x, end_y, loglik(end_x, end_y)))
+                if np.linalg.norm(end_pt - start_pt) < 1e-6:
+                    end_pt = start_pt + np.array([1e-6, 0, 0])
+                return Arrow3D(start=start_pt, end=end_pt, color=ORANGE)
+
+            gradient_arrow = always_redraw(make_gradient_arrow)
+            self.add(gradient_arrow)
+
             self.play(
                 x_tracker.animate.set_value(mle_x),
                 y_tracker.animate.set_value(mle_y),
@@ -92,6 +112,8 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             )
 
             # --- Force a clean rebuild of the MathTex ---
+            gradient_arrow.clear_updaters()
+            self.remove(gradient_arrow)
             deriv_tex.clear_updaters()
             self.remove(deriv_tex)
 
@@ -134,7 +156,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                                             y_range = y_range,
                                             z_range = z_range,
                                             resolution=21,
-                                            color = BLUE_C)
+                                            color = TEAL_C)
                 surface.save_state()
                 usable_time = tracker.duration - 0.1
                 if usable_time > 2:
