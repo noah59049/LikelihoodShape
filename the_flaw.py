@@ -119,13 +119,15 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             self.add(gradient_arrow)
 
             # Do gradient descent
-            NUM_GRAD_STEPS = 300
             LR = 0.01
             curr = np.array((start_u, start_v))
             grad_steps = [curr]
-            for _ in range(NUM_GRAD_STEPS):
+            while np.linalg.norm(gradient_centered(*curr)) > 2.5e-5:
                 curr = curr + LR * visual_gradient(*curr)
                 grad_steps.append(curr)
+                if len(grad_steps) > 10000:
+                    print(f"We're not there yet {visual_gradient(*curr)=} {curr=}")
+                    break
             grad_steps = np.vstack(grad_steps)
             
 
