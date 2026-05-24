@@ -124,11 +124,18 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             grad_steps = [curr]
             momentum = np.array([0,0])
             while np.linalg.norm(gradient_centered(*curr)) > 2.5e-5:
+                # Determine step
                 step = LR * visual_gradient(*curr)
+
+                # Gradient clipping, or something like it
                 if np.linalg.norm(step) < 0.03:
                     step = step * np.sqrt(0.03 / np.linalg.norm(step))
+
+                # Momentum
                 momentum = step + momentum * 0.9
                 curr = curr + momentum * 0.1
+
+                # Add the next one
                 grad_steps.append(curr)
                 if len(grad_steps) > 10000:
                     print(f"We're not there yet {visual_gradient(*curr)=} {curr=}")
