@@ -99,21 +99,26 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                 )
             ))
 
-            initial_g = visual_gradient(start_u, start_v)
-            initial_vis_g_norm = np.linalg.norm(initial_g)
-            arrow_scale = 0.1 / initial_vis_g_norm
-
+            g0_norm = np.linalg.norm(visual_gradient(start_u, start_v))
             def make_gradient_arrow():
                 u = u_tracker.get_value()
                 v = v_tracker.get_value()
-                g = visual_gradient(u,v)
-                start_pt = np.array(axes.c2p(u, v, loglik_centered(u, v)))
-                end_u = u + g[0] * arrow_scale
-                end_v = v + g[1] * arrow_scale
-                end_pt = np.array(axes.c2p(end_u, end_v, loglik_centered(end_u, end_v)))
-                if np.linalg.norm(end_pt - start_pt) < 1e-6:
-                    end_pt = start_pt + np.array([1e-6, 0, 0])
-                return Arrow3D(start=start_pt, end=end_pt, color=ORANGE)
+                g = visual_gradient(u, v)
+                g_norm = np.linalg.norm(g)
+                arr_size = 0.12# * (g_norm / g0_norm) ** 0.03
+                if arr_size < 0.001:
+                    arr = Arrow3D(start=start_pt, end=start_pt + np.array([0.001, 0, 0]),
+                                  color=ORANGE, thickness=0.006, height=0.05, base_radius=0.02)
+                    arr.set_opacity(0)
+                    return arr
+                else:
+                    g_vis = g / g_norm * arr_size
+                    end_u = u + g_vis[0]
+                    end_v = v + g_vis[1]
+                    start_pt = np.array(axes.c2p(u, v, loglik_centered(u, v)))
+                    end_pt = np.array(axes.c2p(end_u, end_v, loglik_centered(end_u, end_v)))
+                    return Arrow3D(start=start_pt, end=end_pt, color=ORANGE,
+                                thickness=0.006, height=0.05, base_radius=0.02)
 
             gradient_arrow = always_redraw(make_gradient_arrow)
             self.add(gradient_arrow)
