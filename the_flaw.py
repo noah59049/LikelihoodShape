@@ -162,7 +162,6 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                 run_time=4,
                 rate_func=linear
             )
-            return
 
             # --- Force a clean rebuild of the MathTex ---
             gradient_arrow.clear_updaters()
@@ -183,31 +182,29 @@ class FlawScene(ThreeDScene, VoiceoverScene):
 
             self.add_fixed_in_frame_mobjects(deriv_tex)
 
-        return
+
         # --- Define the functions for what if the log likelihood is something else ---
-        def upside_down_loglik(beta_hat0, beta_hat1):
-            return 2 * mle_z - loglik(beta_hat0, beta_hat1)
-        def saddle_loglik_centered(beta_hat0, beta_hat1):
-            return loglik(beta_hat0, beta_hat1) - \
-                   loglik(*rotate_90_cw(mle_x, mle_y, beta_hat0, beta_hat1, x_scale = se[0], y_scale = se[1])) + \
-                   mle_z
-        def bump(beta_hat0, beta_hat1):
-            x0 = mle_x + se[0] * ses / 2 # I would rather do this with eigenvectors or something
-            y0 = mle_y - se[1] * ses / 2 # I would rather do this with eigenvectors or something
-            x_screen = (beta_hat0 - x0) / (se[0] * ses / 6)
-            y_screen = (beta_hat1 - y0) / (se[1] * ses / 6)
+        def upside_down_loglik(u, v):
+            return 2 * mle_z - loglik_centered(u, v)
+        def saddle_loglik_centered(u, v):
+            return loglik_centered(u, v) - loglik_centered(v, -u) + mle_z
+        def bump(u, v):
+            x0 =  0.5 # I would rather do this with eigenvectors or something
+            y0 = -0.5 # I would rather do this with eigenvectors or something
+            x_screen = (u - x0) * 6
+            y_screen = (v - y0) * 6
             z_scale = (z_range[1] - z_range[0]) / 4
             exponential = np.exp(-(x_screen**2 + y_screen**2))
             return exponential * z_scale
-        def bumped_loglik(beta_hat0, beta_hat1):
-            return loglik(beta_hat0, beta_hat1) + bump(beta_hat0, beta_hat1)
+        def bumped_loglik_centered(u, v):
+            return loglik_centered(u, v) + bump(u, v)
         
         # --- Play the animations for what if it's a minimum, saddle, or local non global max ---
-        for z_func in upside_down_loglik, saddle_loglik, bumped_loglik:
+        for z_func in upside_down_loglik, saddle_loglik_centered, bumped_loglik_centered:
             with self.voiceover("a local minimum instead? Or") as tracker:
                 _, surface2 = create_3d_graph(z_func = z_func,
-                                            x_range=x_range,
-                                            y_range = y_range,
+                                            x_range=[-1,1],
+                                            y_range = [-1,1],
                                             z_range = z_range,
                                             resolution=21,
                                             color = TEAL_C)
