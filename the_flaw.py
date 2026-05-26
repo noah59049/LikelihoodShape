@@ -5,11 +5,12 @@ from manim_voiceover import *
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 from N_Tools import *
 from tex_colors import *
+import ls_config
 
 class FlawScene(ThreeDScene, VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/the_flaw_podcast2.wav",
-        cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+        self.set_speech_service(StitcherService(ls_config.path_to_podcast("the_flaw"),
+        cache_dir=ls_config.get_cache_dir(),
         min_silence_len=2000,
         keep_silence=(0,0)))
         # --- Get our actual log likelihood ---
