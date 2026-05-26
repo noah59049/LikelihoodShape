@@ -9,6 +9,7 @@ from intro_with_tables import yX_tex_numbered # TODO: Maybe move this to a data 
 from data import COLS_TO_KEEP, X, y, yX # type: ignore
 from hat_matrix_logo import HMDialogBox
 from tex_colors import *
+import ls_config
 
 
 yXyhat_tex = yX_tex_numbered.replace(r"\\", r"& \\").replace(r"c | }", r"c | c | }").replace("X4\n &", r"X4 & $\hat{y}$")
@@ -20,8 +21,8 @@ TableTransform = TransformMatchingCells # TransformMatchingCells for production,
 
 class MLEScene(VoiceoverScene, ThreeDScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/mle_explorer_podcast21.wav",
-                cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+        self.set_speech_service(StitcherService(ls_config.path_to_podcast("mle_explorer"),
+                cache_dir=ls_config.get_cache_dir(),
                 min_silence_len=2000,
                 keep_silence=(0,0)))
         yX_table = Tex(yX_tex_numbered).scale(0.66).to_corner(UL)
