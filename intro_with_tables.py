@@ -3,6 +3,7 @@
 import numpy as np
 import pandas as pd
 from N_Tools import as_row, as_col, numpy_to_latex, TransformMatchingCells
+import ls_config
 
 from data import COLS_TO_KEEP, colnames, X, y, yX # type: ignore
 
@@ -35,8 +36,10 @@ from manim_voiceover.services.stitcher import _StitcherService as StitcherServic
 
 class DefinitionsScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService("/Users/noah/Convex/LikelihoodShape/podcasts/intro_with_tables_podcast5.wav",
-                cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+        # print(f"{__name__=} {ls_config.__name__=}")
+        # return
+        self.set_speech_service(StitcherService(ls_config.path_to_podcast("intro_with_tables"),
+                cache_dir=ls_config.get_cache_dir(),
                 min_silence_len=2000,
                 keep_silence=(0,0)))
         
