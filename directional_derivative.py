@@ -4,6 +4,7 @@ from manim_voiceover.services.stitcher import _StitcherService as StitcherServic
 import numpy as np
 from MF_Tools import *
 from N_Tools import latex_vector, ReplacementTransformGroupWithBoxes
+import ls_config
 
 def create_v(num_elements,
              orientation = "row",
@@ -49,8 +50,8 @@ def hessian_latex(n, func_name="f"):
 
 class DirectionalDerivativeScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/directional_derivative_podcast4.mp3",
-        cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+        self.set_speech_service(StitcherService(ls_config.path_to_podcast("directional_derivative"),
+        cache_dir=ls_config.get_cache_dir(),
         min_silence_len=2000,
         keep_silence=(0,0)))
 
@@ -109,7 +110,7 @@ class DirectionalDerivativeScene(VoiceoverScene):
             )
 
             # --- Step 9: Clear out the rest of the scene except for simplified ---
-            self.wait(tracker.duration - 2)
+            # self.wait(tracker.duration - 2) # TODO: Figure out how to get this runtime down lower
             self.play(FadeOut(deriv_relation),
                       simplified.animate.to_edge(UP),
                       run_time = 1)
