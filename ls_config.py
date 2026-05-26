@@ -7,6 +7,22 @@ def get_cache_dir():
     return get_abspath("cache_dir")
 
 def path_to_podcast(stem):
+    """Return the path to the highest-numbered podcast WAV file matching the given stem.
+
+    Scans the podcasts/ directory for files named ``<stem>_podcast<N>.wav`` and
+    returns the one with the largest consecutive N starting from 1.
+
+    Args:
+        stem: Base name prefix for the podcast files (e.g. ``"episode1"`` matches
+              ``episode1_podcast1.wav``, ``episode1_podcast2.wav``, etc.).
+
+    Returns:
+        Absolute path to the highest-numbered matching WAV file.
+
+    Raises:
+        FileNotFoundError: If no matching file is found (i.e. ``<stem>_podcast1.wav``
+                           does not exist).
+    """
     directory = get_abspath("podcasts/")
     best_number = 0
     for number in range(1, 10000):
