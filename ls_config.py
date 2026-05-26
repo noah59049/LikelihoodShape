@@ -6,6 +6,28 @@ def get_abspath(path):
 def get_cache_dir():
     return get_abspath("cache_dir")
 
+def path_to_transcript(stem : str, extension : str = ".pdf"):
+    return WORKING_DIRECTORY + "transcripts/" + stem + extension
+
+def path_to_manim_script(stem: str):
+    return WORKING_DIRECTORY + stem + ".py"
+
+def path_to_raw_voiceover(stem: str):
+    directory = get_abspath("raw_voiceovers/")
+    best_number = 0
+    for number in range(1, 10000):
+        for extension in ".wav", ".mp3", ".m4a":
+            if os.path.exists(directory + stem + f"{number}{extension}") :
+                best_number = number
+                break # This will keep the right extension
+        if best_number != number: # We didn't find one
+            break
+
+    if best_number == 0:
+        raise FileNotFoundError(f"Could not find raw voiceover {directory + stem + f"1{extension}"}")
+    else:
+        return directory + stem + f"{best_number}{extension}"
+
 def path_to_podcast(stem : str, make_new : bool = False):
     """Return the path to the highest-numbered podcast WAV file matching the given stem.
 

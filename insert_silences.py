@@ -26,6 +26,8 @@ from pathlib import Path
 from faster_whisper import WhisperModel # type: ignore
 from pydub import AudioSegment
 
+import ls_config
+
 
 def ensure_wav(audio_path: str) -> str:
     """If the file is .m4a or .mp3, convert to .wav via ffmpeg and return the new path."""
@@ -196,6 +198,7 @@ def main():
     p.add_argument("-i", "--input", help="Input audio file (any format ffmpeg can read)")
     p.add_argument("-t", "--transcript", help="Plain-text transcript (one chunk per line) or manim .py script")
     p.add_argument("-o", "--output", help="Output audio file (extension picks format)")
+    p.add_argument("-s", "--stem", help="File stem, e.g. 'intro_with_tables' or 'directional_derivative'")
     p.add_argument(
         "--silence",
         type=float,
@@ -209,6 +212,11 @@ def main():
     )
     args = p.parse_args()
 
+    if args.stem:
+        # Calculate input output and transcript from stem
+        args.input = ls_config.path_to_raw_voiceover(args.stem)
+        args.transcript = ls_config.path_to_manim_script(args.stem)
+        args.output = ls_config.path_to_podcast(args.stem, make_new = True)
     if not args.input:
         args.input = input("Input audio file: ").strip()
     if not args.transcript:

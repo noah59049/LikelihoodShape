@@ -16,6 +16,7 @@ import argparse
 import re
 import sys
 from pathlib import Path
+import ls_config
 
 
 def extract_voiceovers(path: str) -> list[str]:
@@ -61,10 +62,20 @@ def main():
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    p.add_argument("-i", "--input", required=True, help="Manim Python script")
+    p.add_argument("-i", "--input", help="Manim Python script")
     p.add_argument("-o", "--output", help="Output file: .txt, .pdf, or omit for stdout")
-    p.add_argument("-l", "--linebreaks", help="If true (default), inserts a line break between each voiceover call. If false, does not")
+    p.add_argument("-s", "--stem", help="File stem, e.g. 'intro_with_tables' or 'directional_derivative'")
+    p.add_argument("-x", "--extension", help="File extension for transcript, either 'pdf' or 'txt'")
+    p.add_argument("-l", "--linebreaks", help="If true, inserts a line break between each voiceover call. If false, does not. Defaults to true for txt and false for pdf")
     args = p.parse_args()
+
+    if args.stem:
+        if args.extension:
+            extension = "." + args.extension
+        else:
+            extension = ".pdf"
+        args.input = ls_config.path_to_manim_script(args.stem)
+        args.output = ls_config.path_to_transcript(args.stem, extension=extension)
 
     lines = extract_voiceovers(args.input)
     if not lines:
@@ -80,7 +91,8 @@ def main():
         else:
             print(f"Invalid value {args.linebreaks} for linebreaks", file=sys.stderr)
             return 1
-    
+    elif Path(args.output).suffix.lower() == ".pdf": # linebreaks for txt, not for pdf
+        lines = [" ".join(lines)]
 
     if args.output:
         if Path(args.output).suffix.lower() == ".pdf":
