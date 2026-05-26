@@ -7,6 +7,7 @@ import pandas as pd
 from N_Tools import simple_linear_regression, logistic_regression, create_graph, TransformWithBoxes
 from hat_matrix_logo import HMDialogBox
 from tex_colors import *
+import ls_config
 
 df = pd.read_csv("breast_cancer_sklearn.csv")
 X1 = np.array(df[df.columns[0]])
@@ -17,8 +18,8 @@ Y = np.array(df["target"])
 
 class LinearLogisticScene(ThreeDScene, VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/linear_to_logistic_podcast_1002.wav",
-                cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+        self.set_speech_service(StitcherService(ls_config.path_to_podcast("linear_to_logistic"),
+                cache_dir=ls_config.get_cache_dir(),
                 min_silence_len=2000,
                 keep_silence=(0,0)))
         self.set_camera_orientation(phi=0 * DEGREES, theta=-90 * DEGREES)
