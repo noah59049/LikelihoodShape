@@ -4,13 +4,13 @@ from manim_voiceover.services.stitcher import _StitcherService as StitcherServic
 import numpy as np
 from slice_utils import make_graph_slice
 from N_Tools import shift_to_screen_corner
-
+import ls_config
 
 class GlobalMax(ThreeDScene, VoiceoverScene):
     def construct(self):
         self.set_speech_service(StitcherService(
-            r"/Users/noah/Convex/LikelihoodShape/podcasts/global_max_podcast3.wav",
-            cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+            ls_config.path_to_podcast("global_max"),
+            cache_dir=ls_config.get_cache_dir(),
             min_silence_len=2000,
             keep_silence=(0, 0),
         ))
