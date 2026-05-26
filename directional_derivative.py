@@ -354,7 +354,7 @@ class DirectionalDerivativeScene(VoiceoverScene):
                 hess_mat2 = hess_mat3
 
         # Replace the whole Hessian with H
-        with self.voiceover("10. So this matrix of second order partials is called the Hessian, and it’s notated H. And now if we just replace these with") as tracker:
+        with self.voiceover("So this matrix of second order partials is called the Hessian, and it’s notated H. And now if we just replace these with") as tracker:
             self.play(FadeOut(hess_mat3))
             self.play(FadeIn(hess_vec2_split_copy))
 
@@ -373,7 +373,7 @@ class DirectionalDerivativeScene(VoiceoverScene):
                             r"\vec{v}")
             self.play(*[ReplacementTransform(hess_vec3[i], hess_vec4[i]) for i in range(4)])
 
-        with self.voiceover("12. And compare it with the formula for directional first derivatives. It looks very similar.") as tracker:
+        with self.voiceover("And compare it with the formula for directional first derivatives. It looks very similar.") as tracker:
             # Replace the g''(t) with a directional second derivative using D^2
             hess_vec5 = MathTex(r"D^2_{\vec{v}}f(\vec{x}) =",
                             r"\vec{v}^T",
