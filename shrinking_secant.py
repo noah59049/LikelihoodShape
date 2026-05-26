@@ -4,12 +4,13 @@ from manim_voiceover import *
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 from MF_Tools import *
 from N_Tools import FadeInRHS
+import ls_config
 
 
 class ShrinkingSecantScene(VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/shrinking_secant_podcast1.mp3",
-        cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+        self.set_speech_service(StitcherService(ls_config.path_to_podcast("shrinking_secant"),
+        cache_dir=ls_config.get_cache_dir(),
         min_silence_len=2000,
         keep_silence=(0,0)))
 
