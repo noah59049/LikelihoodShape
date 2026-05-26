@@ -4,11 +4,12 @@ from manim_voiceover.services.stitcher import _StitcherService as StitcherServic
 import numpy as np
 from MF_Tools import *
 from slice_utils import make_graph_slice
+import ls_config
 
 class DirectionalDerivativeSliceCopy(ThreeDScene, VoiceoverScene):
     def construct(self):
-        self.set_speech_service(StitcherService(r"/Users/noah/Convex/LikelihoodShape/podcasts/graph_slice_podcast1.wav",
-        cache_dir="/Users/noah/Convex/LikelihoodShape/cache_dir",
+        self.set_speech_service(StitcherService(ls_config.path_to_podcast("graph_slice"),
+        cache_dir=ls_config.get_cache_dir(),
         min_silence_len=2000,
         keep_silence=(0,0)))
 
