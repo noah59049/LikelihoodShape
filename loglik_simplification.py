@@ -473,7 +473,7 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         (FadeIn, [15,16]),
                                         ))
         
-        with self.voiceover("It’s v transpose H v, which if we plug the definition of the Hessian in,") as tracker:
+        with self.voiceover("It's v transpose H v, which if we plug the definition of the Hessian in,") as tracker:
             quadratic2 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{v}^TX^T W X \vec{v}")
             self.play(TransformByGlyphMap(quadratic1, quadratic2,
                                         (range(6), range(7))))
