@@ -22,7 +22,12 @@ import ls_config
 def extract_voiceovers(path: str) -> list[str]:
     text = Path(path).read_text(encoding="utf-8")
     pattern = re.compile(r"""self\.voiceover\(\s*(?:"([^"]+)"|'([^']+)')""")
-    return [m.group(1) or m.group(2) for m in pattern.finditer(text)]
+    results = []
+    for m in pattern.finditer(text):
+        line_start = text.rfind('\n', 0, m.start()) + 1
+        if '#' not in text[line_start:m.start()]:
+            results.append(m.group(1) or m.group(2))
+    return results
 
 
 _UNICODE_TO_ASCII = str.maketrans({

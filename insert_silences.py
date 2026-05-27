@@ -96,7 +96,11 @@ def _load_manim_transcript(path: str) -> list[list[str]]:
     """Extract voiceover strings from a manim script in order."""
     text = Path(path).read_text(encoding="utf-8")
     pattern = re.compile(r"""self\.voiceover\(\s*(?:"([^"]+)"|'([^']+)')""")
-    raw_lines = [m.group(1) or m.group(2) for m in pattern.finditer(text)]
+    raw_lines = []
+    for m in pattern.finditer(text):
+        line_start = text.rfind('\n', 0, m.start()) + 1
+        if '#' not in text[line_start:m.start()]:
+            raw_lines.append(m.group(1) or m.group(2))
     if not raw_lines:
         print("Warning: no self.voiceover(...) calls found in the script.", file=sys.stderr)
     return _parse_lines(raw_lines)
