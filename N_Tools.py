@@ -343,13 +343,9 @@ def square_matrix_tex(n : int,
             row.append(entry)
         rows.append(" & ".join(row))
     
-    matrix_body = " \\\\\n".join(rows)
-    
-    latex = (
-        "\\begin{bmatrix}\n"
-        f"{matrix_body}\n"
-        "\\end{bmatrix}\n"
-    )
+    matrix_body = " \\\\ ".join(rows)
+
+    latex = f"\\begin{{bmatrix}}{matrix_body}\\end{{bmatrix}}"
     return latex
 
 def latex_vector(elements, orientation="column", bracket="bmatrix"):
