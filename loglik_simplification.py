@@ -153,7 +153,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             with self.voiceover("The ln becomes a reciprocal,") as tracker:
                 pass
         
-        loglik17_broken2 = ColoredMathTex(r"l=",
+        loglik17_broken2 = ColoredMathTex(r"\ell=",
                                          r"\sum_{i=1}^{n}",
                                          r"y_i\hat{z}_i",
                                          r"-",
