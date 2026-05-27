@@ -62,17 +62,17 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         ([15,16,17], FadeOut, {"run_time":0.5}),
                                         ([18,24], FadeOut, {"run_time":0.5})))
         
-        with self.voiceover("and if you remember the original definition we gave, this part becomes the linear combination of the predictors.") as tracker:
+        with self.voiceover("and per our original definitions, this part becomes the linear combination of the predictors.") as tracker:
             self.play(TransformByGlyphMap(loglik8, loglik9,
                                         (range(10,21),range(10,45))))
         
-        with self.voiceover("Let's call that zi to simplify things.") as tracker:
-            self.play(TransformByGlyphMap(loglik9, loglik10,
-                                        (range(9,46), [10,11])))
+        with self.voiceover("Let's call that zi hat to simplify things.") as tracker:
+            self.play(TransformByGlyphMap(loglik9, loglik11,
+                                        (range(9,46), [9,10,11])))
         
-        with self.voiceover("And since it's estimated we use zi hat instead,") as tracker:
-            self.play(TransformByGlyphMap(loglik10, loglik11,
-                                        (FadeIn, [9])))
+        # with self.voiceover("And since it's estimated we use zi hat instead,") as tracker:
+        #     self.play(TransformByGlyphMap(loglik10, loglik11,
+        #                                 (FadeIn, [9])))
         
         with self.voiceover("so that yi hat just becomes sigmoid of zi hat.") as tracker:
             self.play(TransformByGlyphMap(loglik11, loglik12,
@@ -329,7 +329,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(TransformByGlyphMap(dot1, dot2,
                                         (FadeIn, range(13,22))))
         
-        with self.voiceover("Where W is just a nxn diagonal matrix with the elements of wi on the diagonal.") as tracker:
+        with self.voiceover("Where W is just a nxn diagonal matrix of all the wi's.") as tracker:
             dot3 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
             r"X_{\cdot m}^T",
             r"W",
@@ -396,7 +396,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             dot10.scale(0.87)
             self.play(ReplacementTransform(dot9[0], dot10[0]), TransformMatchingShapes(dot9[1], dot10[1]))
         
-        with self.voiceover("So we return to the formula and plug that in. And now we want to find the full Hessian.") as tracker:
+        with self.voiceover("So we return to the formula and plug that in.") as tracker:
             self.play(FadeIn(hess_simplified4), FadeOut(dot10))
             hess_simplified5 = ColoredMathTex(r"\frac{\partial^2 \ell}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -",
                                     r"X_{\cdot m}^T W X_{\cdot j}").move_to(hess_simplified4, aligned_edge=LEFT)
@@ -407,13 +407,13 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(TransformMatchingTex(hess_simplified5, hess_simplified6, run_time = 0.001))
         
         # --- Gluing the partials together into the Hessian
-        with self.voiceover("I claim that it is equal to -X transpose times W times X.") as tracker:
+        with self.voiceover("Now I claim that the full Hessian is equal to -X transpose times W times X.") as tracker:
             big_claim = ColoredMathTex("H=-X^T W X")
             self.play(Write(big_claim))
             self.wait(tracker.duration - 2.1)
             self.play(FadeOut(big_claim))
 
-        with self.voiceover("To see that, let’s just look at the mth row of the Hessian, which you just get by gluing all the columns of X together at the right.") as tracker:
+        with self.voiceover("To get the mth row of the Hessian, you just glue all the columns of X together at the right.") as tracker:
             hess_row_tex = latex_vector([r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)) for j in range(4)], "row")
             glued_row = ColoredMathTex(hess_row_tex + r"= -X_{\cdot m}^T W " + latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")).scale(0.9)
             self.play(TransformByGlyphMap(hess_simplified6.copy(), glued_row,
@@ -455,7 +455,7 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         (FadeIn, range(228, 232)) # Right bracket of XT
                                         ))
         
-        with self.voiceover("So now if you use the definitions for Hessian and X, you'll see that my claim was correct, the Hessian is -X transpose W X") as tracker:
+        with self.voiceover("So now if you use the definitions for Hessian and X, you'll see that the Hessian is in fact -X transpose W X") as tracker:
             quadratic0 = ColoredMathTex("H=-X^T W X").move_to(glued_hess)
             self.play(TransformByGlyphMap(glued_hess, quadratic0,
                                         (range(206), [0]),
@@ -487,14 +487,14 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         ([13],[14]),
                                         ))
         
-        with self.voiceover("And then let’s define Xv as u. It doesn’t really matter what u is.") as tracker:
+        with self.voiceover("We define vector u as Xv.") as tracker:
             quadratic4 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{u}^T W \vec{u}")
             self.play(TransformByGlyphMap(quadratic3,quadratic4,
                                         (range(9,14), [9,10]),
                                         (range(16,19), [13,14]),
                                         ))
         
-        with self.voiceover("Now let’s use a result we got from earlier. This product is the sum of ui times wi times ui,") as tracker:
+        with self.voiceover("As we showed with diagonal matrices, this product is the sum of ui times wi times ui,") as tracker:
             quadratic5 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\sum_{i=1}^{n} u_i w_i u_i")
             self.play(TransformByGlyphMap(quadratic4, quadratic5,
                                         (FadeIn, range(9,14)),
