@@ -213,7 +213,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             just_the_grad.generate_target()
             just_the_grad.target.next_to(grad_parts, DOWN, aligned_edge=LEFT)
             self.play(MoveToTarget(just_the_grad))
-            just_the_grad2 = ColoredMathTex(r"\frac{\partial l}{\partial \hat{\beta}_j} = ")
+            just_the_grad2 = ColoredMathTex(r"\frac{\partial \ell}{\partial \hat{\beta}_j} = ")
             just_the_grad2.next_to(grad_parts, DOWN, aligned_edge = LEFT)
             self.play(TransformMatchingShapes(just_the_grad,just_the_grad2, run_time = 0.001))
             self.play(TransformByGlyphMap(just_the_grad2, hesses[0],
@@ -283,7 +283,7 @@ class LoglikSimplificationScene(VoiceoverScene):
                                   ).scale(0.74).next_to(hess_simplified3,DOWN) # TODO: Why isn't this colored?
         with self.voiceover("The entire Hessian is just this, not very helpful.") as tracker:
             self.play(Write(matrix_hess_tex))
-        with self.voiceover("So let's try a different approach.") as tracker:
+        with self.voiceover("For a different approach,") as tracker:
             self.play(FadeOut(matrix_hess_tex))
 
         hess_simplified4 = ColoredMathTex(r"\frac{\partial^2 \ell}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -",
@@ -414,7 +414,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(FadeOut(big_claim))
 
         with self.voiceover("To get the mth row of the Hessian, you just glue all the columns of X together at the right.") as tracker:
-            hess_row_tex = latex_vector([r"\frac{\partial^2 l}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)) for j in range(4)], "row")
+            hess_row_tex = latex_vector([r"\frac{\partial^2 \ell}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)) for j in range(4)], "row") # TODO: Why are these l's not colored?
             glued_row = ColoredMathTex(hess_row_tex + r"= -X_{\cdot m}^T W " + latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")).scale(0.9)
             self.play(TransformByGlyphMap(hess_simplified6.copy(), glued_row,
                                         (range(12), range(1 ,13)),
@@ -439,6 +439,7 @@ class LoglikSimplificationScene(VoiceoverScene):
                                 " W " + 
                                 latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")
                                 ).scale(0.89).next_to(glued_row, DOWN)
+            # TODO: Why does nothing in glued_hess have any color at all?
             self.play(TransformByGlyphMap(glued_row.copy(),glued_hess,
                                         ([0], range(7)), # Left bracket of hess
                                         (range(1,49), range(7,55)),
