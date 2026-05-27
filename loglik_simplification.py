@@ -353,7 +353,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             dot5.scale(0.87)
             self.play(ReplacementTransformGroup(dot4, dot5))
 
-        with self.voiceover("The product of the matrix and the jth column is just the product of each row with that column vector.") as tracker:
+        with self.voiceover("Multiplying by a diagonal matrix just scales each component by the corresponding diagonal element.") as tracker:
             dot6 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
             latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
             W_tex+
@@ -362,27 +362,17 @@ class LoglikSimplificationScene(VoiceoverScene):
             dot6.scale(0.87)
             self.play(TransformMatchingTex(dot5, dot6, run_time = 0.001))
 
-            self.play(FadeOut(easy_dot2, hess_simplified4)) # We need the whole screen for this transformation
-            dot7 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
-            latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
-            latex_vector([latex_vector([W_generator(i,j) for j in range(1,5)],"row") + 
-                        latex_vector([f"X_{{{j}j}}" for j in range(1,5)], orientation = "column")
-                            for i in range(1,5)])
-            )
-            dot7.scale(0.87)
-            self.play(*[ReplacementTransform(dot6[i], dot7[i]) for i in range(2)],
-                    TransformMatchingShapes(dot6[2], dot7[2]))
+            self.play(FadeOut(easy_dot2, hess_simplified4)) # I guess these need to go at some point
         
-        with self.voiceover("And everything is multiplied by 0 except wi times Xij.") as tracker:
             dot8 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
             latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
             latex_vector([f"w_{j} X_{{{j}j}}" for j in range(1,5)], orientation = "column")
             )
             dot8.scale(0.87)
-            self.play(*[ReplacementTransform(dot7[i], dot8[i]) for i in range(2)],
-                    TransformMatchingShapes(dot7[2], dot8[2]))
+            self.play(*[ReplacementTransform(dot6[i], dot8[i]) for i in range(2)],
+                    TransformMatchingShapes(dot6[2], dot8[2]))
         
-        with self.voiceover("And now you expand out the matrix vector product, and you see that my claim was correct. The sum is equal to the mth column transposed times the matrix W times the jth column.") as tracker:
+        with self.voiceover("And if you multiply the row and column vectors, you see that my claim was correct. The sum is equal to the mth column transposed times the matrix W times the jth column.") as tracker:
             dot9 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
             latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row") +
             latex_vector([f"w_{j} X_{{{j}j}}" for j in range(1,5)], orientation = "column")
