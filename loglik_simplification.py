@@ -414,7 +414,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(FadeOut(big_claim))
 
         with self.voiceover("To get the mth row of the Hessian, you just glue all the columns of X together at the right.") as tracker:
-            hess_row_tex = latex_vector([r"\frac{\partial^2 \ell}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)) for j in range(4)], "row") # TODO: Why are these l's not colored?
+            hess_row_tex = latex_vector([r"\frac{\partial^2 \ell}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)) for j in range(4)], "row")
             glued_row = ColoredMathTex(hess_row_tex + r"= -X_{\cdot m}^T W " + latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")).scale(0.9)
             self.play(TransformByGlyphMap(hess_simplified6.copy(), glued_row,
                                         (range(12), range(1 ,13)),
