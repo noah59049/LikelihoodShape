@@ -552,9 +552,9 @@ class LoglikSimplificationScene(VoiceoverScene):
             )
 
         # Highlight the whole sum term
-        sum_box = SurroundingRectangle(quadratic7[2:], buff=0.12)
+        sum_box = SurroundingRectangle(quadratic7[2:], buff=0.12, color = RED)
 
-        positive_text = Tex("Positive", color = RED).scale(0.7)
+        positive_text = Tex("Positive").scale(0.7)
         positive_text.next_to(sum_box, UP, buff=0.35)
 
         positive_arrow = Arrow(
@@ -564,9 +564,9 @@ class LoglikSimplificationScene(VoiceoverScene):
             stroke_width=4,
         )
         # Highlight the negative sign
-        minus_box = SurroundingRectangle(quadratic7[1:], buff=0.08)
+        minus_box = SurroundingRectangle(quadratic7[1:], buff=0.08, color = RED)
 
-        negative_text = Tex("Therefore negative", color = RED).scale(0.7)
+        negative_text = Tex("Therefore negative").scale(0.7)
         negative_text.next_to(minus_box, DOWN, buff=0.35)
 
         negative_arrow = Arrow(
