@@ -33,7 +33,7 @@ class LoglikSimplificationScene(VoiceoverScene):
         loglik16 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}y_i\hat{z}_i+\ln(\frac{1}{e^{\hat{z}_i}+1})")
         loglik17 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}y_i\hat{z}_i-\ln(e^{\hat{z}_i}+1)")
 
-        with self.voiceover("So now we want to find the Hessian and directional second derivatives of our log likelihood. We will simplify it first.") as tracker:
+        with self.voiceover("We want the Hessian and directional second derivatives of our log likelihood. We will simplify it first.") as tracker:
             self.play(Write(loglik4))
 
         with self.voiceover("We expand (1 - yi),") as tracker:
