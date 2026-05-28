@@ -462,11 +462,14 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(TransformByGlyphMap(quadratic1, quadratic2, ([11], range(11,18))))
         with self.voiceover("move the minus sign to the beginning,") as tracker:
             quadratic2a= ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{v}^TX^T W X \vec{v}").move_to(quadratic1)
-            self.play(TransformByGlyphMap(quadratic2, quadratic2a), FadeOut(quadratic0))
-            return
+            self.play(TransformByGlyphMap(quadratic2, quadratic2a, 
+                                          ([12],[8],{"path_arc": PI / 3}),
+                                          ([11,17], FadeOut)),
+                                          FadeOut(quadratic0))
         with self.voiceover("and simplify the transpose of a product, we get this. Let's define") as tracker:
             quadratic3 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -(X\vec{v})^T W X \vec{v}").move_to(quadratic1)
             self.play(TransformMatchingTex(quadratic2a,quadratic3))
+            return
         
         with self.voiceover("vector u as Xv.") as tracker:
             quadratic4 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{u}^T W \vec{u}").move_to(quadratic1)
