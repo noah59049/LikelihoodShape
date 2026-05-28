@@ -45,6 +45,10 @@ def ensure_wav(audio_path: str) -> str:
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
+    print(f"Converted {p.name} → {wav_path.name} ...", file=sys.stderr)
+    print(f"Deleting {p.name}", file = sys.stderr)
+    p.unlink()
+    print(f"Deleted {p.name}", file = sys.stderr)
     return str(wav_path)
 
 
