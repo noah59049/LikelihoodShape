@@ -33,10 +33,10 @@ class LoglikSimplificationScene(VoiceoverScene):
         loglik16 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}y_i\hat{z}_i+\ln(\frac{1}{e^{\hat{z}_i}+1})")
         loglik17 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}y_i\hat{z}_i-\ln(e^{\hat{z}_i}+1)")
 
-        with self.voiceover("We want the Hessian and directional second derivatives of our log likelihood. We will simplify it first.") as tracker:
+        with self.voiceover("We want the Hessian and directional second derivatives of our log likelihood. We will simplify it first. We") as tracker:
             self.play(Write(loglik4))
 
-        with self.voiceover("We expand (1 - yi),") as tracker:
+        with self.voiceover("expand 1 minus yi,") as tracker:
             self.play(TransformByGlyphMap(loglik4, loglik5,
                                         (range(21,30), range(15,24), {"path_arc":PI}),
                                         (range(21,30), range(27,36)),
@@ -74,18 +74,18 @@ class LoglikSimplificationScene(VoiceoverScene):
         #     self.play(TransformByGlyphMap(loglik10, loglik11,
         #                                 (FadeIn, [9])))
         
-        with self.voiceover("so that yi hat just becomes sigmoid of zi hat.") as tracker:
+        with self.voiceover("so that yi hat just becomes sigmoid of zi hat. And we use the") as tracker:
             self.play(TransformByGlyphMap(loglik11, loglik12,
                                         (range(18,21), range(18,24))))
         
-        with self.voiceover("And we use the definition of sigmoid,") as tracker:
+        with self.voiceover("definition of sigmoid, put the") as tracker:
             self.play(TransformByGlyphMap(loglik12, loglik13,
                                         ([18,19,23], FadeOut, {"run_time":0.5}),
                                         (FadeIn, [18,22,23,27,28], {"delay":0.25, "run_time":0.73}),
                                         ([20,21,22],[19,20,21]),
                                         ([20,21,22],[24,25,26])))
         
-        with self.voiceover("put the fraction under a common denominator,") as tracker:
+        with self.voiceover("fraction under a common denominator,") as tracker:
             self.play(TransformByGlyphMap(loglik13,loglik14,
                                         ([16], range(16,29))))
             self.play(TransformByGlyphMap(loglik14, loglik15,
@@ -96,12 +96,12 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         (range(35,41), range(28,34), {"path_arc":-PI/2}),
                                         ([22,34],[27])))
         
-        with self.voiceover("cancel out e to the zi hat,") as tracker:
+        with self.voiceover("cancel out e to the zi hat, and") as tracker:
             self.play(TransformByGlyphMap(loglik15, loglik16,
                                         (range(16,21), []),
                                         (range(22,27), [])))
         
-        with self.voiceover("and simplify the ln of a ratio.") as tracker:
+        with self.voiceover("simplify the ln of a ratio. NOW we want to find the") as tracker:
             self.play(TransformByGlyphMap(loglik16, loglik17,
                                         ([16,17], FadeOut)))
         
@@ -125,7 +125,7 @@ class LoglikSimplificationScene(VoiceoverScene):
                                          r"-",
                                          r"\ln(e^{\hat{z}_i}+1)",
                                          )
-        with self.voiceover("NOW we want to find the derivative of the log likelihood with respect to beta hat j.") as tracker:
+        with self.voiceover("derivative of the log likelihood with respect to beta hat j.") as tracker:
             self.play(TransformMatchingTex(loglik17, loglik17_broken, run_time = 0.001))
 
             grads[0].next_to(loglik17, DOWN, aligned_edge=LEFT)
@@ -148,9 +148,9 @@ class LoglikSimplificationScene(VoiceoverScene):
         if False:
             with self.voiceover("The yi zi hat turns into yi Xij,") as tracker:
                 pass # TODO: [WHY WHY WHY]
-            with self.voiceover("and then we subtract the derivative of the thing on the right, using the chain rule.") as tracker:
+            with self.voiceover("and then we use the chain rule. The ln") as tracker:
                 pass
-            with self.voiceover("The ln becomes a reciprocal,") as tracker:
+            with self.voiceover("becomes a reciprocal,") as tracker:
                 pass
         
         loglik17_broken2 = ColoredMathTex(r"\ell=",
@@ -162,26 +162,26 @@ class LoglikSimplificationScene(VoiceoverScene):
                                          r"+1)",
                                          )
         
-        with self.voiceover("the exponential is it's own derivative,") as tracker:
+        with self.voiceover("the exponential is it's own derivative, and the zi") as tracker:
             self.play(TransformMatchingTex(loglik17_broken, loglik17_broken2, run_time = 0.001))
             self.play(ReplacementTransform(loglik17_broken2[5].copy(), grads[5][5]))
             self.play(TransformMatchingTex(grads[4], grads[5], run_time = 0.001))
 
-        with self.voiceover("and the zi becomes Xij.") as tracker:
+        with self.voiceover("becomes Xij. We can put this") as tracker:
             self.play(ReplacementTransform(loglik17_broken2[5][1:].copy(), grads[6][6]))
             self.play(TransformMatchingTex(grads[5], grads[6], run_time = 0.001))
             grad_together = ColoredMathTex("".join(grad_texes)).move_to(grads[0], aligned_edge=LEFT)
             self.play(TransformMatchingTex(grads[6], grad_together, run_time = 0.001))
 
         grad_together2 = ColoredMathTex(r"\frac{\partial \ell}{\partial \hat{\beta}_j}= \sum_{i=1}^{n} y_i X_{ij} - \frac{e^{\hat{z}_i}}{e^{\hat{z}_i}+1} X_{ij}").move_to(grads[0], aligned_edge=LEFT)
-        with self.voiceover("Now if we just put this in one fraction,") as tracker:
+        with self.voiceover("in one fraction, which is") as tracker:
             self.play(TransformByGlyphMap(grad_together,grad_together2,
                                         ([27,28,29,30], [19,20,21,22]),
                                         ([19], FadeOut),
                                         ))
         
         grad_together3 = ColoredMathTex(r"\frac{\partial \ell}{\partial \hat{\beta}_j}= \sum_{i=1}^{n} y_i X_{ij} - \sigma(\hat{z}_i) X_{ij}").move_to(grads[0], aligned_edge=LEFT)
-        with self.voiceover("that fraction becomes sigmoid of zi.") as tracker:
+        with self.voiceover("sigmoid of zi.") as tracker:
             self.play(TransformByGlyphMap(grad_together2,grad_together3,
                                         (range(19,30), range(19,25))
                                         ))
@@ -205,7 +205,7 @@ class LoglikSimplificationScene(VoiceoverScene):
                                     r" - \sigma(\hat{z}_i)",
                                     r" X_{ij}").move_to(grad_together3)
         
-        with self.voiceover("Now we want the second order partial with respect to beta hat j and beta hat m.") as tracker:
+        with self.voiceover("The second order partial with respect to beta hat j and beta hat m") as tracker:
             # TODO: Include now about how [I wanted to use k but we’re already using it]
             self.play(TransformMatchingTex(grad_together3, grad_parts), run_time = 0.001)
             
@@ -220,12 +220,7 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         (FadeIn, [1], {"delay":0.4, "run_time":0.7}),
                                         (FadeIn, [8,9,10,11])))
         for i in range(1,4):
-            # with self.voiceover([
-            # "Again it's a sum",
-            # "This yi Xij is a constant, and on the right side we use a chain rule",
-            # "The derivative of the sigmoid is equal to sigmoid times 1 minus sigmoid, and I’ll leave up on screen the derivation of that, though I won’t go into it.",
-            # ][i-1]) as tracker:
-            with self.voiceover("Again it's a sum.") as tracker:
+            with self.voiceover("is a sum,") as tracker:
                 self.play(ReplacementTransform(grad_parts[i].copy(), hesses[i][i]))
                 self.play(TransformMatchingTex(hesses[i - 1], hesses[i], run_time = 0.001))
         if False:
@@ -245,14 +240,14 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(TransformMatchingTex(grad_parts, grad_parts2, run_time = 0.001))
             self.play(ReplacementTransform(grad_parts2[4].copy(), hesses[4][4]))
         
-        with self.voiceover("and then the Xij is just a constant factor.") as tracker:
+        with self.voiceover("and the Xij is just a constant factor.") as tracker:
             self.play(TransformMatchingTex(hesses[3], hesses[4], run_time = 0.001))
             self.play(ReplacementTransform(grad_parts2[6].copy(), hesses[5][5]))
             self.play(TransformMatchingTex(hesses[4], hesses[5], run_time = 0.001))
     
         hess_joined = ColoredMathTex("".join(hess_texes)).next_to(grad_together3,DOWN,aligned_edge=LEFT)
         hess_joined[0][18].set_opacity(0) # That pesky dot again
-        with self.voiceover("Now let's turn those sigmoids of zi hat into yi hat,") as tracker:
+        with self.voiceover("We turn those sigmoids of zi hat into yi hat, define") as tracker:
             self.play(TransformMatchingTex(hesses[5], hess_joined, run_time = 0.55))
         
             hess_simplified = ColoredMathTex(r"\frac{\partial^2 \ell}{\partial \hat{\beta}_j \partial \hat{\beta}_m}=" +
@@ -268,10 +263,10 @@ class LoglikSimplificationScene(VoiceoverScene):
         
         hess_simplified2 = ColoredMathTex(r"\frac{\partial^2 \ell}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = \sum_{i=1}^{n} - w_i X_{im} X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
         hess_simplified3 = ColoredMathTex(r"\frac{\partial^2 \ell}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = - \sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(grad_together3,DOWN,aligned_edge=LEFT)
-        with self.voiceover("and let's define wi as yi hat times 1 minus yi hat") as tracker:
+        with self.voiceover("wi as yi hat times 1 minus yi hat, and") as tracker:
             self.play(TransformByGlyphMap(hess_simplified, hess_simplified2,
                                         (range(19,29),[19,20])))
-        with self.voiceover("Let's rearrange the sum a little bit, which will be useful later.") as tracker:
+        with self.voiceover("rearrange the sum.") as tracker:
             self.play(TransformByGlyphMap(hess_simplified2, hess_simplified3,
                                         ([18],[13], {"path_arc": -PI}),
                                         (range(13,18), range(14,19), {"path_arc": -PI}),
@@ -303,20 +298,20 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(TransformMatchingShapes(sum_with_w,sum_with_w2, run_time = 0.001))
 
         sum_without_w = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} X_{ij}").next_to(hess_simplified4, DOWN)
-        with self.voiceover("I notice that without the wi,") as tracker:
+        with self.voiceover("Without the wi, it would be the") as tracker:
             self.play(TransformByGlyphMap(sum_with_w2,sum_without_w,
                                         ([8,9], FadeOut)))
         easy_dot1 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} X_{ij} = X_{\cdot m}\cdot X_{\cdot j}").next_to(hess_simplified4, DOWN)
-        with self.voiceover("It would be the dot product of the mth and jth columns of X.") as tracker:
+        with self.voiceover("dot product of the mth and jth columns of X. Or the") as tracker:
             self.play(TransformByGlyphMap(sum_without_w, easy_dot1,
                                         (FadeIn, range(11,19))))
         easy_dot2 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} X_{ij} = X_{\cdot m}^T X_{\cdot j}").next_to(hess_simplified4, DOWN)
-        with self.voiceover("Or the mth column transposed times the jth column.") as tracker:
+        with self.voiceover("mth column transposed times the jth column.") as tracker:
             self.play(TransformByGlyphMap(easy_dot1, easy_dot2,
                                         ([15],[13])))
         
         # --- Proving that that sum is a dot product with a diagonal matrix in between ---
-        with self.voiceover("But there is the wi.") as tracker:
+        with self.voiceover("But there is the wi. I claim that this sum, with the wi, is equal to") as tracker:
             dot0 = hess_simplified4[1].copy()
             dot0.generate_target()
             dot0.target.next_to(easy_dot2, DOWN)
@@ -324,12 +319,12 @@ class LoglikSimplificationScene(VoiceoverScene):
             dot1 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij}").next_to(easy_dot2, DOWN)
             self.play(TransformMatchingShapes(dot0,dot1, run_time = 0.001))
         
-        with self.voiceover("I claim that this sum, with the wi, is equal to the mth column transposed times the matrix W, times the jth column.") as tracker:
+        with self.voiceover("the mth column transposed times the matrix W, times the jth column. Where W is just an") as tracker:
             dot2 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = X_{\cdot m}^T W X_{\cdot j}").next_to(easy_dot2, DOWN)
             self.play(TransformByGlyphMap(dot1, dot2,
                                         (FadeIn, range(13,22))))
         
-        with self.voiceover("Where W is just a nxn diagonal matrix of all the wi's.") as tracker:
+        with self.voiceover("nxn diagonal matrix of all the wi's.") as tracker:
             dot3 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
             r"X_{\cdot m}^T",
             r"W",
@@ -344,7 +339,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             r"X_{\cdot j}").next_to(easy_dot2, DOWN)
             self.play(ReplacementTransformGroup(dot3, dot4))
         
-        with self.voiceover("So let's explicitly write out the vectors.") as tracker:
+        with self.voiceover("So let's explicitly write out the vectors. Multiplying by a diagonal matrix just scales each component") as tracker:
             dot5 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
             latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
             W_tex,
@@ -353,7 +348,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             dot5.scale(0.87)
             self.play(ReplacementTransformGroup(dot4, dot5))
 
-        with self.voiceover("Multiplying by a diagonal matrix just scales each component by the corresponding diagonal element.") as tracker:
+        with self.voiceover("by the corresponding diagonal element. And if you") as tracker:
             dot6 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
             latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row"),
             W_tex+
@@ -372,7 +367,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(*[ReplacementTransform(dot6[i], dot8[i]) for i in range(2)],
                     TransformMatchingShapes(dot6[2], dot8[2]))
         
-        with self.voiceover("And if you multiply the row and column vectors, you see that my claim was correct. The sum is equal to the mth column transposed times the matrix W times the jth column.") as tracker:
+        with self.voiceover("multiply the row and column vectors, you see that my claim was correct. The sum is equal to the mth column transposed times the matrix W times the jth column.") as tracker:
             dot9 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
             latex_vector([f"X_{{{i}m}}" for i in range(1,5)], orientation = "row") +
             latex_vector([f"w_{j} X_{{{j}j}}" for j in range(1,5)], orientation = "column")
@@ -397,13 +392,13 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(TransformMatchingTex(hess_simplified5, hess_simplified6, run_time = 0.001))
         
         # --- Gluing the partials together into the Hessian
-        with self.voiceover("Now I claim that the full Hessian is equal to -X transpose times W times X.") as tracker:
+        with self.voiceover("Now I claim that the full Hessian is equal to -X transpose times W times X. To get the mth row of the Hessian, you just") as tracker:
             big_claim = ColoredMathTex("H=-X^T W X")
             self.play(Write(big_claim))
             self.wait(tracker.duration - 2.1)
             self.play(FadeOut(big_claim))
 
-        with self.voiceover("To get the mth row of the Hessian, you just glue all the columns of X together at the right.") as tracker:
+        with self.voiceover("glue all the columns of X together at the right. And the entire Hessian is just") as tracker:
             hess_row_tex = latex_vector([r"\frac{\partial^2 \ell}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)) for j in range(4)], "row")
             glued_row = ColoredMathTex(hess_row_tex + r"= -X_{\cdot m}^T W " + latex_vector([r"X_{\cdot j}".replace("j",str(j)) for j in range(4)], "row")).scale(0.9)
             self.play(TransformByGlyphMap(hess_simplified6.copy(), glued_row,
@@ -420,7 +415,7 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         (range(19,22), range(67,70)),
                                         ))
         
-        with self.voiceover("And the entire Hessian is just gluing the rows together at the beginning.") as tracker:
+        with self.voiceover("gluing the rows together at the beginning.") as tracker:
             entire_hess_tex = square_matrix_tex(4, 
                                                 lambda m, j: r"\frac{\partial^2 \ell}{\partial \hat{\beta}_j \partial \hat{\beta}_m}".replace("j",str(j)).replace("m", str(m)), start_ij = 0)
             glued_hess = ColoredMathTex(entire_hess_tex + 
@@ -457,10 +452,10 @@ class LoglikSimplificationScene(VoiceoverScene):
         with self.voiceover("The second derivative in the direction of column vector v is v transpose H v, and if we") as tracker:
             quadratic1 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = \vec{v}^T H \vec{v}").next_to(quadratic0, DOWN)
             self.play(Write(quadratic1))
-        with self.voiceover("plug in -X transpose W X for the Hessian,") as tracker:
+        with self.voiceover("plug in -X transpose W X for the Hessian, move") as tracker:
             quadratic2 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = \vec{v}^T(-X^T W X) \vec{v}").move_to(quadratic1)
             self.play(TransformByGlyphMap(quadratic1, quadratic2, ([11], range(11,18))))
-        with self.voiceover("move the minus sign to the beginning,") as tracker:
+        with self.voiceover("the minus sign to the beginning,") as tracker:
             quadratic2a= ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{v}^TX^T W X \vec{v}").move_to(quadratic1)
             self.play(TransformByGlyphMap(quadratic2, quadratic2a, 
                                           ([12],[8],{"path_arc": PI / 3}),
@@ -476,14 +471,14 @@ class LoglikSimplificationScene(VoiceoverScene):
                                           ([13],[14],{"path_arc":-PI/4}),
                                           ))
         
-        with self.voiceover("vector u as Xv.") as tracker:
+        with self.voiceover("vector u as Xv. As we showed with diagonal matrices, this product is") as tracker:
             quadratic4 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{u}^T W \vec{u}").move_to(quadratic1)
             self.play(TransformByGlyphMap(quadratic3,quadratic4,
                                         (range(9,14), [9,10]),
                                         (range(16,19), [13,14]),
                                         ))
         
-        with self.voiceover("As we showed with diagonal matrices, this product is the sum of ui times wi times ui,") as tracker:
+        with self.voiceover("the sum of ui times wi times ui,") as tracker:
             quadratic5 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\sum_{i=1}^{n} u_i w_i u_i").move_to(quadratic1)
             self.play(TransformByGlyphMap(quadratic4, quadratic5,
                                         (FadeIn, range(9,14)),
