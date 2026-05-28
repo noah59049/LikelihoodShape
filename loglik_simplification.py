@@ -365,7 +365,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             )
             dot8.scale(0.87)
             self.play(*[ReplacementTransform(dot6[i], dot8[i]) for i in range(2)],
-                    TransformMatchingShapes(dot6[2], dot8[2]))
+                    TransformMatchingShapes(dot6[2], dot8[2])) # TODO: Turn this into a TransformByGlyphMap
         
         with self.voiceover("multiply the row and column vectors, you see that my claim was correct. The sum is equal to the mth column transposed times the matrix W times the jth column.") as tracker:
             dot9 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
