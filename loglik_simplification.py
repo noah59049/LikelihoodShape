@@ -482,7 +482,6 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         (range(9,14), [9,10]),
                                         (range(16,19), [13,14]),
                                         ))
-            return
         
         with self.voiceover("As we showed with diagonal matrices, this product is the sum of ui times wi times ui,") as tracker:
             quadratic5 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\sum_{i=1}^{n} u_i w_i u_i").move_to(quadratic1)
