@@ -125,7 +125,7 @@ class LoglikSimplificationScene(VoiceoverScene):
                                          r"-",
                                          r"\ln(e^{\hat{z}_i}+1)",
                                          )
-        with self.voiceover("NOW we want to find the derivative of the likelihood with respect to beta hat j.") as tracker:
+        with self.voiceover("NOW we want to find the derivative of the log likelihood with respect to beta hat j.") as tracker:
             self.play(TransformMatchingTex(loglik17, loglik17_broken, run_time = 0.001))
 
             grads[0].next_to(loglik17, DOWN, aligned_edge=LEFT)
@@ -455,38 +455,26 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(LaggedStart(FadeOut(glued_row, hess_simplified6), quadratic0.animate.move_to(ORIGIN), lag_ratio=0.3))
         
         with self.voiceover("The second derivative in the direction of column vector v is") as tracker:
-            quadratic1 = ColoredMathTex(r"\vec{v}^T H \vec{v} = -\vec{v}^TX^T W X \vec{v}")
-            self.play(TransformByGlyphMap(quadratic0,quadratic1,
-                                        (FadeIn, [0,1,2]),
-                                        (FadeIn, [4,5]),
-                                        (FadeIn, [8,9,10]),
-                                        (FadeIn, [15,16]),
-                                        ))
+            quadratic1 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = \vec{v}^T H \vec{v}").next_to(quadratic0, DOWN)
+            self.play(Write(quadratic1))
         
         with self.voiceover("v transpose H v, and if we plug in -X transpose W X for the Hessian") as tracker:
-            quadratic2 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{v}^TX^T W X \vec{v}")
-            self.play(TransformByGlyphMap(quadratic1, quadratic2,
-                                        (range(6), range(7))))
-        
-        with self.voiceover("and use the formula for the transpose of a product, we get this.") as tracker:
-            quadratic3 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -(X\vec{v})^T W X \vec{v}")
-            self.play(TransformByGlyphMap(quadratic2, quadratic3,
-                                        ([12],[10]),
-                                        ([9,10],[11,12]),
-                                        (FadeIn, [9,13]),
-                                        ([11],[14]),
-                                        ([13],[14]),
-                                        ))
+            quadratic2 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = \vec{v}^T(-X^T W X) \vec{v}").move_to(quadratic1)
+            self.play(TransformMatchingTex(quadratic1, quadratic2))
+            quadratic2a= ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{v}^TX^T W X \vec{v}").move_to(quadratic1)
+            self.play(TransformMatchingTex(quadratic2, quadratic2a))
+            quadratic3 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -(X\vec{v})^T W X \vec{v}").move_to(quadratic1)
+            self.play(TransformMatchingTex(quadratic2a,quadratic3))
         
         with self.voiceover("Let's define vector u as Xv.") as tracker:
-            quadratic4 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{u}^T W \vec{u}")
+            quadratic4 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{u}^T W \vec{u}").move_to(quadratic1)
             self.play(TransformByGlyphMap(quadratic3,quadratic4,
                                         (range(9,14), [9,10]),
                                         (range(16,19), [13,14]),
                                         ))
         
         with self.voiceover("As we showed with diagonal matrices, this product is the sum of ui times wi times ui,") as tracker:
-            quadratic5 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\sum_{i=1}^{n} u_i w_i u_i")
+            quadratic5 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\sum_{i=1}^{n} u_i w_i u_i").move_to(quadratic1)
             self.play(TransformByGlyphMap(quadratic4, quadratic5,
                                         (FadeIn, range(9,14)),
                                         ([9,11], [15]),
@@ -495,7 +483,7 @@ class LoglikSimplificationScene(VoiceoverScene):
         
 
         with self.voiceover("or wi times ui squared") as tracker:
-            quadratic6 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\sum_{i=1}^{n} w_i u_i^2")
+            quadratic6 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\sum_{i=1}^{n} w_i u_i^2").move_to(quadratic1)
             self.play(TransformByGlyphMap(quadratic5, quadratic6,
                                         ([14,15],[17], {"path_arc": -PI/3})))
             quadratic7 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) =",
