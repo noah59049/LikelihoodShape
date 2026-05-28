@@ -468,8 +468,13 @@ class LoglikSimplificationScene(VoiceoverScene):
                                           FadeOut(quadratic0))
         with self.voiceover("and simplify the transpose of a product, we get this. Let's define") as tracker:
             quadratic3 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -(X\vec{v})^T W X \vec{v}").move_to(quadratic1)
-            self.play(TransformMatchingTex(quadratic2a,quadratic3))
-            return
+            self.play(TransformByGlyphMap(quadratic2a,quadratic3,
+                                          ([12],[10]),
+                                          ([9,10],[11,12]),
+                                          (FadeIn,[9,13]),
+                                          ([11],[14],{"path_arc":-PI/6}),
+                                          ([13],[14],{"path_arc":-PI/4}),
+                                          ))
         
         with self.voiceover("vector u as Xv.") as tracker:
             quadratic4 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{u}^T W \vec{u}").move_to(quadratic1)
@@ -477,6 +482,7 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         (range(9,14), [9,10]),
                                         (range(16,19), [13,14]),
                                         ))
+            return
         
         with self.voiceover("As we showed with diagonal matrices, this product is the sum of ui times wi times ui,") as tracker:
             quadratic5 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\sum_{i=1}^{n} u_i w_i u_i").move_to(quadratic1)
