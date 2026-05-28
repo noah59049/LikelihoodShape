@@ -454,7 +454,7 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         (range(233, 247), [6])))
             self.play(LaggedStart(FadeOut(glued_row, hess_simplified6), quadratic0.animate.move_to(ORIGIN), lag_ratio=0.3))
         
-        with self.voiceover("So now we want to find the directional second derivative in the direction of column vector v.") as tracker:
+        with self.voiceover("The second derivative in the direction of column vector v is") as tracker:
             quadratic1 = ColoredMathTex(r"\vec{v}^T H \vec{v} = -\vec{v}^TX^T W X \vec{v}")
             self.play(TransformByGlyphMap(quadratic0,quadratic1,
                                         (FadeIn, [0,1,2]),
@@ -463,12 +463,12 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         (FadeIn, [15,16]),
                                         ))
         
-        with self.voiceover("It's v transpose H v, which if we plug the definition of the Hessian in,") as tracker:
+        with self.voiceover("v transpose H v, and if we plug in -X transpose W X for the Hessian") as tracker:
             quadratic2 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{v}^TX^T W X \vec{v}")
             self.play(TransformByGlyphMap(quadratic1, quadratic2,
                                         (range(6), range(7))))
         
-        with self.voiceover("Use the formula for the transpose of a product.") as tracker:
+        with self.voiceover("and use the formula for the transpose of a product, we get this.") as tracker:
             quadratic3 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -(X\vec{v})^T W X \vec{v}")
             self.play(TransformByGlyphMap(quadratic2, quadratic3,
                                         ([12],[10]),
@@ -478,7 +478,7 @@ class LoglikSimplificationScene(VoiceoverScene):
                                         ([13],[14]),
                                         ))
         
-        with self.voiceover("We define vector u as Xv.") as tracker:
+        with self.voiceover("Let's define vector u as Xv.") as tracker:
             quadratic4 = ColoredMathTex(r"D_{\vec{v}}^2(\ell) = -\vec{u}^T W \vec{u}")
             self.play(TransformByGlyphMap(quadratic3,quadratic4,
                                         (range(9,14), [9,10]),
