@@ -225,24 +225,51 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             with self.voiceover("a local maximum, but not the global maximum?") as tracker:
                 pass
 
-        with self.voiceover("All of those are in fact impossible, and the rest of this video is going to prove it. If the derivatives of the log likelihood are all 0, we must be at the global maximum") as tracker:
+        with self.voiceover("All of those are in fact impossible, and the rest of this video is going to prove it. If the derivatives of the log likelihood are all 0, we must be at the global maximum. Our proof has to do with the second derivative test. To do that, we need to take") as tracker:
             pass
-        with self.voiceover("Our proof has to do with the second derivative test. To do that, we need to take directional second derivatives. But we're first going to review directional derivatives, and before that, derivatives.") as tracker:
+        
+        angle_tracker = ValueTracker(0)
+
+        def get_g_pp(theta):
+            v0, v1 = np.cos(theta), np.sin(theta)
+            eps = 1e-4
+            return (
+                loglik_centered(v0 * eps, v1 * eps)
+                - 2 * mle_z
+                + loglik_centered(-v0 * eps, -v1 * eps)
+            ) / eps**2
+
+        def make_parabola():
+            theta = angle_tracker.get_value()
+            v0, v1 = np.cos(theta), np.sin(theta)
+            g_pp = get_g_pp(theta)
+            pts = [
+                axes.c2p(v0 * t, v1 * t, mle_z + 0.5 * g_pp * t**2)
+                for t in np.linspace(-0.8, 0.8, 120)
+            ]
+            curve = VMobject(color=YELLOW, stroke_width=5)
+            curve.set_points_as_corners(pts)
+            return curve
+
+        def make_d2_label():
+            g_pp = get_g_pp(angle_tracker.get_value())
+            return MathTex(
+                r"D^2_{\vec{v}} \ell = " + f"{g_pp:.3f}",
+                color=YELLOW,
+            ).next_to(deriv_tex, DOWN, aligned_edge=LEFT, buff=0.2)
+        
+        with self.voiceover("directional second derivatives. But we're first going to review directional derivatives, and before that, derivatives.") as tracker:
             self.stop_ambient_camera_rotation()
 
-            # Directional second derivative at MLE (u=0, v=0) in direction [1, 0]
-            eps = 1e-4
-            g_pp = (loglik_centered(eps, 0) - 2 * mle_z + loglik_centered(-eps, 0)) / eps**2
+            parabola = always_redraw(make_parabola)
+            self.add(parabola)
 
-            # 2nd-order Taylor parabola: mle_z + 0.5 * g_pp * t^2
-            # g'(0) = 0 at the MLE, so the linear term vanishes.
-            # This lies above the surface (concave function ≤ its Taylor approximation).
-            t_vals = np.linspace(-0.8, 0.8, 120)
-            parabola_pts = [axes.c2p(t, 0, mle_z + 0.5 * g_pp * t**2) for t in t_vals]
-            parabola = VMobject(color=YELLOW, stroke_width=5)
-            parabola.set_points_as_corners(parabola_pts)
-            self.play(Create(parabola))
+            d2_label = always_redraw(make_d2_label)
+            self.add_fixed_in_frame_mobjects(d2_label)
+            self.play(FadeIn(d2_label))
 
-            g_pp_label = MathTex(r"D^2_{\vec{v}} \ell < 0", color=YELLOW).to_corner(UR)
-            self.add_fixed_in_frame_mobjects(g_pp_label)
-            self.play(FadeIn(g_pp_label))
+            self.play(
+                angle_tracker.animate.set_value(TAU),
+                run_time=tracker.duration - 1.1,
+                rate_func=linear
+            )
