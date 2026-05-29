@@ -225,9 +225,6 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             with self.voiceover("a local maximum, but not the global maximum?") as tracker:
                 pass
 
-        with self.voiceover("All of those are in fact impossible, and the rest of this video is going to prove it. If the derivatives of the log likelihood are all 0, we must be at the global maximum. Our proof has to do with the second derivative test. To do that, we need to take") as tracker:
-            pass
-        
         angle_tracker = ValueTracker(0)
 
         def get_g_pp(theta):
@@ -238,6 +235,21 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                 - 2 * mle_z
                 + loglik_centered(-v0 * eps, -v1 * eps)
             ) / eps**2
+
+        eps_h = 1e-4
+        h00 = (loglik_centered(eps_h, 0) - 2 * mle_z + loglik_centered(-eps_h, 0)) / eps_h**2
+        h11 = (loglik_centered(0, eps_h) - 2 * mle_z + loglik_centered(0, -eps_h)) / eps_h**2
+        h01 = (
+            loglik_centered(eps_h, eps_h) - loglik_centered(eps_h, -eps_h)
+            - loglik_centered(-eps_h, eps_h) + loglik_centered(-eps_h, -eps_h)
+        ) / (4 * eps_h**2)
+
+        hessian_tex = MathTex(
+            r"H = \begin{pmatrix} "
+            + f"{h00:.3f}" + r" & " + f"{h01:.3f}" + r" \\ "
+            + f"{h01:.3f}" + r" & " + f"{h11:.3f}"
+            + r" \end{pmatrix}"
+        ).next_to(deriv_tex, DOWN, aligned_edge=LEFT, buff=0.2)
 
         def make_parabola():
             theta = angle_tracker.get_value()
@@ -256,20 +268,22 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             return MathTex(
                 r"D^2_{\vec{v}} \ell = " + f"{g_pp:.3f}",
                 color=YELLOW,
-            ).next_to(deriv_tex, DOWN, aligned_edge=LEFT, buff=0.2)
-        
-        with self.voiceover("directional second derivatives. But we're first going to review directional derivatives, and before that, derivatives.") as tracker:
-            self.stop_ambient_camera_rotation()
+            ).next_to(hessian_tex, DOWN, aligned_edge=LEFT, buff=0.2)
 
-            parabola = always_redraw(make_parabola)
-            self.add(parabola)
+        parabola = always_redraw(make_parabola)
+        d2_label = always_redraw(make_d2_label)
 
-            d2_label = always_redraw(make_d2_label)
+        with self.voiceover("All of those are in fact impossible, and the rest of this video is going to prove it. If the derivatives of the log likelihood are all 0, we must be at the global maximum. Our proof has to do with the second derivative test. To do that, we need to take") as tracker:
+            self.add_fixed_in_frame_mobjects(hessian_tex)
+            self.play(FadeIn(hessian_tex))
             self.add_fixed_in_frame_mobjects(d2_label)
             self.play(FadeIn(d2_label))
 
+        with self.voiceover("directional second derivatives. But we're first going to review directional derivatives, and before that, derivatives.") as tracker:
+            self.stop_ambient_camera_rotation()
+            self.add(parabola)
             self.play(
                 angle_tracker.animate.set_value(TAU),
-                run_time=tracker.duration - 1.1,
+                run_time=tracker.duration - 0.1,
                 rate_func=linear
             )
