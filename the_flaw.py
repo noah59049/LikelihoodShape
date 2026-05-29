@@ -224,3 +224,25 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                 pass
             with self.voiceover("a local maximum, but not the global maximum?") as tracker:
                 pass
+
+        with self.voiceover("All of those are in fact impossible, and the rest of this video is going to prove it. If the derivatives of the log likelihood are all 0, we must be at the global maximum") as tracker:
+            pass
+        with self.voiceover("Our proof has to do with the second derivative test. To do that, we need to take directional second derivatives. But we're first going to review directional derivatives, and before that, derivatives.") as tracker:
+            self.stop_ambient_camera_rotation()
+
+            # Directional second derivative at MLE (u=0, v=0) in direction [1, 0]
+            eps = 1e-4
+            g_pp = (loglik_centered(eps, 0) - 2 * mle_z + loglik_centered(-eps, 0)) / eps**2
+
+            # 2nd-order Taylor parabola: mle_z + 0.5 * g_pp * t^2
+            # g'(0) = 0 at the MLE, so the linear term vanishes.
+            # This lies above the surface (concave function ≤ its Taylor approximation).
+            t_vals = np.linspace(-0.8, 0.8, 120)
+            parabola_pts = [axes.c2p(t, 0, mle_z + 0.5 * g_pp * t**2) for t in t_vals]
+            parabola = VMobject(color=YELLOW, stroke_width=5)
+            parabola.set_points_as_corners(parabola_pts)
+            self.play(Create(parabola))
+
+            g_pp_label = MathTex(r"D^2_{\vec{v}} \ell < 0", color=YELLOW).to_corner(UR)
+            self.add_fixed_in_frame_mobjects(g_pp_label)
+            self.play(FadeIn(g_pp_label))
