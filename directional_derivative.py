@@ -77,7 +77,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         )
         surface.set_fill_by_checkerboard(BLUE_D, TEAL_D, opacity=0.65)
 
-        self.set_camera_orientation(phi=40 * DEGREES, theta=-50 * DEGREES)
+        self.set_camera_orientation(phi=60 * DEGREES, theta=55 * DEGREES)
         self.play(
             Create(axes, run_time=1.5),
             FadeIn(surface, run_time=1.5),
