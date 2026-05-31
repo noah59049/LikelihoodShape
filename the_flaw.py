@@ -279,7 +279,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             self.add_fixed_in_frame_mobjects(d2_label)
             self.play(FadeIn(d2_label))
 
-        with self.voiceover("directional second derivatives. But we're first going to review directional derivatives, and before that, derivatives.") as tracker:
+        with self.voiceover("directional second derivatives. But we're first going to review directional derivatives.") as tracker:
             self.stop_ambient_camera_rotation()
             self.add(parabola)
             self.play(
