@@ -77,7 +77,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         )
         surface.set_fill_by_checkerboard(BLUE_D, TEAL_D, opacity=0.65)
 
-        self.set_camera_orientation(phi=70 * DEGREES, theta=-50 * DEGREES)
+        self.set_camera_orientation(phi=40 * DEGREES, theta=-50 * DEGREES)
         self.play(
             Create(axes, run_time=1.5),
             FadeIn(surface, run_time=1.5),
@@ -196,6 +196,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         keep_silence=(0,0)))
 
         self._show_3d_graph_derivation()
+        return
 
         with self.voiceover("If we want to calculate the directional derivative, ") as tracker:
             # --- Steps 1-6: Were removed, now just derivative definition ---
