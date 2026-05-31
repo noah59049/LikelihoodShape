@@ -28,6 +28,10 @@ def create_hess_row(num_elements,
                         orientation=orientation,
                         bracket = bracket)
 
+def example_function(x, y):
+    return -0.3 * x**2 - 0.2 * y**2
+
+
 def hessian_latex(n, func_name="f"):
     rows = []
     
@@ -48,12 +52,150 @@ def hessian_latex(n, func_name="f"):
     
     return latex
 
-class DirectionalDerivativeScene(VoiceoverScene):
+class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
+    def _show_3d_graph_derivation(self):
+        axes = ThreeDAxes(
+            x_range=[-2.5, 2.5, 1],
+            y_range=[-2.5, 2.5, 1],
+            z_range=[0, 2.5, 0.5],
+            x_length=6,
+            y_length=6,
+            z_length=3,
+        )
+        x_label = axes.get_x_axis_label(MathTex("x_1"))
+        y_label = axes.get_y_axis_label(MathTex("x_2"))
+        z_label = axes.get_z_axis_label(MathTex("f"))
+
+        surface = Surface(
+            lambda u, v: axes.c2p(u, v, example_function(u, v)),
+            u_range=[-2.2, 2.2],
+            v_range=[-2.2, 2.2],
+            resolution=(20, 20),
+            fill_opacity=0.65,
+            stroke_width=0.3,
+            stroke_color=WHITE,
+        )
+        surface.set_fill_by_checkerboard(BLUE_D, TEAL_D, opacity=0.65)
+
+        self.set_camera_orientation(phi=70 * DEGREES, theta=-50 * DEGREES)
+        self.play(
+            Create(axes, run_time=1.5),
+            FadeIn(surface, run_time=1.5),
+            FadeIn(x_label),
+            FadeIn(y_label),
+            FadeIn(z_label),
+        )
+
+        # All z values computed through example_function — change that function and everything updates
+        x0, y0 = 0.8, 0.5
+        v1, v2 = 0.8, 0.6
+        dt = 0.7
+
+        z0 = example_function(x0, y0)
+        xm, ym = x0 + v1 * dt, y0          # intermediate: after Δx₁ only
+        zm = example_function(xm, ym)
+        xe, ye = xm, y0 + v2 * dt           # final: after both Δx₁ and Δx₂
+        ze = example_function(xe, ye)
+
+        def pt(x, y, z=None):
+            return axes.c2p(x, y, example_function(x, y) if z is None else z)
+
+        # Starting dot + dashed vertical stem
+        p0_dot = Dot3D(pt(x0, y0), color=YELLOW, radius=0.07)
+        stem0 = DashedLine(pt(x0, y0, 0), pt(x0, y0), color=YELLOW_A, stroke_width=2)
+        self.play(FadeIn(p0_dot), Create(stem0))
+
+        # Full direction vector in the xy-plane
+        dir_arrow = Arrow3D(pt(x0, y0, 0), pt(xe, ye, 0), color=WHITE, thickness=0.012)
+        self.play(Create(dir_arrow))
+
+        # ── v₁ component (x-direction) ──────────────────────────────────────
+        v1_arrow = Arrow3D(pt(x0, y0, 0), pt(xm, ym, 0), color=RED_B, thickness=0.012)
+        v1_lbl = MathTex(r"v_1 \Delta t", color=RED_B).scale(0.6)
+        v1_lbl.move_to(pt(x0 + v1 * dt * 0.5, y0 - 0.45, -0.1))
+        self.add_fixed_orientation_mobjects(v1_lbl)
+        self.play(Create(v1_arrow), FadeIn(v1_lbl))
+
+        # Trace the path on the surface along x₁
+        x1_curve = ParametricFunction(
+            lambda s: axes.c2p(x0 + v1 * dt * s, y0, example_function(x0 + v1 * dt * s, y0)),
+            t_range=[0, 1],
+            color=RED_B,
+            stroke_width=5,
+        )
+        stem_m = DashedLine(pt(xm, ym, 0), pt(xm, ym), color=RED_A, stroke_width=2)
+        self.play(Create(x1_curve), Create(stem_m))
+
+        # Δf₁ bar (from z0 to zm at the intermediate x position)
+        df1 = zm - z0
+        df1_bar = Line3D(pt(xm, ym, z0), pt(xm, ym, zm), thickness=0.05, color=RED_B)
+        df1_lbl = MathTex(r"\frac{\partial f}{\partial x_1} v_1 \Delta t", color=RED_B).scale(0.5)
+        df1_lbl.move_to(pt(xm + 0.6, ym - 0.1, z0 + df1 * 0.5))
+        self.add_fixed_orientation_mobjects(df1_lbl)
+        self.play(Create(df1_bar), FadeIn(df1_lbl))
+
+        # ── v₂ component (y-direction, from intermediate x position) ────────
+        v2_arrow = Arrow3D(pt(xm, ym, 0), pt(xe, ye, 0), color=BLUE_B, thickness=0.012)
+        v2_lbl = MathTex(r"v_2 \Delta t", color=BLUE_B).scale(0.6)
+        v2_lbl.move_to(pt(xm + 0.4, y0 + v2 * dt * 0.5, -0.1))
+        self.add_fixed_orientation_mobjects(v2_lbl)
+        self.play(Create(v2_arrow), FadeIn(v2_lbl))
+
+        # Trace the path on the surface along x₂
+        x2_curve = ParametricFunction(
+            lambda s: axes.c2p(xm, y0 + v2 * dt * s, example_function(xm, y0 + v2 * dt * s)),
+            t_range=[0, 1],
+            color=BLUE_B,
+            stroke_width=5,
+        )
+        stem_e = DashedLine(pt(xe, ye, 0), pt(xe, ye), color=BLUE_A, stroke_width=2)
+        self.play(Create(x2_curve), Create(stem_e))
+
+        # Δf₂ bar (from zm to ze at the final position)
+        df2 = ze - zm
+        df2_bar = Line3D(pt(xe, ye, zm), pt(xe, ye, ze), thickness=0.05, color=BLUE_B)
+        df2_lbl = MathTex(r"\frac{\partial f}{\partial x_2} v_2 \Delta t", color=BLUE_B).scale(0.5)
+        df2_lbl.move_to(pt(xe + 0.6, ye, zm + df2 * 0.5))
+        self.add_fixed_orientation_mobjects(df2_lbl)
+        self.play(Create(df2_bar), FadeIn(df2_lbl))
+
+        # Final dot on surface
+        pe_dot = Dot3D(pt(xe, ye), color=GREEN, radius=0.07)
+        self.play(FadeIn(pe_dot))
+
+        # Chain rule summary (fixed to screen so it's always readable)
+        summary = MathTex(
+            r"\Delta f \approx",
+            r"\frac{\partial f}{\partial x_1} v_1 \Delta t",
+            r"+",
+            r"\frac{\partial f}{\partial x_2} v_2 \Delta t",
+        ).scale(0.65).to_corner(UL)
+        summary[1].set_color(RED_B)
+        summary[3].set_color(BLUE_B)
+        self.add_fixed_in_frame_mobjects(summary)
+        self.play(Write(summary))
+
+        self.wait(2)
+
+        self.play(
+            FadeOut(VGroup(
+                axes, surface, x_label, y_label, z_label,
+                p0_dot, stem0, dir_arrow,
+                v1_arrow, x1_curve, stem_m, df1_bar,
+                v2_arrow, x2_curve, stem_e, df2_bar,
+                pe_dot, v1_lbl, v2_lbl, df1_lbl, df2_lbl,
+            )),
+            FadeOut(summary),
+        )
+        self.set_camera_orientation(phi=0, theta=-90 * DEGREES)
+
     def construct(self):
         self.set_speech_service(StitcherService(ls_config.path_to_podcast("directional_derivative"),
         cache_dir=ls_config.get_cache_dir(),
         min_silence_len=2000,
         keep_silence=(0,0)))
+
+        self._show_3d_graph_derivation()
 
         with self.voiceover("If we want to calculate the directional derivative, ") as tracker:
             # --- Steps 1-6: Were removed, now just derivative definition ---
