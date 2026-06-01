@@ -147,10 +147,11 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         # ── v₂ component (y-direction, from intermediate x position) ────────
         v2_arrow = Arrow3D(pt(xm, ym, 0), pt(xe, ye, 0), color=BLUE_B, thickness=0.012).set_opacity(show_stems)
         v2_arrow1= Arrow3D(pt(xm, ym,z0), pt(xe, ye,z0), color=BLUE_B, thickness=0.012).set_opacity(show_surface_arrows)
+        v2_arrow2= Arrow3D(pt(xm, ym,zm), pt(xe, ye,zm), color=BLUE_B, thickness=0.012).set_opacity(show_surface_arrows)
         v2_lbl = MathTex(r"v_2 \Delta t", color=BLUE_B).scale(0.6)
         v2_lbl.move_to(pt(xm + 0.25 * view_radius, y0 + v2 * dt * 1, lbl_z))
         self.add_fixed_orientation_mobjects(v2_lbl)
-        self.play(Create(v2_arrow), Create(v2_arrow1), FadeIn(v2_lbl))
+        self.play(Create(v2_arrow), Create(v2_arrow1), Create(v2_arrow2), FadeIn(v2_lbl))
 
         # Trace the path on the surface along x₂
         x2_curve = ParametricFunction(
@@ -194,8 +195,8 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
             FadeOut(VGroup(
                 axes, surface, x_label, y_label, z_label,
                 p0_dot, stem0, dir_arrow, dir_arrow1,
-                v1_arrow, v1_arrow1, x1_curve, stem_m, df1_bar,
-                v2_arrow, v2_arrow1, x2_curve, stem_e, df2_bar,
+                v1_arrow, v1_arrow1,            x1_curve, stem_m, df1_bar,
+                v2_arrow, v2_arrow1, v2_arrow2, x2_curve, stem_e, df2_bar,
                 pe_dot, v1_lbl, v2_lbl, df1_lbl, df2_lbl,
             )),
             FadeOut(summary),
