@@ -54,6 +54,17 @@ def hessian_latex(n, func_name="f"):
 
 class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
     def _show_3d_graph_derivation(self):
+        # All z values computed through example_function — change that function and everything updates
+        x0, y0 = 0.8, 0.5
+        v1, v2 = 0.8, 0.6
+        dt = 0.7
+
+        z0 = example_function(x0, y0)
+        xm, ym = x0 + v1 * dt, y0          # intermediate: after Δx₁ only
+        zm = example_function(xm, ym)
+        xe, ye = xm, y0 + v2 * dt           # final: after both Δx₁ and Δx₂
+        ze = example_function(xe, ye)
+
         axes = ThreeDAxes(
             x_range=[-2.5, 2.5, 1],
             y_range=[-2.5, 2.5, 1],
@@ -85,17 +96,6 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
             FadeIn(y_label),
             FadeIn(z_label),
         )
-
-        # All z values computed through example_function — change that function and everything updates
-        x0, y0 = 0.8, 0.5
-        v1, v2 = 0.8, 0.6
-        dt = 0.7
-
-        z0 = example_function(x0, y0)
-        xm, ym = x0 + v1 * dt, y0          # intermediate: after Δx₁ only
-        zm = example_function(xm, ym)
-        xe, ye = xm, y0 + v2 * dt           # final: after both Δx₁ and Δx₂
-        ze = example_function(xe, ye)
 
         def pt(x, y, z=None):
             return axes.c2p(x, y, example_function(x, y) if z is None else z)
