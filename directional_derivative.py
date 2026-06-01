@@ -148,7 +148,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         v2_arrow = Arrow3D(pt(xm, ym, 0), pt(xe, ye, 0), color=BLUE_B, thickness=0.012).set_opacity(show_stems)
         v2_arrow1= Arrow3D(pt(xm, ym,z0), pt(xe, ye,z0), color=BLUE_B, thickness=0.012).set_opacity(show_surface_arrows)
         v2_lbl = MathTex(r"v_2 \Delta t", color=BLUE_B).scale(0.6)
-        v2_lbl.move_to(pt(xm + 0.15 * view_radius, y0 + v2 * dt * 0.5, lbl_z))
+        v2_lbl.move_to(pt(xm + 0.25 * view_radius, y0 + v2 * dt * 1, lbl_z))
         self.add_fixed_orientation_mobjects(v2_lbl)
         self.play(Create(v2_arrow), Create(v2_arrow1), FadeIn(v2_lbl))
 
@@ -168,7 +168,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         df2 = ze - zm
         df2_bar = Line3D(pt(xe, ye, zm), pt(xe, ye, ze), thickness=0.05, color=BLUE_B)
         df2_lbl = MathTex(r"\frac{\partial f}{\partial x_2} v_2 \Delta t", color=BLUE_B).scale(0.5)
-        df2_lbl.move_to(pt(xe + 0.2 * view_radius, ye, zm + df2 * 0.5))
+        df2_lbl.move_to(pt(xe, ye + 0.3 * view_radius, zm + df2 * 0.5))
         self.add_fixed_orientation_mobjects(df2_lbl)
         self.play(Create(df2_bar), FadeIn(df2_lbl))
 
