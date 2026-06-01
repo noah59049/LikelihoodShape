@@ -56,6 +56,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
     def _show_3d_graph_derivation(self):
         # All z values computed through example_function — change that function and everything updates
         x0, y0 = 1.3, 1.0
+        z0 = example_function(x0, y0)
         v1, v2 = 0.8, 0.6
         dt = 0.7
 
@@ -111,10 +112,12 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         # Full direction vector in the xy-plane
         dir_arrow = Arrow3D(pt(x0, y0, 0), pt(xe, ye, 0), color=WHITE, thickness=0.012)
+        dir_arrow1= Arrow3D(pt(x0, y0,z0), pt(xe, ye,z0), color=WHITE, thickness=0.012)
         self.play(Create(dir_arrow))
 
         # ── v₁ component (x-direction) ──────────────────────────────────────
         v1_arrow = Arrow3D(pt(x0, y0, 0), pt(xm, ym, 0), color=RED_B, thickness=0.012)
+        v1_arrow1= Arrow3D(pt(x0, y0,z0), pt(xm, ym,z0), color=RED_B, thickness=0.012)
         v1_lbl = MathTex(r"v_1 \Delta t", color=RED_B).scale(0.6)
         v1_lbl.move_to(pt(x0 + v1 * dt * 0.5, y0 - 0.45, -0.1))
         self.add_fixed_orientation_mobjects(v1_lbl)
@@ -140,6 +143,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         # ── v₂ component (y-direction, from intermediate x position) ────────
         v2_arrow = Arrow3D(pt(xm, ym, 0), pt(xe, ye, 0), color=BLUE_B, thickness=0.012)
+        v2_arrow1= Arrow3D(pt(xm, ym,z0), pt(xe, ye,z0), color=BLUE_B, thickness=0.012)
         v2_lbl = MathTex(r"v_2 \Delta t", color=BLUE_B).scale(0.6)
         v2_lbl.move_to(pt(xm + 0.4, y0 + v2 * dt * 0.5, -0.1))
         self.add_fixed_orientation_mobjects(v2_lbl)
