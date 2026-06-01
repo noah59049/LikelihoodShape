@@ -65,9 +65,13 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         xe, ye = xm, y0 + v2 * dt           # final: after both Δx₁ and Δx₂
         ze = example_function(xe, ye)
 
+        window = 1.5
+        x_range = [x0 - window, x0 + window]
+        y_range = [y0 - window, y0 + window]
+
         axes = ThreeDAxes(
-            x_range=[-2.5, 2.5, 1],
-            y_range=[-2.5, 2.5, 1],
+            x_range=x_range,
+            y_range=y_range,
             z_range=compute_z_range(example_function, x_range=[-2.5, 2.5, 1], y_range=[-2.5, 2.5, 1]),
             x_length=6,
             y_length=6,
@@ -79,8 +83,8 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         surface = Surface(
             lambda u, v: axes.c2p(u, v, example_function(u, v)),
-            u_range=[-2.5, 2.5],
-            v_range=[-2.5, 2.5],
+            u_range=x_range[:2],
+            v_range=y_range[:2],
             resolution=(20, 20),
             fill_opacity=0.65,
             stroke_width=0.3,
