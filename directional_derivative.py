@@ -104,24 +104,26 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         def pt(x, y, z=None):
             return axes.c2p(x, y, example_function(x, y) if z is None else z)
+        use_stems: bool = False
+        use_close_arrows: bool = True
 
         # Starting dot + dashed vertical stem
         p0_dot = Dot3D(pt(x0, y0), color=YELLOW, radius=0.07)
-        stem0 = DashedLine(pt(x0, y0, 0), pt(x0, y0), color=YELLOW_A, stroke_width=2)
+        stem0 = DashedLine(pt(x0, y0, 0), pt(x0, y0), color=YELLOW_A, stroke_width=2).set_opacity(use_stems)
         self.play(FadeIn(p0_dot), Create(stem0))
 
         # Full direction vector in the xy-plane
-        dir_arrow = Arrow3D(pt(x0, y0, 0), pt(xe, ye, 0), color=WHITE, thickness=0.012)
-        dir_arrow1= Arrow3D(pt(x0, y0,z0), pt(xe, ye,z0), color=WHITE, thickness=0.012)
-        self.play(Create(dir_arrow))
+        dir_arrow = Arrow3D(pt(x0, y0, 0), pt(xe, ye, 0), color=WHITE, thickness=0.012).set_opacity(use_stems)
+        dir_arrow1= Arrow3D(pt(x0, y0,z0), pt(xe, ye,z0), color=WHITE, thickness=0.012).set_opacity(use_close_arrows)
+        self.play(Create(dir_arrow), Create(dir_arrow1))
 
         # ── v₁ component (x-direction) ──────────────────────────────────────
-        v1_arrow = Arrow3D(pt(x0, y0, 0), pt(xm, ym, 0), color=RED_B, thickness=0.012)
-        v1_arrow1= Arrow3D(pt(x0, y0,z0), pt(xm, ym,z0), color=RED_B, thickness=0.012)
+        v1_arrow = Arrow3D(pt(x0, y0, 0), pt(xm, ym, 0), color=RED_B, thickness=0.012).set_opacity(use_stems)
+        v1_arrow1= Arrow3D(pt(x0, y0,z0), pt(xm, ym,z0), color=RED_B, thickness=0.012).set_opacity(use_close_arrows)
         v1_lbl = MathTex(r"v_1 \Delta t", color=RED_B).scale(0.6)
         v1_lbl.move_to(pt(x0 + v1 * dt * 0.5, y0 - 0.45, -0.1))
         self.add_fixed_orientation_mobjects(v1_lbl)
-        self.play(Create(v1_arrow), FadeIn(v1_lbl))
+        self.play(Create(v1_arrow), FadeIn(v1_lbl), FadeIn(v1_arrow1))
 
         # Trace the path on the surface along x₁
         x1_curve = ParametricFunction(
@@ -130,7 +132,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
             color=RED_B,
             stroke_width=5,
         )
-        stem_m = DashedLine(pt(xm, ym, 0), pt(xm, ym), color=RED_A, stroke_width=2)
+        stem_m = DashedLine(pt(xm, ym, 0), pt(xm, ym), color=RED_A, stroke_width=2).set_opacity(use_stems)
         self.play(Create(x1_curve), Create(stem_m))
 
         # Δf₁ bar (from z0 to zm at the intermediate x position)
@@ -142,12 +144,12 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         self.play(Create(df1_bar), FadeIn(df1_lbl))
 
         # ── v₂ component (y-direction, from intermediate x position) ────────
-        v2_arrow = Arrow3D(pt(xm, ym, 0), pt(xe, ye, 0), color=BLUE_B, thickness=0.012)
-        v2_arrow1= Arrow3D(pt(xm, ym,z0), pt(xe, ye,z0), color=BLUE_B, thickness=0.012)
+        v2_arrow = Arrow3D(pt(xm, ym, 0), pt(xe, ye, 0), color=BLUE_B, thickness=0.012).set_opacity(use_stems)
+        v2_arrow1= Arrow3D(pt(xm, ym,z0), pt(xe, ye,z0), color=BLUE_B, thickness=0.012).set_opacity(use_close_arrows)
         v2_lbl = MathTex(r"v_2 \Delta t", color=BLUE_B).scale(0.6)
         v2_lbl.move_to(pt(xm + 0.4, y0 + v2 * dt * 0.5, -0.1))
         self.add_fixed_orientation_mobjects(v2_lbl)
-        self.play(Create(v2_arrow), FadeIn(v2_lbl))
+        self.play(Create(v2_arrow), Create(v2_arrow1), FadeIn(v2_lbl))
 
         # Trace the path on the surface along x₂
         x2_curve = ParametricFunction(
@@ -157,6 +159,8 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
             stroke_width=5,
         )
         stem_e = DashedLine(pt(xe, ye, 0), pt(xe, ye), color=BLUE_A, stroke_width=2)
+        if not use_stems:
+            stem_e.set_opacity(0)
         self.play(Create(x2_curve), Create(stem_e))
 
         # Δf₂ bar (from zm to ze at the final position)
@@ -188,9 +192,9 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         self.play(
             FadeOut(VGroup(
                 axes, surface, x_label, y_label, z_label,
-                p0_dot, stem0, dir_arrow,
-                v1_arrow, x1_curve, stem_m, df1_bar,
-                v2_arrow, x2_curve, stem_e, df2_bar,
+                p0_dot, stem0, dir_arrow, dir_arrow1,
+                v1_arrow, v1_arrow1, x1_curve, stem_m, df1_bar,
+                v2_arrow, v2_arrow1, x2_curve, stem_e, df2_bar,
                 pe_dot, v1_lbl, v2_lbl, df1_lbl, df2_lbl,
             )),
             FadeOut(summary),
