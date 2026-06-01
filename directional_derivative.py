@@ -3,7 +3,7 @@ from manim_voiceover import *
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 import numpy as np
 from MF_Tools import *
-from N_Tools import latex_vector, ReplacementTransformGroupWithBoxes
+from N_Tools import latex_vector, ReplacementTransformGroupWithBoxes, compute_z_range
 import ls_config
 
 def create_v(num_elements,
@@ -68,7 +68,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         axes = ThreeDAxes(
             x_range=[-2.5, 2.5, 1],
             y_range=[-2.5, 2.5, 1],
-            z_range=[0, 2.5, 0.5],
+            z_range=compute_z_range(example_function, x_range=[-2.5, 2.5, 1], y_range=[-2.5, 2.5, 1]),
             x_length=6,
             y_length=6,
             z_length=3,
