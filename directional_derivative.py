@@ -79,8 +79,8 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         surface = Surface(
             lambda u, v: axes.c2p(u, v, example_function(u, v)),
-            u_range=[-2.2, 2.2],
-            v_range=[-2.2, 2.2],
+            u_range=[-2.5, 2.5],
+            v_range=[-2.5, 2.5],
             resolution=(20, 20),
             fill_opacity=0.65,
             stroke_width=0.3,
