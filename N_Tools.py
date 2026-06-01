@@ -744,8 +744,10 @@ def compute_z_range(
 ):
     print("Beginning to compute z range")
     t0 = time.time()
-    x_min, x_max = x_range
-    y_min, y_max = y_range
+    assert len(x_range) in [2,3]
+    assert len(y_range) in [2,3]
+    x_min, x_max = x_range[0:2]
+    y_min, y_max = y_range[0:2]
 
     xs = np.linspace(x_min, x_max, samples)
     ys = np.linspace(y_min, y_max, samples)
