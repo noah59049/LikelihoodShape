@@ -10,6 +10,7 @@ breast_cancer_sklearn.csv
 *.pdf
 transcription/*.txt
 transcription/transcripts/*.txt
+transcripts/*.txt
 deprecated/*.txt
 deprecated/*/*.txt
 deprecated/*/*/*.txt
