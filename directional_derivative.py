@@ -55,7 +55,7 @@ def hessian_latex(n, func_name="f"):
 class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
     def _show_3d_graph_derivation(self):
         # All z values computed through example_function — change that function and everything updates
-        x0, y0 = 0.8, 0.5
+        x0, y0 = 1.3, 1.0
         v1, v2 = 0.8, 0.6
         dt = 0.7
 
