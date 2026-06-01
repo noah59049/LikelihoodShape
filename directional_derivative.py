@@ -65,7 +65,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         xe, ye = xm, y0 + v2 * dt           # final: after both Δx₁ and Δx₂
         ze = example_function(xe, ye)
 
-        window = 1.5
+        window = 1
         x_range = [x0 - window, x0 + window]
         y_range = [y0 - window, y0 + window]
 
