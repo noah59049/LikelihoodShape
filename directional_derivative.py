@@ -126,7 +126,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         )
         self.play(Create(dir_curve))
 
-        # Δf₁ bar (from z0 to zm at the intermediate x position) TODO: This was copy pasted
+        # Δf bar (from z0 to ze)
         df = ze - z0
         df_bar_x = xe - view_radius * 0.0  # small offset to avoid z-fighting with df2_bar at (xe, ye)
         df_bar = Line3D(pt(df_bar_x, ye, z0), pt(df_bar_x, ye, ze), thickness=0.045, color=WHITE)
