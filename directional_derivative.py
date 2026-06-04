@@ -128,7 +128,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         # Trace the path on the surface along x₁
         x1_curve = ParametricFunction(
-            lambda s: axes.c2p(x0 + v1 * dt * s, y0, example_function(x0 + v1 * dt * s, y0)),
+            lambda s: pt(x0 + v1 * dt * s, y0),
             t_range=[0, 1],
             color=RED_B,
             stroke_width=5,
@@ -156,7 +156,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         # Trace the path on the surface along x₂
         x2_curve = ParametricFunction(
-            lambda s: axes.c2p(xm, y0 + v2 * dt * s, example_function(xm, y0 + v2 * dt * s)),
+            lambda s: pt(xm, y0 + v2 * dt * s),
             t_range=[0, 1],
             color=BLUE_B,
             stroke_width=5,
