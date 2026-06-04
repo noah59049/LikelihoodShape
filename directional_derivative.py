@@ -130,7 +130,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         df = ze - z0
         df_bar = Line3D(pt(xe, ye, z0), pt(xe, ye, ze), thickness=0.05, color=WHITE)
         df_lbl = MathTex(r"\Delta f", color=WHITE).scale(0.5)
-        _p = self.camera.project_point(pt(xe - 0.2 * view_radius, ye + 0.05 * view_radius, ze + df * 0.5))
+        _p = self.camera.project_point(pt(xe - 0.2 * view_radius, ye - 0.08 * view_radius, ze + df * 0.5))
         df_lbl.move_to(np.array([_p[0], _p[1], 0]))
         self.add_fixed_in_frame_mobjects(df_lbl)
         self.play(Create(df_bar), FadeIn(df_lbl))
