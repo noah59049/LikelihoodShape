@@ -187,18 +187,22 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         summary[1].set_color(RED_B)
         summary[3].set_color(BLUE_B)
         self.add_fixed_in_frame_mobjects(summary)
+        summary[1].set_opacity(0)   # hide until copy arrives
+        summary[3].set_opacity(0)
 
-        # df1_lbl_projected = df1_lbl.copy()
-        # df1_lbl_projected.apply_function(
-        #     lambda p: self.camera.project_point(p)
-        # )
-        # df2_lbl_projected = df2_lbl.copy()
-        # df2_lbl_projected.apply_function(
-        #     lambda p: self.camera.project_point(p)
-        # )
-        self.play(TransformFromCopy(df1_lbl, summary[1]),
-                  TransformFromCopy(df2_lbl, summary[3]),
-                  FadeIn(summary[0], summary[2]))
+        df1_copy = df1_lbl.copy()
+        df2_copy = df2_lbl.copy()
+        self.add_fixed_in_frame_mobjects(df1_copy, df2_copy)   # <-- stays in frame space
+
+        self.play(
+            Transform(df1_copy, summary[1]),
+            Transform(df2_copy, summary[3]),
+            FadeIn(summary[0], summary[2]),
+        )
+
+        summary[1].set_opacity(1)   # reveal real summary terms
+        summary[3].set_opacity(1)
+        self.remove(df1_copy, df2_copy)
 
         self.wait(2)
 
