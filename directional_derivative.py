@@ -128,8 +128,8 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         # Δf₁ bar (from z0 to zm at the intermediate x position) TODO: This was copy pasted
         df = ze - z0
-        df_bar_x = xe - view_radius * 0.01  # small offset to avoid z-fighting with df2_bar at (xe, ye)
-        df_bar = Line3D(pt(df_bar_x, ye, z0), pt(df_bar_x, ye, ze), thickness=0.05, color=WHITE)
+        df_bar_x = xe - view_radius * 0.0  # small offset to avoid z-fighting with df2_bar at (xe, ye)
+        df_bar = Line3D(pt(df_bar_x, ye, z0), pt(df_bar_x, ye, ze), thickness=0.045, color=WHITE)
         df_lbl = MathTex(r"\Delta f", color=WHITE).scale(0.5)
         _p = self.camera.project_point(pt(df_bar_x - 0.2 * view_radius, ye - 0.08 * view_radius, ze + df * 0.5))
         df_lbl.move_to(np.array([_p[0], _p[1], 0]))
@@ -187,7 +187,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         # Δf₂ bar (from zm to ze at the final position)
         df2 = ze - zm
-        df2_bar = Line3D(pt(xe, ye, zm), pt(xe, ye, ze), thickness=0.05, color=BLUE_B)
+        df2_bar = Line3D(pt(xe, ye, zm), pt(xe, ye, ze), thickness=0.055, color=BLUE_B)
         df2_lbl = MathTex(r"\frac{\partial f}{\partial x_2} v_2 \Delta t", color=BLUE_B).scale(0.5)
         _p = self.camera.project_point(pt(xe, ye + 0.3 * view_radius, zm + df2 * 0.5))
         df2_lbl.move_to(np.array([_p[0], _p[1], 0]))
