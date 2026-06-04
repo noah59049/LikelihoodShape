@@ -140,8 +140,8 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         df1 = zm - z0
         df1_bar = Line3D(pt(xm, ym, z0), pt(xm, ym, zm), thickness=0.05, color=RED_B)
         df1_lbl = MathTex(r"\frac{\partial f}{\partial x_1} v_1 \Delta t", color=RED_B).scale(0.5)
-        df1_lbl.move_to(pt(xm + 0.2 * view_radius, ym - 0.05 * view_radius, z0 + df1 * 0.5))
-        self.add_fixed_orientation_mobjects(df1_lbl)
+        df1_lbl.move_to(self.camera.project_point(pt(xm + 0.2 * view_radius, ym - 0.05 * view_radius, z0 + df1 * 0.5)))
+        self.add_fixed_in_frame_mobjects(df1_lbl)
         self.play(Create(df1_bar), FadeIn(df1_lbl))
 
         # ── v₂ component (y-direction, from intermediate x position) ────────
@@ -169,8 +169,8 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         df2 = ze - zm
         df2_bar = Line3D(pt(xe, ye, zm), pt(xe, ye, ze), thickness=0.05, color=BLUE_B)
         df2_lbl = MathTex(r"\frac{\partial f}{\partial x_2} v_2 \Delta t", color=BLUE_B).scale(0.5)
-        df2_lbl.move_to(pt(xe, ye + 0.3 * view_radius, zm + df2 * 0.5))
-        self.add_fixed_orientation_mobjects(df2_lbl)
+        df2_lbl.move_to(self.camera.project_point(pt(xe, ye + 0.3 * view_radius, zm + df2 * 0.5)))
+        self.add_fixed_in_frame_mobjects(df2_lbl)
         self.play(Create(df2_bar), FadeIn(df2_lbl))
 
         # Final dot on surface
@@ -187,7 +187,18 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         summary[1].set_color(RED_B)
         summary[3].set_color(BLUE_B)
         self.add_fixed_in_frame_mobjects(summary)
-        self.play(Write(summary))
+
+        # df1_lbl_projected = df1_lbl.copy()
+        # df1_lbl_projected.apply_function(
+        #     lambda p: self.camera.project_point(p)
+        # )
+        # df2_lbl_projected = df2_lbl.copy()
+        # df2_lbl_projected.apply_function(
+        #     lambda p: self.camera.project_point(p)
+        # )
+        self.play(TransformFromCopy(df1_lbl, summary[1]),
+                  TransformFromCopy(df2_lbl, summary[3]),
+                  FadeIn(summary[0], summary[2]))
 
         self.wait(2)
 
