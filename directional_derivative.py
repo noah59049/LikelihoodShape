@@ -121,10 +121,19 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         dir_curve = ParametricFunction(
             lambda s: pt(x0 + v1 * dt * s, y0 + v2 * dt * s),
             t_range=[0, 1],
-            color=RED_B,
+            color=WHITE,
             stroke_width=5,
         )
         self.play(Create(dir_curve))
+
+        # Δf₁ bar (from z0 to zm at the intermediate x position) TODO: This was copy pasted
+        df = ze - z0
+        df_bar = Line3D(pt(xe, ye, z0), pt(xe, ye, ze), thickness=0.05, color=WHITE)
+        df_lbl = MathTex(r"\Delta f", color=WHITE).scale(0.5)
+        _p = self.camera.project_point(pt(xe - 0.2 * view_radius, ye + 0.05 * view_radius, ze + df * 0.5))
+        df_lbl.move_to(np.array([_p[0], _p[1], 0]))
+        self.add_fixed_in_frame_mobjects(df_lbl)
+        self.play(Create(df_bar), FadeIn(df_lbl))
 
         # ── v₁ component (x-direction) ──────────────────────────────────────
         v1_arrow = Arrow3D(pt(x0, y0, 0), pt(xm, ym, 0), color=RED_B, thickness=0.012).set_opacity(show_stems)
@@ -216,6 +225,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         self.wait(2)
 
+        return # TODO: Remove this
         self.play(
             FadeOut(VGroup(
                 axes, surface, x_label, y_label, z_label,
