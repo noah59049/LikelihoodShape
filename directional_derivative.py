@@ -117,6 +117,15 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         dir_arrow1= Arrow3D(pt(x0, y0,z0), pt(xe, ye,z0), color=WHITE, thickness=0.012).set_opacity(show_surface_arrows)
         self.play(Create(dir_arrow), Create(dir_arrow1))
 
+        # Trace the path on the surface along v
+        dir_curve = ParametricFunction(
+            lambda s: pt(x0 + v1 * dt * s, y0 + v2 * dt * s),
+            t_range=[0, 1],
+            color=RED_B,
+            stroke_width=5,
+        )
+        self.play(Create(dir_curve))
+
         # ── v₁ component (x-direction) ──────────────────────────────────────
         v1_arrow = Arrow3D(pt(x0, y0, 0), pt(xm, ym, 0), color=RED_B, thickness=0.012).set_opacity(show_stems)
         v1_arrow1= Arrow3D(pt(x0, y0,z0), pt(xm, ym,z0), color=RED_B, thickness=0.012).set_opacity(show_surface_arrows)
