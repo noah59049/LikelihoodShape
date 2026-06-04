@@ -128,9 +128,10 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         # Δf₁ bar (from z0 to zm at the intermediate x position) TODO: This was copy pasted
         df = ze - z0
-        df_bar = Line3D(pt(xe, ye, z0), pt(xe, ye, ze), thickness=0.05, color=WHITE)
+        df_bar_x = xe - view_radius * 0.01  # small offset to avoid z-fighting with df2_bar at (xe, ye)
+        df_bar = Line3D(pt(df_bar_x, ye, z0), pt(df_bar_x, ye, ze), thickness=0.05, color=WHITE)
         df_lbl = MathTex(r"\Delta f", color=WHITE).scale(0.5)
-        _p = self.camera.project_point(pt(xe - 0.2 * view_radius, ye - 0.08 * view_radius, ze + df * 0.5))
+        _p = self.camera.project_point(pt(df_bar_x - 0.2 * view_radius, ye - 0.08 * view_radius, ze + df * 0.5))
         df_lbl.move_to(np.array([_p[0], _p[1], 0]))
         self.add_fixed_in_frame_mobjects(df_lbl)
         self.play(Create(df_bar), FadeIn(df_lbl))
@@ -210,14 +211,15 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         self.add_fixed_in_frame_mobjects(summary[0], summary[2])
 
         # Sources have summary[1]/[3]'s structure (not df1_lbl's extra nesting level)
+        df_src = summary[0].copy().move_to(df_lbl.get_center())
         df1_src = summary[1].copy().move_to(df1_lbl.get_center())
         df2_src = summary[3].copy().move_to(df2_lbl.get_center())
-        self.add_fixed_in_frame_mobjects(df1_src, df2_src)
+        self.add_fixed_in_frame_mobjects(df_src, df1_src, df2_src)
 
         self.play(
-            FadeIn(summary[0]),
-            FadeIn(summary[2]),
+            ReplacementTransform( df_src, summary[0]),
             ReplacementTransform(df1_src, summary[1]),
+            FadeIn(summary[2]),
             ReplacementTransform(df2_src, summary[3]),
         )
         # ReplacementTransform adds the targets to the regular scene; promote to fixed_in_frame
