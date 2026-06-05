@@ -53,7 +53,12 @@ def hessian_latex(n, func_name="f"):
     return latex
 
 class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
-    def _show_3d_graph_derivation(self):
+    def construct(self):
+        self.set_speech_service(StitcherService(ls_config.path_to_podcast("directional_derivative"),
+        cache_dir=ls_config.get_cache_dir(),
+        min_silence_len=2000,
+        keep_silence=(0,0)))
+
         # All z values computed through example_function — change that function and everything updates
         x0, y0 = 1.3, 1.0
         z0 = example_function(x0, y0)
@@ -230,7 +235,6 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         self.wait(2)
 
-        return # TODO: Remove this
         self.play(
             FadeOut(VGroup(
                 axes, surface, x_label, y_label, z_label,
@@ -243,17 +247,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
             )),
             FadeOut(summary),
         )
-        self.wait(2)
         self.set_camera_orientation(phi=0, theta=-90 * DEGREES)
-
-    def construct(self):
-        self.set_speech_service(StitcherService(ls_config.path_to_podcast("directional_derivative"),
-        cache_dir=ls_config.get_cache_dir(),
-        min_silence_len=2000,
-        keep_silence=(0,0)))
-
-        self._show_3d_graph_derivation()
-        return
 
         with self.voiceover("If we want to calculate the directional derivative, ") as tracker:
             # --- Steps 1-6: Were removed, now just derivative definition ---
