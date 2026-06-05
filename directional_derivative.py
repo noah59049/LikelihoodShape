@@ -130,7 +130,6 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         df = ze - z0
         df_bar_top = Line3D(pt(xe, ye, z0), pt(xe, ye, zm), thickness=0.05, color=WHITE)
         df_bar_low = Line3D(pt(xe, ye, zm), pt(xe, ye, ze), thickness=0.05, color=WHITE)
-        df_bar_low2= Line3D(pt(xe, ye, zm), pt(xe, ye, ze), thickness=0.05, color=BLUE_B)
         df_lbl = MathTex(r"\Delta f", color=WHITE).scale(0.5)
         _p = self.camera.project_point(pt(xe - 0.2 * view_radius, ye - 0.08 * view_radius, ze + df * 0.5))
         df_lbl.move_to(np.array([_p[0], _p[1], 0]))
@@ -193,8 +192,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         df2_lbl.move_to(np.array([_p[0], _p[1], 0]))
         self.add_fixed_in_frame_mobjects(df2_lbl)
         self.play(FadeIn(df2_lbl), 
-                  FadeOut(df_bar_low), 
-                  FadeIn(df_bar_low2),
+                  df_bar_low.animate.set_color(BLUE_B),
                   )
 
         # Final dot on surface
