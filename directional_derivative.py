@@ -228,7 +228,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         self.wait(2)
 
-        # return # TODO: Remove this
+        return # TODO: Remove this
         self.play(
             FadeOut(VGroup(
                 axes, surface, x_label, y_label, z_label,
