@@ -237,7 +237,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
                 v2_arrow, v2_arrow1, v2_arrow2, x2_curve, stem_e,
                 pe_dot, v1_lbl, v2_lbl, df1_lbl, df2_lbl,
                 df_lbl, dir_curve,
-                # df_bar_top, df_bar_low,
+                df_bar_top, df_bar_low,
             )),
             FadeOut(summary),
         )
