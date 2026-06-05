@@ -29,7 +29,7 @@ def create_hess_row(num_elements,
                         bracket = bracket)
 
 def example_function(x, y):
-    return -0.3 * x**2 - 0.2 * y**2
+    return -0.3 * x**2 - 0.4 * y**2
 
 
 def hessian_latex(n, func_name="f"):
