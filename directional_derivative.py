@@ -99,37 +99,40 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         surface.set_fill_by_checkerboard(BLUE_D, TEAL_D, opacity=0.65)
 
         self.set_camera_orientation(phi=60 * DEGREES, theta=55 * DEGREES)
-        self.play(
-            Create(axes, run_time=1.5),
-            FadeIn(surface, run_time=1.5),
-            FadeIn(x_label),
-            FadeIn(y_label),
-            FadeIn(z_label),
-        )
+        with self.voiceover("Suppose we have some function f of multiple variables. Here we just show f of x1 and x2.") as tracker:
+            self.play(
+                Create(axes, run_time=1.5),
+                FadeIn(surface, run_time=1.5),
+                FadeIn(x_label),
+                FadeIn(y_label),
+                FadeIn(z_label),
+            )
 
         def pt(x, y, z=None):
             return axes.c2p(x, y, example_function(x, y) if z is None else z)
         show_stems: bool = False
         show_surface_arrows: bool = True
 
-        # Starting dot + dashed vertical stem
-        p0_dot = Dot3D(pt(x0, y0), color=YELLOW, radius=0.07)
-        stem0 = DashedLine(pt(x0, y0, 0), pt(x0, y0), color=YELLOW_A, stroke_width=2).set_opacity(show_stems)
-        self.play(FadeIn(p0_dot), Create(stem0))
 
-        # Full direction vector in the xy-plane
-        dir_arrow = Arrow3D(pt(x0, y0, 0), pt(xe, ye, 0), color=WHITE, thickness=0.012).set_opacity(show_stems)
-        dir_arrow1= Arrow3D(pt(x0, y0,z0), pt(xe, ye,z0), color=WHITE, thickness=0.012).set_opacity(show_surface_arrows)
-        self.play(Create(dir_arrow), Create(dir_arrow1))
+        with self.voiceover("And suppose we want to find the directional derivative in the direction of v at some point.") as tracker:
+            # Starting dot + dashed vertical stem
+            p0_dot = Dot3D(pt(x0, y0), color=YELLOW, radius=0.07)
+            stem0 = DashedLine(pt(x0, y0, 0), pt(x0, y0), color=YELLOW_A, stroke_width=2).set_opacity(show_stems)
+            self.play(FadeIn(p0_dot), Create(stem0))
 
-        # Trace the path on the surface along v
-        dir_curve = ParametricFunction(
-            lambda s: pt(x0 + v1 * dt * s, y0 + v2 * dt * s),
-            t_range=[0, 1],
-            color=WHITE,
-            stroke_width=5,
-        )
-        self.play(Create(dir_curve))
+            # Full direction vector in the xy-plane
+            dir_arrow = Arrow3D(pt(x0, y0, 0), pt(xe, ye, 0), color=WHITE, thickness=0.012).set_opacity(show_stems)
+            dir_arrow1= Arrow3D(pt(x0, y0,z0), pt(xe, ye,z0), color=WHITE, thickness=0.012).set_opacity(show_surface_arrows)
+            self.play(Create(dir_arrow), Create(dir_arrow1))
+
+            # Trace the path on the surface along v
+            dir_curve = ParametricFunction(
+                lambda s: pt(x0 + v1 * dt * s, y0 + v2 * dt * s),
+                t_range=[0, 1],
+                color=WHITE,
+                stroke_width=5,
+            )
+            self.play(Create(dir_curve))
 
         # Δf bar (from z0 to ze)
         df = ze - z0
@@ -139,7 +142,8 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         _p = self.camera.project_point(pt(xe - 0.2 * view_radius, ye - 0.08 * view_radius, ze + df * 0.5))
         df_lbl.move_to(np.array([_p[0], _p[1], 0]))
         self.add_fixed_in_frame_mobjects(df_lbl)
-        self.play(Create(df_bar_top), Create(df_bar_low), FadeIn(df_lbl))
+        with self.voiceover("So we want the change in f over the change in x. How do we find the change in f?") as tracker:
+            self.play(Create(df_bar_top), Create(df_bar_low), FadeIn(df_lbl))
 
         # ── v₁ component (x-direction) ──────────────────────────────────────
         v1_arrow = Arrow3D(pt(x0, y0, 0), pt(xm, ym, 0), color=RED_B, thickness=0.012).set_opacity(show_stems)
@@ -148,17 +152,18 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         lbl_z = z0 if (not show_stems and show_surface_arrows) else -0.1
         v1_lbl.move_to(pt(x0 + v1 * dt * 0.5, y0 - 0.15 * view_radius, lbl_z))
         self.add_fixed_orientation_mobjects(v1_lbl)
-        self.play(Create(v1_arrow), FadeIn(v1_lbl), FadeIn(v1_arrow1))
+        with self.voiceover("Well, if you consider what happens to f as you go along the x1 component of v,") as tracker:
+            self.play(Create(v1_arrow), FadeIn(v1_lbl), FadeIn(v1_arrow1))
 
-        # Trace the path on the surface along x₁
-        x1_curve = ParametricFunction(
-            lambda s: pt(x0 + v1 * dt * s, y0),
-            t_range=[0, 1],
-            color=RED_B,
-            stroke_width=5,
-        )
-        stem_m = DashedLine(pt(xm, ym, 0), pt(xm, ym), color=RED_A, stroke_width=2).set_opacity(show_stems)
-        self.play(Create(x1_curve), Create(stem_m))
+            # Trace the path on the surface along x₁
+            x1_curve = ParametricFunction(
+                lambda s: pt(x0 + v1 * dt * s, y0),
+                t_range=[0, 1],
+                color=RED_B,
+                stroke_width=5,
+            )
+            stem_m = DashedLine(pt(xm, ym, 0), pt(xm, ym), color=RED_A, stroke_width=2).set_opacity(show_stems)
+            self.play(Create(x1_curve), Create(stem_m))
 
         # Δf₁ bar (from z0 to zm at the intermediate x position)
         df1 = zm - z0
@@ -167,7 +172,8 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         _p = self.camera.project_point(pt(xm + 0.2 * view_radius, ym - 0.05 * view_radius, z0 + df1 * 0.5))
         df1_lbl.move_to(np.array([_p[0], _p[1], 0]))
         self.add_fixed_in_frame_mobjects(df1_lbl)
-        self.play(Create(df1_bar), FadeIn(df1_lbl))
+        with self.voiceover("the change in x1 is just v1 times delta t, and the change in y is approximately the change in x1 times the partial derivative of y with respect to x1.") as tracker:
+            self.play(Create(df1_bar), FadeIn(df1_lbl))
 
         # ── v₂ component (y-direction, from intermediate x position) ────────
         v2_arrow = Arrow3D(pt(xm, ym, 0), pt(xe, ye, 0), color=BLUE_B, thickness=0.012).set_opacity(show_stems)
@@ -176,33 +182,34 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         v2_lbl = MathTex(r"v_2 \Delta t", color=BLUE_B).scale(0.6)
         v2_lbl.move_to(pt(xm + 0.25 * view_radius, y0 + v2 * dt * 1, lbl_z))
         self.add_fixed_orientation_mobjects(v2_lbl)
-        self.play(Create(v2_arrow), Create(v2_arrow1), Create(v2_arrow2), FadeIn(v2_lbl))
+        with self.voiceover("The change in x2 is likewise v2 times delta t, and the change in y is approximately the change in x2 times the partial of y with respect to x2.") as tracker:
+            self.play(Create(v2_arrow), Create(v2_arrow1), Create(v2_arrow2), FadeIn(v2_lbl))
 
-        # Trace the path on the surface along x₂
-        x2_curve = ParametricFunction(
-            lambda s: pt(xm, y0 + v2 * dt * s),
-            t_range=[0, 1],
-            color=BLUE_B,
-            stroke_width=5,
-        )
-        stem_e = DashedLine(pt(xe, ye, 0), pt(xe, ye), color=BLUE_A, stroke_width=2)
-        if not show_stems:
-            stem_e.set_opacity(0)
-        self.play(Create(x2_curve), Create(stem_e))
+            # Trace the path on the surface along x₂
+            x2_curve = ParametricFunction(
+                lambda s: pt(xm, y0 + v2 * dt * s),
+                t_range=[0, 1],
+                color=BLUE_B,
+                stroke_width=5,
+            )
+            stem_e = DashedLine(pt(xe, ye, 0), pt(xe, ye), color=BLUE_A, stroke_width=2)
+            if not show_stems:
+                stem_e.set_opacity(0)
+            self.play(Create(x2_curve), Create(stem_e))
 
-        # Δf₂ bar (from zm to ze at the final position)
-        df2 = ze - zm
-        df2_lbl = MathTex(r"\frac{\partial f}{\partial x_2} v_2 \Delta t", color=BLUE_B).scale(0.5)
-        _p = self.camera.project_point(pt(xe, ye + 0.3 * view_radius, zm + df2 * 0.5))
-        df2_lbl.move_to(np.array([_p[0], _p[1], 0]))
-        self.add_fixed_in_frame_mobjects(df2_lbl)
-        self.play(FadeIn(df2_lbl), 
-                  df_bar_low.animate.set_color(BLUE_B),
-                  )
+            # Δf₂ bar (from zm to ze at the final position)
+            df2 = ze - zm
+            df2_lbl = MathTex(r"\frac{\partial f}{\partial x_2} v_2 \Delta t", color=BLUE_B).scale(0.5)
+            _p = self.camera.project_point(pt(xe, ye + 0.3 * view_radius, zm + df2 * 0.5))
+            df2_lbl.move_to(np.array([_p[0], _p[1], 0]))
+            self.add_fixed_in_frame_mobjects(df2_lbl)
+            self.play(FadeIn(df2_lbl), 
+                    df_bar_low.animate.set_color(BLUE_B),
+                    )
 
-        # Final dot on surface
-        pe_dot = Dot3D(pt(xe, ye), color=GREEN, radius=0.07)
-        self.play(FadeIn(pe_dot))
+            # Final dot on surface
+            pe_dot = Dot3D(pt(xe, ye), color=GREEN, radius=0.07)
+            self.play(FadeIn(pe_dot))
 
         # Chain rule summary (fixed to screen so it's always readable)
         summary = MathTex(
@@ -223,31 +230,32 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         df2_src = summary[4].copy().move_to(df2_lbl.get_center())
         self.add_fixed_in_frame_mobjects(df_src, df1_src, df2_src)
 
-        self.play(
-            ReplacementTransform( df_src, summary[0]),
-            FadeIn(summary[1]),
-            ReplacementTransform(df1_src, summary[2]),
-            FadeIn(summary[3]),
-            ReplacementTransform(df2_src, summary[4]),
-        )
-        # ReplacementTransform adds the targets to the regular scene; promote to fixed_in_frame
-        self.add_fixed_in_frame_mobjects(summary[0], summary[2], summary[4])
+        with self.voiceover("And then the overall change in f is equal to the change from moving in the x1 direction plus the change from moving in the x2 direction.") as tracker:
+            self.play(
+                ReplacementTransform( df_src, summary[0]),
+                FadeIn(summary[1]),
+                ReplacementTransform(df1_src, summary[2]),
+                FadeIn(summary[3]),
+                ReplacementTransform(df2_src, summary[4]),
+            )
+            # ReplacementTransform adds the targets to the regular scene; promote to fixed_in_frame
+            self.add_fixed_in_frame_mobjects(summary[0], summary[2], summary[4])
 
-        self.wait(2)
+            self.wait(2)
 
-        self.play(
-            FadeOut(VGroup(
-                axes, surface, x_label, y_label, z_label,
-                p0_dot, stem0, dir_arrow, dir_arrow1,
-                v1_arrow, v1_arrow1,            x1_curve, stem_m, df1_bar,
-                v2_arrow, v2_arrow1, v2_arrow2, x2_curve, stem_e,
-                pe_dot, v1_lbl, v2_lbl, df1_lbl, df2_lbl,
-                df_lbl, dir_curve,
-                df_bar_top, df_bar_low,
-            )),
-            FadeOut(summary),
-        )
-        self.set_camera_orientation(phi=0, theta=-90 * DEGREES)
+            self.play(
+                FadeOut(VGroup(
+                    axes, surface, x_label, y_label, z_label,
+                    p0_dot, stem0, dir_arrow, dir_arrow1,
+                    v1_arrow, v1_arrow1,            x1_curve, stem_m, df1_bar,
+                    v2_arrow, v2_arrow1, v2_arrow2, x2_curve, stem_e,
+                    pe_dot, v1_lbl, v2_lbl, df1_lbl, df2_lbl,
+                    df_lbl, dir_curve,
+                    df_bar_top, df_bar_low,
+                )),
+                FadeOut(summary),
+            )
+            self.set_camera_orientation(phi=0, theta=-90 * DEGREES)
 
         with self.voiceover("If we want to calculate the directional derivative, ") as tracker:
             # --- Steps 1-6: Were removed, now just derivative definition ---
