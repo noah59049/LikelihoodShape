@@ -130,12 +130,12 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         df = ze - z0
         df_bar_top = Line3D(pt(xe, ye, z0), pt(xe, ye, zm), thickness=0.05, color=WHITE)
         df_bar_low = Line3D(pt(xe, ye, zm), pt(xe, ye, ze), thickness=0.05, color=WHITE)
-        df_bar = VGroup(df_bar_top, df_bar_low)
+        df_bar_low2= Line3D(pt(xe, ye, zm), pt(xe, ye, ze), thickness=0.05, color=BLUE_B)
         df_lbl = MathTex(r"\Delta f", color=WHITE).scale(0.5)
         _p = self.camera.project_point(pt(xe - 0.2 * view_radius, ye - 0.08 * view_radius, ze + df * 0.5))
         df_lbl.move_to(np.array([_p[0], _p[1], 0]))
         self.add_fixed_in_frame_mobjects(df_lbl)
-        self.play(Create(df_bar), FadeIn(df_lbl))
+        self.play(Create(df_bar_top), Create(df_bar_low), FadeIn(df_lbl))
 
         # ── v₁ component (x-direction) ──────────────────────────────────────
         v1_arrow = Arrow3D(pt(x0, y0, 0), pt(xm, ym, 0), color=RED_B, thickness=0.012).set_opacity(show_stems)
@@ -192,7 +192,10 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
         _p = self.camera.project_point(pt(xe, ye + 0.3 * view_radius, zm + df2 * 0.5))
         df2_lbl.move_to(np.array([_p[0], _p[1], 0]))
         self.add_fixed_in_frame_mobjects(df2_lbl)
-        self.play(df_bar_low.animate.set_color(BLUE_B), FadeIn(df2_lbl))
+        self.play(FadeIn(df2_lbl), 
+                  FadeOut(df_bar_low), 
+                  FadeIn(df_bar_low2),
+                  )
 
         # Final dot on surface
         pe_dot = Dot3D(pt(xe, ye), color=GREEN, radius=0.07)
@@ -227,17 +230,20 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         self.wait(2)
 
-        return # TODO: Remove this
+        # return # TODO: Remove this
         self.play(
             FadeOut(VGroup(
                 axes, surface, x_label, y_label, z_label,
                 p0_dot, stem0, dir_arrow, dir_arrow1,
                 v1_arrow, v1_arrow1,            x1_curve, stem_m, df1_bar,
-                v2_arrow, v2_arrow1, v2_arrow2, x2_curve, stem_e, df_bar_low,
+                v2_arrow, v2_arrow1, v2_arrow2, x2_curve, stem_e,
                 pe_dot, v1_lbl, v2_lbl, df1_lbl, df2_lbl,
+                df_lbl, dir_curve,
+                # df_bar_top, df_bar_low,
             )),
             FadeOut(summary),
         )
+        self.wait(2)
         self.set_camera_orientation(phi=0, theta=-90 * DEGREES)
 
     def construct(self):
