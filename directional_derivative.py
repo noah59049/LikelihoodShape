@@ -128,10 +128,11 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         # Δf bar (from z0 to ze)
         df = ze - z0
-        df_bar_x = xe - view_radius * 0.0  # small offset to avoid z-fighting with df2_bar at (xe, ye)
-        df_bar = Line3D(pt(df_bar_x, ye, z0), pt(df_bar_x, ye, ze), thickness=0.045, color=WHITE)
+        df_bar_top = Line3D(pt(xe, ye, z0), pt(xe, ye, zm), thickness=0.05, color=WHITE)
+        df_bar_low = Line3D(pt(xe, ye, zm), pt(xe, ye, ze), thickness=0.05, color=WHITE)
+        df_bar = VGroup(df_bar_top, df_bar_low)
         df_lbl = MathTex(r"\Delta f", color=WHITE).scale(0.5)
-        _p = self.camera.project_point(pt(df_bar_x - 0.2 * view_radius, ye - 0.08 * view_radius, ze + df * 0.5))
+        _p = self.camera.project_point(pt(xe - 0.2 * view_radius, ye - 0.08 * view_radius, ze + df * 0.5))
         df_lbl.move_to(np.array([_p[0], _p[1], 0]))
         self.add_fixed_in_frame_mobjects(df_lbl)
         self.play(Create(df_bar), FadeIn(df_lbl))
@@ -187,12 +188,11 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         # Δf₂ bar (from zm to ze at the final position)
         df2 = ze - zm
-        df2_bar = Line3D(pt(xe, ye, zm), pt(xe, ye, ze), thickness=0.055, color=BLUE_B)
         df2_lbl = MathTex(r"\frac{\partial f}{\partial x_2} v_2 \Delta t", color=BLUE_B).scale(0.5)
         _p = self.camera.project_point(pt(xe, ye + 0.3 * view_radius, zm + df2 * 0.5))
         df2_lbl.move_to(np.array([_p[0], _p[1], 0]))
         self.add_fixed_in_frame_mobjects(df2_lbl)
-        self.play(Create(df2_bar), FadeIn(df2_lbl))
+        self.play(df_bar_low.animate.set_color(BLUE_B), FadeIn(df2_lbl))
 
         # Final dot on surface
         pe_dot = Dot3D(pt(xe, ye), color=GREEN, radius=0.07)
@@ -233,7 +233,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
                 axes, surface, x_label, y_label, z_label,
                 p0_dot, stem0, dir_arrow, dir_arrow1,
                 v1_arrow, v1_arrow1,            x1_curve, stem_m, df1_bar,
-                v2_arrow, v2_arrow1, v2_arrow2, x2_curve, stem_e, df2_bar,
+                v2_arrow, v2_arrow1, v2_arrow2, x2_curve, stem_e, df_bar_low,
                 pe_dot, v1_lbl, v2_lbl, df1_lbl, df2_lbl,
             )),
             FadeOut(summary),
