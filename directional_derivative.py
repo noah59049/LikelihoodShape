@@ -201,30 +201,32 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         # Chain rule summary (fixed to screen so it's always readable)
         summary = MathTex(
-            r"\Delta f \approx",
+            r"\Delta f",
+            r"\approx",
             r"\frac{\partial f}{\partial x_1} v_1 \Delta t",
             r"+",
             r"\frac{\partial f}{\partial x_2} v_2 \Delta t",
         ).scale(0.65).to_corner(UL)
-        summary[1].set_color(RED_B)
-        summary[3].set_color(BLUE_B)
-        # summary[0] and [2] added now (fixed_in_frame); [1] and [3] arrive via animation
-        self.add_fixed_in_frame_mobjects(summary[0], summary[2])
+        summary[2].set_color(RED_B)
+        summary[4].set_color(BLUE_B)
+        # summary[1] and [3] added now (fixed_in_frame); [0] [2] and [4] arrive via animation
+        self.add_fixed_in_frame_mobjects(summary[1], summary[3])
 
-        # Sources have summary[1]/[3]'s structure (not df1_lbl's extra nesting level)
+        # Sources have summary[2]/[4]'s structure (not df1_lbl's extra nesting level)
         df_src = summary[0].copy().move_to(df_lbl.get_center())
-        df1_src = summary[1].copy().move_to(df1_lbl.get_center())
-        df2_src = summary[3].copy().move_to(df2_lbl.get_center())
+        df1_src = summary[2].copy().move_to(df1_lbl.get_center())
+        df2_src = summary[4].copy().move_to(df2_lbl.get_center())
         self.add_fixed_in_frame_mobjects(df_src, df1_src, df2_src)
 
         self.play(
             ReplacementTransform( df_src, summary[0]),
-            ReplacementTransform(df1_src, summary[1]),
-            FadeIn(summary[2]),
-            ReplacementTransform(df2_src, summary[3]),
+            FadeIn(summary[1]),
+            ReplacementTransform(df1_src, summary[2]),
+            FadeIn(summary[3]),
+            ReplacementTransform(df2_src, summary[4]),
         )
         # ReplacementTransform adds the targets to the regular scene; promote to fixed_in_frame
-        self.add_fixed_in_frame_mobjects(summary[1], summary[3])
+        self.add_fixed_in_frame_mobjects(summary[0], summary[2], summary[4])
 
         self.wait(2)
 
