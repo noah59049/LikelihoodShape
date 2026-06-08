@@ -28,10 +28,6 @@ def create_hess_row(num_elements,
                         orientation=orientation,
                         bracket = bracket)
 
-def example_function(x, y):
-    return -0.3 * x**2 - 0.4 * y**2
-
-
 def hessian_latex(n, func_name="f"):
     rows = []
     
@@ -51,6 +47,9 @@ def hessian_latex(n, func_name="f"):
     )
     
     return latex
+
+def example_function(x, y):
+    return -0.3 * x**2 - 0.4 * y**2
 
 class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
     def construct(self):
