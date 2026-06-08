@@ -24,6 +24,17 @@ def create_hess_row(num_elements,
                         orientation=orientation,
                         bracket = bracket)
 
+def make_directional(n=4, second=False):
+    prefix = r"D^2_{\vec{v}} f(\vec{x})" if second else r"D_{\vec{v}} f(\vec{x})"
+    frac_num = r"D_{\vec{v}} f(\vec{x})" if second else "f"
+    parts = [prefix, "="]
+    for i in range(1, n + 1):
+        parts.append(rf"\frac{{\partial {frac_num}}}{{\partial x_{i}}}")
+        parts.append(rf"v_{i}")
+        if i < n:
+            parts.append("+")
+    return MathTex(*parts)
+
 def hessian_latex(n, func_name="f"):
     rows = []
     
@@ -46,22 +57,7 @@ def hessian_latex(n, func_name="f"):
 
 class DirectionalDerivativeScene2(Scene):
     def construct(self):
-        # HM TODO: We're doing a 4D vector, it can be any size though
-        directional = MathTex(
-            r"D_{\vec{v}} f(\vec{x})",
-            "=",
-            "\\frac{\\partial f}{\\partial x_1}",
-            "v_1",
-            "+",
-            "\\frac{\\partial f}{\\partial x_2}",
-            "v_2",
-            "+",
-            "\\frac{\\partial f}{\\partial x_3}",
-            "v_3",
-            "+",
-            "\\frac{\\partial f}{\\partial x_4}",
-            "v_4",
-        )
+        directional = make_directional(4)
         directional.to_edge(UP)
 
         self.add(directional)
@@ -82,20 +78,6 @@ class DirectionalDerivativeScene2(Scene):
         self.play(TransformMatchingShapes(directional.copy(), vTgrad))
         self.play(FadeOut(vTgrad))
 
-        second_directional = MathTex(
-            r"D^2_{\vec{v}} f(\vec{x})",
-            r"=",
-            r"\frac{\partial D_{\vec{v} f(\vec{x})}}{\partial x_1}",
-            r"v_1",
-            r"+",
-            r"\frac{\partial D_{\vec{v} f(\vec{x})}}{\partial x_2}",
-            r"v_2",
-            r"+",
-            r"\frac{\partial D_{\vec{v} f(\vec{x})}}{\partial x_3}",
-            r"v_3",
-            r"+",
-            r"\frac{\partial D_{\vec{v} f(\vec{x})}}{\partial x_4}",
-            r"v_4",
-        )
+        second_directional = make_directional(4, second=True)
 
         self.play(TransformMatchingShapes(directional.copy(), second_directional))
