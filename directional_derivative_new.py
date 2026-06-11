@@ -99,7 +99,12 @@ class DirectionalDerivativeScene2(Scene):
         
         second_expanded = MathTex(*make_expanded_D2v()).scale(0.77)
         second_expanded_focus = MathTex(make_expanded_D2v()[-1]).scale(0.77).align_to(second_expanded, RIGHT)
-        
+        Hv = MathTex(
+            hessian_latex(4), 
+            v_col, 
+            "="
+        ).scale(0.77).to_edge(LEFT)
+
         # --- Animations ---
         self.add(directional)
         self.play(TransformMatchingShapes(directional.copy(), vTgrad))
@@ -109,4 +114,5 @@ class DirectionalDerivativeScene2(Scene):
         self.play(TransformMatchingShapes(second_directional, second_expanded))
         self.add(second_expanded_focus)
         self.play(FadeOut(second_expanded))
+        self.play(FadeIn(Hv))
         self.wait(2)
