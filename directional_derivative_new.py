@@ -46,6 +46,10 @@ def hessian_latex(n, func_name="f"):
     
     return latex
 
+def create_partial_col(n, *inner_parts):
+    rows = [[MathTex(rf"\frac{{\partial}}{{\partial x_{i}}}", *inner_parts)] for i in range(1, n + 1)]
+    return MobjectMatrix(rows)
+
 def make_directional(n=4, second=False):
     prefix = r"D^2_{\vec{v}} f(\vec{x})" if second else r"D_{\vec{v}} f(\vec{x})"
     frac_num = r"D_{\vec{v}} f(\vec{x})" if second else "f"
@@ -87,3 +91,7 @@ class DirectionalDerivativeScene2(Scene):
         dir_grad_col = create_grad(4, "col", func_name=Dv)
         second_directional = MathTex(D2v, "=", v_row, dir_grad_col)
         self.play(TransformMatchingShapes(vTgrad, second_directional))
+
+        partial_col = create_partial_col(4, grad_row, v_col)
+        expanded = VGroup(MathTex(D2v, "=", v_row), partial_col).arrange(RIGHT)
+        self.play(TransformMatchingShapes(second_directional, expanded))
