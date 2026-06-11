@@ -46,10 +46,6 @@ def hessian_latex(n, func_name="f"):
     
     return latex
 
-def create_partial_col(n, *inner_parts):
-    rows = [[MathTex(rf"\frac{{\partial}}{{\partial x_{i}}}", *inner_parts)] for i in range(1, n + 1)]
-    return MobjectMatrix(rows)
-
 def make_directional(n=4, second=False):
     prefix = r"D^2_{\vec{v}} f(\vec{x})" if second else r"D_{\vec{v}} f(\vec{x})"
     frac_num = r"D_{\vec{v}} f(\vec{x})" if second else "f"
@@ -61,18 +57,24 @@ def make_directional(n=4, second=False):
             parts.append("+")
     return MathTex(*parts)
 
+v_row = create_v(4, "row")
+v_col = create_v(4, "column")
+grad_row = create_grad(4, "row")
+grad_col = create_grad(4, "column")
+
 Dv = r"D_{\vec{v}} f(\vec{x})"
 D2v = r"D^2_{\vec{v}} f(\vec{x})"
+
+def make_expanded_D2v(n=4):
+    v_row = create_v(n, "row")
+    elements = [rf"\frac {{\partial}} {{\partial X_{i}}}" + grad_row + v_col for i in range(1, n + 1)]
+    return D2v + "=" + v_row + latex_vector(elements)
 
 
 class DirectionalDerivativeScene2(Scene):
     def construct(self):
         directional = make_directional(4)
 
-        v_row = create_v(4, "row")
-        v_col = create_v(4, "column")
-        grad_row = create_grad(4, "row")
-        grad_col = create_grad(4, "column")
         vTgrad = MathTex(Dv,
                          "=",
                          v_row,
@@ -83,15 +85,15 @@ class DirectionalDerivativeScene2(Scene):
                          v_col)
         
         first_order = VGroup(directional, vTgrad, gradTv).arrange(DOWN).to_edge(UP)
-        
-        self.add(directional)
-        self.play(TransformMatchingShapes(directional.copy(), vTgrad))
-        self.play(TransformMatchingShapes(vTgrad.copy(), gradTv))
 
         dir_grad_col = create_grad(4, "col", func_name=Dv)
         second_directional = MathTex(D2v, "=", v_row, dir_grad_col)
+        
+        second_expanded = MathTex(make_expanded_D2v())
+        
+        # --- Animations ---
+        self.add(directional)
+        self.play(TransformMatchingShapes(directional.copy(), vTgrad))
+        self.play(TransformMatchingShapes(vTgrad.copy(), gradTv))
         self.play(TransformMatchingShapes(vTgrad, second_directional))
-
-        partial_col = create_partial_col(4, grad_row, v_col)
-        expanded = VGroup(MathTex(D2v, "=", v_row), partial_col).arrange(RIGHT)
-        self.play(TransformMatchingShapes(second_directional, expanded))
+        self.play(TransformMatchingShapes(second_directional, second_expanded))
