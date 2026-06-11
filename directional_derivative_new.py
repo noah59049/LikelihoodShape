@@ -66,7 +66,6 @@ Dv = r"D_{\vec{v}} f(\vec{x})"
 D2v = r"D^2_{\vec{v}} f(\vec{x})"
 
 def make_expanded_D2v(n=4):
-    v_row = create_v(n, "row")
     elements = [rf"\frac {{\partial}} {{\partial X_{i}}}" + grad_row + v_col for i in range(1, n + 1)]
     return [
         D2v,
@@ -99,6 +98,7 @@ class DirectionalDerivativeScene2(Scene):
         second_directional = MathTex(D2v, "=", v_row, dir_grad_col)
         
         second_expanded = MathTex(*make_expanded_D2v()).scale(0.77)
+        second_expanded_focus = MathTex(make_expanded_D2v()[-1]).scale(0.77).align_to(second_expanded, RIGHT)
         
         # --- Animations ---
         self.add(directional)
@@ -107,4 +107,6 @@ class DirectionalDerivativeScene2(Scene):
         self.remove(directional, gradTv)
         self.play(TransformMatchingShapes(vTgrad, second_directional))
         self.play(TransformMatchingShapes(second_directional, second_expanded))
+        self.add(second_expanded_focus)
+        self.play(FadeOut(second_expanded))
         self.wait(2)
