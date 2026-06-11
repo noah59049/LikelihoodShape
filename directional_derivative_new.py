@@ -89,11 +89,12 @@ class DirectionalDerivativeScene2(Scene):
         dir_grad_col = create_grad(4, "col", func_name=Dv)
         second_directional = MathTex(D2v, "=", v_row, dir_grad_col)
         
-        second_expanded = MathTex(make_expanded_D2v())
+        second_expanded = MathTex(make_expanded_D2v()).scale(0.77)
         
         # --- Animations ---
         self.add(directional)
         self.play(TransformMatchingShapes(directional.copy(), vTgrad))
         self.play(TransformMatchingShapes(vTgrad.copy(), gradTv))
+        self.remove(directional, gradTv)
         self.play(TransformMatchingShapes(vTgrad, second_directional))
         self.play(TransformMatchingShapes(second_directional, second_expanded))
