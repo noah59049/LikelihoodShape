@@ -57,6 +57,10 @@ def make_directional(n=4, second=False):
             parts.append("+")
     return MathTex(*parts)
 
+Dv = r"D_{\vec{v}} f(\vec{x})"
+D2v = r"D^2_{\vec{v}} f(\vec{x})"
+
+
 class DirectionalDerivativeScene2(Scene):
     def construct(self):
         directional = make_directional(4)
@@ -65,11 +69,11 @@ class DirectionalDerivativeScene2(Scene):
         v_col = create_v(4, "column")
         grad_row = create_grad(4, "row")
         grad_col = create_grad(4, "column")
-        vTgrad = MathTex(r"D_{\vec{v}} f(\vec{x})",
+        vTgrad = MathTex(Dv,
                          "=",
                          v_row,
                          grad_col)
-        gradTv = MathTex(r"D_{\vec{v}} f(\vec{x})",
+        gradTv = MathTex(Dv,
                          "=",
                          grad_row,
                          v_col)
@@ -80,6 +84,6 @@ class DirectionalDerivativeScene2(Scene):
         self.play(TransformMatchingShapes(directional.copy(), vTgrad))
         self.play(TransformMatchingShapes(vTgrad.copy(), gradTv))
 
-        dir_grad_col = create_grad(4, "col", func_name=r"D_{\vec{v}} f(\vec{x})")
-        second_directional = MathTex(r"D^2_{\vec{v}} f(\vec{x})", "=", v_row, dir_grad_col)
+        dir_grad_col = create_grad(4, "col", func_name=Dv)
+        second_directional = MathTex(D2v, "=", v_row, dir_grad_col)
         self.play(TransformMatchingShapes(vTgrad, second_directional))
