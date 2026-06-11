@@ -80,14 +80,18 @@ class DirectionalDerivativeScene2(Scene):
     def construct(self):
         directional = make_directional(4)
 
-        vTgrad = MathTex(Dv,
-                         "=",
-                         v_row,
-                         grad_col)
-        gradTv = MathTex(Dv,
-                         "=",
-                         grad_row,
-                         v_col)
+        vTgrad = MathTex(
+            Dv,
+            "=",
+            v_row,
+            grad_col
+        )
+        gradTv = MathTex(
+            Dv,
+            "=",
+            grad_row,
+            v_col
+        )
         
         first_order = VGroup(directional, vTgrad, gradTv).arrange(DOWN).to_edge(UP)
 
