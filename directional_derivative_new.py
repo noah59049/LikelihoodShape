@@ -58,9 +58,6 @@ def hessian_latex(n, func_name="f"):
 class DirectionalDerivativeScene2(Scene):
     def construct(self):
         directional = make_directional(4)
-        directional.to_edge(UP)
-
-        self.add(directional)
 
         v_row = create_v(4, "row")
         v_col = create_v(4, "column")
@@ -75,8 +72,15 @@ class DirectionalDerivativeScene2(Scene):
                          grad_row,
                          v_col)
         
+        first_order = VGroup(directional, vTgrad, gradTv).arrange(DOWN).to_edge(UP)
+        
+        self.add(directional)
         self.play(TransformMatchingShapes(directional.copy(), vTgrad))
-        self.play(FadeOut(vTgrad))
+        self.play(TransformMatchingShapes(vTgrad.copy(), gradTv))
+
+
+
+        return
 
         second_directional = make_directional(4, second=True)
 
