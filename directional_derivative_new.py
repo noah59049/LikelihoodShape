@@ -98,3 +98,4 @@ class DirectionalDerivativeScene2(Scene):
         self.remove(directional, gradTv)
         self.play(TransformMatchingShapes(vTgrad, second_directional))
         self.play(TransformMatchingShapes(second_directional, second_expanded))
+        self.wait(2)
