@@ -77,6 +77,7 @@ def make_expanded_D2v(n=4):
 
 class DirectionalDerivativeScene2(Scene):
     def construct(self):
+        # --- Part 1: Create the objects ---
         directional = make_directional(4)
 
         vTgrad = MathTex(
@@ -91,21 +92,24 @@ class DirectionalDerivativeScene2(Scene):
             grad_row,
             v_col
         )
-        
-        first_order = VGroup(directional, vTgrad, gradTv).arrange(DOWN).to_edge(UP)
 
         dir_grad_col = create_grad(4, "col", func_name=Dv)
         second_directional = MathTex(D2v, "=", v_row, dir_grad_col)
         
         second_expanded = MathTex(*make_expanded_D2v()).scale(0.77)
-        second_expanded_focus = MathTex(make_expanded_D2v()[-1]).scale(0.77).align_to(second_expanded, RIGHT)
+        second_expanded_focus = MathTex(make_expanded_D2v()[-1]).scale(0.77)
         Hv = MathTex(
             hessian_latex(4), 
             v_col, 
             "="
-        ).scale(0.77).to_edge(LEFT)
+        ).scale(0.77)
 
-        # --- Animations ---
+        # --- Part 2: Move the objects ---
+        Hv.to_edge(LEFT)
+        first_order = VGroup(directional, vTgrad, gradTv).arrange(DOWN).to_edge(UP)
+        second_expanded_focus.align_to(second_expanded, RIGHT)
+
+        # --- Part 3: Animations ---
         self.add(directional)
         self.play(TransformMatchingShapes(directional.copy(), vTgrad))
         self.play(TransformMatchingShapes(vTgrad.copy(), gradTv))
