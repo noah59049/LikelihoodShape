@@ -107,6 +107,7 @@ class DirectionalDerivativeScene2(Scene):
         # --- Part 2: Move the objects ---
         Hv.to_edge(LEFT)
         first_order = VGroup(directional, vTgrad, gradTv).arrange(DOWN).to_edge(UP)
+        second_expanded.to_edge(RIGHT)
         second_expanded_focus.align_to(second_expanded, RIGHT)
 
         # --- Part 3: Animations ---
