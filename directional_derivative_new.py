@@ -2,6 +2,8 @@ from manim import *
 from MF_Tools import *
 from N_Tools import *
 
+DIMS = 4
+
 def create_v(num_elements,
              orientation = "row",
              bracket = "bmatrix"):
@@ -46,7 +48,7 @@ def hessian_latex(n, func_name="f"):
     
     return latex
 
-def make_directional(n=4, second=False):
+def make_directional(n=DIMS, second=False):
     prefix = r"D^2_{\vec{v}} f(\vec{x})" if second else r"D_{\vec{v}} f(\vec{x})"
     frac_num = r"D_{\vec{v}} f(\vec{x})" if second else "f"
     parts = [prefix, "="]
@@ -57,15 +59,15 @@ def make_directional(n=4, second=False):
             parts.append("+")
     return MathTex(*parts)
 
-v_row = create_v(4, "row")
-v_col = create_v(4, "column")
-grad_row = create_grad(4, "row")
-grad_col = create_grad(4, "column")
+v_row = create_v(DIMS, "row")
+v_col = create_v(DIMS, "column")
+grad_row = create_grad(DIMS, "row")
+grad_col = create_grad(DIMS, "column")
 
 Dv = r"D_{\vec{v}} f(\vec{x})"
 D2v = r"D^2_{\vec{v}} f(\vec{x})"
 
-def make_expanded_D2v(n=4):
+def make_expanded_D2v(n=DIMS):
     elements = [rf"\frac {{\partial}} {{\partial X_{i}}}" + grad_row + v_col for i in range(1, n + 1)]
     return [
         D2v,
@@ -78,8 +80,9 @@ def make_expanded_D2v(n=4):
 class DirectionalDerivativeScene2(Scene):
     def construct(self):
         # --- Part 1: Create the objects ---
-        Dv_sum = make_directional(4)
 
+        # Directional first derivatives
+        Dv_sum = make_directional(DIMS)
         vTgrad = MathTex(
             Dv,
             "=",
@@ -93,18 +96,25 @@ class DirectionalDerivativeScene2(Scene):
             v_col
         )
 
-        D2v_sub_str = create_grad(4, "col", func_name=Dv) 
-        D2v_sub = MathTex(D2v, "=", v_row, D2v_sub_str) # Plug f = Dv into the formula for Dv, getting D2v
+        # Directional second derivatives
+        D2v_sub_str = create_grad(DIMS, "col", func_name=Dv) 
+        D2v_sub = MathTex(
+            D2v, 
+            "=", 
+            v_row, 
+            D2v_sub_str
+        ) # Plug f = Dv into the formula for Dv, getting D2v
         
         D2v_partials = MathTex(*make_expanded_D2v()) # Expand out D2v
         D2v_hess_rows = MathTex(        
             D2v,
             "=",
             v_row,
-            latex_vector([create_hess_row(num_elements=4, i=i) + v_col for i in range(1, 5)]))
+            latex_vector([create_hess_row(num_elements=DIMS, i=i) + v_col for i in range(1, DIMS + 1)])
+        )
         D2v_col_only = MathTex(D2v_hess_rows.tex_strings[-1])
         Hv = MathTex(
-            hessian_latex(4), 
+            hessian_latex(DIMS), 
             v_col, 
             "="
         )
