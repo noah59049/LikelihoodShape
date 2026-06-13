@@ -78,7 +78,7 @@ def make_expanded_D2v(n=4):
 class DirectionalDerivativeScene2(Scene):
     def construct(self):
         # --- Part 1: Create the objects ---
-        directional = make_directional(4)
+        Dv_sum = make_directional(4)
 
         vTgrad = MathTex(
             Dv,
@@ -93,11 +93,11 @@ class DirectionalDerivativeScene2(Scene):
             v_col
         )
 
-        dir_grad_col = create_grad(4, "col", func_name=Dv)
-        second_directional = MathTex(D2v, "=", v_row, dir_grad_col)
+        D2v_sub_str = create_grad(4, "col", func_name=Dv)
+        D2v_sub = MathTex(D2v, "=", v_row, D2v_sub_str)
         
-        second_expanded = MathTex(*make_expanded_D2v()).scale(0.77)
-        second_expanded_focus = MathTex(make_expanded_D2v()[-1]).scale(0.77)
+        D2v_partials = MathTex(*make_expanded_D2v()).scale(0.77)
+        D2v_col_only = MathTex(make_expanded_D2v()[-1]).scale(0.77)
         Hv = MathTex(
             hessian_latex(4), 
             v_col, 
@@ -106,18 +106,18 @@ class DirectionalDerivativeScene2(Scene):
 
         # --- Part 2: Move the objects ---
         Hv.to_edge(LEFT)
-        first_order = VGroup(directional, vTgrad, gradTv).arrange(DOWN).to_edge(UP)
-        second_expanded.to_edge(RIGHT)
-        second_expanded_focus.align_to(second_expanded, RIGHT)
+        VGroup(Dv_sum, vTgrad, gradTv).arrange(DOWN).to_edge(UP)
+        D2v_partials.to_edge(RIGHT)
+        D2v_col_only.align_to(D2v_partials, RIGHT)
 
         # --- Part 3: Animations ---
-        self.add(directional)
-        self.play(TransformMatchingShapes(directional.copy(), vTgrad))
+        self.add(Dv_sum)
+        self.play(TransformMatchingShapes(Dv_sum.copy(), vTgrad))
         self.play(TransformMatchingShapes(vTgrad.copy(), gradTv))
-        self.remove(directional, gradTv)
-        self.play(TransformMatchingShapes(vTgrad, second_directional))
-        self.play(TransformMatchingShapes(second_directional, second_expanded))
-        self.add(second_expanded_focus)
-        self.play(FadeOut(second_expanded))
+        self.remove(Dv_sum, gradTv)
+        self.play(TransformMatchingShapes(vTgrad, D2v_sub))
+        self.play(TransformMatchingShapes(D2v_sub, D2v_partials))
+        self.add(D2v_col_only)
+        self.play(FadeOut(D2v_partials))
         self.play(FadeIn(Hv))
         self.wait(2)
