@@ -120,7 +120,8 @@ class DirectionalDerivativeScene2(Scene):
         )
 
         # --- Part 2a: Scale the objects ---
-        scale_factor = config.frame_width / (D2v_col_only.width + Hv.width)
+        desired_width = config.frame_width - 2 * DEFAULT_MOBJECT_TO_EDGE_BUFFER - DEFAULT_MOBJECT_TO_MOBJECT_BUFFER
+        scale_factor = desired_width / (D2v_col_only.width + Hv.width)
         D2v_partials.scale(scale_factor)
         D2v_hess_rows.scale(scale_factor)
         D2v_col_only.scale(scale_factor)
