@@ -96,22 +96,26 @@ class DirectionalDerivativeScene2(Scene):
         D2v_sub_str = create_grad(4, "col", func_name=Dv) 
         D2v_sub = MathTex(D2v, "=", v_row, D2v_sub_str) # Plug f = Dv into the formula for Dv, getting D2v
         
-        D2v_partials = MathTex(*make_expanded_D2v()).scale(0.77) # Expand out D2v
+        D2v_partials = MathTex(*make_expanded_D2v()) # Expand out D2v
         D2v_hess_rows = MathTex(        
             D2v,
             "=",
             v_row,
-            latex_vector([create_hess_row(num_elements=4, i=i) + v_col for i in range(1, 5)])).scale(0.77)
-        D2v_col_only = MathTex(D2v_hess_rows.tex_strings[-1]).scale(0.77)
+            latex_vector([create_hess_row(num_elements=4, i=i) + v_col for i in range(1, 5)]))
+        D2v_col_only = MathTex(D2v_hess_rows.tex_strings[-1])
         Hv = MathTex(
             hessian_latex(4), 
             v_col, 
             "="
-        ).scale(0.77)
+        )
 
         # --- Part 2a: Scale the objects ---
+        D2v_partials.scale(0.77)
+        D2v_hess_rows.scale(0.77)
+        D2v_col_only.scale(0.77)
+        Hv.scale(0.77)
 
-        # --- Part 2: Move the objects ---
+        # --- Part 2b: Move the objects ---
         Hv.to_edge(LEFT)
         VGroup(Dv_sum, vTgrad, gradTv).arrange(DOWN).to_edge(UP)
         D2v_partials.to_edge(RIGHT)
