@@ -93,10 +93,15 @@ class DirectionalDerivativeScene2(Scene):
             v_col
         )
 
-        D2v_sub_str = create_grad(4, "col", func_name=Dv)
-        D2v_sub = MathTex(D2v, "=", v_row, D2v_sub_str)
+        D2v_sub_str = create_grad(4, "col", func_name=Dv) 
+        D2v_sub = MathTex(D2v, "=", v_row, D2v_sub_str) # Plug f = Dv into the formula for Dv, getting D2v
         
-        D2v_partials = MathTex(*make_expanded_D2v()).scale(0.77)
+        D2v_partials = MathTex(*make_expanded_D2v()).scale(0.77) # Expand out D2v
+        D2v_hess_rows = MathTex(        
+            D2v,
+            "=",
+            v_row,
+            latex_vector([create_hess_row(num_elements=4, i=i) + v_col for i in range(1, 5)])).scale(0.77)
         D2v_col_only = MathTex(make_expanded_D2v()[-1]).scale(0.77)
         Hv = MathTex(
             hessian_latex(4), 
@@ -117,6 +122,9 @@ class DirectionalDerivativeScene2(Scene):
         self.remove(Dv_sum, gradTv)
         self.play(TransformMatchingShapes(vTgrad, D2v_sub))
         self.play(TransformMatchingShapes(D2v_sub, D2v_partials))
+        self.play(TransformMatchingShapes(D2v_partials, D2v_hess_rows))
+        self.wait()
+        return 
         self.add(D2v_col_only)
         self.play(FadeOut(D2v_partials))
         self.play(TransformMatchingShapes(D2v_col_only.copy(), Hv))
