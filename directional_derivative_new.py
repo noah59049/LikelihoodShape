@@ -2,7 +2,7 @@ from manim import *
 from MF_Tools import *
 from N_Tools import *
 
-DIMS = 4
+DIMS = 3
 
 def create_v(num_elements,
              orientation = "row",
