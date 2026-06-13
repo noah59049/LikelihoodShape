@@ -119,5 +119,5 @@ class DirectionalDerivativeScene2(Scene):
         self.play(TransformMatchingShapes(D2v_sub, D2v_partials))
         self.add(D2v_col_only)
         self.play(FadeOut(D2v_partials))
-        self.play(FadeIn(Hv))
+        self.play(TransformMatchingShapes(D2v_col_only.copy(), Hv))
         self.wait(2)
