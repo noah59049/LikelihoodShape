@@ -102,18 +102,21 @@ class DirectionalDerivativeScene2(Scene):
             "=",
             v_row,
             latex_vector([create_hess_row(num_elements=4, i=i) + v_col for i in range(1, 5)])).scale(0.77)
-        D2v_col_only = MathTex(make_expanded_D2v()[-1]).scale(0.77)
+        D2v_col_only = MathTex(D2v_hess_rows.tex_strings[-1]).scale(0.77)
         Hv = MathTex(
             hessian_latex(4), 
             v_col, 
             "="
         ).scale(0.77)
 
+        # --- Part 2a: Scale the objects ---
+
         # --- Part 2: Move the objects ---
         Hv.to_edge(LEFT)
         VGroup(Dv_sum, vTgrad, gradTv).arrange(DOWN).to_edge(UP)
         D2v_partials.to_edge(RIGHT)
-        D2v_col_only.align_to(D2v_partials, RIGHT)
+        D2v_hess_rows.to_edge(RIGHT)
+        D2v_col_only.to_edge(RIGHT)
 
         # --- Part 3: Animations ---
         self.add(Dv_sum)
@@ -123,12 +126,10 @@ class DirectionalDerivativeScene2(Scene):
         self.play(TransformMatchingShapes(vTgrad, D2v_sub))
         self.play(TransformMatchingShapes(D2v_sub, D2v_partials))
         self.play(TransformMatchingShapes(D2v_partials, D2v_hess_rows))
-        self.wait()
-        return 
         self.add(D2v_col_only)
-        self.play(FadeOut(D2v_partials))
+        self.play(FadeOut(D2v_hess_rows))
         self.play(TransformMatchingShapes(D2v_col_only.copy(), Hv))
         self.play(FadeOut(Hv))
-        self.play(FadeIn(D2v_partials))
+        self.play(FadeIn(D2v_hess_rows))
         self.remove(D2v_col_only)
         self.wait(2)
