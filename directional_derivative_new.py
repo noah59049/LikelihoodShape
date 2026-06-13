@@ -120,17 +120,18 @@ class DirectionalDerivativeScene2(Scene):
         )
 
         # --- Part 2a: Scale the objects ---
-        D2v_partials.scale(0.77)
-        D2v_hess_rows.scale(0.77)
-        D2v_col_only.scale(0.77)
-        Hv.scale(0.77)
+        scale_factor = config.frame_width / (D2v_col_only.width + Hv.width)
+        D2v_partials.scale(scale_factor)
+        D2v_hess_rows.scale(scale_factor)
+        D2v_col_only.scale(scale_factor)
+        Hv.scale(scale_factor)
 
         # --- Part 2b: Move the objects ---
-        Hv.to_edge(LEFT)
         VGroup(Dv_sum, vTgrad, gradTv).arrange(DOWN).to_edge(UP)
         D2v_partials.to_edge(RIGHT)
         D2v_hess_rows.to_edge(RIGHT)
         D2v_col_only.to_edge(RIGHT)
+        Hv.to_edge(LEFT)
 
         # --- Part 3: Animations ---
         self.add(Dv_sum)
