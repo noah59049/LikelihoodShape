@@ -118,6 +118,12 @@ class DirectionalDerivativeScene2(Scene):
             v_col, 
             "="
         )
+        D2v_quadratic_form = MathTex(        
+            D2v,
+            "=",
+            v_row,
+            hessian_latex(DIMS) + v_col
+        )
 
         # --- Part 2a: Scale the objects ---
         desired_width = config.frame_width - 2 * DEFAULT_MOBJECT_TO_EDGE_BUFFER - DEFAULT_MOBJECT_TO_MOBJECT_BUFFER
@@ -148,4 +154,9 @@ class DirectionalDerivativeScene2(Scene):
         self.play(FadeOut(Hv))
         self.play(FadeIn(D2v_hess_rows))
         self.remove(D2v_col_only)
+        self.play(ReplacementTransformGroup(
+            D2v_hess_rows, 
+            D2v_quadratic_form,
+            transform=TransformMatchingShapes
+        ))
         self.wait(2)
