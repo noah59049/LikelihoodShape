@@ -933,6 +933,7 @@ class ReplacementTransformGroup(AnimationGroup):
         dst_group,
         lag_ratio=0,
         check_length=True,
+        transform = ReplacementTransform,
         **kwargs
     ):
         if check_length and len(src_group) != len(dst_group):
@@ -943,7 +944,7 @@ class ReplacementTransformGroup(AnimationGroup):
 
         super().__init__(
             *[
-                ReplacementTransform(src, dst)
+                transform(src, dst)
                 for src, dst in zip(src_group, dst_group)
             ],
             lag_ratio=lag_ratio,
