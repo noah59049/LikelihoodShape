@@ -2,7 +2,7 @@ from manim import *
 from MF_Tools import *
 from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
-from N_Tools import latex_vector, square_matrix_tex, ReplacementTransformGroup
+from N_Tools import latex_vector, square_matrix_tex, TransformIndices
 from tex_colors import *
 import ls_config
 
@@ -337,7 +337,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             r"X_{\cdot m}^T",
             W_tex,
             r"X_{\cdot j}").next_to(easy_dot2, DOWN)
-            self.play(ReplacementTransformGroup(dot3, dot4))
+            self.play(TransformIndices(dot3, dot4))
         
         with self.voiceover("So let's explicitly write out the vectors. Multiplying by a diagonal matrix just scales each component") as tracker:
             dot5 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
@@ -346,7 +346,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             latex_vector([f"X_{{{i}j}}" for i in range(1,5)], orientation = "column")
             ).next_to(easy_dot2, DOWN)
             dot5.scale(0.87)
-            self.play(ReplacementTransformGroup(dot4, dot5))
+            self.play(TransformIndices(dot4, dot5))
 
         with self.voiceover("by the corresponding diagonal element. And if you") as tracker:
             dot6 = ColoredMathTex(r"\sum_{i=1}^{n} X_{im} w_i X_{ij} = ",
@@ -385,7 +385,7 @@ class LoglikSimplificationScene(VoiceoverScene):
             self.play(FadeIn(hess_simplified4), FadeOut(dot10))
             hess_simplified5 = ColoredMathTex(r"\frac{\partial^2 \ell}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -",
                                     r"X_{\cdot m}^T W X_{\cdot j}").move_to(hess_simplified4, aligned_edge=LEFT)
-            self.play(ReplacementTransformGroup(hess_simplified4, hess_simplified5))
+            self.play(TransformIndices(hess_simplified4, hess_simplified5))
 
             hess_simplified6 = ColoredMathTex(r"\frac{\partial^2 \ell}{\partial \hat{\beta}_j \partial \hat{\beta}_m} = -"+
                                     r"X_{\cdot m}^T W X_{\cdot j}").move_to(hess_simplified4, aligned_edge=LEFT)

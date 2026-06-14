@@ -154,7 +154,7 @@ class DirectionalDerivativeScene2(Scene):
         self.play(FadeOut(Hv))
         self.play(FadeIn(D2v_hess_rows))
         self.remove(D2v_col_only)
-        self.play(ReplacementTransformGroup(
+        self.play(TransformIndices(
             D2v_hess_rows, 
             D2v_quadratic_form,
             transform=TransformMatchingShapes

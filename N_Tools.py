@@ -926,7 +926,7 @@ def rotate_90_cw(x0, y0, x, y, x_scale=1, y_scale=1):
     # Translate back
     return x0 + new_dx * x_scale, y0 + new_dy * y_scale
 
-class ReplacementTransformGroup(AnimationGroup):
+class TransformIndices(AnimationGroup):
     def __init__(
         self,
         src_group,
