@@ -3,7 +3,7 @@ from manim_voiceover import *
 from manim_voiceover.services.stitcher import _StitcherService as StitcherService
 import numpy as np
 from MF_Tools import *
-from N_Tools import latex_vector, ReplacementTransformGroupWithBoxes, compute_z_range
+from N_Tools import latex_vector, TransformIndicesWithBoxes, compute_z_range
 import ls_config
 
 def create_v(num_elements,
@@ -302,7 +302,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         with self.voiceover("become the components of v. ") as tracker:
             self.play(
-                ReplacementTransformGroupWithBoxes(
+                TransformIndicesWithBoxes(
                     chain_rule,
                     simplified,
                     box_indices=[2, 5, 8, 11],
@@ -379,7 +379,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
 
         with self.voiceover("directional second derivative, we take the derivative of this sum with respect to t. The components of v are just constants,") as tracker:
             self.play(
-                ReplacementTransformGroupWithBoxes(simplified, giga_hess0, [0])
+                TransformIndicesWithBoxes(simplified, giga_hess0, [0])
                 # *[ReplacementTransform(simplified[i], giga_hess0[i]) for i in range(12)]
             )
 

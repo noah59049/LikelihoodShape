@@ -970,7 +970,7 @@ class TransformIndices(AnimationGroup):
         if self._dst_group not in scene.mobjects:
             scene.add(self._dst_group)
 
-class ReplacementTransformGroupWithBoxes(Succession):
+class TransformIndicesWithBoxes(Succession):
     def __init__(
         self,
         src_group,
