@@ -140,11 +140,22 @@ class DirectionalDerivativeScene2(Scene):
             "H",
             v_col
         )
+        D2v_quadratic_form_compact1 = MathTex(        
+            D2v,
+            r"=",
+            v_row,
+            r"H",
+            r"\vec{v}"
+        )
+        D2v_quadratic_form_compact2 = MathTex(        
+            D2v,
+            r"=",
+            r"\vec{v}^T",
+            r"H",
+            r"\vec{v}"
+        )
         element11_box = box_matrix_element(D2v_quadratic_form5[3], 0, 0)
         element12_box = box_matrix_element(D2v_quadratic_form5[3], 0, 1)
-        hess_box1 = SurroundingRectangle(D2v_quadratic_form5[3], color = RED)
-        hess_box2 = SurroundingRectangle(D2v_quadratic_form_hess[3], color = RED)
-
 
         # --- Part 2a: Scale the objects ---
         desired_width = config.frame_width - 2 * DEFAULT_MOBJECT_TO_EDGE_BUFFER - DEFAULT_MOBJECT_TO_MOBJECT_BUFFER
@@ -195,4 +206,6 @@ class DirectionalDerivativeScene2(Scene):
         self.play(FadeOut(element11_box, element12_box))
         self.play(hess_transform.animations[1])
         self.play(hess_transform.animations[2])
+        self.play(TransformIndicesWithBoxes(D2v_quadratic_form_hess,     D2v_quadratic_form_compact1, box_indices = [4]))
+        self.play(TransformIndicesWithBoxes(D2v_quadratic_form_compact1, D2v_quadratic_form_compact2, box_indices = [2]))
         self.wait(2)
