@@ -28,24 +28,25 @@ def create_hess_row(num_elements,
                         bracket = bracket)
 
 
-def hessian_latex(n, func_name="f"):
+def hessian_latex(n, func_name="f", row_sep=""):
     rows = []
-    
+
     for i in range(1, n + 1):
         row = []
         for j in range(1, n + 1):
             entry = f"\\frac{{\\partial^2 {func_name}}}{{\\partial x_{i} \\partial x_{j}}}"
             row.append(entry)
         rows.append(" & ".join(row))
-    
-    matrix_body = " \\\\\n".join(rows)
-    
+
+    sep = f" \\\\[{row_sep}]\n" if row_sep else " \\\\\n"
+    matrix_body = sep.join(rows)
+
     latex = (
         "\\begin{bmatrix}\n"
         f"{matrix_body}\n"
         "\\end{bmatrix}\n"
     )
-    
+
     return latex
 
 def make_directional(n=DIMS, second=False):
@@ -112,9 +113,10 @@ class DirectionalDerivativeScene2(Scene):
             v_row,
             latex_vector([create_hess_row(num_elements=DIMS, i=i) + v_col for i in range(1, DIMS + 1)])
         )
+        hess_str = hessian_latex(DIMS, row_sep = "12pt")
         D2v_col_only = MathTex(D2v_hess_rows.tex_strings[-1])
         Hv = MathTex(
-            hessian_latex(DIMS), 
+            hess_str, 
             v_col, 
             "="
         )
@@ -122,13 +124,13 @@ class DirectionalDerivativeScene2(Scene):
             D2v,
             "=",
             v_row,
-            hessian_latex(DIMS) + v_col
+            hess_str + v_col
         )
         D2v_quadratic_form5 = MathTex(        
             D2v,
             "=",
             v_row,
-            hessian_latex(DIMS),
+            hess_str,
             v_col
         )
         D2v_quadratic_form_hess = MathTex(        
@@ -138,6 +140,8 @@ class DirectionalDerivativeScene2(Scene):
             "H",
             v_col
         )
+        element11_box = box_matrix_element(D2v_quadratic_form5[3], 0, 0)
+        element12_box = box_matrix_element(D2v_quadratic_form5[3], 0, 1)
         hess_box1 = SurroundingRectangle(D2v_quadratic_form5[3], color = RED)
         hess_box2 = SurroundingRectangle(D2v_quadratic_form_hess[3], color = RED)
 
@@ -181,6 +185,9 @@ class DirectionalDerivativeScene2(Scene):
         self.remove(D2v_quadratic_form4)
         self.add(D2v_quadratic_form5)
         self.play(Create(hess_box1))
+        self.play(Create(element11_box))
+        self.play(Create(element12_box))
+        self.play(FadeOut(element11_box, element12_box))
         self.play(
             AnimationGroup(
                 ReplacementTransform(hess_box1, hess_box2),
