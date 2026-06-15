@@ -131,7 +131,15 @@ class DirectionalDerivativeScene2(Scene):
             hessian_latex(DIMS),
             v_col
         )
-        hess_box = SurroundingRectangle(D2v_quadratic_form5[3], color = RED)
+        D2v_quadratic_form_hess = MathTex(        
+            D2v,
+            "=",
+            v_row,
+            "H",
+            v_col
+        )
+        hess_box1 = SurroundingRectangle(D2v_quadratic_form5[3], color = RED)
+        hess_box2 = SurroundingRectangle(D2v_quadratic_form_hess[3], color = RED)
 
 
         # --- Part 2a: Scale the objects ---
@@ -172,5 +180,12 @@ class DirectionalDerivativeScene2(Scene):
         ))
         self.remove(D2v_quadratic_form4)
         self.add(D2v_quadratic_form5)
-        self.play(Create(hess_box))
+        self.play(Create(hess_box1))
+        self.play(
+            AnimationGroup(
+                ReplacementTransform(hess_box1, hess_box2),
+                TransformIndices(D2v_quadratic_form5, D2v_quadratic_form_hess)
+            )
+        )
+        self.play(FadeOut(hess_box2))
         self.wait(2)
