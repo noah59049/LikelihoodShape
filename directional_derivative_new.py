@@ -184,15 +184,15 @@ class DirectionalDerivativeScene2(Scene):
         ))
         self.remove(D2v_quadratic_form4)
         self.add(D2v_quadratic_form5)
-        self.play(Create(hess_box1))
+        hess_transform = TransformIndicesWithBoxes(
+            D2v_quadratic_form5, 
+            D2v_quadratic_form_hess, 
+            box_indices=[3]
+        )
+        self.play(hess_transform.animations[0])
         self.play(Create(element11_box))
         self.play(Create(element12_box))
         self.play(FadeOut(element11_box, element12_box))
-        self.play(
-            AnimationGroup(
-                ReplacementTransform(hess_box1, hess_box2),
-                TransformIndices(D2v_quadratic_form5, D2v_quadratic_form_hess)
-            )
-        )
-        self.play(FadeOut(hess_box2))
+        self.play(hess_transform.animations[1])
+        self.play(hess_transform.animations[2])
         self.wait(2)
