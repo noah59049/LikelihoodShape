@@ -1000,22 +1000,22 @@ class TransformIndicesWithBoxes(Succession):
 
         box_kwargs = box_kwargs or {"color": RED, "buff": 0.1}
 
-        src_boxes = VGroup(*[
+        self.src_boxes = VGroup(*[
             SurroundingRectangle(src_group[i], **box_kwargs)
             for i in box_indices
         ])
-        dst_boxes = VGroup(*[
+        self.dst_boxes = VGroup(*[
             SurroundingRectangle(dst_group[i], **box_kwargs)
             for i in box_indices
         ])
 
-        create = CreateBoxesAnim(src_boxes, run_time = time1)
+        create = CreateBoxesAnim(self.src_boxes, run_time = time1)
         transform = AnimationGroup(
             *[ReplacementTransform(src, dst) for src, dst in zip(src_group, dst_group)],
-            Transform(src_boxes, dst_boxes),
+            Transform(self.src_boxes, self.dst_boxes),
             run_time=time2,
         )
-        remove = RemoveBoxesAnim(src_boxes, run_time = time3)
+        remove = RemoveBoxesAnim(self.src_boxes, run_time = time3)
 
         super().__init__(
             create,
