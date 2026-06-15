@@ -942,6 +942,10 @@ class TransformIndices(AnimationGroup):
                 f"({len(src_group)} != {len(dst_group)})"
             )
 
+        self._src_group = src_group
+        self._dst_group = dst_group
+        self._dst_list = list(dst_group)
+
         super().__init__(
             *[
                 transform(src, dst)
@@ -950,6 +954,19 @@ class TransformIndices(AnimationGroup):
             lag_ratio=lag_ratio,
             **kwargs
         )
+
+    def clean_up_from_scene(self, scene):
+        super().clean_up_from_scene(scene)
+        # ReplacementTransform may have added individual dst submobjects as
+        # top-level scene objects; remove them so the parent group owns them.
+        for dst in self._dst_list:
+            if dst in scene.mobjects:
+                scene.remove(dst)
+        # Swap src_group for dst_group at the scene level.
+        if self._src_group in scene.mobjects:
+            scene.remove(self._src_group)
+        if self._dst_group not in scene.mobjects:
+            scene.add(self._dst_group)
 
 class ReplacementTransformGroupWithBoxes(Succession):
     def __init__(
