@@ -332,9 +332,10 @@ def latex_table_to_array(latex_str):
     
     return np.array(table, dtype=np.float64)
 
-def square_matrix_tex(n : int, 
+def square_matrix_tex(n : int,
                       generator: Callable[[int, int], str],
-                      start_ij: int = 1):
+                      start_ij: int = 1,
+                      row_sep: str = ""):
     rows = []
     for i in range(start_ij, n + start_ij):
         row = []
@@ -342,8 +343,9 @@ def square_matrix_tex(n : int,
             entry = generator(i, j)
             row.append(entry)
         rows.append(" & ".join(row))
-    
-    matrix_body = " \\\\ ".join(rows)
+
+    sep = f" \\\\[{row_sep}] " if row_sep else " \\\\ "
+    matrix_body = sep.join(rows)
 
     latex = f"\\begin{{bmatrix}}{matrix_body}\\end{{bmatrix}}"
     return latex
@@ -1133,3 +1135,15 @@ def get_matrix_element_indices(tex, row: int, col: int) -> list[int]:
     col_groups.append(target[prev:])
 
     return [i for i, _ in col_groups[col]]
+
+
+def box_matrix_element(tex, row: int, col: int, **rect_kwargs) -> SurroundingRectangle:
+    """
+    Return a SurroundingRectangle around the matrix element at (row, col),
+    both 0-indexed.  tex may be a full MathTex or a MathTexPart slice.
+    Extra keyword args are forwarded to SurroundingRectangle (e.g. color, buff).
+    """
+    indices = get_matrix_element_indices(tex, row, col)
+    glyphs = tex[0] if hasattr(tex, 'tex_strings') else tex
+    cell = VGroup(*[glyphs[i] for i in indices])
+    return SurroundingRectangle(cell, **rect_kwargs)
