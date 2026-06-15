@@ -989,6 +989,10 @@ class ReplacementTransformGroupWithBoxes(Succession):
                 f"({len(src_group)=} != {len(dst_group)=})"
             )
 
+        self._src_group = src_group
+        self._dst_group = dst_group
+        self._dst_list = list(dst_group)
+
         if isinstance(run_time, (list, tuple)):
             time1, time2, time3 = run_time
         else:
@@ -1019,6 +1023,19 @@ class ReplacementTransformGroupWithBoxes(Succession):
             remove,
             **kwargs
         )
+
+    def clean_up_from_scene(self, scene):
+        super().clean_up_from_scene(scene)
+        # ReplacementTransform may have added individual dst submobjects as
+        # top-level scene objects; remove them so the parent group owns them.
+        for dst in self._dst_list:
+            if dst in scene.mobjects:
+                scene.remove(dst)
+        # Swap src_group for dst_group at the scene level.
+        if self._src_group in scene.mobjects:
+            scene.remove(self._src_group)
+        if self._dst_group not in scene.mobjects:
+            scene.add(self._dst_group)
 
 
 def shift_to_screen_corner(scene, mob, corner=UR, buff=0.5, scale = None):
