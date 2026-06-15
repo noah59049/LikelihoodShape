@@ -1041,3 +1041,95 @@ def shift_to_screen_corner(scene, mob, corner=UR, buff=0.5, scale = None):
 
     shift_3d = np.linalg.lstsq(J, np.array([dx_s, dy_s]), rcond=None)[0]
     return shift_3d
+
+
+def get_matrix_element_indices(tex, row: int, col: int) -> list[int]:
+    """
+    Return the glyph indices for the element at (row, col), both 0-indexed,
+    of a MathTex (or MathTexPart slice like MathTex(...)[2]) containing only
+    a single matrix environment.
+
+    Indices are into the glyph container: tex[0] for a full MathTex, or tex
+    itself for a MathTexPart (e.g. the result of MathTex(...)[n]).
+
+    Works by:
+      1. Parsing n_rows / n_cols from the LaTeX string.
+      2. Dropping bracket glyphs (h/w > 3 — tall, narrow bracket pieces).
+      3. Splitting remaining glyphs into matrix rows via the n_rows-1 largest
+         y-gaps (so subscripts/superscripts stay with their row).
+      4. Within the target row, splitting into columns via the n_cols-1 largest
+         x-gaps (so multi-char entries like "10" stay in one cell).
+    """
+    import re
+
+    # --- 1. Parse matrix dimensions from LaTeX ---
+    # MathTex has tex_strings (list); MathTexPart has tex_string (plain str).
+    if hasattr(tex, 'tex_strings'):
+        latex = tex.tex_strings[0]
+        glyphs = tex[0]
+    else:
+        latex = tex.tex_string
+        glyphs = tex
+
+    inner = re.sub(r'\\begin\{[^}]+\}', '', latex)
+    inner = re.sub(r'\\end\{[^}]+\}', '', inner).strip()
+    row_strs = re.split(r'\\\\', inner)
+    n_rows = len(row_strs)
+    n_cols = max(len(r.split('&')) for r in row_strs)
+
+    if not (0 <= row < n_rows):
+        raise IndexError(f"row {row} out of range for {n_rows}-row matrix")
+    if not (0 <= col < n_cols):
+        raise IndexError(f"col {col} out of range for {n_cols}-col matrix")
+
+    # --- 2. Identify and exclude bracket glyphs (h/w > 3) ---
+    bracket_set = {
+        i for i, g in enumerate(glyphs)
+        if g.width > 0 and g.height / g.width > 3
+    }
+    content = [(i, g) for i, g in enumerate(glyphs) if i not in bracket_set]
+
+    # --- 3. Split content into matrix rows via largest y-gaps ---
+    content_by_y = sorted(content, key=lambda x: -x[1].get_center()[1])
+    ys = [g.get_center()[1] for _, g in content_by_y]
+
+    if n_rows > 1:
+        gaps = sorted(
+            ((ys[k] - ys[k + 1], k) for k in range(len(ys) - 1)),
+            reverse=True
+        )
+        split_pts = sorted(k for _, k in gaps[:n_rows - 1])
+        rows_content: list[list] = []
+        prev = 0
+        for sp in split_pts:
+            rows_content.append(content_by_y[prev:sp + 1])
+            prev = sp + 1
+        rows_content.append(content_by_y[prev:])
+    else:
+        rows_content = [content_by_y]
+
+    # Sort each row's glyphs left-to-right
+    for r in rows_content:
+        r.sort(key=lambda x: x[1].get_center()[0])
+
+    # --- 4. Split target row into columns via largest x-gaps ---
+    target = rows_content[row]
+
+    if n_cols == 1 or len(target) <= 1:
+        return [i for i, _ in target]
+
+    xs = [g.get_center()[0] for _, g in target]
+    x_gaps = sorted(
+        ((xs[j + 1] - xs[j], j) for j in range(len(xs) - 1)),
+        reverse=True
+    )
+    split_pts_x = sorted(j for _, j in x_gaps[:n_cols - 1])
+
+    col_groups: list[list] = []
+    prev = 0
+    for sp in split_pts_x:
+        col_groups.append(target[prev:sp + 1])
+        prev = sp + 1
+    col_groups.append(target[prev:])
+
+    return [i for i, _ in col_groups[col]]
