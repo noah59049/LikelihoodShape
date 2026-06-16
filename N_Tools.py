@@ -1154,6 +1154,83 @@ def get_matrix_element_indices(tex, row: int, col: int) -> list[int]:
     return [i for i, _ in col_groups[col]]
 
 
+class LabeledBox(VGroup):
+    """
+    A SurroundingRectangle around a mobject, with a label and arrow.
+
+    The label is placed in `direction` from the box; the arrow points from
+    the label back to the box.  Access `.box`, `.label`, `.arrow` individually
+    for fine-grained animation control, or use `.creation_anims()` for the
+    standard Create/Write/GrowArrow bundle.
+
+    Parameters
+    ----------
+    mobject : Mobject
+        The object to surround.
+    text : str
+        Passed to `label_class` to create the label.
+    direction : np.ndarray
+        Which side/corner the label appears on (UP, DR, LEFT, UR, …).
+    label_class : type
+        Manim text class — Tex, MathTex, Text, etc. Default Tex.
+    label_scale : float
+        Scale applied to the label after creation.
+    label_kwargs : dict
+        Extra kwargs forwarded to `label_class`.
+    box_kwargs : dict
+        Extra kwargs forwarded to SurroundingRectangle.
+    arrow_kwargs : dict
+        Extra kwargs forwarded to Arrow.
+    buff : float
+        Gap between box edge and label.
+    """
+
+    def __init__(
+        self,
+        mobject,
+        text,
+        direction=UP,
+        label_class=Tex,
+        label_scale=1.0,
+        label_kwargs=None,
+        box_kwargs=None,
+        arrow_kwargs=None,
+        buff=0.35,
+    ):
+        super().__init__()
+        label_kwargs = label_kwargs or {}
+        box_kwargs   = box_kwargs   or {}
+        arrow_kwargs = {"buff": 0.1, "stroke_width": 4, **(arrow_kwargs or {})}
+
+        self.box = SurroundingRectangle(mobject, **box_kwargs)
+
+        self.label = label_class(text, **label_kwargs)
+        if label_scale != 1.0:
+            self.label.scale(label_scale)
+        self.label.next_to(self.box, direction, buff=buff)
+
+        self.arrow = Arrow(
+            self.label.get_critical_point(-direction),
+            self.box.get_critical_point(direction),
+            **arrow_kwargs,
+        )
+
+        self.add(self.box, self.label, self.arrow)
+
+    def creation_anims(
+        self,
+        box_anim=Create,
+        label_anim=Write,
+        arrow_anim=GrowArrow,
+    ):
+        """Return an AnimationGroup of the standard creation animations."""
+        return AnimationGroup(
+            box_anim(self.box),
+            label_anim(self.label),
+            arrow_anim(self.arrow),
+        )
+
+
 def box_matrix_element(tex, row: int, col: int, **rect_kwargs) -> SurroundingRectangle:
     """
     Return a SurroundingRectangle around the matrix element at (row, col),
