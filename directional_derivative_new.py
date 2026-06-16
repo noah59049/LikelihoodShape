@@ -187,13 +187,13 @@ class DirectionalDerivativeScene2(VoiceoverScene):
         vT_label = LabeledBox(
             vTgrad[2],
             text = r"\vec{v}^T",
-            direction = UL,
+            direction = DL,
             label_class = MathTex,
         )
         grad_label = LabeledBox(
             vTgrad[3],
             text = r"\nabla f",
-            direction = UR,
+            direction = DR,
             label_class = MathTex,
         )
         # --- Part 3: Animations ---
