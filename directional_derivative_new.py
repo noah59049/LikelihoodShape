@@ -1,6 +1,9 @@
 from manim import *
 from MF_Tools import *
 from N_Tools import *
+from manim_voiceover import *
+from manim_voiceover.services.stitcher import _StitcherService as StitcherService
+import ls_config
 
 DIMS = 3
 
@@ -78,8 +81,14 @@ def make_expanded_D2v(n=DIMS):
     ]
 
 
-class DirectionalDerivativeScene2(Scene):
+class DirectionalDerivativeScene2(VoiceoverScene):
     def construct(self):
+        # --- Part 0: Set the speech service ---
+        self.set_speech_service(StitcherService(ls_config.path_to_podcast("directional_derivative_new"),
+        cache_dir=ls_config.get_cache_dir(),
+        min_silence_len=2000,
+        keep_silence=(0,0)))
+
         # --- Part 1: Create the objects ---
 
         # Directional first derivatives
@@ -175,37 +184,59 @@ class DirectionalDerivativeScene2(Scene):
 
 
         # --- Part 3: Animations ---
-        self.add(Dv_sum)
-        self.play(TransformMatchingShapes(Dv_sum.copy(), vTgrad))
-        self.play(TransformMatchingShapes(vTgrad.copy(), gradTv))
-        self.remove(Dv_sum, gradTv)
-        self.play(TransformMatchingShapes(vTgrad, D2v_sub))
-        self.play(TransformMatchingShapes(D2v_sub, D2v_partials))
-        self.play(TransformMatchingShapes(D2v_partials, D2v_hess_rows))
-        self.add(D2v_col_only)
-        self.play(FadeOut(D2v_hess_rows))
-        self.play(TransformMatchingShapes(D2v_col_only.copy(), Hv))
-        self.play(FadeOut(Hv))
-        self.play(FadeIn(D2v_hess_rows))
-        self.remove(D2v_col_only)
-        self.play(TransformIndices(
-            D2v_hess_rows, 
-            D2v_quadratic_form4,
-            transform=TransformMatchingShapes
-        ))
-        self.remove(D2v_quadratic_form4)
+        with self.voiceover("You may recall that the directional derivative is equal to the sum of the partial derivatives times the components of the direction vector.") as tracker:
+            self.add(Dv_sum)
+        with self.voiceover("It's more convenient to write this as a product of the vector of components of v and of the partial derivatives.") as tracker:
+            self.play(TransformMatchingShapes(Dv_sum.copy(), vTgrad))
+        with self.voiceover("This is just v, except it's a row vector so it's v transpose. And this, as you may recall, is the gradient.") as tracker:
+            ... # TODO: Draw an arrow pointing to each one of these
+        with self.voiceover("The directional derivative is also equal to the gradient transposed times v.") as tracker:
+            self.play(TransformMatchingShapes(vTgrad.copy(), gradTv))
+        with self.voiceover("Now, the directional second derivative is just the directional derivative of the directional derivative.") as tracker:
+            self.remove(Dv_sum, gradTv)
+            self.play(TransformMatchingShapes(vTgrad, D2v_sub))
+        with self.voiceover("we can plug the directional derivative definition into this formula") as tracker:
+            self.play(TransformMatchingShapes(D2v_sub, D2v_partials))
+        with self.voiceover("and the derivative just distributes with sums and scaling.") as tracker:
+            self.play(TransformMatchingShapes(D2v_partials, D2v_hess_rows))
+        with self.voiceover("This part here looks suspiciously like a matrix multiplication") as tracker:
+            self.add(D2v_col_only)
+            self.play(FadeOut(D2v_hess_rows))
+        with self.voiceover("where we just glue all the row vectors into a matrix, and multiply it by v. It in fact is.") as tracker:
+            self.play(TransformMatchingShapes(D2v_col_only.copy(), Hv))
+        with self.voiceover("The first element of this product should be the first row times the vector, and what do you know, it is. The second element should be the second row times the column vector, etcetera.") as tracker:
+            ... # TODO: Highlight the rows
+        with self.voiceover("Now we can go back to the equation we had") as tracker:
+            self.play(FadeOut(Hv))
+            self.play(FadeIn(D2v_hess_rows))
+            self.remove(D2v_col_only)
+        with self.voiceover("and replace this messy vector with our matrix vector product.") as tracker:
+            self.play(TransformIndices(
+                D2v_hess_rows, 
+                D2v_quadratic_form4,
+                transform=TransformMatchingShapes
+            ))
+            self.remove(D2v_quadratic_form4)
         self.add(D2v_quadratic_form5)
         hess_transform = TransformIndicesWithBoxes(
             D2v_quadratic_form5, 
             D2v_quadratic_form_hess, 
             box_indices=[3]
         )
-        self.play(hess_transform.animations[0])
-        self.play(Create(element11_box))
-        self.play(Create(element12_box))
-        self.play(FadeOut(element11_box, element12_box))
-        self.play(hess_transform.animations[1])
-        self.play(hess_transform.animations[2])
-        self.play(TransformIndicesWithBoxes(D2v_quadratic_form_hess,     D2v_quadratic_form_compact1, box_indices = [4]))
-        self.play(TransformIndicesWithBoxes(D2v_quadratic_form_compact1, D2v_quadratic_form_compact2, box_indices = [2]))
-        self.wait(2)
+        with self.voiceover("The matrix is somewhat special. Recall how the gradient was the vector of all the first order partials? This is basically the second derivative version of that.") as tracker:
+            self.play(hess_transform.animations[0])
+        with self.voiceover("The element at 11, the first row and column, is the second order partial with respect to X1.") as tracker:
+            self.play(Create(element11_box))
+        with self.voiceover("The element at 12 is the mixed second order partial with respect to X1 and X2,") as tracker:
+            self.play(Create(element12_box))
+        with self.voiceover("and so on for all the other elements.") as tracker:
+            self.play(FadeOut(element11_box, element12_box))
+        with self.voiceover("This matrix is called the Hessian, written H.") as tracker:
+            self.play(hess_transform.animations[1])
+            self.play(hess_transform.animations[2])
+        with self.voiceover("This vector here is just v,") as tracker:
+            self.play(TransformIndicesWithBoxes(D2v_quadratic_form_hess,     D2v_quadratic_form_compact1, box_indices = [4]))
+        with self.voiceover("and this vector is v transpose.") as tracker:
+            self.play(TransformIndicesWithBoxes(D2v_quadratic_form_compact1, D2v_quadratic_form_compact2, box_indices = [2]))
+        with self.voiceover("So we have arrived at a delightfully simple formula for the directional second derivative, and our next goal is to prove that it is negative. To do that, we need to calculate the Hessian.") as tracker:
+            ...
