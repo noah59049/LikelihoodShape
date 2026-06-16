@@ -106,6 +106,7 @@ class DirectionalDerivativeScene2(VoiceoverScene):
             v_col
         )
 
+
         # Directional second derivatives
         D2v_sub_str = create_grad(DIMS, "col", func_name=Dv) 
         D2v_sub = MathTex(
@@ -182,20 +183,35 @@ class DirectionalDerivativeScene2(VoiceoverScene):
         D2v_col_only.to_edge(RIGHT)
         Hv.to_edge(LEFT)
 
-
+        # LabeledBoxes need to be created after moving objects because they depend on where their parent mobjects are.
+        vT_label = LabeledBox(
+            vTgrad[2],
+            text = r"\vec{v}^T",
+            direction = UL,
+            label_class = MathTex,
+        )
+        grad_label = LabeledBox(
+            vTgrad[3],
+            text = r"\nabla f",
+            direction = UR,
+            label_class = MathTex,
+        )
         # --- Part 3: Animations ---
         with self.voiceover("You may recall that the directional derivative is equal to the sum of the partial derivatives times the components of the direction vector.") as tracker:
             self.add(Dv_sum)
         with self.voiceover("It's more convenient to write this as a product of the vector of components of v and of the partial derivatives.") as tracker:
             self.play(TransformMatchingShapes(Dv_sum.copy(), vTgrad))
-        with self.voiceover("This is just v, except it's a row vector so it's v transpose. And this, as you may recall, is the gradient.") as tracker:
-            ... # TODO: Draw an arrow pointing to each one of these
+        with self.voiceover("This is just v, except it's a row vector so it's v transpose.") as tracker:
+            self.play(vT_label.creation_anims())
+        with self.voiceover("And this, as you may recall, is the gradient.") as tracker:
+            self.play(grad_label.creation_anims())
+            self.play(FadeOut(vT_label, grad_label))
         with self.voiceover("The directional derivative is also equal to the gradient transposed times v.") as tracker:
             self.play(TransformMatchingShapes(vTgrad.copy(), gradTv))
         with self.voiceover("Now, the directional second derivative is just the directional derivative of the directional derivative.") as tracker:
             self.remove(Dv_sum, gradTv)
             self.play(TransformMatchingShapes(vTgrad, D2v_sub))
-        with self.voiceover("we can plug the directional derivative definition into this formula") as tracker:
+        with self.voiceover("We can plug the directional derivative definition into this formula") as tracker:
             self.play(TransformMatchingShapes(D2v_sub, D2v_partials))
         with self.voiceover("and the derivative just distributes with sums and scaling.") as tracker:
             self.play(TransformMatchingShapes(D2v_partials, D2v_hess_rows))
@@ -238,5 +254,13 @@ class DirectionalDerivativeScene2(VoiceoverScene):
             self.play(TransformIndicesWithBoxes(D2v_quadratic_form_hess,     D2v_quadratic_form_compact1, box_indices = [4]))
         with self.voiceover("and this vector is v transpose.") as tracker:
             self.play(TransformIndicesWithBoxes(D2v_quadratic_form_compact1, D2v_quadratic_form_compact2, box_indices = [2]))
-        with self.voiceover("So we have arrived at a delightfully simple formula for the directional second derivative, and our next goal is to prove that it is negative. To do that, we need to calculate the Hessian.") as tracker:
+        with self.voiceover("So we have arrived at a delightfully simple formula for the directional second derivative.") as tracker:
             ...
+        with self.voiceover("This is sometimes called the quadratic form. Our next goal is to prove that the directional second derivative of the log likelihood is negative;") as tracker:
+            ... # TODO: Explain what the quadratic form is
+        with self.voiceover("in other words, that the quadratic form of the Hessian of the log liklihood is always negative.") as tracker:
+            ...
+        with self.voiceover("If a matrix has this property, that its quadratic form is always negative, we call it negative definite.") as tracker:
+            ...
+        # HM TODO: Dialog box about how actually the quadratic form can be 0 if v is 0.
+        # HM TODO: Dialog box about how the definiteness of a matrix depends on its eigenvalues
