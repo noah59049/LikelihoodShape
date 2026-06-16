@@ -198,7 +198,7 @@ class DirectionalDerivativeScene2(VoiceoverScene):
         )
         # --- Part 3: Animations ---
         with self.voiceover("You may recall that the directional derivative is equal to the sum of the partial derivatives times the components of the direction vector.") as tracker:
-            self.add(Dv_sum)
+            self.play(Write(Dv_sum))
         with self.voiceover("It's more convenient to write this as a product of the vector of components of v and of the partial derivatives.") as tracker:
             self.play(TransformMatchingShapes(Dv_sum.copy(), vTgrad))
         with self.voiceover("This is just v, except it's a row vector so it's v transpose.") as tracker:
@@ -234,7 +234,7 @@ class DirectionalDerivativeScene2(VoiceoverScene):
             ))
             self.remove(D2v_quadratic_form4)
             self.add(D2v_quadratic_form5)
-            
+
         hess_transform = TransformIndicesWithBoxes(
             D2v_quadratic_form5, 
             D2v_quadratic_form_hess, 
