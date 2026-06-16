@@ -253,9 +253,9 @@ class DirectionalDerivativeScene2(VoiceoverScene):
             self.play(hess_transform.animations[2])
         # TODO: Maybe add "We can simplify this expression further" to beginning of next voiceover?
         with self.voiceover("This vector here is just v,") as tracker:
-            self.play(TransformIndicesWithBoxes(D2v_quadratic_form_hess,     D2v_quadratic_form_compact1, box_indices = [4]))
+            self.play(TransformIndicesWithBoxes(D2v_quadratic_form_hess,     D2v_quadratic_form_compact1, box_indices = [4], run_time=tracker.duration - 0.1))
         with self.voiceover("and this vector is v transpose.") as tracker:
-            self.play(TransformIndicesWithBoxes(D2v_quadratic_form_compact1, D2v_quadratic_form_compact2, box_indices = [2]))
+            self.play(TransformIndicesWithBoxes(D2v_quadratic_form_compact1, D2v_quadratic_form_compact2, box_indices = [2], run_time = tracker.duration - 0.1))
         with self.voiceover("So we have arrived at a delightfully simple formula for the directional second derivative.") as tracker:
             ...
         with self.voiceover("This is sometimes called the quadratic form. Our next goal is to prove that the directional second derivative of the log likelihood is negative;") as tracker:
