@@ -250,6 +250,7 @@ class DirectionalDerivativeScene2(VoiceoverScene):
         with self.voiceover("This matrix is called the Hessian, written H.") as tracker:
             self.play(hess_transform.animations[1])
             self.play(hess_transform.animations[2])
+        # TODO: Maybe add "We can simplify this expression further" to beginning of next voiceover?
         with self.voiceover("This vector here is just v,") as tracker:
             self.play(TransformIndicesWithBoxes(D2v_quadratic_form_hess,     D2v_quadratic_form_compact1, box_indices = [4]))
         with self.voiceover("and this vector is v transpose.") as tracker:
