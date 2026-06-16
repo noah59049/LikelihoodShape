@@ -233,7 +233,8 @@ class DirectionalDerivativeScene2(VoiceoverScene):
                 transform=TransformMatchingShapes
             ))
             self.remove(D2v_quadratic_form4)
-        self.add(D2v_quadratic_form5)
+            self.add(D2v_quadratic_form5)
+            
         hess_transform = TransformIndicesWithBoxes(
             D2v_quadratic_form5, 
             D2v_quadratic_form_hess, 
