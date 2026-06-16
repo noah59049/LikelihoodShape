@@ -465,7 +465,7 @@ class LinearLogisticScene(ThreeDScene, VoiceoverScene):
         with self.voiceover("a small value of z, ") as tracker:
             self.play(TransformWithBoxes(sigmoid_defn, f1_static, 
                                          ([11], [11,12,13,14,15,16]),
-                                         run_time = (tracker.duration - 0.1) / 3,
+                                         run_time = tracker.duration - 0.1,
                                          ))
         with self.voiceover("the denominator becomes very large,") as tracker:
             self.play(TransformFromCopy(f1_static, f2_static))

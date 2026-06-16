@@ -306,7 +306,7 @@ class DirectionalDerivativeScene(ThreeDScene, VoiceoverScene):
                     chain_rule,
                     simplified,
                     box_indices=[2, 5, 8, 11],
-                    run_time=1,
+                    run_time=3,
                 )
             )
 

@@ -696,13 +696,13 @@ class TransformWithBoxes(Succession):
         box_kwargs=None,
         create_boxes_anim=Create,
         remove_boxes_anim=FadeOut,
-        run_time=1.0,
+        run_time=3.0,
         **kwargs                  # passed to Succession
     ):
         if type(run_time) == list or type(run_time) == tuple:
             time1, time2, time3 = run_time
         else:
-            time1, time2, time3 = run_time, run_time, run_time
+            time1, time2, time3 = run_time / 3, run_time / 3, run_time / 3
 
         box_kwargs = box_kwargs or {"color": RED, "buff": 0.1}
 
@@ -979,7 +979,7 @@ class TransformIndicesWithBoxes(Succession):
         box_kwargs=None,
         CreateBoxesAnim=Create,
         RemoveBoxesAnim=FadeOut,
-        run_time=1.0,
+        run_time=3.0,
         check_length=True,
         **kwargs
     ):
@@ -996,7 +996,7 @@ class TransformIndicesWithBoxes(Succession):
         if isinstance(run_time, (list, tuple)):
             time1, time2, time3 = run_time
         else:
-            time1, time2, time3 = run_time, run_time, run_time
+            time1, time2, time3 = run_time / 3, run_time / 3, run_time / 3
 
         box_kwargs = box_kwargs or {"color": RED, "buff": 0.1}
 
