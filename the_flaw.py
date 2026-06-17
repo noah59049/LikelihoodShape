@@ -268,7 +268,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             return MathTex(
                 r"D^2_{\vec{v}} \ell = " + f"{g_pp:.3f}",
                 color=YELLOW,
-            ).next_to(hessian_tex, DOWN, aligned_edge=LEFT, buff=0.2)
+            ).next_to(deriv_tex, DOWN, aligned_edge=LEFT, buff=0.2)
 
         parabola = always_redraw(make_parabola)
         d2_label = always_redraw(make_d2_label)
@@ -278,8 +278,8 @@ class FlawScene(ThreeDScene, VoiceoverScene):
         with self.voiceover("But all of those are in fact impossible, we must be at the global max, and the rest of this video will prove it. We essentially use the") as tracker:
             pass
         with self.voiceover("second derivative test. To do the second derivative test on a function of multiple variables like the log likelihood, we need to be able to calculate directional second derivatives.") as tracker:
-            self.add_fixed_in_frame_mobjects(hessian_tex)
-            self.play(FadeIn(hessian_tex))
+            # self.add_fixed_in_frame_mobjects(hessian_tex)
+            # self.play(FadeIn(hessian_tex))
             self.add_fixed_in_frame_mobjects(d2_label)
             self.play(FadeIn(d2_label))
             self.stop_ambient_camera_rotation()
