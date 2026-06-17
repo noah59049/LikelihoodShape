@@ -273,13 +273,15 @@ class FlawScene(ThreeDScene, VoiceoverScene):
         parabola = always_redraw(make_parabola)
         d2_label = always_redraw(make_d2_label)
 
-        with self.voiceover("All of those are in fact impossible, and the rest of this video is going to prove it. If the derivatives of the log likelihood are all 0, we must be at the global maximum. Our proof has to do with the second derivative test. To do that, we need to take") as tracker:
+        with self.voiceover("Very few explanations I've seen even acknowledge this.") as tracker:
+            pass
+        with self.voiceover("But all of those are in fact impossible, we must be at the global max, and the rest of this video will prove it. We essentially use the") as tracker:
+            pass
+        with self.voiceover("second derivative test. For a function of multiple variables like the log likelihood, we need to be able to take directional second derivatives.") as tracker:
             self.add_fixed_in_frame_mobjects(hessian_tex)
             self.play(FadeIn(hessian_tex))
             self.add_fixed_in_frame_mobjects(d2_label)
             self.play(FadeIn(d2_label))
-
-        with self.voiceover("directional second derivatives. But we're first going to review directional derivatives.") as tracker:
             self.stop_ambient_camera_rotation()
             self.add(parabola)
             self.play(
