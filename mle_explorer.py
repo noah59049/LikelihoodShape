@@ -645,33 +645,11 @@ class MLEScene(VoiceoverScene, ThreeDScene):
 
         # Step 4: Add log likelihood
         loglik1 = ColoredMathTex(r"\ell(\hat{\beta})=\ln\prod_{i=1}^{n}\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}").to_corner(UL)
-        loglik2 = ColoredMathTex(r"\ell(\hat{\beta})=\sum_{i=1}^{n}\ln[\hat{y}_i^{y_i}(1-\hat{y}_i)^{1-{y_i}}]").to_corner(UL)
-        loglik3 = ColoredMathTex(r"\ell(\hat{\beta})=\sum_{i=1}^{n}\ln\hat{y}_i^{y_i}+ln(1-\hat{y}_i)^{1-{y_i}}").to_corner(UL)
-        loglik4 = ColoredMathTex(r"\ell(\hat{\beta})=\sum_{i=1}^{n}y_i\ln\hat{y}_i+({1-{y_i}})ln(1-\hat{y}_i)").to_corner(UL)
 
-        with self.voiceover("The log likelihood, denoted little l, is the ln of the likelihood. If we simplify a bit, ") as tracker:
+        with self.voiceover("The log likelihood, denoted little l, is the ln of the likelihood.") as tracker:
             self.play(TransformByGlyphMap(L_as_function, loglik1,
                                         ([0], [0]),
                                         ([], [6,7])))
-
-        with self.voiceover("the ln of a product is the sum of the lns,") as tracker:
-            self.play(TransformByGlyphMap(loglik1, loglik2,
-                                        ([9], [7]),
-                                        ([6,7], [11,12]),
-                                        (FadeIn, [13,30])))
-
-        with self.voiceover("do it again ") as tracker:
-            self.play(TransformByGlyphMap(loglik2, loglik3,
-                                        ([13,30], FadeOut),
-                                        (FadeIn, [18]),
-                                        ([11,12], [11,12]),
-                                        ([11,12],[19,20], {"path_arc": PI * -0.7})))
-
-        with self.voiceover("and then move the exponents.") as tracker:
-            self.play(TransformByGlyphMap(loglik3, loglik4,
-                                        ([15,16],[11,12],{"path_arc": PI * 0.7}),
-                                        (range(28,32),range(20,24), {"path_arc": PI * 0.7}),
-                                        (FadeIn, [19,25])))
 
         with self.voiceover("So here's the graph of the log likelihood. The maximum is in the same place, but the graph is slightly nicer, and more importantly, it's easier to take the derivative of, which ties into our next idea.") as tracker:
             # Normalize the log-likelihood to [0, 1] so the peak stays at z=1

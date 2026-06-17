@@ -33,8 +33,27 @@ class LoglikSimplificationScene(VoiceoverScene):
         loglik16 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}y_i\hat{z}_i+\ln(\frac{1}{e^{\hat{z}_i}+1})")
         loglik17 = ColoredMathTex(r"\ell=\sum_{i=1}^{n}y_i\hat{z}_i-\ln(e^{\hat{z}_i}+1)")
 
-        with self.voiceover("We want the Hessian and directional second derivatives of our log likelihood. We will simplify it first. We") as tracker:
-            self.play(Write(loglik4))
+        with self.voiceover("Therefore our next goal is to prove that the Hessian of the log likelihoood is negative definite. But first we need to simplify it.") as tracker:
+            self.play(Write(loglik1))
+
+        with self.voiceover("the ln of a product is the sum of the lns,") as tracker:
+            self.play(TransformByGlyphMap(loglik1, loglik2,
+                                        ([9], [7]),
+                                        ([6,7], [11,12]),
+                                        (FadeIn, [13,30])))
+
+        with self.voiceover("do it again ") as tracker:
+            self.play(TransformByGlyphMap(loglik2, loglik3,
+                                        ([13,30], FadeOut),
+                                        (FadeIn, [18]),
+                                        ([11,12], [11,12]),
+                                        ([11,12],[19,20], {"path_arc": PI * -0.7})))
+
+        with self.voiceover("and then move the exponents.") as tracker:
+            self.play(TransformByGlyphMap(loglik3, loglik4,
+                                        ([15,16],[11,12],{"path_arc": PI * 0.7}),
+                                        (range(28,32),range(20,24), {"path_arc": PI * 0.7}),
+                                        (FadeIn, [19,25])))
 
         with self.voiceover("expand 1 minus yi,") as tracker:
             self.play(TransformByGlyphMap(loglik4, loglik5,
