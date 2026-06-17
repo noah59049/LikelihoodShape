@@ -56,7 +56,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
         start_v = 1
         start_z = loglik_centered(start_u, start_v)
 
-        with self.voiceover("The standard explanation goes, you set all the derivatives to 0, the logic being, at the max, the derivative must be 0. But this explanation is incomplete. What if it's") as tracker:
+        with self.voiceover("The standard explanation goes, you set all the derivatives to 0, the logic being, at the max, the derivative must be 0. But this explanation is incomplete. What if all the derivatives are 0, but it's") as tracker:
             dot = Dot3D(axes.c2p(start_u, start_v, start_z), color=YELLOW)
             self.play(FadeIn(dot))
 
@@ -220,7 +220,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
                     self.play(Restore(surface, run_time = usable_time / 2))
 
         if False:
-            with self.voiceover("a saddle point? Or ") as tracker:
+            with self.voiceover("a saddle point? Or") as tracker:
                 pass
             with self.voiceover("a local maximum, but not the global maximum?") as tracker:
                 pass
@@ -277,7 +277,7 @@ class FlawScene(ThreeDScene, VoiceoverScene):
             pass
         with self.voiceover("But all of those are in fact impossible, we must be at the global max, and the rest of this video will prove it. We essentially use the") as tracker:
             pass
-        with self.voiceover("second derivative test. For a function of multiple variables like the log likelihood, we need to be able to take directional second derivatives.") as tracker:
+        with self.voiceover("second derivative test. To do the second derivative test on a function of multiple variables like the log likelihood, we need to be able to calculate directional second derivatives.") as tracker:
             self.add_fixed_in_frame_mobjects(hessian_tex)
             self.play(FadeIn(hessian_tex))
             self.add_fixed_in_frame_mobjects(d2_label)
