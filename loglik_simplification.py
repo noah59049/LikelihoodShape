@@ -38,23 +38,24 @@ class LoglikSimplificationScene(VoiceoverScene):
 
         with self.voiceover("the ln of a product is the sum of the lns,") as tracker:
             self.play(TransformByGlyphMap(loglik1, loglik2,
-                                        ([9], [7]),
-                                        ([6,7], [11,12]),
-                                        (FadeIn, [13,30])))
+                                        ([2,3],[7,8], {"path_arc":-PI}),
+                                        (FadeIn, [9,26]),
+            ))
 
         with self.voiceover("do it again ") as tracker:
             self.play(TransformByGlyphMap(loglik2, loglik3,
-                                        ([13,30], FadeOut),
-                                        (FadeIn, [18]),
-                                        ([11,12], [11,12]),
-                                        ([11,12],[19,20], {"path_arc": PI * -0.7})))
+                                        ([9,26], FadeOut),
+                                        (FadeIn, [14]),
+                                        ([7,8], [7,8]),
+                                        ([7,8],[15,16], {"path_arc": PI * -0.7})
+            ))
 
         with self.voiceover("and then move the exponents.") as tracker:
             self.play(TransformByGlyphMap(loglik3, loglik4,
-                                        ([15,16],[11,12],{"path_arc": PI * 0.7}),
-                                        (range(28,32),range(20,24), {"path_arc": PI * 0.7}),
-                                        (FadeIn, [19,25])))
-
+                                        ([11,12],[7,8],{"path_arc": PI * 0.7}),
+                                        (range(24,28),range(16,20), {"path_arc": PI * 0.7}),
+                                        (FadeIn, [15,21])))
+        
         with self.voiceover("expand 1 minus yi,") as tracker:
             self.play(TransformByGlyphMap(loglik4, loglik5,
                                         (range(21,30), range(15,24), {"path_arc":PI}),
